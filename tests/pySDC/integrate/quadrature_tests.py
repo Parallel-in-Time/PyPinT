@@ -1,13 +1,12 @@
 import unittest
 from pySDC.integrate.quadrature import *
 
-class QuadratureTest(unittest.TestCase):
-    def testInitialization(self):
-        with self.assertRaises(NotImplementedError):
+class QuadratureTests( unittest.TestCase ):
+    def testInitialization( self ):
+        with self.assertRaises( NotImplementedError ):
             Quadrature()
-    
-def main():
-    unittest.main()
-    
+        with self.assertRaises( NotImplementedError ):
+            Quadrature.integrate()
+
 if __name__ == "__main__":
-    main()
+    unittest.main()
