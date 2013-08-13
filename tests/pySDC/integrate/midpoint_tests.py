@@ -1,5 +1,6 @@
 import unittest
-from pySDC.integrate.midpoint import *
+from decimal import Decimal
+from pySDC.integrate.midpoint import Midpoint
 
 class MidpointTests( unittest.TestCase ):
     def testInitialization( self ):

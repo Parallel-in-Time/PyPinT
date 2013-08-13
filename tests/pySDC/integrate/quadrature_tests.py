@@ -1,5 +1,5 @@
 import unittest
-from pySDC.integrate.quadrature import *
+from pySDC.integrate.quadrature import Quadrature
 
 class QuadratureTests( unittest.TestCase ):
     def testInitialization( self ):

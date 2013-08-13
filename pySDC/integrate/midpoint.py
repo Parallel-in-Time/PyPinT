@@ -1,5 +1,5 @@
-from decimal import *
-from pySDC.integrate.quadrature import *
+from decimal import Decimal
+from pySDC.integrate.quadrature import Quadrature
 
 class Midpoint( Quadrature ):
 	"""
