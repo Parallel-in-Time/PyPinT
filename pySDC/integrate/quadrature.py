@@ -7,4 +7,4 @@ class Quadrature:
         """
        
         """
-        
+        raise NotImplementedError( "Should be implemented by derivation." )
