@@ -10,7 +10,10 @@ class MidpointTests( unittest.TestCase ):
         Midpoint.integrate()
 
     def testIntegrate( self ):
-        self.assertEqual( Midpoint.integrate(), Decimal( 1.0 ), "Default integrate" )
+        self.assertEqual( Midpoint.integrate(), Decimal( 1.0 ), "Default integrate values" )
+        self.assertEqual( Midpoint.integrate( lambda x: Decimal( 0.0 ) ), Decimal( 0.0 ), "Zero function" )
+        with self.assertRaises( AttributeError ):
+            Midpoint.integrate( lambda x: 1.0, 0, 0, 1)
 
 if __name__ == "__main__":
     unittest.main()
