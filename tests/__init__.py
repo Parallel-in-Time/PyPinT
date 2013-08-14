@@ -1,5 +1,5 @@
 import unittest
-from tests.pySDC.__init__ import *
+from tests.pySDC.__init__ import pySDCTests
 
 class pySDCTestSuite( unittest.TestSuite ):
     def __init__( self ):
