@@ -1,1 +1,1 @@
-__all__ = [ "quadrature", "midpoint" ]
+__all__ = [ "quadrature", "newton_cotes", "midpoint" ]

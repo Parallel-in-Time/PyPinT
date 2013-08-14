@@ -1,7 +1,7 @@
 from decimal import Decimal
-from pySDC.integrate.quadrature import Quadrature
+from pySDC.integrate.newton_cotes import NewtonCotes
 
-class Midpoint( Quadrature ):
+class Midpoint( NewtonCotes ):
 	"""
 	"""
 
