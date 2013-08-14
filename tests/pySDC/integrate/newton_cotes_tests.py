@@ -3,31 +3,57 @@ from decimal import Decimal
 from pySDC.integrate.newton_cotes import NewtonCotes
 
 class NewtonCotesTests( unittest.TestCase ):
+    @classmethod
+    def setUpClass( self ):
+        self.testFunctions = []
+        self.testFunctions.append( { 'func': lambda x: Decimal( 0.0 ), 'begin': 0, 'end': 1, 'steps': 10, 'result': Decimal( 0.0 ), 'name': "Zero function" } )
+        self.testFunctions.append( { 'func': lambda x: Decimal( 1.0 ), 'begin': 0, 'end': 1, 'steps': 10, 'result': Decimal( 1.0 ), 'name': "One function" } )
+        self.testFunctions.append( { 'func': lambda x: Decimal( x ), 'begin': 0, 'end': 1, 'steps': 10, 'result': Decimal( 0.5 ), 'name': "Identity function" } )
+
+        self.testFailures = []
+        self.testFailures.append( { 'func': lambda x: 1.0, 'begin': 0, 'end': 0, 'steps': 1 } )
+        self.testFailures.append( { 'func': lambda x: 1.0, 'begin': 0, 'end': 1, 'steps': 0 } )
+        self.testFailures.append( { 'func': lambda x: 1.0, 'begin': 1, 'end': 0, 'steps': 1 } )
+
+    def _functional( self, order ):
+        for params in self.testFunctions:
+            self.assertEqual( NewtonCotes.integrate( params['func'], params['begin'],
+                                                     params['end'], params['steps'], order ),
+                              params['result'], params['name'] )
+
+    def _failures( self, order ):
+        for params in self.testFailures:
+            with self.assertRaises( AttributeError ):
+                NewtonCotes.integrate( params['func'], params['begin'], params['end'], params['steps'], order )
+
+
     def testInitialization( self ):
         testObj = NewtonCotes()
         self.assertIsInstance( testObj, NewtonCotes )
         self.assertTrue( hasattr( testObj, 'integrate' ), "Newton-Cotes integration scheme needs integrate function." )
         NewtonCotes.integrate()
 
+    def testIntegrateOrderNone( self ):
+        with self.assertRaises( NotImplementedError ):
+            NewtonCotes.integrate( order=0 )
+
     def testIntegrateOrderOne( self ):
+        order = 1
         self.assertEqual( NewtonCotes.integrate(), Decimal( 1.0 ), "Default integrate values" )
-        self.assertEqual( NewtonCotes.integrate( lambda x: Decimal( 0.0 ) ), Decimal( 0.0 ), "Zero function" )
-        
-        testParams = []
-        testParams.append( [lambda x: 1.0, 0, 0, 1, 1] )
-        testParams.append( [lambda x: 1.0, 0, 1, 0, 1] )
-        testParams.append( [lambda x: 1.0, 1, 0, 1, 1] )
-        for params in testParams:
-            with self.assertRaises( AttributeError ):
-                NewtonCotes.integrate( params[0], params[1], params[2], params[3], params[4] )
+        self._functional( order )
+        self._failures( order )
 
     def testIntegrateOrderTwo( self ):
-        self.assertEqual( NewtonCotes.integrate( lambda x: Decimal( 0.0 ), 0, 1, 10, 2 ), Decimal( 0.0 ), "Zero function" )
-        
-        testParams = []
-        testParams.append( [lambda x: 1.0, 0, 0, 1, 2] )
-        testParams.append( [lambda x: 1.0, 0, 1, 0, 2] )
-        testParams.append( [lambda x: 1.0, 1, 0, 1, 2] )
-        for params in testParams:
-            with self.assertRaises( AttributeError ):
-                NewtonCotes.integrate( params[0], params[1], params[2], params[3], params[4] )
+        order = 2
+        self._functional( order )
+        self._failures( order )
+
+    def testIntegrateOrderThree( self ):
+        order = 3
+        self._functional( order )
+        self._failures( order )
+
+    def testIntegrateOrderFour( self ):
+        order = 4
+        self._functional( order )
+        self._failures( order )
