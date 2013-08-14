@@ -7,7 +7,7 @@ def read( fname ):
     return open( os.path.join( os.path.dirname( __file__ ), fname ) ).read()
 
 setup( name="pySDC",
-       version="0.0.1 pre-alpha",
+       version="0.0.1a0",
        author="Torbjörn Klatt",
        author_email="opensource@torbjoern-klatt.de",
        description=( "A Python implementation of a Spectral Deffered Corrections (SDC) method" ),
