@@ -6,6 +6,3 @@ class IntegrateTests( unittest.TestSuite ):
     def __init__( self ):
         self.addTests( QuadratureTests() )
         self.addTests( NewtonCotesTests() )
-
-if __name__ == "__main__":
-    unittest.main()

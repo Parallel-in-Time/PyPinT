@@ -7,6 +7,3 @@ class QuadratureTests( unittest.TestCase ):
             Quadrature()
         with self.assertRaises( NotImplementedError ):
             Quadrature.integrate()
-
-if __name__ == "__main__":
-    unittest.main()
