@@ -40,6 +40,13 @@ class Gauss( Quadrature ):
                      [ Decimal( 1.0 ) / Decimal( 5 ) * Decimal( 5 ).sqrt(), Decimal( 5 ) / Decimal( 6 ) ],
                      [ Decimal( 1.0 ), Decimal( 1 / Decimal( 6 ) ) ]
                    ]
+        elif nPoints == 5:
+            return [ [ Decimal( -1.0 ), Decimal( 1 ) / Decimal( 10 ) ],
+                     [ Decimal( -1.0 ) / Decimal( 7 ) * Decimal( 21 ).sqrt(), Decimal( 49 ) / Decimal( 90 ) ],
+                     [ Decimal( 0.0 ), Decimal( 32 ) / Decimal( 45 ) ],
+                     [ Decimal( 1.0 ) / Decimal( 7 ) * Decimal( 21 ).sqrt(), Decimal( 49 ) / Decimal( 90 ) ],
+                     [ Decimal( 1.0 ), Decimal( 1 ) / Decimal( 10 ) ]
+                   ]
         elif nPoints < 3:
             raise ValueError( "Gauss-Lobatto quadrature does not work with less than three points." )
         else:

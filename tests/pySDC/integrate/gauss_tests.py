@@ -7,8 +7,9 @@ class GaussTests( unittest.TestCase ):
     def setUpClass( self ):
         self.testFunctions = []
         self.testFunctions.append( { 'func': lambda x: Decimal( 0.0 ), 'begin': 0, 'end': 1, 'result': Decimal( 0.0 ), 'msg': "Zero function" } )
-        self.testFunctions.append( { 'func': lambda x: Decimal( 1.0 ), 'begin': 0, 'end': 1, 'result': Decimal( 1.0 ), 'msg': "One function" } )
-        self.testFunctions.append( { 'func': lambda x: Decimal( x ), 'begin': 0, 'end': 1, 'result': Decimal( 0.5 ), 'msg': "Identity function" } )
+        self.testFunctions.append( { 'func': lambda x: Decimal( 1.0 ), 'begin': 0, 'end': 1, 'result': Decimal( 1.0 ), 'msg': "One function in [0, 1]" } )
+        self.testFunctions.append( { 'func': lambda x: Decimal( 1.0 ), 'begin': -3, 'end': 5, 'result': Decimal( 8.0 ), 'msg': "One function in [-3, 5]" } )
+        self.testFunctions.append( { 'func': lambda x: Decimal( x ), 'begin': 0, 'end': 1, 'result': Decimal( 0.5 ), 'msg': "Identity function in [0, 1]" } )
 
         self.testFailures = []
         self.testFailures.append( { 'func': lambda x: 1.0, 'begin': 0, 'end': 0, 'msg': "Zero interval" } )
@@ -42,5 +43,10 @@ class GaussTests( unittest.TestCase ):
 
     def testIntegrateOrderFour( self ):
         nPoints = 4
+        self._functional( nPoints )
+        self._failures( nPoints )
+
+    def testIntegrateOrderFive( self ):
+        nPoints = 5
         self._functional( nPoints )
         self._failures( nPoints )
