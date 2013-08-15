@@ -17,9 +17,9 @@ class NewtonCotes( Quadrature ):
         b = Decimal( end )
 
         if a == b or ( b - a ) <= Decimal( 0.0 ):
-            raise AttributeError( "Integration interval must be non-zero positive (end - begin = " + str( b - a ) + ")." )
+            raise ValueError( "Integration interval must be non-zero positive (end - begin = " + str( b - a ) + ")." )
         if steps < 1:
-            raise AttributeError( "At least one step makes sense (steps=" + str( steps ) + ")." )
+            raise ValueError( "At least one step makes sense (steps=" + str( steps ) + ")." )
 
         step_width = ( b - a ) / Decimal( steps )
         result = Decimal( 0.0 )
