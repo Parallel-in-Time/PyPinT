@@ -8,12 +8,12 @@ class GaussTests( unittest.TestCase ):
         self.testFunctions = []
         self.testFunctions.append( { 'func': lambda x: Decimal( 0.0 ), 'begin': 0, 'end': 1, 'result': Decimal( 0.0 ), 'msg': "Zero function" } )
         self.testFunctions.append( { 'func': lambda x: Decimal( 1.0 ), 'begin': 0, 'end': 1, 'result': Decimal( 1.0 ), 'msg': "One function in [0, 1]" } )
-        self.testFunctions.append( { 'func': lambda x: Decimal( 1.0 ), 'begin': -3, 'end': 5, 'result': Decimal( 8.0 ), 'msg': "One function in [-3, 5]" } )
+        self.testFunctions.append( { 'func': lambda x: Decimal( 1.0 ), 'begin':-3, 'end': 5, 'result': Decimal( 8.0 ), 'msg': "One function in [-3, 5]" } )
         self.testFunctions.append( { 'func': lambda x: Decimal( x ), 'begin': 0, 'end': 1, 'result': Decimal( 0.5 ), 'msg': "Identity function in [0, 1]" } )
 
-        self.testFailures = []
-        self.testFailures.append( { 'func': lambda x: 1.0, 'begin': 0, 'end': 0, 'msg': "Zero interval" } )
-        self.testFailures.append( { 'func': lambda x: 1.0, 'begin': 1, 'end': 0, 'msg': "Negative interval" } )
+        self.testFailureCases = []
+        self.testFailureCases.append( { 'func': lambda x: 1.0, 'begin': 0, 'end': 0, 'msg': "Zero interval" } )
+        self.testFailureCases.append( { 'func': lambda x: 1.0, 'begin': 1, 'end': 0, 'msg': "Negative interval" } )
 
     def _functional( self, nPoints ):
         for params in self.testFunctions:
@@ -21,7 +21,7 @@ class GaussTests( unittest.TestCase ):
                               params['result'], msg=params['msg'], delta=getcontext().prec, places=None )
 
     def _failures( self, nPoints ):
-        for params in self.testFailures:
+        for params in self.testFailureCases:
             with self.assertRaises( ValueError, msg=params['msg'] ):
                 Gauss.integrate( params['func'], params['begin'], params['end'] )
 
@@ -30,11 +30,15 @@ class GaussTests( unittest.TestCase ):
         testObj = Gauss()
         self.assertIsInstance( testObj, Gauss )
         self.assertTrue( hasattr( testObj, 'integrate' ), "Newton-Cotes integration scheme needs integrate function." )
-        self.assertAlmostEqual( Gauss.integrate(), Decimal( 1.0 ), msg="Default integrate values", delta=Decimal(1e-7), places=None )
+        self.assertAlmostEqual( Gauss.integrate(), Decimal( 1.0 ), msg="Default integrate values", delta=Decimal( 1e-7 ), places=None )
 
     def testIntegrateOrderNone( self ):
         with self.assertRaises( ValueError ):
             Gauss.integrate( nPoints=0 )
+
+    def testIntegrateOrderTooHigh( self ):
+        with self.assertRaises( NotImplementedError ):
+            Gauss.integrate( nPoints=10 )
 
     def testIntegrateOrderThree( self ):
         order = 3

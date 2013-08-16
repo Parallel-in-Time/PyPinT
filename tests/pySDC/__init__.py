@@ -1,3 +1,5 @@
+__all__ = []
+
 import unittest
 from tests.pySDC.integrate.__init__ import IntegrateTests
 
