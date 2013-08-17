@@ -3,7 +3,7 @@ from nose.tools import raises
 from decimal import Decimal
 from pySDC.integrate.newton_cotes import NewtonCotes
 
-testOrders = [ 1, 4]
+testOrders = [ 1, 4 ]
 testCases = { 'correct': [], 'fail': [] }
 
 testCases['fail'].append( { 'func': lambda x: 1.0, 'begin': 0, 'end': 0, 'steps': 1, 'msg': "Zero interval" } )
