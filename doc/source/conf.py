@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # pySDC documentation build configuration file, created by
-# sphinx-quickstart on Wed Aug 14 09:32:24 2013.
+# sphinx-quickstart on Tue Aug 20 11:52:45 2013.
 #
 # This file is execfile()d with the current directory set to its containing dir.
 #
@@ -17,7 +17,8 @@ import sys, os
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
-sys.path.insert(0, os.path.abspath('../../'))
+sys.path.insert(0, os.path.abspath('../sphinxext'))
+sys.path.insert(0, os.path.abspath('../..'))
 
 # -- General configuration -----------------------------------------------------
 
@@ -26,23 +27,25 @@ sys.path.insert(0, os.path.abspath('../../'))
 
 # Add any Sphinx extension module names here, as strings. They can be extensions
 # coming with Sphinx (named 'sphinx.ext.*') or your custom ones.
-extensions = ['sphinx.ext.autodoc', 'sphinx.ext.todo', 'sphinx.ext.coverage', 'sphinx.ext.mathjax', 'sphinx.ext.viewcode']
+extensions = ['sphinx.ext.autodoc', 'sphinx.ext.autosummary', 'sphinx.ext.doctest', 
+              'sphinx.ext.todo', 'sphinx.ext.coverage', 'sphinx.ext.mathjax', 
+              'sphinx.ext.viewcode', 'numpydoc']
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
 
 # The suffix of source filenames.
 source_suffix = '.rst'
- 
+
 # The encoding of source files.
 source_encoding = 'utf-8-sig'
 
 # The master toctree document.
-master_doc = 'index'
+master_doc = 'README.md'
 
 # General information about the project.
 project = 'pySDC'
-copyright = '2013, Torbjörn Klatt'
+copyright = '2013, Torbjoern Klatt'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -71,7 +74,7 @@ exclude_patterns = []
 #default_role = None
 
 # If true, '()' will be appended to :func: etc. cross-reference text.
-#add_function_parentheses = True
+add_function_parentheses = True
 
 # If true, the current module name will be prepended to all description
 # unit titles (such as .. function::).
@@ -92,7 +95,7 @@ pygments_style = 'sphinx'
 
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
-html_theme = 'default'
+html_theme = 'sphinxdoc'
 
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
@@ -184,8 +187,8 @@ latex_elements = {
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title, author, documentclass [howto/manual]).
 latex_documents = [
-  ('index', 'pySDC.tex', 'pySDC Documentation',
-   'Torbjörn Klatt', 'manual'),
+  ('README.md', 'pySDC.tex', 'pySDC Documentation',
+   'Torbjoern Klatt', 'manual'),
 ]
 
 # The name of an image file (relative to this directory) to place at the top of
@@ -214,8 +217,8 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    ('index', 'pysdc', 'pySDC Documentation',
-     ['Torbjörn Klatt'], 1)
+    ('README.md', 'pysdc', 'pySDC Documentation',
+     ['Torbjoern Klatt'], 1)
 ]
 
 # If true, show URL addresses after external links.
@@ -228,8 +231,8 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-  ('index', 'pySDC', 'pySDC Documentation',
-   'Torbjörn Klatt', 'pySDC', 'One line description of project.',
+  ('README.md', 'pySDC', 'pySDC Documentation',
+   'Torbjoern Klatt', 'pySDC', 'One line description of project.',
    'Miscellaneous'),
 ]
 
