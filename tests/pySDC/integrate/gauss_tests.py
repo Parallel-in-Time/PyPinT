@@ -55,3 +55,6 @@ class GaussTests( unittest.TestCase ):
         """
         with self.assertRaises( NotImplementedError ):
             Gauss.integrate( nPoints=10 )
+
+if __name__ == "__main__":
+    unittest.main()
