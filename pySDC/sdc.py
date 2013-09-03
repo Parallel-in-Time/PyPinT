@@ -10,25 +10,24 @@ class SDC(object):
     def __init__(self):
         """
         """
-        self.fnc = lambda x, y: dc.Decimal(1.0)
+        self.fnc = lambda t, x: dc.Decimal(1.0)
         self.initial_value = dc.Decimal(0.0)
-        self.timeRange = [dc.Decimal(0.0), dc.Decimal(1.0)]
+        self.timeRange = [dc.Decimal(0.1), dc.Decimal(1.0)]
         self.timeSteps = 10
         self.numSubsteps = 3
         self.iterations = 5
-        self.__sol = np.zeros((5, self.timeSteps, self.numSubsteps), dtype=np.dtype(dc.Decimal) )
+        self.__sol = np.zeros((self.iterations, self.timeSteps, self.numSubsteps), dtype=np.dtype(dc.Decimal))
 
     def solve(self):
         """
         solves a given problem setup
         """
-        
-        self.__sol[0][0][0] = self.initial_value
+
         _substeps = np.zeros((self.timeSteps, self.numSubsteps), dtype=np.dtype(dc.Decimal))
         _dt_n = self.timeRange[1] - self.timeRange[0] / dc.Decimal(self.timeSteps)
         _nodes = Gauss.nodes(self.numSubsteps)
 
-        # Compute initial approximations with standard implicit/explicit Euler
+        # Set initial values and compute substep points
         for t_n_i in range(0, self.timeSteps):
             _t_n = self.timeRange[0] + t_n_i * _dt_n
 
@@ -36,30 +35,35 @@ class SDC(object):
             _trans = Gauss.transform(_t_n, _t_n + _dt_n)
             assert len(_trans) == 2, "Coordinate transformation failed"
             assert len(_substeps) > t_n_i, "Substeps not initialized (len(_substeps)=" + str(len(_substeps)) + ")"
+
             for step in range(0, self.numSubsteps):
                 assert len(_nodes) > step, "Fever nodes than steps"
                 _substeps[t_n_i][step] = _trans[0] * _nodes[step] + _trans[1]
-            assert len(_substeps[t_n_i]) == self.numSubsteps
+            print("_substeps[" + str(t_n_i) + "] = " + str(_substeps[t_n_i]))
 
-            for t_m_i in range(0, self.numSubsteps):
-                _t_m = _substeps[t_n_i][t_m_i]
-                """ TODO
-                # compute initial approximation with standard Euler
-                """
-                self.__sol[0][t_n_i][t_m_i] = dc.Decimal(0.0)
+            self.__sol[0][t_n_i] = np.asarray([self.initial_value] * self.numSubsteps)
+            print("__sol[0][" + str(t_n_i) + "] = " + str(self.solution[0][t_n_i]))
 
+        # Compute SDC iterations
         for k in range(1, self.iterations):
+            self.__sol[k][0][0] = self.initial_value
             for t_n_i in range(0, self.timeSteps):
-                _t_n = self.timeRange[0] + t_n_i * _dt_n
+                self.__sol[k][t_n_i][0] = self.__sol[k][t_n_i - 1][-1]
                 for t_m_i in range(1, self.numSubsteps):
                     t_m = _substeps[t_n_i][t_m_i]
                     _dt_m = t_m - _substeps[t_n_i][t_m_i - 1]
-                    # compute Eqn. 2.7
-                    # solve with Newton or alike
+                    assert _dt_m > dc.Decimal(0.0), "dt_m should be larger 0"
+
+                    # compute Eqn. 2.7 in explicit form
                     self.__sol[k][t_n_i][t_m_i] = self.__sol[k][t_n_i][t_m_i - 1] + \
-                        _dt_m * (self.fnc(t_m, self.__sol[k][t_n_i][t_m_i]) - \
+                        _dt_m * (self.fnc(t_m, self.__sol[k][t_n_i][t_m_i - 1]) - \
                                  self.fnc(t_m, self.__sol[k - 1][t_n_i][t_m_i])) + \
                         Gauss.partial_integrate(t_m_i - 1, t_m_i, self.__sol[k][t_n_i])
+                    print("__sol[" + str(k) + "][" + str(t_n_i) + "][" + str(t_m_i) + "] = "
+                           + str(self.__sol[k][t_n_i][t_m_i - 1]) + " + " + str(_dt_m) + " * (" + str(self.fnc(t_m, self.__sol[k][t_n_i][t_m_i - 1]))
+                           + " - " + str(self.fnc(t_m, self.__sol[k - 1][t_n_i][t_m_i])) + ") + "
+                           + "Gauss.partial_integrate(" + str(t_m_i - 1) + ", " + str(t_m_i) + ", " + str(self.__sol[k][t_n_i]) + ")")
+                print("__sol[" + str(k) + "][" + str(t_n_i) + "] = " + str(self.solution[k][t_n_i]))
 
     @property
     def solution(self):
