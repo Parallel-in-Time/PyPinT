@@ -1,4 +1,3 @@
-import decimal as dc
 import numpy as np
 from pySDC.integrate.gauss import Gauss
 
@@ -10,21 +9,21 @@ class SDC(object):
     def __init__(self):
         """
         """
-        self.fnc = lambda t, x: dc.Decimal(1.0)
-        self.initial_value = dc.Decimal(0.0)
-        self.timeRange = [dc.Decimal(0.1), dc.Decimal(1.0)]
+        self.fnc = lambda t, x:-1.0 * float(x)
+        self.initial_value = 1.0
+        self.timeRange = [0.1, 1.0]
         self.timeSteps = 10
-        self.numSubsteps = 3
+        self.numSubsteps = 5
         self.iterations = 5
-        self.__sol = np.zeros((self.iterations, self.timeSteps, self.numSubsteps), dtype=np.dtype(dc.Decimal))
+        self.__sol = np.zeros((self.iterations, self.timeSteps, self.numSubsteps), dtype=float)
 
     def solve(self):
         """
         solves a given problem setup
         """
 
-        _substeps = np.zeros((self.timeSteps, self.numSubsteps), dtype=np.dtype(dc.Decimal))
-        _dt_n = self.timeRange[1] - self.timeRange[0] / dc.Decimal(self.timeSteps)
+        _substeps = np.zeros((self.timeSteps, self.numSubsteps), dtype=float)
+        _dt_n = self.timeRange[1] - self.timeRange[0] / self.timeSteps
         _nodes = Gauss.nodes(self.numSubsteps)
 
         # Set initial values and compute substep points
@@ -48,21 +47,22 @@ class SDC(object):
         for k in range(1, self.iterations):
             self.__sol[k][0][0] = self.initial_value
             for t_n_i in range(0, self.timeSteps):
+                _t_n = self.timeRange[0] + t_n_i * _dt_n
                 self.__sol[k][t_n_i][0] = self.__sol[k][t_n_i - 1][-1]
                 for t_m_i in range(1, self.numSubsteps):
-                    t_m = _substeps[t_n_i][t_m_i]
-                    _dt_m = t_m - _substeps[t_n_i][t_m_i - 1]
-                    assert _dt_m > dc.Decimal(0.0), "dt_m should be larger 0"
+                    _t_m = _substeps[t_n_i][t_m_i]
+                    _dt_m = _t_m - _substeps[t_n_i][t_m_i - 1]
+                    assert _dt_m > 0.0, "dt_m should be larger 0"
 
                     # compute Eqn. 2.7 in explicit form
                     self.__sol[k][t_n_i][t_m_i] = self.__sol[k][t_n_i][t_m_i - 1] + \
-                        _dt_m * (self.fnc(t_m, self.__sol[k][t_n_i][t_m_i - 1]) - \
-                                 self.fnc(t_m, self.__sol[k - 1][t_n_i][t_m_i])) + \
-                        Gauss.partial_integrate(t_m_i - 1, t_m_i, self.__sol[k][t_n_i])
+                        _dt_m * (self.fnc(_t_m, self.__sol[k][t_n_i][t_m_i - 1]) - \
+                                 self.fnc(_t_m, self.__sol[k - 1][t_n_i][t_m_i])) + \
+                        Gauss.integrate(func=self.fnc, t=_t_m, begin=_t_n, end=(_t_n + _dt_n), nPoints=self.numSubsteps, lower=(t_m_i - 1), upper=t_m_i)
                     print("__sol[" + str(k) + "][" + str(t_n_i) + "][" + str(t_m_i) + "] = "
-                           + str(self.__sol[k][t_n_i][t_m_i - 1]) + " + " + str(_dt_m) + " * (" + str(self.fnc(t_m, self.__sol[k][t_n_i][t_m_i - 1]))
-                           + " - " + str(self.fnc(t_m, self.__sol[k - 1][t_n_i][t_m_i])) + ") + "
-                           + "Gauss.partial_integrate(" + str(t_m_i - 1) + ", " + str(t_m_i) + ", " + str(self.__sol[k][t_n_i]) + ")")
+                           + str(self.__sol[k][t_n_i][t_m_i - 1]) + " + " + str(_dt_m) + " * (" + str(self.fnc(_t_m, self.__sol[k][t_n_i][t_m_i - 1]))
+                           + " - " + str(self.fnc(_t_m, self.__sol[k - 1][t_n_i][t_m_i])) + ") + "
+                           + "Gauss.integrate(func=" + str(self.fnc) + ", t=" + str(_t_m) + ", begin=" + str(_t_n) + ", end=" + str(_t_n + _dt_n) + ", nPoints=" + str(self.numSubsteps) + ", lower=" + str(t_m_i - 1) + ", upper=" + str(t_m_i) + ")")
                 print("__sol[" + str(k) + "][" + str(t_n_i) + "] = " + str(self.solution[k][t_n_i]))
 
     @property
@@ -112,7 +112,7 @@ class SDC(object):
 
     @initial_value.setter
     def initial_value(self, value):
-        self.__initial_value = dc.Decimal(value)
+        self.__initial_value = value
 
     @initial_value.deleter
     def initial_value(self):
@@ -136,11 +136,11 @@ class SDC(object):
 
     @time_range.setter
     def time_range(self, value):
-        if dc.Decimal(value[1]) <= dc.Decimal(value[0]):
+        if value[1] <= value[0]:
             raise ValueError("Time interval must be non-zero positive [start, "
                              "end]: [" + str(value[0]) + ", " + str(value[1])
                              + "]")
-        self.__timeRange = [dc.Decimal(value[0]), dc.Decimal(value[1])]
+        self.__timeRange = [value[0], value[1]]
 
     @time_range.deleter
     def time_range(self):

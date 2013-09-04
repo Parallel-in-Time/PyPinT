@@ -1,21 +1,20 @@
 import unittest
 from nose.tools import *
-from decimal import Decimal, getcontext
 from pySDC.integrate.gauss import Gauss
 
 testNumPoints = [ 3, 5 ]
 testCases = { 'correct': [], 'fail': [] }
 
-testCases['correct'].append( { 'func': lambda x: Decimal( 0.0 ), 'begin': 0, 'end': 1, 'result': Decimal( 0.0 ), 'msg': "Zero function" } )
-testCases['correct'].append( { 'func': lambda x: Decimal( 1.0 ), 'begin': 0, 'end': 1, 'result': Decimal( 1.0 ), 'msg': "One function in [0, 1]" } )
-testCases['correct'].append( { 'func': lambda x: Decimal( 1.0 ), 'begin':-3, 'end': 5, 'result': Decimal( 8.0 ), 'msg': "One function in [-3, 5]" } )
-testCases['correct'].append( { 'func': lambda x: Decimal( x ), 'begin': 0, 'end': 1, 'result': Decimal( 0.5 ), 'msg': "Identity function in [0, 1]" } )
+testCases['correct'].append( { 'func': lambda t, x: 0.0, 'begin': 0, 'end': 1, 'result': 0.0, 'msg': "Zero function" } )
+testCases['correct'].append( { 'func': lambda t, x: 1.0, 'begin': 0, 'end': 1, 'result': 1.0, 'msg': "One function in [0, 1]" } )
+testCases['correct'].append( { 'func': lambda t, x: 1.0, 'begin':-3, 'end': 5, 'result': 8.0, 'msg': "One function in [-3, 5]" } )
+testCases['correct'].append( { 'func': lambda t, x: x, 'begin': 0, 'end': 1, 'result': 0.5, 'msg': "Identity function in [0, 1]" } )
 
-testCases['fail'].append( { 'func': lambda x: 1.0, 'begin': 0, 'end': 0, 'msg': "Zero interval" } )
-testCases['fail'].append( { 'func': lambda x: 1.0, 'begin': 1, 'end': 0, 'msg': "Negative interval" } )
+testCases['fail'].append( { 'func': lambda t, x: 1.0, 'begin': 0, 'end': 0, 'msg': "Zero interval" } )
+testCases['fail'].append( { 'func': lambda t, x: 1.0, 'begin': 1, 'end': 0, 'msg': "Negative interval" } )
 
 def correct_integrate( func, begin, end, nPoints, result, message ):
-    assert_almost_equals( Gauss.integrate( func, begin, end, nPoints ), result, msg=message, places=None, delta=getcontext().prec )
+    assert_almost_equals( Gauss.integrate( func, begin, end, nPoints ), result, msg=message, places=None, delta=1e-7 )
 
 @raises( ValueError )
 def failed_integrate( func, begin, end, nPoints, message ):
@@ -42,7 +41,7 @@ class GaussTests( unittest.TestCase ):
         testObj = Gauss()
         self.assertIsInstance( testObj, Gauss )
         self.assertTrue( hasattr( testObj, 'integrate' ), "Newton-Cotes integration scheme needs integrate function." )
-        self.assertAlmostEqual( Gauss.integrate(), Decimal( 1.0 ), msg="Default integrate values", delta=Decimal( 1e-7 ), places=None )
+        self.assertAlmostEqual( Gauss.integrate(), 1.0, msg="Default integrate values", delta=1e-7, places=None )
 
     def test_gauss_integrate_without_points( self ):
         """
