@@ -1,7 +1,7 @@
 import unittest
 from nose.tools import *
 import numpy as np
-import pySDC.settings as config
+import pySDC.globals as config
 from pySDC.integrate.gauss import Gauss
 
 
