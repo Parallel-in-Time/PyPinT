@@ -5,7 +5,7 @@ python:
 before_install:
   - "sudo apt-get update"
 install:
-  - "sudo apt-get install gcc g77 python-dev atlas3-base-dev"
+  - "sudo apt-get install gcc gfortran python-dev atlas3-base-dev"
   - "pip install --use-mirrors -r requirements.txt"
 script:
   - "nosetests -c nose.cfg"
