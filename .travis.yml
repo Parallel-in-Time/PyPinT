@@ -1,11 +1,26 @@
 language: python
 python:
-  - "3.2"
-  - "3.3"
+  - 3.2
+  - 3.3
 before_install:
-  - "sudo apt-get update"
+  - sudo apt-get update -qq
+  - sudo apt-get install -qq libatlas-dev libatlas-base-dev liblapack-dev gfortran
+  - uname -a
+  - free -m
+  - df -h
+  - ulimit -a
+  - mkdir builds
+  - pushd builds
+  - pip install nose
+  - pip install numpy
+  - pip install Cython
+  # mpmath for scipy.special tests
+  - pip install mpmath
+  - python -V
+  - popd
 install:
-  - "sudo apt-get install gcc gfortran python-dev libatlas-dev libatlas3gf-base libatlas-base-dev"
   - "pip install --use-mirrors -r requirements.txt"
 script:
   - "nosetests -c nose.cfg"
+notifications:
+  email: false
