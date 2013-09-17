@@ -53,7 +53,7 @@ def compare_arrays(arr1, arr2):
     assert_equal(len(arr1), len(arr2), "Length of the two arrays not equal: " + str(len(arr1)) + " != " + str(len(arr2)))
     for i in range(1, len(arr1)):
         assert_almost_equals(arr1[i], arr2[i],
-                             msg=str(i) + ". element not equal: arr1[" + str(i) + "]=" + str(arr1[i]) + " != " + str(arr2[i]) + "=arr2[" + str(i) + "]", 
+                             msg=str(i) + ". element not equal: arr1[" + str(i) + "]=" + str(arr1[i]) + " != " + str(arr2[i]) + "=arr2[" + str(i) + "]",
                              places=None, delta=config.PRECISION)
 
 def correct_integrate(func, begin, end, nPoints, method, result, message):
