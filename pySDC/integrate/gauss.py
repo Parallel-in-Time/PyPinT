@@ -28,7 +28,7 @@ class Gauss(Quadrature):
         _result = {'full': 0.0, 'partial': 0.0}
         for i in range(0, len(_nw['nodes'])):
             _result['full'] += _nw['weights'][i] * func(t, _trans[0] * _nw['nodes'][i] + _trans[1])
-            if i >= lower and i <= upper:
+            if lower is not None and upper is not None and i >= lower and i <= upper:
                 _result['partial'] += _nw['weights'][i] * func(t, _trans[0] * _nw['nodes'][i] + _trans[1])
         _result['full'] *= _trans[0]
         _result['partial'] *= _trans[0]
