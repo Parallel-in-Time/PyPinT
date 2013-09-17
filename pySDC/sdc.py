@@ -24,7 +24,7 @@ class SDC(object):
 
         _substeps = np.zeros((self.timeSteps, self.numSubsteps), dtype=float)
         _dt_n = self.timeRange[1] - self.timeRange[0] / self.timeSteps
-        _nodes = Gauss.nodes(self.numSubsteps)
+        _nodes = Gauss.get_nodes_and_weights(self.numSubsteps, "legendre")['nodes']
 
         # Set initial values and compute substep points
         for t_n_i in range(0, self.timeSteps):
@@ -38,10 +38,10 @@ class SDC(object):
             for step in range(0, self.numSubsteps):
                 assert len(_nodes) > step, "Fever nodes than steps"
                 _substeps[t_n_i][step] = _trans[0] * _nodes[step] + _trans[1]
-            print("_substeps[" + str(t_n_i) + "] = " + str(_substeps[t_n_i]))
+#             print("_substeps[" + str(t_n_i) + "] = " + str(_substeps[t_n_i]))
 
             self.__sol[0][t_n_i] = np.asarray([self.initial_value] * self.numSubsteps)
-            print("__sol[0][" + str(t_n_i) + "] = " + str(self.solution[0][t_n_i]))
+#             print("__sol[0][" + str(t_n_i) + "] = " + str(self.solution[0][t_n_i]))
 
         # Compute SDC iterations
         for k in range(1, self.iterations):
@@ -59,11 +59,11 @@ class SDC(object):
                         _dt_m * (self.fnc(_t_m, self.__sol[k][t_n_i][t_m_i - 1]) - \
                                  self.fnc(_t_m, self.__sol[k - 1][t_n_i][t_m_i])) + \
                         Gauss.integrate(func=self.fnc, t=_t_m, begin=_t_n, end=(_t_n + _dt_n), nPoints=self.numSubsteps, lower=(t_m_i - 1), upper=t_m_i)
-                    print("__sol[" + str(k) + "][" + str(t_n_i) + "][" + str(t_m_i) + "] = "
-                           + str(self.__sol[k][t_n_i][t_m_i - 1]) + " + " + str(_dt_m) + " * (" + str(self.fnc(_t_m, self.__sol[k][t_n_i][t_m_i - 1]))
-                           + " - " + str(self.fnc(_t_m, self.__sol[k - 1][t_n_i][t_m_i])) + ") + "
-                           + "Gauss.integrate(func=" + str(self.fnc) + ", t=" + str(_t_m) + ", begin=" + str(_t_n) + ", end=" + str(_t_n + _dt_n) + ", nPoints=" + str(self.numSubsteps) + ", lower=" + str(t_m_i - 1) + ", upper=" + str(t_m_i) + ")")
-                print("__sol[" + str(k) + "][" + str(t_n_i) + "] = " + str(self.solution[k][t_n_i]))
+#                     print("__sol[" + str(k) + "][" + str(t_n_i) + "][" + str(t_m_i) + "] = "
+#                            + str(self.__sol[k][t_n_i][t_m_i - 1]) + " + " + str(_dt_m) + " * (" + str(self.fnc(_t_m, self.__sol[k][t_n_i][t_m_i - 1]))
+#                            + " - " + str(self.fnc(_t_m, self.__sol[k - 1][t_n_i][t_m_i])) + ") + "
+#                            + "Gauss.integrate(func=" + str(self.fnc) + ", t=" + str(_t_m) + ", begin=" + str(_t_n) + ", end=" + str(_t_n + _dt_n) + ", nPoints=" + str(self.numSubsteps) + ", lower=" + str(t_m_i - 1) + ", upper=" + str(t_m_i) + ")")
+#                 print("__sol[" + str(k) + "][" + str(t_n_i) + "] = " + str(self.solution[k][t_n_i]))
 
     @property
     def solution(self):

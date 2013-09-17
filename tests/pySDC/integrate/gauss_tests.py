@@ -66,13 +66,12 @@ def failed_integrate(func, begin, end, nPoints, message):
     Gauss.integrate(func, begin, end, nPoints)
 
 def compare_computed_legendre_weights(nPoints):
-    computed = Gauss.gauss_legendre_nodes_and_weights(nPoints)
+    computed = Gauss.legendre_nodes_and_weights(nPoints)
     compare_arrays(computed['weights'].tolist(), gaussLegendreValues[str(nPoints)]['weights'])
 
 def compare_computed_legendre_nodes(nPoints):
-    computed = Gauss.gauss_legendre_nodes_and_weights(nPoints)
+    computed = Gauss.legendre_nodes_and_weights(nPoints)
     compare_arrays(computed['nodes'].tolist(), gaussLegendreValues[str(nPoints)]['nodes'])
-
 
 def test_gauss_integrate_correct():
     """
@@ -119,7 +118,7 @@ class GaussTests(unittest.TestCase):
         """
         """
         with self.assertRaises(NotImplementedError):
-            Gauss.integrate(nPoints=10)
+            Gauss.integrate(nPoints=10, type='lobatto')
 
 if __name__ == "__main__":
     unittest.main()

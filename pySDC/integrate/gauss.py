@@ -14,6 +14,7 @@ class Gauss(Quadrature):
     @staticmethod
     def integrate(func=lambda t, x: 1.0, begin=0, end=1, nPoints=3, t=1.0, lower=None, upper=None, type="legendre"):
         """
+        integrates given function in [begin, end] using nPoints at time t with method 'type'
         """
         _a = begin
         _b = end
@@ -22,11 +23,7 @@ class Gauss(Quadrature):
             raise ValueError("Integration interval must be non-zero positive (end - begin = " + str(_b - _a) + ").")
 
         _trans = Gauss.transform(_a, _b)
-        _nw = {'nodes': [], 'weights': []}
-        if type == "legendre":
-            _nw = Gauss.gauss_legendre_nodes_and_weights(nPoints)
-        else:
-            _nw = { 'nodes': Gauss.nodes(nPoints), 'weights': Gauss.weights(nPoints) }
+        _nw = Gauss.get_nodes_and_weights(nPoints, type)
 
         _result = {'full': 0.0, 'partial': 0.0}
         for i in range(0, len(_nw['nodes'])):
@@ -43,66 +40,38 @@ class Gauss(Quadrature):
             return _result['full']
 
     @staticmethod
-    def partial_integrate(lower, upper, values):
-        _result = 0.0
-        _weights = Gauss.weights(len(values))
-        for i in range(lower, upper + 1):
-            _result += _weights[i] * values[i]
-        return _result
-
-    @staticmethod
-    def nodes(nPoints):
+    def get_nodes_and_weights(nPoints, type="legendre"):
         """
-        Gauss-Lobatto nodes for 3 to 5 integration points
+        returns integration nodes and weights for given type and number of points
         """
-        if nPoints == 3:
-            return [ -1.0,
-                     0.0,
-                     1.0 ]
-        elif nPoints == 4:
-            return [ -1.0,
-                     - 1.0 / 5.0 * np.sqrt(5),
-                     1.0 / 5.0 * np.sqrt(5),
-                     1.0 ]
-        elif nPoints == 5:
-            return [ -1.0,
-                     - 1.0 / 7.0 * np.sqrt(21),
-                     0.0,
-                     1.0 / 7.0 * np.sqrt(21),
-                     1.0 ]
-        elif nPoints < 3:
-            raise ValueError("Gauss-Lobatto quadrature does not work with less than three points.")
+        if type == "legendre":
+            return Gauss.legendre_nodes_and_weights(nPoints)
+        elif type == "lobatto":
+            return Gauss.lobatto_nodes_and_weights(nPoints)
         else:
-            raise NotImplementedError()
+            raise NotImplementedError("Gaus-" + str(type) + "-Quadrature not implemented/known.")
 
     @staticmethod
-    def weights(nPoints):
+    def legendre_nodes_and_weights(nPoints):
         """
-        Gauss-Lobatto weights for 3 to 5 integration points
-        """
-        if nPoints == 3:
-            return [ 1.0 / 3.0,
-                     4.0 / 3.0,
-                     1.0 / 3.0 ]
-        elif nPoints == 4:
-            return [ 1.0 / 6.0,
-                     5.0 / 6.0,
-                     5.0 / 6.0,
-                     1.0 / 6.0 ]
-        elif nPoints == 5:
-            return [ 1.0 / 10.0,
-                     49.0 / 90.0,
-                     32.0 / 45.0,
-                     49.0 / 90.0,
-                     1.0 / 10.0 ]
-        elif nPoints < 3:
-            raise ValueError("Gauss-Lobatto quadrature does not work with less than three points.")
-        else:
-            raise NotImplementedError()
+        computats nodes and weights for the Gauss-Legendre quadrature of order n>1 on [-1, +1]
+        (ported from MATLAB code, reference see below)
 
-    @staticmethod
-    def gauss_legendre_nodes_and_weights(nPoints):
-        """
+        (original comment from MatLab source; modified)
+        Unlike many publicly available functions, this function is valid for
+        n>=46.
+        This is due to the fact that it does not rely on MATLAB's build-in 'root'
+        routines to determine the roots of the Legendre polynomial, but finds the
+        roots by looking for the eigenvalues of an alternative version of the
+        companion matrix of the n'th degree Legendre polynomial.
+        The companion matrix is constructed as a symmetrical matrix, guaranteeing
+        that all the eigenvalues (roots) will be real.
+        On the contrary, MATLAB's 'roots' function uses a general form for the
+        companion matrix, which becomes unstable at higher orders n, leading to
+        complex roots.
+
+        (Credit, where credit due)
+        original MATLAB function by: Geert Van Damme <geert@vandamme-iliano.be> (February 21, 2010)
         """
         nPoints = float(nPoints)
 
@@ -114,33 +83,66 @@ class Gauss(Quadrature):
         # under consideration. Moreover, CM will be constructed in such a way
         # that it is symmetrical.
         j = np.linspace(start=1, stop=nPoints - 1, num=nPoints - 1)
-#         print("j:\n"+str(j))
         a = j / np.sqrt(4.0 * j ** 2 - 1.0)
-#         print("a:\n"+str(a))
         CM = np.diag(a, 1) + np.diag(a, -1)
-#         print("CM:\n"+str(CM))
 
         # Determining the abscissas (x) and weights (w)
         # - since det(xI-CM)=P_n(x), the abscissas are the roots of the
         #   characteristic polynomial, i.d. the eigenvalues of CM;
         # - the weights can be derived from the corresponding eigenvectors.
         [L, V] = linalg.eig(CM)
-#         print("V:\n"+str(V))
-#         print("L:\n"+str(L))
         ind = np.argsort(L)
-#         print("ind:\n"+str(ind))
         x = L[ind]
-#         print("x:\n"+str(x))
         V = V[:, ind].transpose()
-#         print("V':\n"+str(V))
-#         print("V[0,:]:\n"+str(V[0,:]))
-#         print("V[:,0]:\n"+str(V[:,0]))
-        w = 2.0 * np.asarray(V[:,0]) ** 2.0
-#         print("w:\n"+str(w))
+        w = 2.0 * np.asarray(V[:, 0]) ** 2.0
 
-        return {'nodes': np.around(x.real, config.PRECISION), 
+        return {'nodes': np.around(x.real, config.PRECISION),
                 'weights': np.around(w.real, config.PRECISION)}
 
     @staticmethod
     def transform(a, b):
+        """
+        calculates transformation coefficients to map [a,b] to [-1,1]
+        
+        see: http://en.wikipedia.org/wiki/Gaussian_quadrature#Change_of_interval
+        """
         return [(b - a) / 2.0, (b + a) / 2.0]
+
+    @staticmethod
+    def lobatto_nodes_and_weights(nPoints):
+        """
+        Gauss-Lobatto nodes and weights for 3 to 5 integration points (hard coded)
+
+        source of values: http://en.wikipedia.org/wiki/Gaussian_quadrature#Gauss.E2.80.93Lobatto_rules
+        """
+        if nPoints == 3:
+            return {'nodes': [ -1.0,
+                                0.0,
+                                1.0 ],
+                    'weights': [ 1.0 / 3.0,
+                                 4.0 / 3.0,
+                                 1.0 / 3.0 ]}
+        elif nPoints == 4:
+            return {'nodes': [ -1.0,
+                               -1.0 / 5.0 * np.sqrt(5),
+                                1.0 / 5.0 * np.sqrt(5),
+                                1.0 ],
+                    'weights': [ 1.0 / 6.0,
+                                 5.0 / 6.0,
+                                 5.0 / 6.0,
+                                 1.0 / 6.0 ]}
+        elif nPoints == 5:
+            return {'nodes': [ -1.0,
+                               -1.0 / 7.0 * np.sqrt(21),
+                                0.0,
+                                1.0 / 7.0 * np.sqrt(21),
+                                1.0 ],
+                    'weights': [  1.0 / 10.0,
+                                 49.0 / 90.0,
+                                 32.0 / 45.0,
+                                 49.0 / 90.0,
+                                  1.0 / 10.0 ]}
+        elif nPoints < 3:
+            raise ValueError("Gauss-Lobatto quadrature does not work with less than three points.")
+        else:
+            raise NotImplementedError("Gauss-Lobatto with " + str(nPoints) + " is not implemented yet.")
