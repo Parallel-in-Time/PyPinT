@@ -3,10 +3,9 @@ python:
   - "3.2"
   - "3.3"
 before_install:
-  - "sudo apt-get python-all python-coverage python-numpy python-scipy python-sphinx python-nose python3-all python3-coverage python3-numpy python3-scipy python3-sphinx python3-nose"
-# command to install dependencies
+  - "suod apt-get update"
 install:
+  - "sudo apt-get install python-all python-coverage python-numpy python-scipy python-sphinx python-nose python3-all python3-coverage python3-numpy python3-scipy python3-sphinx python3-nose"
   - "pip install -r requirements.txt --use-mirrors"
-# command to run tests
 script:
   - "nosetests -c nose.cfg"
