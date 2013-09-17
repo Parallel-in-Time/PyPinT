@@ -1,1 +1,1 @@
-__all__ = [ "sdc" ]
+__all__ = [ "settings", "sdc" ]

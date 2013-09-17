@@ -1,6 +1,6 @@
 import numpy as np
 from scipy import linalg
-import pySDC.settings as config
+import pySDC.globals as config
 from pySDC.integrate.quadrature import Quadrature
 
 class Gauss(Quadrature):
