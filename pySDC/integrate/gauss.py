@@ -1,4 +1,6 @@
 import numpy as np
+from scipy import linalg
+import pySDC.settings as config
 from pySDC.integrate.quadrature import Quadrature
 
 class Gauss(Quadrature):
@@ -10,7 +12,7 @@ class Gauss(Quadrature):
         """
 
     @staticmethod
-    def integrate(func=lambda t, x: 1.0, begin=0, end=1, nPoints=3, t=1.0, lower=None, upper=None):
+    def integrate(func=lambda t, x: 1.0, begin=0, end=1, nPoints=3, t=1.0, lower=None, upper=None, type="legendre"):
         """
         """
         _a = begin
@@ -20,18 +22,22 @@ class Gauss(Quadrature):
             raise ValueError("Integration interval must be non-zero positive (end - begin = " + str(_b - _a) + ").")
 
         _trans = Gauss.transform(_a, _b)
-        _nodes = Gauss.nodes(nPoints)
-        _weights = Gauss.weights(nPoints)
+        _nw = {'nodes': [], 'weights': []}
+        if type == "legendre":
+            _nw = Gauss.gauss_legendre_nodes_and_weights(nPoints)
+        else:
+            _nw = { 'nodes': Gauss.nodes(nPoints), 'weights': Gauss.weights(nPoints) }
+
         _result = {'full': 0.0, 'partial': 0.0}
-        for i in range(0, len(_nodes)):
-            _result['full'] += _weights[i] * func(t, _trans[0] * _nodes[i] + _trans[1])
+        for i in range(0, len(_nw['nodes'])):
+            _result['full'] += _nw['weights'][i] * func(t, _trans[0] * _nw['nodes'][i] + _trans[1])
             if i >= lower and i <= upper:
-                _result['partial'] += _weights[i] * func(t, _trans[0] * _nodes[i] + _trans[1])
+                _result['partial'] += _nw['weights'][i] * func(t, _trans[0] * _nw['nodes'][i] + _trans[1])
         _result['full'] *= _trans[0]
         _result['partial'] *= _trans[0]
 
         if lower and upper:
-            print("Gauss.integrate() >> [" + str(_trans[0] * _nodes[lower] + _trans[1]) + "," + str(_trans[0] * _nodes[upper] + _trans[1]) + "] in [" + str(begin) + "," + str(end) + "]")
+#             print("Gauss.integrate() >> [" + str(_trans[0] * _nodes[lower] + _trans[1]) + "," + str(_trans[0] * _nodes[upper] + _trans[1]) + "] in [" + str(begin) + "," + str(end) + "]")
             return _result['partial']
         else:
             return _result['full']
@@ -46,6 +52,9 @@ class Gauss(Quadrature):
 
     @staticmethod
     def nodes(nPoints):
+        """
+        Gauss-Lobatto nodes for 3 to 5 integration points
+        """
         if nPoints == 3:
             return [ -1.0,
                      0.0,
@@ -68,6 +77,9 @@ class Gauss(Quadrature):
 
     @staticmethod
     def weights(nPoints):
+        """
+        Gauss-Lobatto weights for 3 to 5 integration points
+        """
         if nPoints == 3:
             return [ 1.0 / 3.0,
                      4.0 / 3.0,
@@ -87,6 +99,47 @@ class Gauss(Quadrature):
             raise ValueError("Gauss-Lobatto quadrature does not work with less than three points.")
         else:
             raise NotImplementedError()
+
+    @staticmethod
+    def gauss_legendre_nodes_and_weights(nPoints):
+        """
+        """
+        nPoints = float(nPoints)
+
+        if nPoints < 2:
+            raise ValueError("Gauss-Legendre quadrature does not work with less than three points.")
+
+        # Building the companion matrix CM
+        # CM is such that det(xI-CM)=P_n(x), with P_n the Legendre polynomial
+        # under consideration. Moreover, CM will be constructed in such a way
+        # that it is symmetrical.
+        j = np.linspace(start=1, stop=nPoints - 1, num=nPoints - 1)
+#         print("j:\n"+str(j))
+        a = j / np.sqrt(4.0 * j ** 2 - 1.0)
+#         print("a:\n"+str(a))
+        CM = np.diag(a, 1) + np.diag(a, -1)
+#         print("CM:\n"+str(CM))
+
+        # Determining the abscissas (x) and weights (w)
+        # - since det(xI-CM)=P_n(x), the abscissas are the roots of the
+        #   characteristic polynomial, i.d. the eigenvalues of CM;
+        # - the weights can be derived from the corresponding eigenvectors.
+        [L, V] = linalg.eig(CM)
+#         print("V:\n"+str(V))
+#         print("L:\n"+str(L))
+        ind = np.argsort(L)
+#         print("ind:\n"+str(ind))
+        x = L[ind]
+#         print("x:\n"+str(x))
+        V = V[:, ind].transpose()
+#         print("V':\n"+str(V))
+#         print("V[0,:]:\n"+str(V[0,:]))
+#         print("V[:,0]:\n"+str(V[:,0]))
+        w = 2.0 * np.asarray(V[:,0]) ** 2.0
+#         print("w:\n"+str(w))
+
+        return {'nodes': np.around(x.real, config.PRECISION), 
+                'weights': np.around(w.real, config.PRECISION)}
 
     @staticmethod
     def transform(a, b):
