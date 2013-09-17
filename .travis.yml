@@ -2,7 +2,11 @@ language: python
 python:
   - "3.2"
   - "3.3"
+before install:
+  - "sudo apt-get python-all python-coverage python-numpy python-scipy python-sphinx python-nose python3-all python3-coverage python3-numpy python3-scipy python3-sphinx python3-nose"
 # command to install dependencies
-install: "pip install -r requirements.txt --use-mirrors"
+install:
+  - "pip install -r requirements.txt --use-mirrors"
 # command to run tests
-script: "nosetests -c nose.cfg"
+script:
+  - "nosetests -c nose.cfg"
