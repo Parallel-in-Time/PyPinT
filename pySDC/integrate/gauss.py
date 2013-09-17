@@ -14,7 +14,31 @@ class Gauss(Quadrature):
     @staticmethod
     def integrate(func=lambda t, x: 1.0, begin=0, end=1, nPoints=3, t=1.0, lower=None, upper=None, type="legendre"):
         """
-        integrates given function in [begin, end] using nPoints at time t with method 'type'
+        Integrates given function in `[begin, end]` using `nPoints` at time `t` with method `type`
+        
+        :param func:    function to be integrated; requires time `t` as first and 
+                        point `x` as second argument; default: constant 1 function
+        :type func:     function pointer or lambda
+        :param begin:   start point of integration interval
+        :type begin:    Integer or Float
+        :param end:     end point of integration interval
+        :type end:      Integer or Float
+        :param nPoints: number of integration points in interval
+        :type nPoints:  Integer
+        :param t:       time point to be integrated
+        :type t:        Integer or Float
+        :param lower:   first integration point for partial integral
+        :type lower:    Integer
+        :param upper:   last integration point for partial integral
+        :type upper:    Integer
+        :param type:    type of integration points; currently only `legendre` or
+                        `lobatto` available
+        :type type:     String
+        
+        :rtype:         Float
+        
+        >>> print Gauss.integrate()
+        1.0
         """
         _a = begin
         _b = end
@@ -42,7 +66,20 @@ class Gauss(Quadrature):
     @staticmethod
     def get_nodes_and_weights(nPoints, type="legendre"):
         """
-        returns integration nodes and weights for given type and number of points
+        Returns integration nodes and weights for given type and number of points
+        
+        :param nPoints: number of integration points
+        :type nPoints:  Integer
+        :param type:    type of integration points to return; valid options:
+                        `legendre` and `lobatto`
+        :type type:     String
+        
+        :rtype: Dictionary of Floats with keys `nodes` and `weights`
+        
+        :raises: NotImplementedError (if `type` not supported)
+        
+        :seealso: Gauss.legendre_nodes_and_weights(nPoints),
+                  Gauss.lobatto_nodes_and_weights(nPoints)
         """
         if type == "legendre":
             return Gauss.legendre_nodes_and_weights(nPoints)
@@ -54,8 +91,9 @@ class Gauss(Quadrature):
     @staticmethod
     def legendre_nodes_and_weights(nPoints):
         """
-        computats nodes and weights for the Gauss-Legendre quadrature of order n>1 on [-1, +1]
-        (ported from MATLAB code, reference see below)
+        Computats nodes and weights for the Gauss-Legendre quadrature of order n>1 on [-1, +1]
+        
+        Ported from MATLAB code, reference see below.
 
         (original comment from MatLab source; modified)
         Unlike many publicly available functions, this function is valid for
@@ -72,6 +110,16 @@ class Gauss(Quadrature):
 
         (Credit, where credit due)
         original MATLAB function by: Geert Van Damme <geert@vandamme-iliano.be> (February 21, 2010)
+        
+        :param nPoints: number of integration points
+        :type nPoints:  Integer
+        
+        :rtype: Dictionary of Floats with keys `nodes` and `weights`
+        
+        :raises: ValueError (if `nPoints`<2)
+        
+        >>> print Gauss.legendre_nodes_and_weights(3)
+        {'nodes': array([-0.77459667,  0.        ,  0.77459667]), 'weights': array([ 0.55555556,  0.88888889,  0.55555556])}
         """
         nPoints = float(nPoints)
 
@@ -102,9 +150,19 @@ class Gauss(Quadrature):
     @staticmethod
     def transform(a, b):
         """
-        calculates transformation coefficients to map [a,b] to [-1,1]
+        calculates transformation coefficients to map `[a,b]` to `[-1,1]`
         
-        see: http://en.wikipedia.org/wiki/Gaussian_quadrature#Change_of_interval
+        :param a: start point of interval
+        :type a:  Integer or Float
+        :param b: end point of interval
+        :type b:  Integer or Float
+        
+        :rtype: List of Floats of length 2
+        
+        :seealso: http://en.wikipedia.org/wiki/Gaussian_quadrature#Change_of_interval
+        
+        >>> print Gauss.transform(1.0, 2.0)
+        [0.5, 1.5]
         """
         return [(b - a) / 2.0, (b + a) / 2.0]
 
@@ -112,8 +170,18 @@ class Gauss(Quadrature):
     def lobatto_nodes_and_weights(nPoints):
         """
         Gauss-Lobatto nodes and weights for 3 to 5 integration points (hard coded)
+        
+        :param nPoints: number of integration points
+        :type nPoints:  Integer
+        
+        :rtype: Dictionary of Floats with keys `nodes` and `weights`
+        
+        :raises: ValueError (if `nPoints`<3), NotImplementedError (if `nPoints`>5)
 
-        source of values: http://en.wikipedia.org/wiki/Gaussian_quadrature#Gauss.E2.80.93Lobatto_rules
+        :seealso: http://en.wikipedia.org/wiki/Gaussian_quadrature#Gauss.E2.80.93Lobatto_rules
+        
+        >>> print Gauss.lobatto_nodes_and_weights(3)
+        {'nodes': [-1.0, 0.0, 1.0], 'weights': [0.3333333333333333, 1.3333333333333333, 0.3333333333333333]}
         """
         if nPoints == 3:
             return {'nodes': [ -1.0,

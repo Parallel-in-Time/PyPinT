@@ -12,6 +12,27 @@ class NewtonCotes( Quadrature ):
     @staticmethod
     def integrate( func=lambda x: 1, begin=Decimal( 0 ), end=Decimal( 1 ), steps=10, order=1 ):
         """
+        Integrates given function in `[begin, end]` using `nPoints` with Newton-Cotes-Quadrature
+        
+        :param func:  function to be integrated; requires point `x` as only argument; 
+                      default: constant 1 function
+        :type func:   function pointer or lambda
+        :param begin: start point of interval
+        :type begin:  Integer or Float
+        :param end:   end point of interval
+        :type end:    Integer or Float
+        :param steps: number of steps
+        :type steps:  Integer
+        :param order: number of intergration points per step
+        :type order:  Integer
+        
+        :rtype: decimal.Decimal
+        
+        :raises: ValueError (if zero-interval or wrong orientation or `steps`<1),
+                 NotImplementedError (if `order`>4)
+                 
+        >>> print NewtonCotes.integrate()
+        1.0
         """
         a = Decimal( begin )
         b = Decimal( end )

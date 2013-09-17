@@ -12,9 +12,9 @@ class SDC(object):
         self.fnc = lambda t, x:-1.0 * float(x)
         self.initial_value = 1.0
         self.timeRange = [0.1, 1.0]
-        self.timeSteps = 10
-        self.numSubsteps = 5
-        self.iterations = 5
+        self.timeSteps = 5
+        self.numSubsteps = 3
+        self.iterations = 2
         self.__sol = np.zeros((self.iterations, self.timeSteps, self.numSubsteps), dtype=float)
 
     def solve(self):
@@ -62,7 +62,9 @@ class SDC(object):
 #                     print("__sol[" + str(k) + "][" + str(t_n_i) + "][" + str(t_m_i) + "] = "
 #                            + str(self.__sol[k][t_n_i][t_m_i - 1]) + " + " + str(_dt_m) + " * (" + str(self.fnc(_t_m, self.__sol[k][t_n_i][t_m_i - 1]))
 #                            + " - " + str(self.fnc(_t_m, self.__sol[k - 1][t_n_i][t_m_i])) + ") + "
-#                            + "Gauss.integrate(func=" + str(self.fnc) + ", t=" + str(_t_m) + ", begin=" + str(_t_n) + ", end=" + str(_t_n + _dt_n) + ", nPoints=" + str(self.numSubsteps) + ", lower=" + str(t_m_i - 1) + ", upper=" + str(t_m_i) + ")")
+#                            + "(" + str(Gauss.integrate(func=self.fnc, t=_t_m, begin=_t_n, end=(_t_n + _dt_n), nPoints=self.numSubsteps, lower=(t_m_i - 1), upper=t_m_i)) + 
+#                            "=)Gauss.integrate(func=" + str(self.fnc) + ", t=" + str(_t_m) + ", begin=" + str(_t_n) + ", end=" + str(_t_n + _dt_n) + ", nPoints=" + str(self.numSubsteps) + ", lower=" + str(t_m_i - 1) + ", upper=" + str(t_m_i) + ") = " +
+#                            str(self.__sol[k][t_n_i][t_m_i]))
 #                 print("__sol[" + str(k) + "][" + str(t_n_i) + "] = " + str(self.solution[k][t_n_i]))
 
     @property
@@ -70,9 +72,7 @@ class SDC(object):
         """
         solution of the last call to :py:func:`SDC.solve`
 
-        Returns
-        -------
-        list[Decimal]
+        :rtype: multi-dimensional List of decimal.Decimal
         """
         return self.__sol
 
@@ -85,9 +85,7 @@ class SDC(object):
         """
         function describing the problem
 
-        Returns
-        -------
-        function pointer
+        :rtype: function pointer
         """
         return self.__function
 
@@ -104,9 +102,7 @@ class SDC(object):
         """
         initial value of the problem
 
-        Returns
-        -------
-        decimal.Decimal
+        :rtype: decimal.Decimal
         """
         return self.__initial_value
 
@@ -123,14 +119,9 @@ class SDC(object):
         """
         pair of start and end time
 
-        Returns
-        -------
-        list[decimal.Decimal]
+        :rtype: List of two decimal.Decimal
 
-        Raises
-        ------
-        ValueError
-            On setting if time range is non-positive or zero
+        :raises: ValueError (on setting if time range is non-positive or zero)
         """
         return self.__timeRange
 
@@ -151,14 +142,9 @@ class SDC(object):
         """
         number of time steps
 
-        Returns
-        -------
-        int
+        :rtype: Integer
 
-        Raises
-        ------
-        ValueError
-            on setting if number steps is not positive
+        :raises: ValueError (on setting if number steps is not positive)
         """
         return self.__timeSteps
 
@@ -177,14 +163,9 @@ class SDC(object):
         """
         number of substeps of each time step
 
-        Returns
-        -------
-        int
+        :rtype: Integer
 
-        Raises
-        ------
-        ValueError
-            on setting if number substeps is not positive
+        :raises: ValueError (on setting if number substeps is not positive)
         """
         return self.__numSubsteps
 
@@ -203,14 +184,9 @@ class SDC(object):
         """
         number if SDC iterations
 
-        Returns
-        -------
-        int
+        :rtype: Integer
 
-        Raises
-        ------
-        ValueError
-            on setting if iterations is not positive
+        :raises: ValueError (on setting if iterations is not positive)
         """
         return self.__iterations
 
