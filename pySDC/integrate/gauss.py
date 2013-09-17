@@ -96,8 +96,8 @@ class Gauss(Quadrature):
         V = V[:, ind].transpose()
         w = 2.0 * np.asarray(V[:, 0]) ** 2.0
 
-        return {'nodes': np.around(x.real, config.PRECISION),
-                'weights': np.around(w.real, config.PRECISION)}
+        return {'nodes': np.around(x.real, config.DIGITS),
+                'weights': np.around(w.real, config.DIGITS)}
 
     @staticmethod
     def transform(a, b):

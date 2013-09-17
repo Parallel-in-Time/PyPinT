@@ -1,3 +1,4 @@
 import numpy as np
 
-PRECISION = 12
+DIGITS = 12
+PRECISION = 1e-7

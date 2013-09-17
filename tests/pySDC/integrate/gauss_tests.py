@@ -6,6 +6,7 @@ from pySDC.integrate.gauss import Gauss
 
 
 testNumPoints = [ 3, 5 ]
+testMethods = ["legendre", "lobatto"]
 testCases = { 'correct': [], 'fail': [] }
 
 testCases['correct'].append({ 'func': lambda t, x: 0.0, 'begin': 0, 'end': 1, 'result': 0.0, 'msg': "Zero function" })
@@ -51,19 +52,19 @@ def compare_arrays(arr1, arr2):
 #     print("\narr1: " + str(np.around(arr1, config.PRECISION)) + "\narr2: " + str(np.around(arr2, config.PRECISION)))
     assert_equal(len(arr1), len(arr2), "Length of the two arrays not equal: " + str(len(arr1)) + " != " + str(len(arr2)))
     for i in range(1, len(arr1)):
-        assert_equal(round(arr1[i], config.PRECISION), round(arr2[i], config.PRECISION),
-                      str(i) + ". element not equal: arr1[" + str(i) + "]=" + str(round(arr1[i], config.PRECISION)) + " != " +
-                      str(round(arr2[i], config.PRECISION)) + "=arr2[" + str(i) + "]")
+        assert_almost_equals(arr1[i], arr2[i],
+                             msg=str(i) + ". element not equal: arr1[" + str(i) + "]=" + str(arr1[i]) + " != " + str(arr2[i]) + "=arr2[" + str(i) + "]", 
+                             places=None, delta=config.PRECISION)
 
-def correct_integrate(func, begin, end, nPoints, result, message):
-    computed = Gauss.integrate(func, begin, end, nPoints)
+def correct_integrate(func, begin, end, nPoints, method, result, message):
+    computed = Gauss.integrate(func, begin, end, nPoints, type=method)
     assert_almost_equals(computed, result,
                          msg=message + "\n\tcomputed: " + str(computed) + "\n\texpected: " + str(result),
-                         places=None, delta=1e-7)
+                         places=None, delta=config.PRECISION)
 
 @raises(ValueError)
-def failed_integrate(func, begin, end, nPoints, message):
-    Gauss.integrate(func, begin, end, nPoints)
+def failed_integrate(func, begin, end, nPoints, method, message):
+    Gauss.integrate(func, begin, end, nPoints, type=method)
 
 def compare_computed_legendre_weights(nPoints):
     computed = Gauss.legendre_nodes_and_weights(nPoints)
@@ -76,16 +77,18 @@ def compare_computed_legendre_nodes(nPoints):
 def test_gauss_integrate_correct():
     """
     """
-    for nPoints in range(testNumPoints[0], testNumPoints[1] + 1):
-        for case in testCases['correct']:
-            yield correct_integrate, case['func'], case['begin'], case['end'], nPoints, case['result'], case['msg']
+    for type in testMethods:
+        for nPoints in range(testNumPoints[0], testNumPoints[1] + 1):
+            for case in testCases['correct']:
+                yield correct_integrate, case['func'], case['begin'], case['end'], nPoints, type, case['result'], case['msg']
 
 def test_gauss_integrate_failures():
     """
     """
-    for nPoints in range(testNumPoints[0], testNumPoints[1] + 1):
-        for case in testCases['fail']:
-            yield failed_integrate, case['func'], case['begin'], case['end'], nPoints, case['msg']
+    for type in testMethods:
+        for nPoints in range(testNumPoints[0], testNumPoints[1] + 1):
+            for case in testCases['fail']:
+                yield failed_integrate, case['func'], case['begin'], case['end'], nPoints, type, case['msg']
 
 def test_computed_legendre_nodes():
     """
@@ -106,7 +109,7 @@ class GaussTests(unittest.TestCase):
         testObj = Gauss()
         self.assertIsInstance(testObj, Gauss)
         self.assertTrue(hasattr(testObj, 'integrate'), "Newton-Cotes integration scheme needs integrate function.")
-        self.assertAlmostEqual(Gauss.integrate(), 1.0, msg="Default integrate values", delta=1e-7, places=None)
+        self.assertAlmostEqual(Gauss.integrate(), 1.0, msg="Default integrate values", delta=config.PRECISION, places=None)
 
     def test_gauss_integrate_without_points(self):
         """
