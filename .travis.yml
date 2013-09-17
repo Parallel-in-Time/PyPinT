@@ -7,14 +7,15 @@ virtualenv:
 before_install:
   - sudo apt-get update -qq
   - sudo apt-get install -qq python3-all libatlas-dev libatlas-base-dev liblapack-dev gfortran
-#  - pip install nose
-#  - pip install numpy
-#  - pip install Cython
+  - pip install nose
+  - pip install numpy
+  - pip install Cython
   # mpmath for scipy.special tests
-#  - pip install mpmath
+  - pip install mpmath
+  - pip install scipy
   - python -V
 install:
-#  - "pip install --use-mirrors -r requirements.txt"
+  - pip install --use-mirrors -r requirements.txt
 script:
   - "nosetests -c nose.cfg"
 notifications:
