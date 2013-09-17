@@ -4,11 +4,14 @@ python:
   - 3.3
 virtualenv:
   system_site_packages: true
+env:
+  global:
+    - SITE_PKG_DIR=$VIRTUAL_ENV/lib/python$TRAVIS_PYTHON_VERSION/site-packages
+    - PYTHONPATH=$VIRTUAL_ENV/lib/python$TRAVIS_PYTHON_VERSION/site-packages:/usr/local/lib/python$TRAVIS_PYTHON_VERSION/site-packages/:$PYTHONPATH
 before_install:
-  - SITE_PKG_DIR=$VIRTUAL_ENV/lib/python$TRAVIS_PYTHON_VERSION/site-packages
   - rm -f $VIRTUAL_ENV/lib/python$TRAVIS_PYTHON_VERSION/no-global-site-packages.txt
   - sudo apt-get update -qq
-  - sudo apt-get install -qq python3-all libatlas-dev libatlas-base-dev liblapack-dev gfortran
+  - sudo apt-get install python3-all python3-numpy python3-scipy libatlas-dev libatlas-base-dev liblapack-dev gfortran
 #  - pip install nose
 #  - pip install numpy
 #  - pip install Cython
