@@ -31,18 +31,10 @@ install:
 script:
   - nosetests -c nose-${TRAVIS_PYTHON_VERSION}.cfg
 
-env:
-  - ignore=this
-
 matrix:
-  - allow_failure:
+  allow_failure:
     - python: 2.7
-      env: might=fail
-  - exclude:
-    # do not run Travis' default configuration
-    - env: ignore=this
-  - include:
+  exclude:
+  include:
     - python: 3.2
-      env: not=fail
     - python: 3.3
-      env: not=fail
