@@ -1,5 +1,6 @@
 language: python
 python:
+  - 2.7
   - 3.2
   - 3.3
 virtualenv:
@@ -22,6 +23,6 @@ install:
   - pip install --use-mirrors -r requirements.txt
   - pip list
 script:
-  - "nosetests -c nose.cfg"
+  - "nosetests -c nose-${TRAVIS_PYTHON_VERSION}.cfg"
 notifications:
   email: false
