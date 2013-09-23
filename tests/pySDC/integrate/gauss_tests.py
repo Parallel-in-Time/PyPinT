@@ -12,8 +12,9 @@ testCases = { 'correct': [], 'fail': [] }
 testCases['correct'].append({ 'func': lambda t, x: 0.0, 'begin': 0, 'end': 1, 'result': 0.0, 'msg': "Zero function" })
 testCases['correct'].append({ 'func': lambda t, x: 1.0, 'begin': 0, 'end': 1, 'result': 1.0, 'msg': "One function in [0, 1]" })
 testCases['correct'].append({ 'func': lambda t, x: 1.0, 'begin':-3, 'end': 5, 'result': 8.0, 'msg': "One function in [-3, 5]" })
+testCases['correct'].append({ 'func': lambda t, x: x ** 2, 'begin': 0, 'end': 1, 'result': 1.0 / 3.0, 'msg': "x^2 in [0,1]"})
 testCases['correct'].append({ 'func': lambda t, x: x, 'begin': 0, 'end': 1, 'result': 0.5, 'msg': "Identity function in [0, 1]" })
-
+ 
 testCases['fail'].append({ 'func': lambda t, x: 1.0, 'begin': 0, 'end': 0, 'msg': "Zero interval" })
 testCases['fail'].append({ 'func': lambda t, x: 1.0, 'begin': 1, 'end': 0, 'msg': "Negative interval" })
 
@@ -81,7 +82,7 @@ def test_gauss_integrate_correct():
         for nPoints in range(testNumPoints[0], testNumPoints[1] + 1):
             for case in testCases['correct']:
                 yield correct_integrate, case['func'], case['begin'], case['end'], nPoints, type, case['result'], case['msg']
-
+ 
 def test_gauss_integrate_failures():
     """
     """

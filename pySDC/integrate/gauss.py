@@ -1,5 +1,6 @@
 import numpy as np
 from scipy import linalg
+import itertools
 import pySDC.globals as config
 from pySDC.integrate.quadrature import Quadrature
 
@@ -12,7 +13,7 @@ class Gauss(Quadrature):
         """
 
     @staticmethod
-    def integrate(func=lambda t, x: 1.0, begin=0, end=1, nPoints=3, t=1.0, lower=None, upper=None, type="legendre"):
+    def integrate(func=lambda t, x: 1.0, begin=0, end=1, nPoints=3, t=1.0, partial=None, type="legendre"):
         """
         integrates given function in [begin, end] using nPoints at time t with method 'type'
         """
@@ -26,15 +27,28 @@ class Gauss(Quadrature):
         _nw = Gauss.get_nodes_and_weights(nPoints, type)
 
         _result = {'full': 0.0, 'partial': 0.0}
+        _count_terms = 0
+
+        if partial is not None:
+            _smat = Gauss.build_s_matrix(_nw['nodes'], begin, end)
+#             print("Constructed Smat:\n" + str(_smat))
+
         for i in range(0, len(_nw['nodes'])):
             _result['full'] += _nw['weights'][i] * func(t, _trans[0] * _nw['nodes'][i] + _trans[1])
-            if lower is not None and upper is not None and i >= lower and i <= upper:
-                _result['partial'] += _nw['weights'][i] * func(t, _trans[0] * _nw['nodes'][i] + _trans[1])
+            if partial is not None:
+                if i <= partial:
+                    _result['partial'] += _smat[partial-1][i] * func(t, _trans[0] * _nw['nodes'][i] + _trans[1])
+                    _count_terms += 1
+            else:
+                _count_terms += 1
+
+        assert _count_terms > 0, "Nothing was integrated (begin={:f}, end={:f}, nPoints={:d}, partial={:d}).".format(begin, end, nPoints, partial)
+
         _result['full'] *= _trans[0]
         _result['partial'] *= _trans[0]
 
-        if lower and upper:
-#             print("Gauss.integrate() >> [" + str(_trans[0] * _nodes[lower] + _trans[1]) + "," + str(_trans[0] * _nodes[upper] + _trans[1]) + "] in [" + str(begin) + "," + str(end) + "]")
+        if partial is not None:
+#             print("Gauss.integrate() >> [" + str(_trans[0] * _nodes[begin] + _trans[1]) + "," + str(_trans[0] * _nodes[partial] + _trans[1]) + "] in [" + str(begin) + "," + str(end) + "]")
             return _result['partial']
         else:
             return _result['full']
@@ -50,6 +64,26 @@ class Gauss(Quadrature):
             return Gauss.lobatto_nodes_and_weights(nPoints)
         else:
             raise NotImplementedError("Gaus-" + str(type) + "-Quadrature not implemented/known.")
+
+    @staticmethod
+    def transform(a, b):
+        """
+        calculates transformation coefficients to map [a,b] to [-1,1]
+
+        see: http://en.wikipedia.org/wiki/Gaussian_quadrature#Change_of_interval
+        """
+#         print('[{: f}, {: f}]: {: f}, {: f}'.format(a, b, (b-a)/2.0, (b+a)/2.0))
+        return [(b - a) / 2.0, (b + a) / 2.0]
+
+    @staticmethod
+    def build_s_matrix(nodes, begin, end):
+        nPoints = len(nodes)
+        smat = np.zeros((nPoints + 1, nPoints), dtype=float)
+        smat[0] = Gauss.compute_weights(nodes, begin, nodes[0])
+        for i in range(1, nPoints):
+            smat[i] = Gauss.compute_weights(nodes, nodes[i - 1], nodes[i])
+        smat[nPoints] = Gauss.compute_weights(nodes, nodes[nPoints - 1], end)
+        return smat
 
     @staticmethod
     def legendre_nodes_and_weights(nPoints):
@@ -96,17 +130,9 @@ class Gauss(Quadrature):
         V = V[:, ind].transpose()
         w = 2.0 * np.asarray(V[:, 0]) ** 2.0
 
+#         print("Gauss.legendre_nodes_and_weights("+str(nPoints)+")="+str(np.around(x.real, config.DIGITS)))
         return {'nodes': np.around(x.real, config.DIGITS),
                 'weights': np.around(w.real, config.DIGITS)}
-
-    @staticmethod
-    def transform(a, b):
-        """
-        calculates transformation coefficients to map [a,b] to [-1,1]
-        
-        see: http://en.wikipedia.org/wiki/Gaussian_quadrature#Change_of_interval
-        """
-        return [(b - a) / 2.0, (b + a) / 2.0]
 
     @staticmethod
     def lobatto_nodes_and_weights(nPoints):
@@ -124,7 +150,7 @@ class Gauss(Quadrature):
                                  1.0 / 3.0 ]}
         elif nPoints == 4:
             return {'nodes': [ -1.0,
-                               -1.0 / 5.0 * np.sqrt(5),
+                               - 1.0 / 5.0 * np.sqrt(5),
                                 1.0 / 5.0 * np.sqrt(5),
                                 1.0 ],
                     'weights': [ 1.0 / 6.0,
@@ -133,7 +159,7 @@ class Gauss(Quadrature):
                                  1.0 / 6.0 ]}
         elif nPoints == 5:
             return {'nodes': [ -1.0,
-                               -1.0 / 7.0 * np.sqrt(21),
+                               - 1.0 / 7.0 * np.sqrt(21),
                                 0.0,
                                 1.0 / 7.0 * np.sqrt(21),
                                 1.0 ],
@@ -146,3 +172,16 @@ class Gauss(Quadrature):
             raise ValueError("Gauss-Lobatto quadrature does not work with less than three points.")
         else:
             raise NotImplementedError("Gauss-Lobatto with " + str(nPoints) + " is not implemented yet.")
+
+    @staticmethod
+    def compute_weights(nodes, begin, end):
+        nPoints = len(nodes)
+        weights = np.zeros(nPoints, dtype=float)
+        for i in range(0, nPoints):
+            selection = itertools.chain(range(0, i), range(i + 1, nPoints))
+            poly = [1]
+            for ar in selection:
+                poly = np.polymul(poly, [ 1.0 / (nodes[i] - nodes[ar]), (1.0 * nodes[ar]) / (nodes[ar] - nodes[i])])
+            poly = np.polyint(poly)
+            weights[i] = np.polyval(poly, end) - np.polyval(poly, begin)
+        return weights
