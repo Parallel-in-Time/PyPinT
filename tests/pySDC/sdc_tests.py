@@ -12,6 +12,7 @@ class SDCTests(unittest.TestCase):
 #         self.assertEqual(mySDC.numSubsteps, 3, "default number of substeps")
 #         self.assertEqual(mySDC.iterations, 5, "default number if SDC iterations")
         mySDC.solve()
+        mySDC.print_solution()
 
 if __name__ == "__main__":
     unittest.main()
