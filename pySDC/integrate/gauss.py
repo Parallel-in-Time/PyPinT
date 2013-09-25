@@ -13,7 +13,7 @@ class Gauss(Quadrature):
         """
 
     @staticmethod
-    def integrate(func=lambda t, x: 1.0, begin=0, end=1, nPoints=3, t=1.0, partial=None, type="legendre"):
+    def integrate(func=lambda t, x: 1.0, vals=None, begin=0, end=1, nPoints=3, t=1.0, partial=None, type="legendre"):
         """
         integrates given function in [begin, end] using nPoints at time t with method 'type'
         """
@@ -25,6 +25,9 @@ class Gauss(Quadrature):
 
         _trans = Gauss.transform(_a, _b)
         _nw = Gauss.get_nodes_and_weights(nPoints, type)
+        
+        if vals is not None:
+            assert len(vals) == len(_nw['nodes']), "Number of given values ({:d}) not matching number of integration points ({:d}).".format( len(vals), len(_nw['nodes']))
 
         _result = {'full': 0.0, 'partial': 0.0}
         _count_terms = 0
@@ -33,14 +36,31 @@ class Gauss(Quadrature):
             _smat = Gauss.build_s_matrix(_nw['nodes'], begin, end)
 #             print("Constructed Smat:\n" + str(_smat))
 
-        for i in range(0, len(_nw['nodes'])):
-            _result['full'] += _nw['weights'][i] * func(t, _trans[0] * _nw['nodes'][i] + _trans[1])
-            if partial is not None:
-                if i <= partial:
-                    _result['partial'] += _smat[partial-1][i] * func(t, _trans[0] * _nw['nodes'][i] + _trans[1])
-                    _count_terms += 1
-            else:
+        if partial is None:
+            for i in range(0, len(_nw['nodes'])):
+                if func is not None:
+                    _result['full'] += _nw['weights'][i] * func(t, _trans[0] * _nw['nodes'][i] + _trans[1])
+                elif vals is not None:
+                    _result['full'] += _nw['weights'][i] * vals[i]
+                else:
+                    raise ValueError("Either func or vals must be given.")
+#                 if partial is not None:
+#                     if i <= partial:
+#                         if func is not None:
+#                             _result['partial'] += _smat[partial-1][i] * func(t, _trans[0] * _nw['nodes'][i] + _trans[1])
+#                         else:
+#                             _result['partial'] += _smat[partial-1][i] * vals[i]
+#                         _count_terms += 1
+#                 else:
                 _count_terms += 1
+        elif vals is not None:
+#             print("Using _smat row {:d}:".format(partial) + str(_smat[partial]))
+            assert len(_smat[partial]) == len(vals), "_smat entries ({:d}) not matching values ({:d})".format(len(_smat[partial]), len(vals))
+            for i in range(0, len(_smat[partial])):
+                _result['partial'] += _smat[partial][i] * vals[i]
+                _count_terms += 1
+        else:
+            raise NotImplementedError("Not yet implemented")
 
         assert _count_terms > 0, "Nothing was integrated (begin={:f}, end={:f}, nPoints={:d}, partial={:d}).".format(begin, end, nPoints, partial)
 

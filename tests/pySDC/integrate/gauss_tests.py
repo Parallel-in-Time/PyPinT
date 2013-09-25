@@ -58,14 +58,14 @@ def compare_arrays(arr1, arr2):
                              places=None, delta=config.PRECISION)
 
 def correct_integrate(func, begin, end, nPoints, method, result, message):
-    computed = Gauss.integrate(func, begin, end, nPoints, type=method)
+    computed = Gauss.integrate(func, begin=begin, end=end, nPoints=nPoints, type=method)
     assert_almost_equals(computed, result,
                          msg=message + "\n\tcomputed: " + str(computed) + "\n\texpected: " + str(result),
                          places=None, delta=config.PRECISION)
 
 @raises(ValueError)
 def failed_integrate(func, begin, end, nPoints, method, message):
-    Gauss.integrate(func, begin, end, nPoints, type=method)
+    Gauss.integrate(func, begin=begin, end=end, nPoints=nPoints, type=method)
 
 def compare_computed_legendre_weights(nPoints):
     computed = Gauss.legendre_nodes_and_weights(nPoints)

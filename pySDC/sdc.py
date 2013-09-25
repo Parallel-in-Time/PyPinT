@@ -10,17 +10,17 @@ class SDC(object):
         """
         """
         self.fnc = lambda t, phi_t:-1.0
-        self.exact = lambda t:-t + 1.0
+        self.exact = lambda t:1.0-float(t)
         self.initial_value = 1.0
         self.time_range = [0.0, 1.0]
         self.time_steps = 1
-        self.num_substeps = 3
-        self.iterations = 3
-        self.__sol = np.zeros((self.iterations + 1, self.time_steps, self.num_substeps + 2), dtype=float)
+        self.num_substeps = 5
+        self.iterations = 5
+        self.__sol = np.empty((self.iterations + 1, self.time_steps, self.num_substeps + 2), dtype=float)
         self._substeps = np.zeros((self.time_steps, self.num_substeps + 2), dtype=float)
         self._dt_n = float(self.time_range[1] - self.time_range[0]) / float(self.time_steps)
-        self._reduction = np.zeros((self.iterations, self.time_steps, self.num_substeps + 2), dtype=float)
-        self._error = np.ones((self.iterations + 1, self.time_steps, self.num_substeps + 2), dtype=float)
+        self._reduction = np.empty((self.iterations + 1, self.time_steps, self.num_substeps + 2), dtype=float)
+        self._error = np.empty((self.iterations + 1, self.time_steps, self.num_substeps + 2), dtype=float)
         self.verbosity = 4
 
     def solve(self):
@@ -29,7 +29,7 @@ class SDC(object):
         """
         self._substeps = np.zeros((self.time_steps, self.num_substeps + 2), dtype=float)
         self._dt_n = float(self.time_range[1] - self.time_range[0]) / float(self.time_steps)
-        self._reduction = np.zeros((self.iterations, self.time_steps, self.num_substeps + 2), dtype=float)
+        self._reduction = np.empty((self.iterations + 1, self.time_steps, self.num_substeps + 2), dtype=float)
 #         print("[{: f}, {: f}], {: f} ==> {: f}".format(self.time_range[0], self.time_range[1], self.time_steps, self._dt_n))
         _nodes = Gauss.get_nodes_and_weights(self.num_substeps, "legendre")['nodes']
 
@@ -111,26 +111,41 @@ class SDC(object):
 
                     # compute Eqn. 2.7 in explicit form
                     self.__sol[k][t_n_i][t_m_i] = self.__sol[k][t_n_i][t_m_i - 1] + \
-                        _dt_m * (self.fnc(_t_m, t_m_i - 1) - self.fnc(_t_m, t_m_i)) + \
-                        Gauss.integrate(func=self.fnc, t=_t_m, begin=_t_n, end=(_t_n + self._dt_n), nPoints=self.num_substeps, partial=t_m_i)
+                        _dt_m * (self.fnc(self._substeps[t_n_i][t_m_i - 1], self.__sol[k][t_n_i][t_m_i - 1]) - self.fnc(self._substeps[t_n_i][t_m_i - 1], self.__sol[k - 1][t_n_i][t_m_i - 1])) + \
+                        _dt_m * Gauss.integrate(func=None, vals=self.__sol[k - 1][t_n_i][1:-1], begin=_t_n, end=(_t_n + self._dt_n), nPoints=self.num_substeps, partial=t_m_i-1)
                     if self.verbosity > 3:
-                        print("          sol = {: f} = {: f} + {: f} * ( {: f} - {: f} ) + {: f}".format(self.__sol[k][t_n_i][t_m_i], self.__sol[k][t_n_i][t_m_i - 1], _dt_m, self.fnc(_t_m, t_m_i - 1), self.fnc(_t_m, t_m_i), Gauss.integrate(func=self.fnc, t=_t_m, begin=_t_n, end=(_t_n + self._dt_n), nPoints=self.num_substeps, partial=t_m_i)))
-
-                    # calculate error and error reduction
-                    self._error[k][t_n_i][t_m_i] = abs(self.__sol[k][t_n_i][t_m_i] - self.exact(_t_m))
-                    self._reduction[k - 1][t_n_i][t_m_i] = abs(self._error[k][t_n_i][t_m_i] / self._error[k - 1][t_n_i][t_m_i])
+                        print("          sol = {: f} = {: f} + {: f} * ( {: f} - {: f} ) + {: f} * {: f}".format(self.__sol[k][t_n_i][t_m_i], self.__sol[k][t_n_i][t_m_i - 1], _dt_m, self.fnc(_t_m, t_m_i - 1), self.fnc(_t_m, t_m_i), _dt_m, Gauss.integrate(func=None, vals=self.__sol[k - 1][t_n_i][1:-1], begin=_t_n, end=(_t_n + self._dt_n), nPoints=self.num_substeps, partial=t_m_i-1)))
                 # END FOR t_m_i
 
                 if self.verbosity > 1:
-                    print("  Solution:\n    t_m_i\t     t    \t    x(t) \treduction\t   exact \t   error")
-                    for t_m_i in range(0, len(self._substeps[t_n_i])):
-                       _t_m = self._substeps[t_n_i][t_m_i]
-                       print('      {:d}    \t{: f}\t{: f}\t{: f}\t{: f}\t{: f}'.format(t_m_i, _t_m, self.__sol[k][t_n_i][t_m_i], self._reduction[k - 1][t_n_i][t_m_i], self.exact(_t_m), self._error[k][t_n_i][t_m_i]))
+                    print("  Solution:\n    t_m_i\t     t    \t    x(t) \treduction   |\t   exact \t   error")
+
+                for t_m_i in range(0, len(self._substeps[t_n_i])):
+                    _t_m = self._substeps[t_n_i][t_m_i]
+                    # calculate error and error reduction
+                    self._error[k][t_n_i][t_m_i] = abs(self.__sol[k][t_n_i][t_m_i] - self.exact(_t_m))
+                    self._reduction[k][t_n_i][t_m_i] = SDC.calc_reduction(self._error[k - 1][t_n_i][t_m_i], self._error[k][t_n_i][t_m_i])
+                    if self.verbosity > 1:
+                       if k > 1:
+                           print('      {:d}    \t{: f}\t{: f}\t{: f}   |\t{: f}\t{: f}'.format(t_m_i, _t_m, self.__sol[k][t_n_i][t_m_i], self._reduction[k][t_n_i][t_m_i], self.exact(_t_m), self._error[k][t_n_i][t_m_i]))
+                       else:
+                           print('      {:d}    \t{: f}\t{: f}\t            |\t{: f}\t{: f}'.format(t_m_i, _t_m, self.__sol[k][t_n_i][t_m_i], self.exact(_t_m), self._error[k][t_n_i][t_m_i]))
+                # END FOR t_m_i
             # END FOR t_n_i
 
             if self.verbosity > 0:
-                print("Overall reduction for this iteration: {:f}".format(self._reduction[k - 1].mean()))
+                if k > 1:
+                    print("Overall reduction for this iteration: {:f}".format(self._reduction[k].mean()))
         # END FOR k
+
+    @staticmethod
+    def calc_reduction(error1, error2):
+        if error1 == error2:
+            return 1.0
+        elif error1 == 0.0 or error2 == 0.0:
+            return 0.0
+        else:
+            return float(abs(float(error2) / float(error1)))
 
     @property
     def solution(self):
@@ -150,13 +165,13 @@ class SDC(object):
     def print_solution(self):
         """
         """
-        print("Solution after " + str(self.iterations) + " iterations:\n(t_n_i, t_m_i)\t     t    \t    x(t) \treduction\t   exact \t   error")
+        print("Solution after " + str(self.iterations) + " iterations:\n(t_n_i, t_m_i)\t     t    \t    x(t) \tover.red.   |\t   exact \t   error")
         for t_n_i in range(0, self.time_steps):
             _t_n = self.time_range[0] + t_n_i * self._dt_n
             for t_m_i in range(0, len(self._substeps[t_n_i])):
                _t_m = self._substeps[t_n_i][t_m_i]
                error = abs(self.__sol[-1][t_n_i][t_m_i] - self.exact(_t_m))
-               print('    ({:d}, {:d})    \t{: f}\t{: f}\t{: f}\t{: f}\t{: f}'.format(t_n_i, t_m_i, _t_m, self.__sol[-1][t_n_i][t_m_i], self._reduction[-1][t_n_i][t_m_i], self.exact(_t_m), error))
+               print('    ({:d}, {:d})    \t{: f}\t{: f}\t{: f}   |\t{: f}\t{: f}'.format(t_n_i, t_m_i, _t_m, self.__sol[-1][t_n_i][t_m_i], SDC.calc_reduction(self._error[1][t_n_i][t_m_i], self._error[-1][t_n_i][t_m_i]), self.exact(_t_m), error))
 
     @property
     def fnc(self):
