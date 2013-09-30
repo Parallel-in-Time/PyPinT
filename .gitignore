@@ -30,6 +30,8 @@ cover/
 #Translations
 *.mo
 
-#Mr Developer
-.mr.developer.cfg
+# PyCharm
+.idea
 
+# documentation
+doc/source/api
