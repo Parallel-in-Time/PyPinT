@@ -2,13 +2,13 @@ class Quadrature:
     """
     """
 
-    def __init__( self ):
+    def __init__(self):
         """
         """
-        raise NotImplementedError( "Should be implemented by derivation." )
+        raise NotImplementedError("Should be implemented by derivation.")
 
     @staticmethod
     def integrate():
         """
         """
-        raise NotImplementedError( "Should be implemented by specific scheme." )
+        raise NotImplementedError("Should be implemented by specific scheme.")

@@ -179,7 +179,7 @@ class Gauss(Quadrature):
         v = v[:, ind].transpose()
         w = 2.0 * np.asarray(v[:, 0]) ** 2.0
 
-        #print("Gauss.legendre_nodes_and_weights({:d})={: f}".format(n, np.around(x.real, config.DIGITS)))
+        #print("Gauss.legendre_nodes_and_weights({:d})={: f}".format(n, np.around(x.real, Config.DIGITS)))
         return {'nodes': np.around(x.real, Config.DIGITS),
                 'weights': np.around(w.real, Config.DIGITS)}
 
