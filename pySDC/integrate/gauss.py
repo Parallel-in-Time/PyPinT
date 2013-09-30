@@ -1,6 +1,8 @@
+import itertools
+
 import numpy as np
 from scipy import linalg
-import itertools
+
 import pySDC.globals as Config
 from pySDC.integrate.quadrature import Quadrature
 
@@ -18,7 +20,30 @@ class Gauss(Quadrature):
     def integrate(func=lambda t, x: 1.0, vals=None, begin=0, end=1, n=3, t=1.0, partial=None,
                   method="legendre"):
         """
-        integrates given function in [begin, end] using n points at time t with method 'method'
+        Integrates given function in `[begin, end]` using `nPoints` at time `t` with `method`
+
+        :param func:    function to be integrated; requires time `t` as first and
+                        point `x` as second argument; default: constant 1 function
+        :type func:     function pointer or lambda
+        :param vals:    array of values to be used instead of a function
+        :type vals:     array or list of Floats
+        :param begin:   start point of integration interval
+        :type begin:    Integer or Float
+        :param end:     end point of integration interval
+        :type end:      Integer or Float
+        :param n:       number of integration points in interval
+        :type n:        Integer
+        :param t:       time point to be integrated
+        :type t:        Integer or Float
+        :param partial: index of the last value to be integrated
+        :type partial:  Integer
+        :param method:  type of integration points; currently only `legendre` or
+                        `lobatto` available
+        :type method:   String
+
+        :rtype:         Float
+
+        :raises:        ValueError
         """
         _a = begin
         _b = end
@@ -38,14 +63,15 @@ class Gauss(Quadrature):
 
         if vals is not None:
             assert len(vals) == len(_nw['nodes']), \
-                "Number of given values ({:d}) not matching number of integration points ({:d})."\
+                "Number of given values ({:d}) not matching number of integration points ({:d})." \
                 .format(len(vals), len(_nw['nodes']))
 
         _result = {'full': 0.0, 'partial': 0.0}
         _count_terms = 0
 
         if partial is not None:
-            _smat = Gauss.build_s_matrix(_trans[0] * _nw['nodes'] + [_trans[1]] * len(_nw['nodes']), begin, end, method)
+            _smat = Gauss.build_s_matrix(_trans[0] * _nw['nodes'] + [_trans[1]] * len(_nw['nodes']),
+                                         begin, end, method)
             Config.LOG.debug("Constructed Smat:\n{}".format(str(_smat)))
 
         if partial is None:
@@ -60,7 +86,7 @@ class Gauss(Quadrature):
         elif vals is not None:
             Config.LOG.debug("using _smat row {:d}:".format(partial - 1) + str(_smat[partial - 1]))
             assert len(_smat[partial - 1]) == len(vals), \
-                "_smat entries ({:d}) not matching values ({:d})"\
+                "_smat entries ({:d}) not matching values ({:d})" \
                 .format(len(_smat[partial - 1]), len(vals))
             for i in range(0, len(_smat[partial - 1])):
                 _result['partial'] += _smat[partial - 1][i] * vals[i]
@@ -71,8 +97,8 @@ class Gauss(Quadrature):
             raise NotImplementedError("Not yet implemented")
 
         assert _count_terms > 0, \
-            "Nothing was integrated (begin={:f}, end={:f}, n={:d}, partial={:d})."\
-            .format(begin, end, n, partial)
+            "Nothing was integrated (begin={:f}, end={:f}, n={:d}, partial={:d})." \
+                .format(begin, end, n, partial)
 
         _result['full'] *= _trans[0]
         _result['partial'] *= _trans[0]
@@ -88,35 +114,65 @@ class Gauss(Quadrature):
             return _result['full']
 
     @staticmethod
-    def get_nodes_and_weights(n, method="legendre"):
+    def get_nodes_and_weights(n_points, method="legendre"):
         """
-        returns integration nodes and weights for given type and number of points
+        Returns integration nodes and weights for given type and number of points
+        
+        :param n_points: number of integration points
+        :type n_points:  Integer
+        :param method:   type of integration points to return; valid options:
+                         `legendre` or `lobatto`
+        :type method:    String
+        
+        :rtype: Dictionary of Floats with keys `nodes` and `weights`
+        
+        :raises: NotImplementedError (if `type` not supported)
+        
+        :seealso: Gauss.legendre_nodes_and_weights(nPoints),
+                  Gauss.lobatto_nodes_and_weights(nPoints)
         """
         if method == "legendre":
-            return Gauss.legendre_nodes_and_weights(n)
+            return Gauss.legendre_nodes_and_weights(n_points)
         elif method == "lobatto":
-            return Gauss.lobatto_nodes_and_weights(n)
+            return Gauss.lobatto_nodes_and_weights(n_points)
         else:
             raise NotImplementedError("Gaus-{}-Quadrature not implemented/known.".format(method))
 
     @staticmethod
     def transform(a, b):
         """
+        Computats nodes and weights for the Gauss-Legendre quadrature of order n>1 on [-1, +1]
+
+        :param a:   start of the interval
+        :type a:    Float
+        :param b:   end fo the interval
+        :type b:    Float
+
+        :rtype:     List of two Floats
+        
+        Ported from MATLAB code, reference see below.
         calculates transformation coefficients to map [a,b] to [-1,1]
 
         see: http://en.wikipedia.org/wiki/Gaussian_quadrature#Change_of_interval
         """
-#         print('[{: f}, {: f}]: {: f}, {: f}'.format(a, b, (b-a)/2.0, (b+a)/2.0))
+        #         print('[{: f}, {: f}]: {: f}, {: f}'.format(a, b, (b-a)/2.0, (b+a)/2.0))
         return [(b - a) / 2.0, (b + a) / 2.0]
 
     @staticmethod
     def build_s_matrix(nodes, begin, end, method):
         """
-        :param nodes:
-        :param begin:
-        :param end:
-        :param method:
-        :return:
+        :param nodes:   integration points
+        :type nodes:    Array or List of Floats
+        :param begin:   start of the integration interval
+        :type begin:    Float
+        :param end:     end of the integration interval
+        :type end:      Float
+        :param method:  method of the integration nodes (either `legendre` or `lobatto`
+        :type method:   String
+
+        :rtype:
+
+        :raises: ValueError (if no valid method given)
         """
         n = len(nodes)
 
@@ -157,6 +213,13 @@ class Gauss(Quadrature):
 
         (Credit, where credit due)
         original MATLAB function by: Geert Van Damme <geert@vandamme-iliano.be> (February 21, 2010)
+        
+        :param n: number of integration points
+        :type n:  Integer
+        
+        :rtype: Dictionary of Floats with keys `nodes` and `weights`
+        
+        :raises: ValueError (if `nPoints`<2)
         """
         if n < 2:
             raise ValueError("Gauss-Legendre quadrature does not work with less than three points.")
@@ -184,20 +247,27 @@ class Gauss(Quadrature):
                 'weights': np.around(w.real, Config.DIGITS)}
 
     @staticmethod
-    def lobatto_nodes_and_weights(n):
+    def lobatto_nodes_and_weights(n_points):
         """
         Gauss-Lobatto nodes and weights for 3 to 5 integration points (hard coded)
+        
+        :param n_points: number of integration points
+        :type n_points:  Integer
+        
+        :rtype: Dictionary of Floats with keys `nodes` and `weights`
+        
+        :raises: ValueError (if `nPoints`<3), NotImplementedError (if `nPoints`>5)
 
-        source of values: http://en.wikipedia.org/wiki/Gaussian_quadrature#Gauss.E2.80.93Lobatto_rules
+        :seealso: http://en.wikipedia.org/wiki/Gaussian_quadrature#Gauss.E2.80.93Lobatto_rules
         """
-        if n == 3:
+        if n_points == 3:
             return {'nodes': [-1.0,
                               0.0,
                               1.0],
                     'weights': [1.0 / 3.0,
                                 4.0 / 3.0,
                                 1.0 / 3.0]}
-        elif n == 4:
+        elif n_points == 4:
             return {'nodes': [-1.0,
                               -1.0 / 5.0 * np.sqrt(5),
                               1.0 / 5.0 * np.sqrt(5),
@@ -206,7 +276,7 @@ class Gauss(Quadrature):
                                 5.0 / 6.0,
                                 5.0 / 6.0,
                                 1.0 / 6.0]}
-        elif n == 5:
+        elif n_points == 5:
             return {'nodes': [-1.0,
                               -1.0 / 7.0 * np.sqrt(21),
                               0.0,
@@ -217,26 +287,29 @@ class Gauss(Quadrature):
                                 32.0 / 45.0,
                                 49.0 / 90.0,
                                 1.0 / 10.0]}
-        elif n < 3:
+        elif n_points < 3:
             raise ValueError("Gauss-Lobatto quadrature does not work with less than three points.")
         else:
-            raise NotImplementedError("Gauss-Lobatto with {:d} is not implemented yet.".format(n))
+            raise NotImplementedError("Gauss-Lobatto with {:d} is not implemented yet."
+                                      .format(n_points))
 
     @staticmethod
-    def lobatto_nodes(n):
+    def lobatto_nodes(n_points):
         """
-        Compute n nodes and weights with a fix start [-1,1]
+        Compute n_points nodes and weights with a fix start [-1,1]
 
-        :param n:
-        :return:
+        :param n_points:    Number of integration nodes
+        :type n_points:     Integer
+
+        :rtype:     Array of Floats
         """
-        j = np.arange(1, n + 1)
+        j = np.arange(1, n_points + 1)
         a = (2.0 * j - 1.0) / j
         c = (j - 1.0) / j
 
-        j = np.diag(1 / (a[0:n-1]), 1) + np.diag(c[1:n+1] / a[1:n+1], -1)
+        j = np.diag(1 / (a[0:n_points - 1]), 1) + np.diag(c[1:n_points + 1] / a[1:n_points + 1], -1)
         # magic trick . . .
-        j[n-1, n-2] = 1.0
+        j[n_points - 1, n_points - 2] = 1.0
 
         # ... no magic actually just the following consideration
         #   1.      p_j(-1)=(-1)^j
@@ -261,10 +334,14 @@ class Gauss(Quadrature):
     @staticmethod
     def compute_weights(nodes, begin, end):
         """
-        :param nodes:
-        :param begin:
-        :param end:
-        :return:
+        :param nodes:   integration points to calculate weights for
+        :type nodes:    Array or List of Floats
+        :param begin:   begin of the integration interval
+        :type begin:    Float
+        :param end:     end of the integration interval
+        :type end:      Float
+
+        :rtype:     Array of Floats
         """
         n = len(nodes)
         weights = np.zeros(n, dtype=float)
