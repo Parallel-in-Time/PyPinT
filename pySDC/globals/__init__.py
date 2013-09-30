@@ -1,5 +1,14 @@
-__all__ = ["DIGITS", "PRECISION"]
-    
+__all__ = ["LOG", "DIGITS", "PRECISION"]
+
+import logging
+import logging.config
+from yaml import load
+
+logging.config.dictConfig(load(open("logging_config.yaml", 'r')))
+LOG = logging.getLogger("consoleLogger")
+"""
+"""
+
 DIGITS = 12
 """
 """
