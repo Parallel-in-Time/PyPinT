@@ -1,7 +1,7 @@
 import numpy as np
 from scipy import linalg
 import itertools
-import pySDC.globals as config
+import pySDC.globals as Config
 from pySDC.integrate.quadrature import Quadrature
 
 
@@ -12,6 +12,7 @@ class Gauss(Quadrature):
     def __init__(self):
         """
         """
+        super(Quadrature, self).__init__()
 
     @staticmethod
     def integrate(func=lambda t, x: 1.0, vals=None, begin=0, end=1, n=3, t=1.0, partial=None,
@@ -44,8 +45,8 @@ class Gauss(Quadrature):
         _count_terms = 0
 
         if partial is not None:
-            _smat = Gauss.build_s_matrix(_nw['nodes'], begin, end)
-            print("Constructed Smat:\n" + str(_smat))
+            _smat = Gauss.build_s_matrix(_trans[0] * _nw['nodes'] + [_trans[1]] * len(_nw['nodes']), begin, end, method)
+            Config.LOG.debug("Constructed Smat:\n{}".format(str(_smat)))
 
         if partial is None:
             for i in range(0, len(_nw['nodes'])):
@@ -57,12 +58,14 @@ class Gauss(Quadrature):
                     raise ValueError("Either func or vals must be given.")
                 _count_terms += 1
         elif vals is not None:
-            print("Using _smat row {:d}:".format(partial) + str(_smat[partial]))
-            assert len(_smat[partial]) == len(vals), \
+            Config.LOG.debug("using _smat row {:d}:".format(partial - 1) + str(_smat[partial - 1]))
+            assert len(_smat[partial - 1]) == len(vals), \
                 "_smat entries ({:d}) not matching values ({:d})"\
-                .format(len(_smat[partial]), len(vals))
-            for i in range(0, len(_smat[partial])):
-                _result['partial'] += _smat[partial][i] * vals[i]
+                .format(len(_smat[partial - 1]), len(vals))
+            for i in range(0, len(_smat[partial - 1])):
+                _result['partial'] += _smat[partial - 1][i] * vals[i]
+                Config.LOG.debug("   {: f} += {: f} * {: f}"
+                                 .format(_result['partial'], _smat[partial - 1][i], vals[i]))
                 _count_terms += 1
         else:
             raise NotImplementedError("Not yet implemented")
@@ -75,9 +78,11 @@ class Gauss(Quadrature):
         _result['partial'] *= _trans[0]
 
         if partial is not None:
-            print("Gauss.integrate() >> [{: f},{: f}] in [{: f}, {: f}]"
-                  .format(_trans[0] * _nw['nodes'][begin] + _trans[1],
-                          _trans[0] * _nw['nodes'][partial] + _trans[1], begin, end))
+            Config.LOG.debug("integrated on [{: f},{: f}] as partial interval in [{: f}, {: f}]"
+                             .format(_trans[0] * _nw['nodes'][begin] + _trans[1],
+                                     _trans[0] * _nw['nodes'][partial] + _trans[1], begin, end))
+            Config.LOG.debug("used values: {}".format(str(vals)))
+            Config.LOG.debug("n nodes: {:d}".format(_count_terms))
             return _result['partial']
         else:
             return _result['full']
@@ -105,13 +110,30 @@ class Gauss(Quadrature):
         return [(b - a) / 2.0, (b + a) / 2.0]
 
     @staticmethod
-    def build_s_matrix(nodes, begin, end):
+    def build_s_matrix(nodes, begin, end, method):
+        """
+        :param nodes:
+        :param begin:
+        :param end:
+        :param method:
+        :return:
+        """
         n = len(nodes)
-        smat = np.zeros((n + 1, n), dtype=float)
-        smat[0] = Gauss.compute_weights(nodes, begin, nodes[0])
-        for i in range(1, n):
-            smat[i] = Gauss.compute_weights(nodes, nodes[i - 1], nodes[i])
-        smat[n] = Gauss.compute_weights(nodes, nodes[n - 1], end)
+
+        if method == "lobatto":
+            smat = np.zeros((n - 1, n), dtype=float)
+            for i in range(1, n):
+                smat[i - 1] = Gauss.compute_weights(nodes, nodes[i - 1], nodes[i])
+        elif method == "legendre":
+            smat = np.zeros((n + 1, n), dtype=float)
+            smat[0] = Gauss.compute_weights(nodes, begin, nodes[0])
+            for i in range(1, n):
+                smat[i] = Gauss.compute_weights(nodes, nodes[i - 1], nodes[i])
+            smat[n] = Gauss.compute_weights(nodes, nodes[n - 1], end)
+        else:
+            raise (ValueError, "Constructing S-Matrix for method '{}' not implemented."
+                               .format(method))
+
         return smat
 
     @staticmethod
@@ -136,8 +158,6 @@ class Gauss(Quadrature):
         (Credit, where credit due)
         original MATLAB function by: Geert Van Damme <geert@vandamme-iliano.be> (February 21, 2010)
         """
-        n = float(n)
-
         if n < 2:
             raise ValueError("Gauss-Legendre quadrature does not work with less than three points.")
 
@@ -145,7 +165,7 @@ class Gauss(Quadrature):
         # cm is such that det(xI-cm)=P_n(x), with P_n the Legendre polynomial
         # under consideration. Moreover, cm will be constructed in such a way
         # that it is symmetrical.
-        j = np.linspace(start=1, stop=n - 1, num=int(n - 1))
+        j = np.linspace(start=1, stop=n - 1, num=n - 1)
         a = j / np.sqrt(4.0 * j ** 2 - 1.0)
         cm = np.diag(a, 1) + np.diag(a, -1)
 
@@ -159,9 +179,9 @@ class Gauss(Quadrature):
         v = v[:, ind].transpose()
         w = 2.0 * np.asarray(v[:, 0]) ** 2.0
 
-#         print("Gauss.legendre_nodes_and_weights("+str(n)+")="+str(np.around(x.real, config.DIGITS)))
-        return {'nodes': np.around(x.real, config.DIGITS),
-                'weights': np.around(w.real, config.DIGITS)}
+        #print("Gauss.legendre_nodes_and_weights({:d})={: f}".format(n, np.around(x.real, config.DIGITS)))
+        return {'nodes': np.around(x.real, Config.DIGITS),
+                'weights': np.around(w.real, Config.DIGITS)}
 
     @staticmethod
     def lobatto_nodes_and_weights(n):
@@ -214,9 +234,9 @@ class Gauss(Quadrature):
         a = (2.0 * j - 1.0) / j
         c = (j - 1.0) / j
 
-        J = np.diag(1 / (a[0:n-1]), 1) + np.diag(c[1:n+1] / a[1:n+1], -1)
+        j = np.diag(1 / (a[0:n-1]), 1) + np.diag(c[1:n+1] / a[1:n+1], -1)
         # magic trick . . .
-        J[n-1, n-2] = 1.0
+        j[n-1, n-2] = 1.0
 
         # ... no magic actually just the following consideration
         #   1.      p_j(-1)=(-1)^j
@@ -233,17 +253,24 @@ class Gauss(Quadrature):
         #      note 2: this ist not the symmetrical form like in GaussLegendre,
         #              hence it is less stable
         #      note 3: the computed weights are useless (and thus not computed here)
-        [L, V] = linalg.eig(J)
-        ind = np.argsort(L)
-        x = L[ind]
-        return x
+        [l, v] = linalg.eig(j)
+        ind = np.argsort(l)
+        x = l[ind]
+        return x.real
 
     @staticmethod
     def compute_weights(nodes, begin, end):
+        """
+        :param nodes:
+        :param begin:
+        :param end:
+        :return:
+        """
         n = len(nodes)
         weights = np.zeros(n, dtype=float)
         for i in range(0, n):
             selection = itertools.chain(range(0, i), range(i + 1, n))
+            #print("selection: {}".format(Gauss.print_iterable(selection)))
             poly = [1]
             for ar in selection:
                 poly = np.polymul(poly, [1.0 / (nodes[i] - nodes[ar]),
@@ -251,3 +278,11 @@ class Gauss(Quadrature):
             poly = np.polyint(poly)
             weights[i] = np.polyval(poly, end) - np.polyval(poly, begin)
         return weights
+
+    @staticmethod
+    def print_iterable(iterable):
+        string = "[ "
+        for elem in iterable:
+            string += str(elem) + " "
+        string += "]"
+        return string

@@ -68,22 +68,22 @@ def correct_integrate(func, begin, end, nPoints, method, result, message):
 
 @raises(ValueError)
 def failed_integrate(func, begin, end, nPoints, method, message):
-    Gauss.integrate(func, begin=begin, end=end, n=nPoints, method=method)
+    Gauss.integrate(func, begin=begin, end=end, n=int(nPoints), method=method)
 
 
 def compare_computed_legendre_weights(nPoints):
-    computed = Gauss.legendre_nodes_and_weights(nPoints)
+    computed = Gauss.legendre_nodes_and_weights(int(nPoints))
     compare_arrays(computed['weights'].tolist(), gaussLegendreValues[str(nPoints)]['weights'])
 
 
 def compare_computed_legendre_nodes(nPoints):
-    computed = Gauss.legendre_nodes_and_weights(nPoints)
+    computed = Gauss.legendre_nodes_and_weights(int(nPoints))
     compare_arrays(computed['nodes'].tolist(), gaussLegendreValues[str(nPoints)]['nodes'])
 
 
 def compare_computed_lobatto_nodes(nPoints):
-    computed = Gauss.lobatto_nodes(nPoints)
-    expected = Gauss.lobatto_nodes_and_weights(nPoints)['nodes']
+    computed = Gauss.lobatto_nodes(int(nPoints))
+    expected = Gauss.lobatto_nodes_and_weights(int(nPoints))['nodes']
     compare_arrays(computed, expected)
 
 

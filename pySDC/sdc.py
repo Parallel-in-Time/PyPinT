@@ -1,4 +1,5 @@
 import numpy as np
+import pySDC.globals as Config
 from pySDC.integrate.gauss import Gauss
 
 
@@ -10,147 +11,224 @@ class SDC(object):
         """
         """
         self.__function = lambda t, phi_t: -1.0
-        self.exact = lambda t: -t+1.0
+        self.__exact = lambda t: -t + 1.0
         self.__initialValue = 1.0
         self.__timeRange = [0.0, 1.0]
         self.__timeSteps = 1
         self.__numSubsteps = 3
         self.__iterations = 2
-        self.__sol = np.empty((self.iterations + 1, self.time_steps, self.num_substeps + 2),
-                              dtype=float)
+        self.__sol = np.zeros((1, 1, 1), dtype=float)
         self._substeps = np.zeros((self.time_steps, self.num_substeps + 2), dtype=float)
         self._dt_n = float(self.time_range[1] - self.time_range[0]) / float(self.time_steps)
-        self._reduction = np.empty((self.iterations + 1, self.time_steps, self.num_substeps + 2),
-                                   dtype=float)
-        self._error = np.empty((self.iterations + 1, self.time_steps, self.num_substeps + 2),
-                               dtype=float)
+        self._relred = np.zeros((1, 1, 1), dtype=float)
+        self._error = np.zeros((1, 1, 1), dtype=float)
         self.verbosity = 4
 
-    def solve(self):
+    def solve(self, integrator="lobatto", initial="copy"):
         """
         solves a given problem setup
-        """
-        self._substeps = np.zeros((self.time_steps, self.num_substeps + 2), dtype=float)
-        self._dt_n = float(self.time_range[1] - self.time_range[0]) / float(self.time_steps)
-        self._reduction = np.empty((self.iterations + 1, self.time_steps, self.num_substeps + 2),
-                                   dtype=float)
-         #print("[{: f}, {: f}], {: f} ==> {: f}"
-         #      .format(self.time_range[0], self.time_range[1], self.time_steps, self._dt_n))
-        _nodes = Gauss.get_nodes_and_weights(self.num_substeps, "lobatto")['nodes']
 
-        # #
-        # # Set initial values and compute substep points
-        # #
+        :param integrator: integration method used as integrator on substeps
+        :raises:
+        """
+        # determine number of integration points per time step in dependency of integration method
+        #  and whether it uses the interval borders as integration points (as Gauss-Lobatto) or
+        #  not (as Gauss-Legendre)
+        if integrator == "lobatto":
+            # Gauss-Lobatto uses outer interval points as integration points
+            n_nodes = self.num_substeps + 1
+            n_sub_values = n_nodes
+        elif integrator == "legendre":
+            # Gauss-Legendre does not use outer interval points as integration points
+            # TODO: we need to interpolate interval borders with Gauss-Legendre
+            n_nodes = self.num_substeps - 1
+            n_sub_values = n_nodes + 2
+            raise (NotImplementedError, "Gauss-Legendre integration not yet implemented.")
+        else:
+            raise (ValueError, "No known integrator given: {s}".format(integrator))
+
+        # initialize solution array
+        self.__sol = np.zeros((self.iterations + 1, self.time_steps, n_sub_values), dtype=float)
+        self._error = np.zeros((self.iterations + 1, self.time_steps, n_sub_values), dtype=float)
+        # multi-dimensional array for relative reduction; all 1-based
+        #  indizes:
+        #    1.: iteration
+        #    2.: coarse time step
+        #    3.: sub step in coarse time step
+        self._relred = np.zeros((self.iterations + 1, self.time_steps, n_sub_values), dtype=float)
+
+        # matrix for time points of all integration points
+        self._substeps = np.zeros((self.time_steps, n_sub_values), dtype=float)
+
+        # delta of coarse time steps
+        self._dt_n = float(self.time_range[1] - self.time_range[0]) / float(self.time_steps)
+
+        # calculate integration nodes for optimal substep alignment
+        Config.LOG.debug("[{: f}, {: f}], {: f} ==> {: f}"
+                         .format(self.time_range[0], self.time_range[1], self.time_steps, self._dt_n))
+        _nodes = Gauss.get_nodes_and_weights(n_nodes, integrator)['nodes']
+
+        #####
+        ## Set initial values and compute substep points
+        Config.LOG.debug("Preparing initial values.")
+
         self._substeps[0][0] = self.time_range[0]
         self._substeps[-1][-1] = self.time_range[1]
 
-        # iterate main time steps
+        # iterate over coarse time steps
         for t_n_i in range(0, self.time_steps):
+            # calculate current time point
             _t_n = self.time_range[0] + t_n_i * self._dt_n
-#             print("t_n_i={:d} (t_n={: f}, _dt_n={: f})".format(t_n_i, _t_n, self._dt_n))
 
             # transform [t_n, t_n+_dt_n] into Gauss nodes
             _trans = Gauss.transform(_t_n, _t_n + self._dt_n)
-            assert len(_trans) == 2, "Coordinate transformation failed (len(_trans)={:d})."\
-                .format(len(_trans))
+            assert len(_trans) == 2, \
+                "Coordinate transformation failed (len(_trans)={:d}).".format(len(_trans))
             assert len(self._substeps) > t_n_i, \
                 "Substeps not correctly initialized (len(_substeps)={:d})."\
                 .format(len(self._substeps))
 
-            self.__sol[0][t_n_i] = np.asarray([self.initial_value] * (self.num_substeps + 2))
+            # initialize solution vector for this coarse time step
+            self.__sol[0][t_n_i] = np.asarray([self.initial_value] * n_sub_values)
 
             if t_n_i > 0:
-                # Compute initial values for _t_n via Standard Euler
-                self.__sol[0][t_n_i][0] = self.__sol[0][t_n_i - 1][0] + self._dt_n * self.fnc(_t_n)
-                # copy values
-                self._substeps[t_n_i][0] = self._substeps[t_n_i - 1][-1]
+                if initial == "euler":
+                    # compute initial values for _t_n via Standard Euler
+                    self.__sol[0][t_n_i][0] = self.__sol[0][t_n_i - 1][0] + self._dt_n * self.fnc(_t_n)
+                elif initial == "copy":
+                    # set global initial value as initial value for current coarse time step
+                    self.__sol[0][t_n_i][0] = self.initial_value
+                else:
+                    raise (ValueError, "Given method for broadcasting initial values not known: {s}"
+                                       .format(initial))
 
-            # compute substep points for current time step
-            for t_m_i in range(0, self.num_substeps):
-#                 print("  t_m_i={:d}".format(t_m_i))
+                # make sure the start of this coarse time step equals the end point of the previous
+                #  coarse time step
+                assert self._substeps[t_n_i][0] == self._substeps[t_n_i - 1][-1], \
+                    "Start of this coarse time step not end point of previous coarse time step: {: f} != {: f}"\
+                    .format(self._substeps[t_n_i][0], self._substeps[t_n_i - 1][-1])
+
+            # compute substep points for current coarse time step
+            for t_m_i in range(0, n_sub_values):
+                #print("  t_m_i={:d}".format(t_m_i))
                 assert len(_nodes) > t_m_i, "Fever nodes than steps"
-                #print("    _t_n={: f} (node={: f})"
-                #      .format(_trans[0] * _nodes[t_m_i] + _trans[1], _nodes[t_m_i]))
-                self._substeps[t_n_i][t_m_i + 1] = _trans[0] * _nodes[t_m_i] + _trans[1]
+                if integrator == "lobatto":
+                    # Gauss-Lobatto uses integration borders as integration nodes
+                    #  make sure they are correct ...
+                    if t_m_i == 0:
+                        # (beginning of substep)
+                        assert self._substeps[t_n_i][0] == _trans[0] * _nodes[0] + _trans[1], \
+                            "First substep time point not equal first integration node: {: f} != {: f}"\
+                            .format(self._substeps[t_n_i][0], _trans[0] * _nodes[0] + _trans[1])
+                    elif t_m_i == n_sub_values - 1:
+                        # (end of substep)
+                        assert self._substeps[t_n_i][-1] == _trans[0] * _nodes[-1] + _trans[1], \
+                            "Last substep time point not equal last integration node: {: f} != {: f}"\
+                            .format(self._substeps[t_n_i][-1], _trans[0] * _nodes[-1] + _trans[1])
+                    else:
+                        # ... and calculate intermediate nodes only
+                        self._substeps[t_n_i][t_m_i] = _trans[0] * _nodes[t_m_i] + _trans[1]
+                elif integrator == "legendre":
+                    # Gauss-Legendre only uses inner interval points as integration nodes
+                    self._substeps[t_n_i][t_m_i + 1] = _trans[0] * _nodes[t_m_i] + _trans[1]
+                else:
+                    # will not reach this, as it has raised previously
+                    pass
             # END FOR t_m_i
 
+            # calculate end point of this coarse time step
             self._substeps[t_n_i][-1] = _t_n + self._dt_n
 
-#             print("__sol[0][" + str(t_n_i) + "] = " + str(self.solution[0][t_n_i]))
+            #print("__sol[0][" + str(t_n_i) + "] = " + str(self.solution[0][t_n_i]))
         # END FOR t_n_i
 
-        if self.verbosity > 1:
-            print("_substeps:\n" + str(self._substeps))
-            if self.verbosity > 3:
-                print("Initial Solution:\n" + str(self.__sol[0]))
+        Config.LOG.debug("Sub Steps: {0}".format(str(self._substeps)))
+        Config.LOG.debug("Initial Solution:\n{0}".format(str(self.__sol[0])))
 
-        # #
-        # # Compute SDC iterations
-        # #
-        # sdc iterations
+        #####
+        ## Compute SDC iterations
+        # SDC iterations
         for k in range(1, self.iterations + 1):
-            if self.verbosity > 0:
-                print(80 * '*' + "\nIteration {:d}/{:d}:".format(k, self.iterations))
-            # start with the initial value
+            Config.LOG.info("")
+            Config.LOG.info("Iteration {:d}/{:d}:".format(k, self.iterations))
+
+            # copy initial value from previous SDC iteration
             self.__sol[k][0][0] = self.__sol[k - 1][0][0]
 
-            # iterate over steps
+            # iterate over coarse time steps
             for t_n_i in range(0, self.time_steps):
-                # compute time point for this step
+                # compute starting coarse time point for this step
                 _t_n = self.time_range[0] + t_n_i * self._dt_n
-                if self.verbosity > 1:
-                    print("  " + 10 * '-' + "\n  Time Step {:d} (_t_n={: f}):".format(t_n_i, _t_n))
+                Config.LOG.info("  Time Step {:d} (_t_n={: f}):".format(t_n_i, _t_n))
 
-                # copy last value from previous substep
+                # in case it is not the first coarse time step copy last value from previous
+                #  coarse time step as initial value for this coarse time step
                 if t_n_i > 0:
                     self.__sol[k][t_n_i][0] = self.__sol[k][t_n_i - 1][-1]
 
                 # iterate over substeps
-                for t_m_i in range(1, len(self._substeps[t_n_i])):
-                    # get time point for this substep
+                #  (of cause: skip initial value)
+                for t_m_i in range(1, self.num_substeps + 1):
+                    # query time point for this substep
                     _t_m = self._substeps[t_n_i][t_m_i]
+
+                    # ... and previous substep
+                    _t_m_p = self._substeps[t_n_i][t_m_i - 1]
+
                     # compute delta t for this substep
-                    _dt_m = _t_m - self._substeps[t_n_i][t_m_i - 1]
-                    if self.verbosity > 2:
-                        print("      Substep {:d} (_t_m={: f}, _dt_m={: f}):"
-                              .format(t_m_i, _t_m, _dt_m))
+                    _dt_m = _t_m - _t_m_p
+                    Config.LOG.info("    Substep {:d} (_t_m={: f}, _dt_m={: f}):"
+                                    .format(t_m_i, _t_m, _dt_m))
 
-                    # dummy assertion
-                    assert _dt_m > 0.0, "dt_m should be larger 0 ({:f})".format(_dt_m)
+                    # make sure nothing goes really wrong
+                    assert _dt_m > 0.0, "Delta of substep must be larger 0: {:f}".format(_dt_m)
 
-                    # compute Eqn. 2.7 in explicit form
-                    integral = Gauss.integrate(func=None, vals=self.__sol[k - 1][t_n_i],
+                    # gather values for integration
+                    _copy_mask = np.concatenate((np.asarray([True]*t_m_i),
+                                                 np.asarray([False]*(n_sub_values-t_m_i))))
+                    Config.LOG.debug("_copy_mask ({:d} : {:d}) = {}".format(t_m_i, (n_sub_values-t_m_i), str(_copy_mask)))
+                    _integrate_values = np.where(_copy_mask, self.__sol[k][t_n_i], self.__sol[k - 1][t_n_i])
+                    Config.LOG.debug("_integrate_values = {}".format(str(_integrate_values)))
+
+                    # integrate this substep
+                    integral = Gauss.integrate(func=None, vals=_integrate_values,
                                                begin=_t_n, end=(_t_n + self._dt_n),
-                                               n=self.num_substeps, partial=t_m_i-1,
-                                               method="lobatto")
-                    self.__sol[k][t_n_i][t_m_i] = self.__sol[k][t_n_i][t_m_i - 1] + \
-                        _dt_m * (self.fnc(self._substeps[t_n_i][t_m_i - 1],
-                                          self.__sol[k][t_n_i][t_m_i - 1]) -
-                                 self.fnc(self._substeps[t_n_i][t_m_i - 1],
-                                          self.__sol[k - 1][t_n_i][t_m_i - 1])) + integral
-                    if self.verbosity > 3:
-                        print("{}sol = {: f} = {: f} + {: f} * ( {: f} - {: f} ) + {: f} * {: f}"
-                              .format(' ' * 10, self.__sol[k][t_n_i][t_m_i],
-                                      self.__sol[k][t_n_i][t_m_i - 1], _dt_m,
-                                      self.fnc(_t_m, t_m_i - 1), self.fnc(_t_m, t_m_i), _dt_m,
-                                      integral))
+                                               n=n_nodes, partial=t_m_i, method=integrator)
+                    # compute new solution for this substep
+                    #  (cf. Minion, Eqn. 2.7, explicit form)
+                    self.__sol[k][t_n_i][t_m_i] = self.__sol[k][t_n_i][t_m_i - 1] \
+                        + _dt_m * (self.fnc(_t_m_p, self.__sol[k][t_n_i][t_m_i - 1]) -
+                                   self.fnc(_t_m_p, self.__sol[k - 1][t_n_i][t_m_i])) \
+                        + _dt_m * integral
+                    Config.LOG.debug("{}sol = {: f} = {: f} + {: f} * ( {: f} - {: f} ) + {: f} * {: f}"
+                                     .format(' ' * 10, self.__sol[k][t_n_i][t_m_i],
+                                             self.__sol[k][t_n_i][t_m_i - 1], _dt_m,
+                                             self.fnc(_t_m_p, self.__sol[k][t_n_i][t_m_i - 1]),
+                                             self.fnc(_t_m_p, self.__sol[k - 1][t_n_i][t_m_i]),
+                                             _dt_m, integral))
                 # END FOR t_m_i
 
-                if self.verbosity > 1:
-                    print("  Solution:\n    t_m_i\t     t    \t    x(t) \treduction   |\t   exact \t   error")
+                Config.LOG.info("Solution after iteration {:d}:\n".format(k)
+                                + "    t_m_i\t     t    \t    x(t) \treduction   |\t   exact \t   error")
 
-                for t_m_i in range(0, len(self._substeps[t_n_i])):
+                # compute error and relative reduction
+                #  (thus iterate over substeps again)
+                for t_m_i in range(0, n_sub_values):
+                    # query time point for this substep
                     _t_m = self._substeps[t_n_i][t_m_i]
-                    # calculate error and error reduction
+
+                    # calculate absolute error
                     self._error[k][t_n_i][t_m_i] = abs(self.__sol[k][t_n_i][t_m_i] - self.exact(_t_m))
-                    self._reduction[k][t_n_i][t_m_i] = \
-                        SDC.calc_reduction(self._error[k - 1][t_n_i][t_m_i],
-                                           self._error[k][t_n_i][t_m_i])
+                    # ... and relative error reduction
+                    if t_m_i > 0:
+                        self._relred[k][t_n_i][t_m_i] = \
+                            SDC.calc_rel_err_reduction(self._error[k - 1][t_n_i][t_m_i],
+                                                       self._error[k][t_n_i][t_m_i])
                     if self.verbosity > 1:
                         if k > 1:
                             print("      {:d}    \t{: f}\t{: f}\t{: f}   |\t{: f}\t{: f}"
                                   .format(t_m_i, _t_m, self.__sol[k][t_n_i][t_m_i],
-                                          self._reduction[k][t_n_i][t_m_i], self.exact(_t_m),
+                                          self._relred[k][t_n_i][t_m_i], self.exact(_t_m),
                                           self._error[k][t_n_i][t_m_i]))
                         else:
                             print("      {:d}    \t{: f}\t{: f}\t            |\t{: f}\t{: f}"
@@ -158,15 +236,15 @@ class SDC(object):
                                           self.exact(_t_m), self._error[k][t_n_i][t_m_i]))
                 # END FOR t_m_i
             # END FOR t_n_i
-
-            if self.verbosity > 0:
-                if k > 1:
-                    print("Overall reduction for this iteration: {:f}"
-                          .format(self._reduction[k].mean()))
         # END FOR k
 
     @staticmethod
-    def calc_reduction(error1, error2):
+    def calc_rel_err_reduction(error1, error2):
+        """
+        :param error1:
+        :param error2:
+        :return:
+        """
         if error1 == error2:
             return 1.0
         elif error1 == 0.0 or error2 == 0.0:
@@ -199,11 +277,11 @@ class SDC(object):
             for t_m_i in range(0, len(self._substeps[t_n_i])):
                 _t_m = self._substeps[t_n_i][t_m_i]
                 error = abs(self.__sol[-1][t_n_i][t_m_i] - self.exact(_t_m))
-                print("    ({:d}, {:d})    \t{: f}\t{: f}\t{: f}   |\t{: f}\t{: f}".
-                      format(t_n_i, t_m_i, _t_m, self.__sol[-1][t_n_i][t_m_i],
-                             SDC.calc_reduction(self._error[1][t_n_i][t_m_i],
-                                                self._error[-1][t_n_i][t_m_i]),
-                             self.exact(_t_m), error))
+                print("    ({:d}, {:d})    \t{: f}\t{: f}\t{: f}   |\t{: f}\t{: f}"
+                      .format(t_n_i, t_m_i, _t_m, self.__sol[-1][t_n_i][t_m_i],
+                              SDC.calc_rel_err_reduction(self._error[1][t_n_i][t_m_i],
+                                                 self._error[-1][t_n_i][t_m_i]),
+                              self.exact(_t_m), error))
 
     @property
     def fnc(self):
@@ -217,12 +295,31 @@ class SDC(object):
         return self.__function
 
     @fnc.setter
-    def fnc(self, value):
-        self.__function = value
+    def fnc(self, function):
+        self.__function = function
 
     @fnc.deleter
     def fnc(self):
         del self.__function
+
+    @property
+    def exact(self):
+        """
+        exact solution function of the problem
+
+        Returns
+        -------
+        function pointer
+        """
+        return self.__exact
+
+    @exact.setter
+    def exact(self, function):
+        self.__exact = function
+
+    @exact.deleter
+    def exact(self):
+        del self.__exact
 
     @property
     def initial_value(self):
@@ -262,9 +359,8 @@ class SDC(object):
     @time_range.setter
     def time_range(self, value):
         if value[1] <= value[0]:
-            raise ValueError("Time interval must be non-zero positive [start, "
-                             "end]: [" + str(value[0]) + ", " + str(value[1])
-                             + "]")
+            raise ValueError("Time interval must be non-zero positive [start, end]: [{:f }, {: f}]"
+                             .format(value[0], value[1]))
         self.__timeRange = [value[0], value[1]]
 
     @time_range.deleter
@@ -316,7 +412,7 @@ class SDC(object):
     @num_substeps.setter
     def num_substeps(self, value):
         if value <= 0:
-            raise ValueError("At least one substep is neccessary.")
+            raise ValueError("At least one substep is neccessary: {:d}".format(value))
         self.__numSubsteps = value
 
     @num_substeps.deleter
