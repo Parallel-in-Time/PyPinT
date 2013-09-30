@@ -35,3 +35,6 @@ cover/
 
 # documentation
 doc/source/api
+
+# logging
+*.log

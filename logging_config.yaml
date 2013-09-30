@@ -15,7 +15,7 @@ handlers:
     class: logging.handlers.RotatingFileHandler
     formatter: precise
     level: INFO
-    filename: logconfig.log
+    filename: logger.log
     maxBytes: 1024
     backupCount: 3
 loggers:
