@@ -30,8 +30,11 @@ cover/
 #Translations
 *.mo
 
-# PyCharm
+# PyCharm / Eclipse / Other IDEs
 .idea
+.settings
+.project
+.pydevproject
 
 # documentation
 doc/source/api
