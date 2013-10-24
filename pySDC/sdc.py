@@ -9,10 +9,12 @@ from pySDC.integrate.gauss import Gauss
 
 class SDC(object):
     """
+    General Provider for the SDC algorithm
     """
 
     def __init__(self):
         """
+        Initialization
         """
         self.__function = lambda t, phi_t: -1.0
         self.__exact = lambda t: -t + 1.0
@@ -51,11 +53,11 @@ class SDC(object):
             # TODO: we need to interpolate interval borders with Gauss-Legendre
             n_nodes = self.num_substeps - 1
             n_sub_values = n_nodes + 2
-            raise (NotImplementedError,
-                   "Gauss-Legendre integration not yet implemented.")
+            raise NotImplementedError("Gauss-Legendre integration not yet \
+                                       implemented.")
         else:
-            raise (ValueError,
-                   "No known integrator given: {s}".format(integrator))
+            raise ValueError("No known integrator given: {s}"
+                             .format(integrator))
 
         # initialize solution array
         self.__sol = np.zeros((self.iterations + 1, self.time_steps,
@@ -118,9 +120,8 @@ class SDC(object):
                     #  coarse time step
                     self.__sol[0][t_n_i][0] = self.initial_value
                 else:
-                    raise (ValueError,
-                           "Given method for broadcasting initial values not \
-                            known: {s}".format(initial))
+                    raise ValueError("Given method for broadcasting initial \
+                                      values not known: {s}".format(initial))
 
                 # make sure the start of this coarse time step equals the end
                 #  point of the previous coarse time step
@@ -323,10 +324,14 @@ class SDC(object):
 
     @solution.deleter
     def solution(self):
+        """
+        resets SDC.solution
+        """
         del self.__sol
 
     def print_solution(self):
         """
+        prints current solution
         """
         print("Solution after {:d} iterations:".format(self.iterations))
         print("(t_n_i, t_m_i)\t     t    \t    x(t) \tover.red.   |\
@@ -355,10 +360,19 @@ class SDC(object):
 
     @fnc.setter
     def fnc(self, function):
+        """
+        sets function
+        :param function:
+        :return:
+        """
         self.__function = function
 
     @fnc.deleter
     def fnc(self):
+        """
+        resets SDC.fnc
+        :return:
+        """
         del self.__function
 
     @property
@@ -374,10 +388,20 @@ class SDC(object):
 
     @exact.setter
     def exact(self, function):
+        """
+        sets exact solution function
+        :param function:
+        :return:
+        """
         self.__exact = function
 
     @exact.deleter
     def exact(self):
+        """
+        resets SDC.exact
+
+        :return:
+        """
         del self.__exact
 
     @property
@@ -391,10 +415,19 @@ class SDC(object):
 
     @initial_value.setter
     def initial_value(self, value):
+        """
+        sets initial value
+        :param value:
+        :return:
+        """
         self.__initialValue = value
 
     @initial_value.deleter
     def initial_value(self):
+        """
+        resets SDC.initial_value
+        :return:
+        """
         del self.__initialValue
 
     @property
@@ -410,6 +443,11 @@ class SDC(object):
 
     @time_range.setter
     def time_range(self, value):
+        """
+        sets time_range
+        :param value:
+        :return:
+        """
         if value[1] <= value[0]:
             raise ValueError("Time interval must be non-zero positive \
                               [start, end]: [{:f }, {: f}]"
@@ -418,6 +456,10 @@ class SDC(object):
 
     @time_range.deleter
     def time_range(self):
+        """
+        resets SDC.time_range
+        :return:
+        """
         del self.__timeRange
 
     @property
@@ -433,12 +475,22 @@ class SDC(object):
 
     @time_steps.setter
     def time_steps(self, value):
+        """
+        sets number of time steps
+
+        :param value:
+        :return:
+        """
         if value <= 0:
             raise ValueError("At least one time step is neccessary.")
         self.__timeSteps = value
 
     @time_steps.deleter
     def time_steps(self):
+        """
+        resets SDC.time_steps
+        :return:
+        """
         del self.__timeSteps
 
     @property
@@ -454,6 +506,11 @@ class SDC(object):
 
     @num_substeps.setter
     def num_substeps(self, value):
+        """
+        sets number of substeps per time step
+        :param value:
+        :return:
+        """
         if value <= 0:
             raise ValueError("At least one substep is neccessary: {:d}"
                              .format(value))
@@ -461,6 +518,10 @@ class SDC(object):
 
     @num_substeps.deleter
     def num_substeps(self):
+        """
+        resets SDC.num_substeps
+        :return:
+        """
         del self.__numSubsteps
 
     @property
@@ -476,10 +537,19 @@ class SDC(object):
 
     @iterations.setter
     def iterations(self, value):
+        """
+        sets number of iterations
+        :param value:
+        :return:
+        """
         if value <= 0:
             raise ValueError("At least one iteration is neccessary.")
         self.__iterations = value
 
     @iterations.deleter
     def iterations(self):
+        """
+        resets SDC.iterations
+        :return:
+        """
         del self.__iterations

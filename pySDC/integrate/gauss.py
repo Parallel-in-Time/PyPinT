@@ -206,8 +206,8 @@ class Gauss(Quadrature):
                 smat[i] = Gauss.compute_weights(nodes, nodes[i - 1], nodes[i])
             smat[n] = Gauss.compute_weights(nodes, nodes[n - 1], end)
         else:
-            raise (ValueError, "Constructing S-Matrix for method '{}' not \
-                                implemented.".format(method))
+            raise ValueError("Constructing S-Matrix for method '{}' not \
+                              implemented.".format(method))
 
         return smat
 
@@ -353,6 +353,7 @@ class Gauss(Quadrature):
         #              hence it is less stable
         #      note 3: the computed weights are useless (and thus not computed
         #              here)
+        #
         [l, v] = linalg.eig(j)
         ind = np.argsort(l)
         x = l[ind]

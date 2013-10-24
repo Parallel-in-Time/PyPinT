@@ -2,13 +2,15 @@
 Quadrature Interface
 """
 
-class Quadrature:
+
+class Quadrature(object):
     """
     Provides interface for quadrature.
     """
 
     def __init__(self):
         """
+        Initialization
         """
         raise NotImplementedError("Should be implemented by derivation.")
 
