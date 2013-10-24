@@ -6,6 +6,6 @@ A Python implementation of the SDC algorithm.
 
 from .integrate import *
 from . import sdc
-from . import settings
+from .globals import *
 
-__all__ = ["settings", "sdc"]
+__all__ = ["sdc"]
