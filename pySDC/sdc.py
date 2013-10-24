@@ -1,5 +1,12 @@
+# coding=utf-8
 """
-SDC Algorithm
+The SDC Algorithm
+
+.. module:: pySDC
+    :platform: Unix, Windows
+    :synopsis: The SDC algorithm.
+
+.. moduleauthor:: Torbjörn Klatt <t.klatt@fz-juelich.de>
 """
 
 import numpy as np
@@ -34,11 +41,23 @@ class SDC(object):
 
     def solve(self, integrator="lobatto", initial="copy"):
         """
-        solves a given problem setup
+        Solves a given problem setup
 
-        :param integrator: integration method used as integrator on substeps
-        :param initial:
-        :raises:
+        :param integrator:  Integration method used as integrator on substeps.
+                            Possible values are:
+
+                            * `lobatto`
+                            * `legendre`
+        :type integrator:   String
+        :param initial:     Method of initial value projection.
+                            Possible values are:
+
+                            * `copy`
+                            * `euler`
+        :type initial:      String
+
+        :raises: * NotImplementedError (if `itengrator` is `legendre`)
+                 * ValueError (if `integrator` not `lobatto` or `legendre`)
         """
         # determine number of integration points per time step in dependency of
         #  integration method and whether it uses the interval borders as
@@ -305,8 +324,11 @@ class SDC(object):
     def calc_rel_err_reduction(error1, error2):
         """
         :param error1:
+        :type error1:  Float
         :param error2:
-        :return:
+        :type error2:  Float
+        :return: Ratio of `error2` to `error1`
+        :rtype: Float
         """
         if error1 == error2:
             return 1.0
@@ -320,6 +342,7 @@ class SDC(object):
         """
         solution of the last call to :py:func:`SDC.solve`
 
+        :return: current solution
         :rtype: multi-dimensional List of decimal.Decimal
         """
         return self.__sol
@@ -356,7 +379,8 @@ class SDC(object):
         """
         function describing the problem
 
-        :rtype: function pointer
+        :return: Function of the problem
+        :rtype:  function pointer
         """
         return self.__function
 
@@ -364,8 +388,9 @@ class SDC(object):
     def fnc(self, function):
         """
         sets function
+
         :param function:
-        :return:
+        :type function:  function pointer
         """
         self.__function = function
 
@@ -373,7 +398,6 @@ class SDC(object):
     def fnc(self):
         """
         resets SDC.fnc
-        :return:
         """
         del self.__function
 
@@ -382,9 +406,8 @@ class SDC(object):
         """
         exact solution function of the problem
 
-        Returns
-        -------
-        function pointer
+        :returns: Function of the exact solution
+        :rtype: function pointer
         """
         return self.__exact
 
@@ -392,8 +415,9 @@ class SDC(object):
     def exact(self, function):
         """
         sets exact solution function
+
         :param function:
-        :return:
+        :type function:  function pointer
         """
         self.__exact = function
 
@@ -401,8 +425,6 @@ class SDC(object):
     def exact(self):
         """
         resets SDC.exact
-
-        :return:
         """
         del self.__exact
 
@@ -411,7 +433,8 @@ class SDC(object):
         """
         initial value of the problem
 
-        :rtype: decimal.Decimal
+        :return: Initial value of the problem
+        :rtype:  Float
         """
         return self.__initialValue
 
@@ -419,8 +442,9 @@ class SDC(object):
     def initial_value(self, value):
         """
         sets initial value
+
         :param value:
-        :return:
+        :type value:  Float
         """
         self.__initialValue = value
 
@@ -428,7 +452,6 @@ class SDC(object):
     def initial_value(self):
         """
         resets SDC.initial_value
-        :return:
         """
         del self.__initialValue
 
@@ -437,7 +460,8 @@ class SDC(object):
         """
         pair of start and end time
 
-        :rtype: List of two decimal.Decimal
+        :return: Total time range of the problem
+        :rtype:  List of two Floats
 
         :raises: ValueError (on setting if time range is non-positive or zero)
         """
@@ -448,7 +472,9 @@ class SDC(object):
         """
         sets time_range
         :param value:
-        :return:
+        :type value:  List of two Floats
+
+        :raises: ValueError (if time range is non-positive or zero)
         """
         if value[1] <= value[0]:
             raise ValueError("Time interval must be non-zero positive " +
@@ -460,7 +486,6 @@ class SDC(object):
     def time_range(self):
         """
         resets SDC.time_range
-        :return:
         """
         del self.__timeRange
 
@@ -469,7 +494,8 @@ class SDC(object):
         """
         number of time steps
 
-        :rtype: Integer
+        :return:
+        :rtype:  Integer
 
         :raises: ValueError (on setting if number steps is not positive)
         """
@@ -481,7 +507,9 @@ class SDC(object):
         sets number of time steps
 
         :param value:
-        :return:
+        :type value:  Integer
+
+        :raises: ValueError (if number steps is not positive)
         """
         if value <= 0:
             raise ValueError("At least one time step is neccessary.")
@@ -491,7 +519,6 @@ class SDC(object):
     def time_steps(self):
         """
         resets SDC.time_steps
-        :return:
         """
         del self.__timeSteps
 
@@ -500,7 +527,8 @@ class SDC(object):
         """
         number of substeps of each time step
 
-        :rtype: Integer
+        :return:
+        :rtype:  Integer
 
         :raises: ValueError (on setting if number substeps is not positive)
         """
@@ -510,8 +538,11 @@ class SDC(object):
     def num_substeps(self, value):
         """
         sets number of substeps per time step
+
         :param value:
-        :return:
+        :type value:  Integer
+
+        :raises: ValueError (if number substeps is not positive)
         """
         if value <= 0:
             raise ValueError("At least one substep is neccessary: {:d}"
@@ -522,7 +553,6 @@ class SDC(object):
     def num_substeps(self):
         """
         resets SDC.num_substeps
-        :return:
         """
         del self.__numSubsteps
 
@@ -531,7 +561,8 @@ class SDC(object):
         """
         number if SDC iterations
 
-        :rtype: Integer
+        :return:
+        :rtype:  Integer
 
         :raises: ValueError (on setting if iterations is not positive)
         """
@@ -541,8 +572,11 @@ class SDC(object):
     def iterations(self, value):
         """
         sets number of iterations
+
         :param value:
-        :return:
+        :type value:  Integer
+
+        :raises: ValueError (if iterations is not positive)
         """
         if value <= 0:
             raise ValueError("At least one iteration is neccessary.")
@@ -552,6 +586,5 @@ class SDC(object):
     def iterations(self):
         """
         resets SDC.iterations
-        :return:
         """
         del self.__iterations

@@ -1,7 +1,8 @@
+# coding=utf-8
 """
-pySDC
-
 A Python implementation of the SDC algorithm.
+
+.. moduleauthor:: Torbjörn Klatt <t.klatt@fz-juelich.de>
 """
 
 from .integrate import *
