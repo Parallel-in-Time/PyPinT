@@ -1,6 +1,8 @@
 # coding=utf-8
 """
-A Python implementation of the SDC algorithm.
+An implementation of the *Spectral Deferred Corrections* (SDC) algorithm for
+solving ordinary differential equations (ODE) in the Python programming
+language.
 
 .. moduleauthor:: Torbjörn Klatt <t.klatt@fz-juelich.de>
 """

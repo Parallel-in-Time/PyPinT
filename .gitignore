@@ -25,6 +25,7 @@ pip-log.txt
 .coverage
 .tox
 nosetests.xml
+coverage.xml
 cover/
 
 #Translations
@@ -37,9 +38,7 @@ cover/
 .pydevproject
 
 # documentation
-doc/source/api
-!doc/source/_static
-!doc/source/_templates
+!doc/source
 
 # logging
 *.log
