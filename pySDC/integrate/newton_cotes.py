@@ -45,8 +45,8 @@ class NewtonCotes(Quadrature):
         b = Decimal(end)
 
         if a == b or (b - a) <= Decimal(0.0):
-            raise ValueError("Integration interval must be non-zero positive \
-                              (end - begin = {:d}).".format(b - a))
+            raise ValueError("Integration interval must be non-zero " +
+                             "(end - begin = {:d}).".format(b - a))
         if steps < 1:
             raise ValueError("At least one step makes sense (steps={:d})."
                              .format(steps))
@@ -85,8 +85,8 @@ class NewtonCotes(Quadrature):
                 ) / Decimal(8)
 
         else:
-            raise NotImplementedError("Newton-Codes integration scheme with \
-                                       order={:d} not implemented."
+            raise NotImplementedError("Newton-Codes integration scheme with " +
+                                      "order={:d} not implemented."
                                       .format(order))
 
         return result

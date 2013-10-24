@@ -53,8 +53,8 @@ class SDC(object):
             # TODO: we need to interpolate interval borders with Gauss-Legendre
             n_nodes = self.num_substeps - 1
             n_sub_values = n_nodes + 2
-            raise NotImplementedError("Gauss-Legendre integration not yet \
-                                       implemented.")
+            raise NotImplementedError("Gauss-Legendre integration not yet " +
+                                      "implemented.")
         else:
             raise ValueError("No known integrator given: {s}"
                              .format(integrator))
@@ -120,15 +120,16 @@ class SDC(object):
                     #  coarse time step
                     self.__sol[0][t_n_i][0] = self.initial_value
                 else:
-                    raise ValueError("Given method for broadcasting initial \
-                                      values not known: {s}".format(initial))
+                    raise ValueError("Given method for broadcasting " +
+                                     "initial values not known: {s}"
+                                     .format(initial))
 
                 # make sure the start of this coarse time step equals the end
                 #  point of the previous coarse time step
                 assert self._substeps[t_n_i][0] == \
                     self._substeps[t_n_i - 1][-1], \
-                    "Start of this coarse time step not end point of previous \
-                     coarse time step: {: f} != {: f}" \
+                    "Start of this coarse time step not end point of " + \
+                    "previous coarse time step: {: f} != {: f}" \
                         .format(self._substeps[t_n_i][0],
                                 self._substeps[t_n_i - 1][-1])
 
@@ -143,16 +144,16 @@ class SDC(object):
                         # (beginning of substep)
                         assert self._substeps[t_n_i][0] == \
                             _trans[0] * _nodes[0] + _trans[1], \
-                            "First substep time point not equal first \
-                             integration node: {: f} != {: f}" \
+                            "First substep time point not equal first " + \
+                            "integration node: {: f} != {: f}" \
                                 .format(self._substeps[t_n_i][0],
                                         _trans[0] * _nodes[0] + _trans[1])
                     elif t_m_i == n_sub_values - 1:
                         # (end of substep)
                         assert self._substeps[t_n_i][-1] == \
                             _trans[0] * _nodes[-1] + _trans[1], \
-                            "Last substep time point not equal last \
-                             integration node: {: f} != {: f}" \
+                            "Last substep time point not equal last " + \
+                            "integration node: {: f} != {: f}" \
                                 .format(self._substeps[t_n_i][-1],
                                         _trans[0] * _nodes[-1] + _trans[1])
                     else:
@@ -211,9 +212,9 @@ class SDC(object):
 
                     # compute delta t for this substep
                     _dt_m = _t_m - _t_m_p
-                    Config.LOG.info("    Substep {:d} (_t_m={: f}, \
-                                     _dt_m={: f}):"
-                                    .format(t_m_i, _t_m, _dt_m))
+                    Config.LOG.info("    Substep {:d} (_t_m={: f}, "
+                                    .format(t_m_i, _t_m) +
+                                    "_dt_m={: f}):".format(_dt_m))
 
                     # make sure nothing goes really wrong
                     assert _dt_m > 0.0, \
@@ -247,22 +248,22 @@ class SDC(object):
                             self.fnc(_t_m_p,
                                      self.__sol[k - 1][t_n_i][t_m_i])) \
                         + _dt_m * integral
-                    Config.LOG.debug("{}sol = {: f} = {: f} + {: f} * ( {: f} \
-                                      - {: f} ) + {: f} * {: f}"
+                    Config.LOG.debug("{}sol = {: f} = {: f} + {: f} "
                                      .format(' ' * 10,
                                              self.__sol[k][t_n_i][t_m_i],
                                              self.__sol[k][t_n_i][t_m_i - 1],
-                                             _dt_m,
-                                             self.fnc(_t_m_p,
+                                             _dt_m) +
+                                     "* ( {: f} - {: f} ) + {: f} * {: f}"
+                                     .format(self.fnc(_t_m_p,
                                                       self.__sol[k][t_n_i][t_m_i - 1]),
                                              self.fnc(_t_m_p,
                                                       self.__sol[k - 1][t_n_i][t_m_i]),
                                              _dt_m, integral))
                 # END FOR t_m_i
 
-                Config.LOG.info("Solution after iteration {:d}:\n\
-                                 t_m_i\t     t    \t    x(t) \treduction   |\
-                                 \t   exact \t   error".format(k))
+                Config.LOG.info("Solution after iteration {:d}:\n".format(k) +
+                                "t_m_i\t     t    \t    x(t) \treduction   |" +
+                                "\t   exact \t   error")
 
                 # compute error and relative reduction
                 #  (thus iterate over substeps again)
@@ -281,19 +282,19 @@ class SDC(object):
                                 self._error[k][t_n_i][t_m_i])
                     if self.verbosity > 1:
                         if k > 1:
-                            print("      {:d}    \t{: f}\t{: f}\t{: f}   |\
-                                   \t{: f}\t{: f}"
+                            print("      {:d}    \t{: f}\t{: f}\t{: f}   |"
                                   .format(t_m_i, _t_m,
                                           self.__sol[k][t_n_i][t_m_i],
-                                          self._relred[k][t_n_i][t_m_i],
-                                          self.exact(_t_m),
+                                          self._relred[k][t_n_i][t_m_i]) +
+                                  "\t{: f}\t{: f}"
+                                  .format(self.exact(_t_m),
                                           self._error[k][t_n_i][t_m_i]))
                         else:
-                            print("      {:d}    \t{: f}\t{: f}\t            |\
-                                   \t{: f}\t{: f}"
+                            print("      {:d}    \t{: f}\t{: f}\t"
                                   .format(t_m_i, _t_m,
-                                          self.__sol[k][t_n_i][t_m_i],
-                                          self.exact(_t_m),
+                                          self.__sol[k][t_n_i][t_m_i]) +
+                                  "            |\t{: f}\t{: f}"
+                                  .format(self.exact(_t_m),
                                           self._error[k][t_n_i][t_m_i]))
                 # END FOR t_m_i
             # END FOR t_n_i
@@ -334,20 +335,20 @@ class SDC(object):
         prints current solution
         """
         print("Solution after {:d} iterations:".format(self.iterations))
-        print("(t_n_i, t_m_i)\t     t    \t    x(t) \tover.red.   |\
-               \t   exact \t   error")
+        print("(t_n_i, t_m_i)\t     t    \t    x(t) \tover.red.   |" +
+              "\t   exact \t   error")
         for t_n_i in range(0, self.time_steps):
             _t_n = self.time_range[0] + t_n_i * self._dt_n
             for t_m_i in range(0, len(self._substeps[t_n_i])):
                 _t_m = self._substeps[t_n_i][t_m_i]
                 error = abs(self.__sol[-1][t_n_i][t_m_i] - self.exact(_t_m))
-                print("    ({:d}, {:d})    \t{: f}\t{: f}\t{: f}   |\
-                       \t{: f}\t{: f}"
+                print("    ({:d}, {:d})    \t{: f}\t{: f}\t{: f}   |"
                       .format(t_n_i, t_m_i, _t_m, self.__sol[-1][t_n_i][t_m_i],
                               SDC.calc_rel_err_reduction(
                                   self._error[1][t_n_i][t_m_i],
-                                  self._error[-1][t_n_i][t_m_i]),
-                              self.exact(_t_m), error))
+                                  self._error[-1][t_n_i][t_m_i])) +
+                      "\t{: f}\t{: f}"
+                      .format(self.exact(_t_m), error))
 
     @property
     def fnc(self):
@@ -449,8 +450,8 @@ class SDC(object):
         :return:
         """
         if value[1] <= value[0]:
-            raise ValueError("Time interval must be non-zero positive \
-                              [start, end]: [{:f }, {: f}]"
+            raise ValueError("Time interval must be non-zero positive " +
+                             "[start, end]: [{:f }, {: f}]"
                              .format(value[0], value[1]))
         self.__timeRange = [value[0], value[1]]
 

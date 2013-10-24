@@ -56,8 +56,8 @@ class Gauss(Quadrature):
         _b = end
 
         if _a == _b or (_b - _a) <= 0.0:
-            raise ValueError("Integration interval must be non-zero positive \
-                              (end - begin = {: f}).".format(_b - _a))
+            raise ValueError("Integration interval must be non-zero positive" +
+                             " (end - begin = {: f}).".format(_b - _a))
 
         _nw = {'nodes': [], 'weights': []}
         if method == "lobatto" and partial is not None:
@@ -70,9 +70,9 @@ class Gauss(Quadrature):
 
         if vals is not None:
             assert len(vals) == len(_nw['nodes']), \
-                "Number of given values ({:d}) not matching number of \
-                 integration points ({:d})." \
-                    .format(len(vals), len(_nw['nodes']))
+                "Number of given values ({:d}) not ".format(len(vals)) + \
+                "matching number of integration points ({:d})."\
+                .format(len(_nw['nodes']))
 
         _result = {'full': 0.0, 'partial': 0.0}
         _count_terms = 0
@@ -109,19 +109,20 @@ class Gauss(Quadrature):
             raise NotImplementedError("Not yet implemented")
 
         assert _count_terms > 0,\
-            "Nothing was integrated (begin={:f}, end={:f}, n={:d}, \
-             partial={:d}).".format(begin, end, n, partial)
+            "Nothing was integrated (begin={:f}, ".format(begin) + \
+            "end={:f}, n={:d}, partial={:d}).".format(end, n, partial)
 
         _result['full'] *= _trans[0]
         _result['partial'] *= _trans[0]
 
         if partial is not None:
-            Config.LOG.debug("integrated on [{: f},{: f}] as partial interval \
-                              in [{: f}, {: f}]"
+            Config.LOG.debug("integrated on [{: f},{: f}] "
                              .format(_trans[0] * _nw['nodes'][begin] +
                                      _trans[1],
                                      _trans[0] * _nw['nodes'][partial] +
-                                     _trans[1], begin, end))
+                                     _trans[1]) +
+                             "as partial interval in [{: f}, {: f}]"
+                             .format(begin, end))
             Config.LOG.debug("used values: {}".format(str(vals)))
             Config.LOG.debug("n nodes: {:d}".format(_count_terms))
             return _result['partial']
@@ -152,8 +153,8 @@ class Gauss(Quadrature):
         elif method == "lobatto":
             return Gauss.lobatto_nodes_and_weights(n_points)
         else:
-            raise NotImplementedError("Gaus-{}-Quadrature not implemented."
-                                      .format(method))
+            raise NotImplementedError("Gaus-" + str(method) +
+                                      "-Quadrature not implemented.")
 
     @staticmethod
     def transform(a, b):
@@ -206,8 +207,8 @@ class Gauss(Quadrature):
                 smat[i] = Gauss.compute_weights(nodes, nodes[i - 1], nodes[i])
             smat[n] = Gauss.compute_weights(nodes, nodes[n - 1], end)
         else:
-            raise ValueError("Constructing S-Matrix for method '{}' not \
-                              implemented.".format(method))
+            raise ValueError("Constructing S-Matrix for method '" +
+                             str(method) + "' not implemented.")
 
         return smat
 
@@ -243,8 +244,8 @@ class Gauss(Quadrature):
         :raises: ValueError (if `nPoints`<2)
         """
         if n < 2:
-            raise ValueError("Gauss-Legendre quadrature does not work with \
-                              less than three points.")
+            raise ValueError("Gauss-Legendre quadrature does not work with " +
+                             "less than three points.")
 
         # Building the companion matrix cm
         # cm is such that det(xI-cm)=P_n(x), with P_n the Legendre polynomial
@@ -311,11 +312,12 @@ class Gauss(Quadrature):
                                 49.0 / 90.0,
                                 1.0 / 10.0]}
         elif n_points < 3:
-            raise ValueError("Gauss-Lobatto quadrature does not work with \
-                              less than three points.")
+            raise ValueError("Gauss-Lobatto quadrature does not work with " +
+                             "less than three points.")
         else:
-            raise NotImplementedError("Gauss-Lobatto with {:d} is not \
-                                       implemented yet.".format(n_points))
+            raise NotImplementedError("Gauss-Lobatto with {:d} "
+                                      .format(n_points) +
+                                      "is not implemented yet.")
 
     @staticmethod
     def lobatto_nodes(n_points):
