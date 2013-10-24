@@ -146,16 +146,16 @@ class SDC(object):
                             _trans[0] * _nodes[0] + _trans[1], \
                             "First substep time point not equal first " + \
                             "integration node: {: f} != {: f}" \
-                                .format(self._substeps[t_n_i][0],
-                                        _trans[0] * _nodes[0] + _trans[1])
+                            .format(self._substeps[t_n_i][0],
+                                    _trans[0] * _nodes[0] + _trans[1])
                     elif t_m_i == n_sub_values - 1:
                         # (end of substep)
                         assert self._substeps[t_n_i][-1] == \
                             _trans[0] * _nodes[-1] + _trans[1], \
                             "Last substep time point not equal last " + \
                             "integration node: {: f} != {: f}" \
-                                .format(self._substeps[t_n_i][-1],
-                                        _trans[0] * _nodes[-1] + _trans[1])
+                            .format(self._substeps[t_n_i][-1],
+                                    _trans[0] * _nodes[-1] + _trans[1])
                     else:
                         # ... and calculate intermediate nodes only
                         self._substeps[t_n_i][t_m_i] = _trans[0] * \
