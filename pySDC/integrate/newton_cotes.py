@@ -1,23 +1,30 @@
+"""
+Newton-Cotes Quadrature
+"""
+
 from decimal import Decimal
 from pySDC.integrate.quadrature import Quadrature
 
 
 class NewtonCotes(Quadrature):
     """
+    Provides integration with Newton-Codes quadrature.
     """
 
     def __init__(self):
         """
         """
-        super(Quadrature, self).__init__()
+        super(NewtonCotes, self).__init__()
 
     @staticmethod
-    def integrate(func=lambda x: 1, begin=Decimal(0), end=Decimal(1), steps=10, order=1):
+    def integrate(func=lambda x: 1, begin=Decimal(0), end=Decimal(1), steps=10,
+                  order=1):
         """
-        Integrates given function in `[begin, end]` using `nPoints` with Newton-Cotes-Quadrature
-        
-        :param func:  function to be integrated; requires point `x` as only argument; 
-                      default: constant 1 function
+        Integrates given function in `[begin, end]` using `nPoints` with
+        Newton-Cotes-Quadrature
+
+        :param func:  function to be integrated; requires point `x` as only
+                      argument; default: constant 1 function
         :type func:   function pointer or lambda
         :param begin: start point of interval
         :type begin:  Integer or Float
@@ -27,20 +34,22 @@ class NewtonCotes(Quadrature):
         :type steps:  Integer
         :param order: number of intergration points per step
         :type order:  Integer
-        
+
         :rtype: decimal.Decimal
-        
-        :raises: ValueError (if zero-interval or wrong orientation or `steps`<1),
+
+        :raises: ValueError (if zero-interval or wrong orientation or
+                 `steps`<1),
                  NotImplementedError (if `order`>4)
         """
         a = Decimal(begin)
         b = Decimal(end)
 
         if a == b or (b - a) <= Decimal(0.0):
-            raise ValueError("Integration interval must be non-zero positive (end - begin = " + str(
-                b - a) + ").")
+            raise ValueError("Integration interval must be non-zero " +
+                             "(end - begin = {:d}).".format(b - a))
         if steps < 1:
-            raise ValueError("At least one step makes sense (steps=" + str(steps) + ").")
+            raise ValueError("At least one step makes sense (steps={:d})."
+                             .format(steps))
 
         step_width = (b - a) / Decimal(steps)
         result = Decimal(0.0)
@@ -48,7 +57,8 @@ class NewtonCotes(Quadrature):
         if order == 1:
             # Midpoint rule
             for i in range(0, steps):
-                result += step_width * Decimal(func(a + Decimal(i + 0.5) * step_width))
+                result += step_width * Decimal(func(a + Decimal(i + 0.5) *
+                                                    step_width))
         elif order == 2:
             # Trapezoid rule
             for i in range(0, steps):
@@ -75,7 +85,8 @@ class NewtonCotes(Quadrature):
                 ) / Decimal(8)
 
         else:
-            raise NotImplementedError(
-                "Newton-Codes integration scheme with order=" + str(order) + " not implemented.")
+            raise NotImplementedError("Newton-Codes integration scheme with " +
+                                      "order={:d} not implemented."
+                                      .format(order))
 
         return result

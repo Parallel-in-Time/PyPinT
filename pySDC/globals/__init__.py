@@ -1,5 +1,6 @@
-__all__ = ["LOG", "DIGITS", "PRECISION"]
-
+"""
+General global variables for pySDC such as the logging backend
+"""
 import logging
 import logging.config
 import os
@@ -18,3 +19,5 @@ DIGITS = 12
 PRECISION = 1e-7
 """
 """
+
+__all__ = ["LOG", "DIGITS", "PRECISION"]
