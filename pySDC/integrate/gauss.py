@@ -1,4 +1,7 @@
-# coding=utf-8
+"""
+Gauss-Quadrature
+"""
+
 import itertools
 
 import numpy as np

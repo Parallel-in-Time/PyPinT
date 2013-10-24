@@ -1,4 +1,7 @@
-# coding=utf-8
+"""
+Newton-Cotes Quadrature
+"""
+
 from decimal import Decimal
 from pySDC.integrate.quadrature import Quadrature
 
@@ -33,7 +36,7 @@ class NewtonCotes(Quadrature):
         :type order:  Integer
 
         :rtype: decimal.Decimal
-        
+
         :raises: ValueError (if zero-interval or wrong orientation or
                  `steps`<1),
                  NotImplementedError (if `order`>4)

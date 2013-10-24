@@ -1,4 +1,7 @@
-# coding=utf-8
+"""
+SDC Algorithm
+"""
+
 import numpy as np
 import pySDC.globals as Config
 from pySDC.integrate.gauss import Gauss
@@ -219,9 +222,9 @@ class SDC(object):
                     _copy_mask = np.concatenate((np.asarray([True] * t_m_i),
                                                  np.asarray([False] * (
                                                  n_sub_values - t_m_i))))
-                    Config.LOG.debug(
-                        "_copy_mask ({:d} : {:d}) = {}".format(t_m_i, (
-                        n_sub_values - t_m_i), str(_copy_mask)))
+                    Config.LOG.debug("_copy_mask ({:d} : {:d}) = {}"
+                                     .format(t_m_i, (n_sub_values - t_m_i),
+                                             str(_copy_mask)))
                     _integrate_values = np.where(_copy_mask,
                                                  self.__sol[k][t_n_i],
                                                  self.__sol[k - 1][t_n_i])

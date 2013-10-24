@@ -1,4 +1,7 @@
-# coding=utf-8
+"""
+Quadrature Interface
+"""
+
 class Quadrature:
     """
     Provides interface for quadrature.
