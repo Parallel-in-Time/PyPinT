@@ -12,7 +12,7 @@ class Quadrature(object):
         """
         Initialization
         """
-        raise NotImplementedError("Should be implemented by derivation.")
+        pass
 
     @staticmethod
     def integrate():
