@@ -100,7 +100,7 @@ class Gauss(Quadrature):
                 _result['partial'] += _smat[partial - 1][i] * vals[i]
                 Config.LOG.debug("   {: f} += {: f} * {: f}"
                                  .format(_result['partial'],
-                                 _smat[partial - 1][i], vals[i]))
+                                         _smat[partial - 1][i], vals[i]))
                 _count_terms += 1
         else:
             raise NotImplementedError("Not yet implemented")
@@ -130,17 +130,17 @@ class Gauss(Quadrature):
         """
         Returns integration nodes and weights for given type and number of
         points
-        
+
         :param n_points: number of integration points
         :type n_points:  Integer
         :param method:   type of integration points to return; valid options:
                          `legendre` or `lobatto`
         :type method:    String
-        
+
         :rtype: Dictionary of Floats with keys `nodes` and `weights`
-        
+
         :raises: NotImplementedError (if `type` not supported)
-        
+
         :seealso: Gauss.legendre_nodes_and_weights(nPoints),
                   Gauss.lobatto_nodes_and_weights(nPoints)
         """
@@ -164,7 +164,7 @@ class Gauss(Quadrature):
         :type b:    Float
 
         :rtype:     List of two Floats
-        
+
         Ported from MATLAB code, reference see below.
         calculates transformation coefficients to map [a,b] to [-1,1]
 
@@ -194,7 +194,8 @@ class Gauss(Quadrature):
         if method == "lobatto":
             smat = np.zeros((n - 1, n), dtype=float)
             for i in range(1, n):
-                smat[i - 1] = Gauss.compute_weights(nodes, nodes[i - 1], nodes[i])
+                smat[i - 1] = Gauss.compute_weights(nodes, nodes[i - 1],
+                                                    nodes[i])
         elif method == "legendre":
             smat = np.zeros((n + 1, n), dtype=float)
             smat[0] = Gauss.compute_weights(nodes, begin, nodes[0])
@@ -230,12 +231,12 @@ class Gauss(Quadrature):
         (Credit, where credit due)
         original MATLAB function by: Geert Van Damme <geert@vandamme-iliano.be>
         (February 21, 2010)
-        
+
         :param n: number of integration points
         :type n:  Integer
-        
+
         :rtype: Dictionary of Floats with keys `nodes` and `weights`
-        
+
         :raises: ValueError (if `nPoints`<2)
         """
         if n < 2:
@@ -268,12 +269,12 @@ class Gauss(Quadrature):
         """
         Gauss-Lobatto nodes and weights for 3 to 5 integration points
         (hard coded)
-        
+
         :param n_points: number of integration points
         :type n_points:  Integer
-        
+
         :rtype: Dictionary of Floats with keys `nodes` and `weights`
-        
+
         :raises: ValueError (if `nPoints`<3),
                  NotImplementedError (if `nPoints`>5)
 
