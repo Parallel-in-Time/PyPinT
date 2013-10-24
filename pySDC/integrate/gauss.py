@@ -19,7 +19,7 @@ class Gauss(Quadrature):
     def __init__(self):
         """
         """
-        super(Quadrature, self).__init__()
+        super(Gauss, self).__init__()
 
     @staticmethod
     def integrate(func=lambda t, x: 1.0, vals=None, begin=0, end=1, n=3, t=1.0,

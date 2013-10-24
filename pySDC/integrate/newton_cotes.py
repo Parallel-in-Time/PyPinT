@@ -14,7 +14,7 @@ class NewtonCotes(Quadrature):
     def __init__(self):
         """
         """
-        super(Quadrature, self).__init__()
+        super(NewtonCotes, self).__init__()
 
     @staticmethod
     def integrate(func=lambda x: 1, begin=Decimal(0), end=Decimal(1), steps=10,
