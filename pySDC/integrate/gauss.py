@@ -71,7 +71,7 @@ class Gauss(Quadrature):
         if vals is not None:
             assert len(vals) == len(_nw['nodes']), \
                 "Number of given values ({:d}) not ".format(len(vals)) + \
-                "matching number of integration points ({:d})."\
+                "matching number of integration points ({:d})." \
                 .format(len(_nw['nodes']))
 
         _result = {'full': 0.0, 'partial': 0.0}
@@ -97,7 +97,7 @@ class Gauss(Quadrature):
             Config.LOG.debug("using _smat row {:d}:".format(partial - 1) +
                              str(_smat[partial - 1]))
             assert len(_smat[partial - 1]) == len(vals), \
-                "_smat entries ({:d}) not matching values ({:d})"\
+                "_smat entries ({:d}) not matching values ({:d})" \
                 .format(len(_smat[partial - 1]), len(vals))
             for i in range(0, len(_smat[partial - 1])):
                 _result['partial'] += _smat[partial - 1][i] * vals[i]
@@ -108,7 +108,7 @@ class Gauss(Quadrature):
         else:
             raise NotImplementedError("Not yet implemented")
 
-        assert _count_terms > 0,\
+        assert _count_terms > 0, \
             "Nothing was integrated (begin={:f}, ".format(begin) + \
             "end={:f}, n={:d}, partial={:d}).".format(end, n, partial)
 
