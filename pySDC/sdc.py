@@ -222,8 +222,9 @@ class SDC(object):
 
                     # gather values for integration
                     _copy_mask = np.concatenate((np.asarray([True] * t_m_i),
-                                                 np.asarray([False] * (
-                                                 n_sub_values - t_m_i))))
+                                                 np.asarray([False] *
+                                                            (n_sub_values -
+                                                             t_m_i))))
                     Config.LOG.debug("_copy_mask ({:d} : {:d}) = {}"
                                      .format(t_m_i, (n_sub_values - t_m_i),
                                              str(_copy_mask)))
