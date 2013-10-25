@@ -10,6 +10,7 @@ Table of Contents
    :maxdepth: 2
 
    requirements
+   development
    API Reference <pySDC>
    license
 

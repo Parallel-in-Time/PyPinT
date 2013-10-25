@@ -1,8 +1,5 @@
-globals Package
-===============
-
 :mod:`globals` Package
-----------------------
+======================
 
 .. automodule:: pySDC.globals
     :members:

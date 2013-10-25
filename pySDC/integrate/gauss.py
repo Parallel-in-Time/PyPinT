@@ -179,6 +179,8 @@ class Gauss(Quadrature):
     @staticmethod
     def build_s_matrix(nodes, begin, end, method):
         """
+        Constructs the integration S-Matrix
+
         :param nodes:   integration points
         :type nodes:    Array or List of Floats
         :param begin:   start of the integration interval
@@ -364,6 +366,8 @@ class Gauss(Quadrature):
     @staticmethod
     def compute_weights(nodes, begin, end):
         """
+        Computes weights based on nodes and interval.
+
         :param nodes:   integration points to calculate weights for
         :type nodes:    Array or List of Floats
         :param begin:   begin of the integration interval
