@@ -1,22 +1,22 @@
-.. pySDC documentation master file, created by
-   sphinx-quickstart on Tue Oct 22 12:56:51 2013.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
-
 Welcome to pySDC's documentation!
 =================================
 
-Contents:
+.. automodule:: pySDC
+
+Table of Contents
+-----------------
 
 .. toctree::
    :maxdepth: 2
 
+   requirements
+   development
+   API Reference <pySDC>
+   license
 
-
-Indices and tables
-==================
+Further Lists
+-------------
 
 * :ref:`genindex`
 * :ref:`modindex`
 * :ref:`search`
-

@@ -9,20 +9,62 @@ testNumPoints = [3, 5]
 testMethods = ["legendre", "lobatto"]
 testCases = {'correct': [], 'fail': []}
 
-testCases['correct'].append(
-    {'func': lambda t, x: 0.0, 'begin': 0, 'end': 1, 'result': 0.0, 'msg': "Zero function"})
-testCases['correct'].append({'func': lambda t, x: 1.0, 'begin': 0, 'end': 1, 'result': 1.0,
-                             'msg': "One function in [0, 1]"})
-testCases['correct'].append({'func': lambda t, x: 1.0, 'begin': -3, 'end': 5, 'result': 8.0,
-                             'msg': "One function in [-3, 5]"})
-testCases['correct'].append(
-    {'func': lambda t, x: x ** 2, 'begin': 0, 'end': 1, 'result': 1.0 / 3.0, 'msg': "x^2 in [0,1]"})
-testCases['correct'].append({'func': lambda t, x: x, 'begin': 0, 'end': 1, 'result': 0.5,
-                             'msg': "Identity function in [0, 1]"})
+testCases['correct'].append({
+    'params': {
+        'func': lambda t, x: 0.0,
+        'begin': 0,
+        'end': 1
+    },
+    'result': 0.0,
+    'msg': "Zero function"})
+testCases['correct'].append({
+    'params': {
+        'func': lambda t, x: 1.0,
+        'begin': 0,
+        'end': 1},
+    'result': 1.0,
+    'msg': "One function in [0, 1]"})
+testCases['correct'].append({
+    'params': {
+        'func': lambda t, x: 1.0,
+        'begin': -3,
+        'end': 5},
+    'result': 8.0,
+    'msg': "One function in [-3, 5]"})
+testCases['correct'].append({
+    'params': {
+        'func': lambda t, x: x ** 2,
+        'begin': 0,
+        'end': 1},
+    'result': 1.0 / 3.0,
+    'msg': "x^2 in [0,1]"})
+testCases['correct'].append({
+    'params': {
+        'func': lambda t, x: x,
+        'begin': 0,
+        'end': 1},
+    'result': 0.5,
+    'msg': "Identity function in [0, 1]"})
+testCases['correct'].append({
+    'params': {
+        'func': lambda t, x: 1,
+        'begin': 0,
+        'end': 1},
+    'result': 1.0,
+    'msg': "One-Function on first two integration nodes in [0,1]"})
 
-testCases['fail'].append({'func': lambda t, x: 1.0, 'begin': 0, 'end': 0, 'msg': "Zero interval"})
-testCases['fail'].append(
-    {'func': lambda t, x: 1.0, 'begin': 1, 'end': 0, 'msg': "Negative interval"})
+testCases['fail'].append({
+    'params': {
+        'func': lambda t, x: 1.0,
+        'begin': 0,
+        'end': 0},
+    'msg': "Zero interval"})
+testCases['fail'].append({
+    'params': {
+        'func': lambda t, x: 1.0,
+        'begin': 1,
+        'end': 0},
+    'msg': "Negative interval"})
 
 gaussLegendreValues = {
     '2': {'nodes': [-np.sqrt(1.0 / 3.0),
@@ -58,35 +100,39 @@ gaussLegendreValues = {
 
 def compare_arrays(arr1, arr2):
     assert_equal(len(arr1), len(arr2),
-                 "Length of the two arrays not equal: " + str(len(arr1)) + " != " + str(len(arr2)))
+                 "Length of the two arrays not equal: {:d} != {:d}"
+                 .format(len(arr1), len(arr2)))
     for i in range(1, len(arr1)):
         assert_almost_equals(arr1[i], arr2[i],
-                             msg=str(i) + ". element not equal: arr1[" + str(i) + "]=" + str(
-                                 arr1[i]) + " != " + str(arr2[i]) + "=arr2[" + str(i) + "]",
+                             msg="{:d}. element not equal:".format(i) +
+                                 " arr1[{:d}]={:f} != {:f}=arr2[{:d}]"
+                                 .format(i, arr1[i], arr2[i], i),
                              places=None, delta=Config.PRECISION)
 
 
-def correct_integrate(func, begin, end, n_points, method, result, message):
-    computed = Gauss.integrate(func, begin=begin, end=end, n=n_points, method=method)
+def correct_integrate(params, result, message):
+    computed = Gauss.integrate(**params)
     assert_almost_equals(computed, result,
-                         msg=message + "\n\tcomputed: " + str(computed) + "\n\texpected: " + str(
-                             result),
+                         msg=(message + "\n\tcomputed: {:f}".format(computed) +
+                              "\n\texpected: {:f}".format(result)),
                          places=None, delta=Config.PRECISION)
 
 
 @raises(ValueError)
-def failed_integrate(func, begin, end, n_points, method, message):
-    Gauss.integrate(func, begin=begin, end=end, n=int(n_points), method=method)
+def failed_integrate(params, message):
+    Gauss.integrate(**params)
 
 
 def compare_computed_legendre_weights(n_points):
     computed = Gauss.legendre_nodes_and_weights(int(n_points))
-    compare_arrays(computed['weights'].tolist(), gaussLegendreValues[str(n_points)]['weights'])
+    compare_arrays(computed['weights'].tolist(),
+                   gaussLegendreValues[str(n_points)]['weights'])
 
 
 def compare_computed_legendre_nodes(n_points):
     computed = Gauss.legendre_nodes_and_weights(int(n_points))
-    compare_arrays(computed['nodes'].tolist(), gaussLegendreValues[str(n_points)]['nodes'])
+    compare_arrays(computed['nodes'].tolist(),
+                   gaussLegendreValues[str(n_points)]['nodes'])
 
 
 def compare_computed_lobatto_nodes(n_points):
@@ -101,7 +147,9 @@ def test_gauss_integrate_correct():
     for method in testMethods:
         for n_points in range(testNumPoints[0], testNumPoints[1] + 1):
             for case in testCases['correct']:
-                yield correct_integrate, case['func'], case['begin'], case['end'], n_points, method,\
+                case['n'] = n_points
+                case['method'] = method
+                yield correct_integrate, case['params'], \
                     case['result'], case['msg']
 
 
@@ -111,8 +159,9 @@ def test_gauss_integrate_failures():
     for method in testMethods:
         for n_points in range(testNumPoints[0], testNumPoints[1] + 1):
             for case in testCases['fail']:
-                yield failed_integrate, case['func'], case['begin'], case['end'], n_points, method, \
-                    case['msg']
+                case['n'] = n_points
+                case['method'] = method
+                yield failed_integrate, case['params'], case['msg']
 
 
 def test_computed_legendre_nodes():
