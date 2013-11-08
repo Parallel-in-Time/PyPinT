@@ -59,6 +59,19 @@ testCasesFull['fail'].append({
         'end': 0},
     'msg': "Negative interval"})
 
+testValueSetsPartial = [
+    {
+        'values': {
+            '3': [1.0] * 3,
+            '4': [1.0] * 4,
+            '5': [1.0] * 5
+        },
+        't_begin': 0.0,
+        't_end': 1.0,
+        'msg': "Constant One-Function in [0,1]"
+    }
+]
+
 gaussLegendreValues = {
     '2': {'nodes': [-np.sqrt(1.0 / 3.0),
                     np.sqrt(1.0 / 3.0)],
@@ -116,6 +129,24 @@ def failed_integrate(params, message):
     Gauss.integrate(**params)
 
 
+def partial_integrate(values, begin, end, tau, nodes, msg):
+    computed = Gauss.partial_integrate(
+        values=values,
+        t_begin=begin,
+        t_end=end,
+        tau_end=tau,
+        n=len(values),
+        method="lobatto")
+    _trans = Gauss.transform(begin, end)
+    expected = (_trans[0] * nodes[tau + 1] + _trans[1]) - \
+               (_trans[0] * nodes[tau] + _trans[1])
+    assert_almost_equal(computed, expected,
+                        msg=(msg + " on {}. integration node:".format(tau) +
+                             "\n\tcomputed: {:f}".format(computed) +
+                             "\n\texpected: {:f}".format(expected)),
+                        places=None, delta=Config.PRECISION)
+
+
 def compare_computed_legendre_weights(n_points):
     computed = Gauss.legendre_nodes_and_weights(int(n_points))
     compare_arrays(computed['weights'].tolist(),
@@ -156,6 +187,16 @@ def test_gauss_integrate_failures():
                 case['method'] = method
                 yield failed_integrate, case['params'], case['msg']
 
+
+def test_gauss_partial_integrate():
+    for test_value_set in testValueSetsPartial:
+        for n_points in sorted(test_value_set['values'].keys()):
+            n = int(n_points)
+            _nodes = Gauss.lobatto_nodes(n)
+            for tau in range(0, n-1):
+                yield partial_integrate, test_value_set['values'][n_points], \
+                    test_value_set['t_begin'], test_value_set['t_end'], tau, \
+                    _nodes, test_value_set['msg']
 
 def test_computed_legendre_nodes():
     """
@@ -200,27 +241,6 @@ class GaussTests(unittest.TestCase):
         """
         with self.assertRaises(NotImplementedError):
             Gauss.integrate(n=10, method='lobatto')
-
-    def test_partial_integrate(self):
-        """
-        """
-        computed = Gauss.partial_integrate(
-            values=[1.0, 1.0, 1.0, 1.0],
-            t_begin=0,
-            t_end=1,
-            n=4,
-            tau_end=1,
-            method="lobatto")
-        _nodes = Gauss.lobatto_nodes(4)
-        _trans = Gauss.transform(0.0, 1.0)
-        expected = (_trans[0] * _nodes[2] + _trans[1]) - \
-                   (_trans[0] * _nodes[1] + _trans[1])
-        assert_almost_equal(computed, expected,
-                            msg=("One-Function on first two integration nodes" +
-                                 " in [0,1]" +
-                                 "\n\tcomputed: {:f}".format(computed) +
-                                 "\n\texpected: {:f}".format(expected)),
-                            places=None, delta=Config.PRECISION)
 
 if __name__ == "__main__":
     unittest.main()
