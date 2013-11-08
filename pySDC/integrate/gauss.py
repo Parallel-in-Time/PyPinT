@@ -130,6 +130,78 @@ class Gauss(Quadrature):
             return _result['full']
 
     @staticmethod
+    def partial_integrate(values, t_begin, t_end, tau_end, n, method="legendre"):
+        """
+
+        :param values:
+        :param t_begin:
+        :param t_end:
+        :param tau_end:
+        :param n:
+        :param method:
+        :return:
+        """
+        _a = t_begin
+        _b = t_end
+
+        if _a == _b or (_b - _a) <= 0.0:
+            raise ValueError("Integration interval must be non-zero positive" +
+                             " (end - begin = {: f}).".format(_b - _a))
+
+        _nw = {'nodes': [], 'weights': []}
+        if method == "lobatto":
+            n = len(values)
+            _nw['nodes'] = Gauss.lobatto_nodes(n)
+        else:
+            _nw = Gauss.get_nodes_and_weights(n, method)
+
+        _trans = Gauss.transform(_a, _b)
+
+        assert len(values) == len(_nw['nodes']), \
+            "Number of given values ({:d}) not ".format(len(values)) + \
+            "matching number of integration points ({:d})." \
+            .format(len(_nw['nodes']))
+
+        Config.LOG.debug("Using {}-nodes: {}".format(method, _nw['nodes']))
+        Config.LOG.debug("  transformed to: {}"
+                         .format(_trans[0] * _nw['nodes'] +
+                                 [_trans[1]] * len(_nw['nodes'])))
+
+        _smat = Gauss.build_s_matrix(_trans[0] * _nw['nodes'] +
+                                     [_trans[1]] * len(_nw['nodes']),
+                                     t_begin, t_end, method)
+        Config.LOG.debug("Constructed Smat:\n{}".format(str(_smat)))
+
+        _result = 0.0
+        _count_terms = 0
+        Config.LOG.debug("using _smat row {:d}:".format(tau_end) +
+                         str(_smat[tau_end]))
+        assert len(_smat[tau_end]) == len(values), \
+            "_smat entries ({:d}) not matching values ({:d})" \
+            .format(len(_smat[tau_end]), len(values))
+        for i in range(0, len(_smat[tau_end])):
+            _result += _smat[tau_end][i] * values[i]
+            Config.LOG.debug("   {: f} += {: f} * {: f}"
+                             .format(_result,
+                                     _smat[tau_end][i], values[i]))
+            _count_terms += 1
+
+        assert _count_terms > 0, \
+            "Nothing was integrated (begin={:f}, ".format(t_begin) + \
+            "end={:f}, n={:d}, partial={:d}).".format(t_end, n, tau_end)
+
+        Config.LOG.debug("integrated on [{: f},{: f}] "
+                         .format(_trans[0] * _nw['nodes'][t_begin] + _trans[1],
+                                 _trans[0] * _nw['nodes'][tau_end] + _trans[1]) +
+                         "as partial interval in [{: f}, {: f}]"
+                         .format(t_begin, t_end))
+
+        Config.LOG.debug("used values: {}".format(str(values)))
+        Config.LOG.debug("n nodes: {:d}".format(_count_terms))
+
+        return _result
+
+    @staticmethod
     def get_nodes_and_weights(n_points, method="legendre"):
         """
         Returns integration nodes and weights for given type and number of
