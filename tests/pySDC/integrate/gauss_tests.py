@@ -7,9 +7,9 @@ from pySDC.integrate.gauss import Gauss
 
 testNumPoints = [3, 5]
 testMethods = ["legendre", "lobatto"]
-testCases = {'correct': [], 'fail': []}
+testCasesFull = {'correct': [], 'fail': []}
 
-testCases['correct'].append({
+testCasesFull['correct'].append({
     'params': {
         'func': lambda t, x: 0.0,
         'begin': 0,
@@ -17,49 +17,42 @@ testCases['correct'].append({
     },
     'result': 0.0,
     'msg': "Zero function"})
-testCases['correct'].append({
+testCasesFull['correct'].append({
     'params': {
         'func': lambda t, x: 1.0,
         'begin': 0,
         'end': 1},
     'result': 1.0,
     'msg': "One function in [0, 1]"})
-testCases['correct'].append({
+testCasesFull['correct'].append({
     'params': {
         'func': lambda t, x: 1.0,
         'begin': -3,
         'end': 5},
     'result': 8.0,
     'msg': "One function in [-3, 5]"})
-testCases['correct'].append({
+testCasesFull['correct'].append({
     'params': {
         'func': lambda t, x: x ** 2,
         'begin': 0,
         'end': 1},
     'result': 1.0 / 3.0,
     'msg': "x^2 in [0,1]"})
-testCases['correct'].append({
+testCasesFull['correct'].append({
     'params': {
         'func': lambda t, x: x,
         'begin': 0,
         'end': 1},
     'result': 0.5,
     'msg': "Identity function in [0, 1]"})
-testCases['correct'].append({
-    'params': {
-        'func': lambda t, x: 1,
-        'begin': 0,
-        'end': 1},
-    'result': 1.0,
-    'msg': "One-Function on first two integration nodes in [0,1]"})
 
-testCases['fail'].append({
+testCasesFull['fail'].append({
     'params': {
         'func': lambda t, x: 1.0,
         'begin': 0,
         'end': 0},
     'msg': "Zero interval"})
-testCases['fail'].append({
+testCasesFull['fail'].append({
     'params': {
         'func': lambda t, x: 1.0,
         'begin': 1,
@@ -146,7 +139,7 @@ def test_gauss_integrate_correct():
     """
     for method in testMethods:
         for n_points in range(testNumPoints[0], testNumPoints[1] + 1):
-            for case in testCases['correct']:
+            for case in testCasesFull['correct']:
                 case['n'] = n_points
                 case['method'] = method
                 yield correct_integrate, case['params'], \
@@ -158,7 +151,7 @@ def test_gauss_integrate_failures():
     """
     for method in testMethods:
         for n_points in range(testNumPoints[0], testNumPoints[1] + 1):
-            for case in testCases['fail']:
+            for case in testCasesFull['fail']:
                 case['n'] = n_points
                 case['method'] = method
                 yield failed_integrate, case['params'], case['msg']
@@ -208,6 +201,26 @@ class GaussTests(unittest.TestCase):
         with self.assertRaises(NotImplementedError):
             Gauss.integrate(n=10, method='lobatto')
 
+    def test_partial_integrate(self):
+        """
+        """
+        computed = Gauss.partial_integrate(
+            values=[1.0, 1.0, 1.0, 1.0],
+            t_begin=0,
+            t_end=1,
+            n=4,
+            tau_end=1,
+            method="lobatto")
+        _nodes = Gauss.lobatto_nodes(4)
+        _trans = Gauss.transform(0.0, 1.0)
+        expected = (_trans[0] * _nodes[2] + _trans[1]) - \
+                   (_trans[0] * _nodes[1] + _trans[1])
+        assert_almost_equal(computed, expected,
+                            msg=("One-Function on first two integration nodes" +
+                                 " in [0,1]" +
+                                 "\n\tcomputed: {:f}".format(computed) +
+                                 "\n\texpected: {:f}".format(expected)),
+                            places=None, delta=Config.PRECISION)
 
 if __name__ == "__main__":
     unittest.main()
