@@ -115,12 +115,16 @@ class SDC(object):
         :return:
         """
         # initialize solution array
+        #  0-based indizes:
+        #    1.: iteration
+        #    2.: coarse time step
+        #    3.: sub step in coarse time step
         self.__sol = np.zeros((self.iterations + 1, self.time_steps,
                                n_sub_values), dtype=float)
         self._error = np.zeros((self.iterations + 1, self.time_steps,
                                 n_sub_values), dtype=float)
-        # multi-dimensional array for relative reduction; all 1-based
-        #  indizes:
+        # multi-dimensional array for relative reduction
+        #  1-based indizes:
         #    1.: iteration
         #    2.: coarse time step
         #    3.: sub step in coarse time step
@@ -128,9 +132,13 @@ class SDC(object):
                                  n_sub_values), dtype=float)
 
         # matrix for time points of all integration points
+        #  0-based indizes:
+        #    1.: coarse time step
+        #    2.: sub time step in coarse step
         self._substeps = np.zeros((self.time_steps, n_sub_values), dtype=float)
 
         # delta of coarse time steps
+        #  (equidistant)
         self._dt_n = float(self.time_range[1] - self.time_range[0]) / \
             float(self.time_steps)
         assert self._dt_n > 0, \
@@ -183,12 +191,14 @@ class SDC(object):
 
                 # make sure the start of this coarse time step equals the end
                 #  point of the previous coarse time step
-                assert self._substeps[t_n_i][0] == \
-                    self._substeps[t_n_i - 1][-1], \
+                self._substeps[t_n_i][0] = self._substeps[t_n_i - 1][-1]
+                assert self._substeps[t_n_i][0] - \
+                    self._substeps[t_n_i - 1][-1] <= Config.PRECISION, \
                     "Start of this coarse time step not end point of " + \
                     "previous coarse time step: {: f} != {: f}" \
-                        .format(self._substeps[t_n_i][0],
-                                self._substeps[t_n_i - 1][-1])
+                    .format(self._substeps[t_n_i][0],
+                            self._substeps[t_n_i - 1][-1]) + \
+                    "\nself._substeps=" + str(self._substeps)
 
             # compute substep points for current coarse time step
             for t_m_i in range(0, n_sub_values):
@@ -197,31 +207,41 @@ class SDC(object):
                 if integrator == "lobatto":
                     # Gauss-Lobatto uses integration borders as integration
                     #  nodes make sure they are correct ...
-                    if t_m_i == 0:
-                        # (beginning of substep)
-                        assert self._substeps[t_n_i][0] == \
-                            _trans[0] * _nodes[0] + _trans[1], \
+                    if t_m_i == 0 and t_n_i > 0:
+                        # (beginning of substep of not the first coarse step)
+                        self._substeps[t_n_i][0] = self._substeps[t_n_i - 1][-1]
+                        assert self._substeps[t_n_i][0] - \
+                            (_trans[0] * _nodes[0] + _trans[1]) <= \
+                            Config.PRECISION, \
                             "First substep time point not equal first " + \
                             "integration node: {: f} != {: f}" \
                             .format(self._substeps[t_n_i][0],
                                     _trans[0] * _nodes[0] + _trans[1])
                     elif t_m_i == n_sub_values - 1:
                         # (end of substep)
-                        assert self._substeps[t_n_i][-1] == \
-                            _trans[0] * _nodes[-1] + _trans[1], \
-                            "Last substep time point not equal last " + \
-                            "integration node: {: f} != {: f}" \
+                        self._substeps[t_n_i][-1] = \
+                            self._substeps[t_n_i][0] + self._dt_n
+                        assert self._substeps[t_n_i][-1] - \
+                            (_trans[0] * _nodes[-1] + _trans[1]) <= \
+                            Config.PRECISION, \
+                            "Last substep time point [{:d}] not equal last " \
+                            .format(t_m_i) + \
+                            "integration node: {0: f} != {1: f} ({0: f}-{1: f}"\
                             .format(self._substeps[t_n_i][-1],
-                                    _trans[0] * _nodes[-1] + _trans[1])
+                                    _trans[0] * _nodes[-1] + _trans[1]) + \
+                            "= {: f} <= {: f})" \
+                            .format(self._substeps[t_n_i][-1] -
+                                    (_trans[0] * _nodes[-1] + _trans[1]),
+                                    Config.PRECISION)
                     else:
                         # ... and calculate intermediate nodes only
-                        self._substeps[t_n_i][t_m_i] = _trans[0] * \
-                            _nodes[t_m_i] + _trans[1]
+                        self._substeps[t_n_i][t_m_i] = \
+                            _trans[0] * _nodes[t_m_i] + _trans[1]
                 elif integrator == "legendre":
                     # Gauss-Legendre only uses inner interval points as
                     #  integration nodes
-                    self._substeps[t_n_i][t_m_i + 1] = _trans[0] * \
-                        _nodes[t_m_i] + _trans[1]
+                    self._substeps[t_n_i][t_m_i + 1] = \
+                        _trans[0] * _nodes[t_m_i] + _trans[1]
                 else:
                     # will not reach this, as it has raised previously
                     pass
