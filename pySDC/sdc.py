@@ -14,10 +14,6 @@ import pySDC.globals as Config
 from pySDC.integrate.gauss import Gauss
 
 
-def test_function(t, phi_t):
-    return np.ones(phi_t.size) * -1.0
-
-
 class SDC(object):
     """
     General Provider for the SDC algorithm
@@ -26,19 +22,18 @@ class SDC(object):
     def __init__(self):
         """
         Initialization
+
+        Sets default values for time_range ([0.0, 1.0]), time_steps (1),
+        num_substeps (4) and iterations (3) and initializes some utility
+        variables
         """
-        self.__function = test_function
-        self.__exact = lambda t: -t + 1.0
-        self.__initialValue = 1.0
         self.__timeRange = [0.0, 1.0]
         self.__timeSteps = 1
         self.__numSubsteps = 4
         self.__iterations = 3
         self.__sol = np.zeros((1, 1, 1), dtype=float)
-        self._substeps = np.zeros((self.time_steps, self.num_substeps + 2),
-                                  dtype=float)
-        self._dt_n = float(self.time_range[1] - self.time_range[0]) / \
-            float(self.time_steps)
+        self._substeps = np.zeros(1, dtype=float)
+        self._dt_n = 0.0
         self._relred = np.zeros((1, 1, 1), dtype=float)
         self._error = np.zeros((1, 1, 1), dtype=float)
 
@@ -60,8 +55,25 @@ class SDC(object):
         :type initial:      String
 
         :raises: * NotImplementedError (if `itengrator` is `legendre`)
-                 * ValueError (if `integrator` not `lobatto` or `legendre`)
+                 * ValueError (if `integrator` not `lobatto` or `legendre`;
+                   or if either fnc, exact or initial_value are not given.)
         """
+        # make sure necessary values are given
+        if self.fnc is None:
+            raise ValueError("There is no function to integrate-")
+        if self.exact is None:
+            raise ValueError("For now we need the exact solution to " +
+                             "calculate the error.")
+        if self.initial_value is None:
+            raise ValueError("No initial value given.")
+
+        self._substeps = np.zeros((self.time_steps, self.num_substeps + 2),
+                                  dtype=float)
+        self._dt_n = float(self.time_range[1] - self.time_range[0]) / \
+            float(self.time_steps)
+        self._relred = np.zeros((1, 1, 1), dtype=float)
+        self._error = np.zeros((1, 1, 1), dtype=float)
+
         # determine number of integration points per time step in dependency of
         #  integration method and whether it uses the interval borders as
         #  integration points (as Gauss-Lobatto) or not (as Gauss-Legendre)
@@ -279,7 +291,6 @@ class SDC(object):
         #  (of cause: skip initial value)
         for t_m_i in range(1, self.num_substeps + 1):
             self.sdc_step(k, t_n_i, _t_n, t_m_i, n_nodes, n_sub_values, integrator)
-        # END FOR t_m_i
 
         Config.LOG.info("Solution after iteration {:d}:".format(k))
         Config.LOG.info("t_m_i\t     t    \t    x(t) \treduction   |" +
