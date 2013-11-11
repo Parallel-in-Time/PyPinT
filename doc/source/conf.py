@@ -49,7 +49,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'pySDC'
-copyright = u'2013, Torbjörn Klatt'
+copyright = u'2013, PinT Research Group, Jülich Supercomputing Centre'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
