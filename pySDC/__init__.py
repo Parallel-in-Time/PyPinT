@@ -8,7 +8,7 @@ language.
 """
 
 from .integrate import *
-from . import sdc
+from .sdc import SDC
 from .globals import *
 
 __all__ = ["sdc"]
