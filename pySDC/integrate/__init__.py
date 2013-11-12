@@ -2,8 +2,8 @@
 Integration Routines
 """
 
-from . import quadrature
-from . import gauss
-from . import newton_cotes
+from .quadrature import Quadrature
+from .gauss import Gauss
+from .newton_cotes import NewtonCotes
 
 __all__ = ["quadrature", "newton_cotes", "gauss"]
