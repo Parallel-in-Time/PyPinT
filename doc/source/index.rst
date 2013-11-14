@@ -1,7 +1,7 @@
-Welcome to pySDC's documentation!
+Welcome to PyPinT's documentation!
 =================================
 
-.. automodule:: pySDC
+.. automodule:: PyPinT
 
 Table of Contents
 -----------------
@@ -11,7 +11,6 @@ Table of Contents
 
    requirements
    development
-   API Reference <pySDC>
    license
 
 Further Lists

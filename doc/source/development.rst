@@ -1,7 +1,7 @@
 Development
 ===========
 
-These lines should help in development of *pySDC*.
+These lines should help in development of *PyPinT*.
 
 
 Documentation
