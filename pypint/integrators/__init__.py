@@ -8,5 +8,6 @@ Integrators for Iterative Time Solvers
 
 from .node_providers import *
 from .weight_function_providers import *
+from .integrator_base import *
 
-__all__ = ['node_providers', 'weight_function_providers']
+__all__ = ['node_providers', 'weight_function_providers', 'IntegratorBase']

@@ -6,4 +6,6 @@ Analyzer Plugins for PyPinT
 .. moduleauthor:: Dieter Moser <d.moser@fz-juelich.de>
 """
 
-__all__ = []
+from .i_analyzer import *
+
+__all__ = ['IAnalyzer']

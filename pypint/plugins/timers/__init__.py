@@ -6,4 +6,6 @@ Timing Plugins for PyPinT
 .. moduleauthor:: Dieter Moser <d.moser@fz-juelich.de>
 """
 
-__all__ = []
+from .timer_base import *
+
+__all__ = ['TimerBase']

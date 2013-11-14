@@ -6,4 +6,6 @@ Logging Plugins for PyPinT
 .. moduleauthor:: Dieter Moser <d.moser@fz-juelich.de>
 """
 
-__all__ = []
+from .logger_base import *
+
+__all__ = ['LoggerBase']

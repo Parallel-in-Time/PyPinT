@@ -6,4 +6,6 @@ Level Transition Providers for Multi-Level Providers
 .. moduleauthor:: Dieter Moser <d.moser@fz-juelich.de>
 """
 
-__all__ = []
+from .i_level_transition_provider import *
+
+__all__ = ['ILevelTransitionProvider']

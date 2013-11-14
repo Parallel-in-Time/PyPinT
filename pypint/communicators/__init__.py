@@ -6,4 +6,7 @@ Communicators on top of Iterative Time Solvers
 .. moduleauthor:: Dieter Moser <d.moser@fz-juelich.de>
 """
 
-__all__ = []
+from .i_communication_provider import *
+from .i_linear_messaging import *
+
+__all__ = ['ICommunicationProvider', 'ILinearMessaging']

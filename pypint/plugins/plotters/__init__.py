@@ -6,4 +6,6 @@ Plotter Plugins for PyPinT
 .. moduleauthor:: Dieter Moser <d.moser@fz-juelich.de>
 """
 
-__all__ = []
+from .i_plotter import *
+
+__all__ = ['IPlotter']

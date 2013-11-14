@@ -6,4 +6,6 @@ Weight Function Providers for Integrators
 .. moduleauthor:: Dieter Moser <d.moser@fz-juelich.de>
 """
 
-__all__ = []
+from .i_weight_function import *
+
+__all__ = ['IWeightFunction']

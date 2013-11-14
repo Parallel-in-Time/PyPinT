@@ -6,4 +6,7 @@ Solutions of Iterative Time Solvers
 .. moduleauthor:: Dieter Moser <d.moser@fz-juelich.de>
 """
 
-__all__ = []
+from .i_solution import *
+from .i_multi_level_solution import *
+
+__all__ = ['ISolution', 'IMultiLevelSolution']

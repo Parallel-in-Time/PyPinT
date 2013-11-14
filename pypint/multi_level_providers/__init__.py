@@ -7,5 +7,6 @@ Multi-Level Providers for Iterative Time Solvers
 """
 
 from .level_transition_providers import *
+from .multi_level_provider import *
 
-__all__ = ['level_transition_providers']
+__all__ = ['level_transition_providers', 'MultiLevelProvider']

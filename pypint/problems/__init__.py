@@ -6,4 +6,7 @@ Problems for Iterative Time Solvers
 .. moduleauthor:: Dieter Moser <d.moser@fz-juelich.de>
 """
 
-__all__ = []
+from .i_problem import *
+from .i_initial_value_problem import *
+
+__all__ = ['IProblem', 'IInitialValueProblem']
