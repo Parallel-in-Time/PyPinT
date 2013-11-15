@@ -1,8 +1,9 @@
 # coding=utf-8
 
 import unittest
-from .node_providers_tests import *
-from .weight_function_providers_tests import *
+from .node_providers_tests import NodeProvidersTests
+from .weight_function_providers_tests import WeightFunctionProvidersTests
+
 
 class IntegratorsTests(unittest.TestSuite):
     def __init__(self):

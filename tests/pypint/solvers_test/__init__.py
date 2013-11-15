@@ -2,6 +2,7 @@
 
 import unittest
 
+
 class SolversTests(unittest.TestSuite):
     def __init__(self):
         pass

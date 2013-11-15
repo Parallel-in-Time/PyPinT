@@ -1,10 +1,11 @@
 # coding=utf-8
 
 import unittest
-from .analyzers_tests import *
-from .loggers_tests import *
-from .plotters_tests import *
-from .timers_tests import *
+from .analyzers_tests import AnalyzersTests
+from .loggers_tests import LoggersTests
+from .plotters_tests import PlottersTests
+from .timers_tests import TimersTests
+
 
 class PluginsTests(unittest.TestSuite):
     def __init__(self):

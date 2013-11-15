@@ -2,6 +2,7 @@
 
 import unittest
 
+
 class LevelTransitionProvidersTests(unittest.TestSuite):
     def __init__(self):
         pass

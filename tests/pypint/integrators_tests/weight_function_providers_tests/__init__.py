@@ -2,6 +2,7 @@
 
 import unittest
 
+
 class WeightFunctionProvidersTests(unittest.TestSuite):
     def __init__(self):
         pass

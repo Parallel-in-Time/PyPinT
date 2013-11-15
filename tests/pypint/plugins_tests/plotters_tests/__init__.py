@@ -2,6 +2,7 @@
 
 import unittest
 
+
 class PlottersTests(unittest.TestSuite):
     def __init__(self):
         pass

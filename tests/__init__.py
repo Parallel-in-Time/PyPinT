@@ -2,7 +2,7 @@
 
 import unittest
 import nose
-from tests.pypint import *
+from tests.pypint import PyPinTTests
 
 
 class PyPintTestSuite(unittest.TestSuite):

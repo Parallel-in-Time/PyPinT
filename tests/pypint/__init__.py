@@ -1,13 +1,14 @@
 # coding=utf-8
 
 import unittest
-from .communicators_tests import *
-from .integrators_tests import *
-from .multi_level_providers_tests import *
-from .plugins_tests import *
-from .problems_tests import *
-from .solutions_tests import *
-from .solvers_test import *
+from .communicators_tests import CommunicatorsTests
+from .integrators_tests import IntegratorsTests
+from .multi_level_providers_tests import MultiLevelProvidersTests
+from .plugins_tests import PluginsTests
+from .problems_tests import ProblemsTests
+from .solutions_tests import SolutionsTests
+from .solvers_test import SolversTests
+
 
 class PyPinTTests(unittest.TestSuite):
     def __init__(self):
