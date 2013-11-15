@@ -25,3 +25,19 @@ solutions Package
     :undoc-members:
     :show-inheritance:
 
+:mod:`iterative_solution` Module
+--------------------------------
+
+.. automodule:: pypint.solutions.iterative_solution
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+:mod:`simple_solution` Module
+-----------------------------
+
+.. automodule:: pypint.solutions.simple_solution
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
