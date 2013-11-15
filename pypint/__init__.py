@@ -11,3 +11,7 @@ routines to a zoo of time integrators in various applications.
 .. moduleauthor:: Torbjörn Klatt <t.klatt@fz-juelich.de>
 .. moduleauthor:: Dieter Moser <d.moser@fz-juelich.de>
 """
+
+from sys import version_info
+if version_info.major < 3:
+    raise RuntimeError("PyPinT requires Python 3.x")
