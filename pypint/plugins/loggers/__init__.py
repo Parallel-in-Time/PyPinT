@@ -7,5 +7,6 @@ Logging Plugins for PyPinT
 """
 
 from .logger_base import *
+from .console_logger import ConsoleLogger
 
-__all__ = ['LoggerBase']
+__all__ = ['LoggerBase', 'ConsoleLogger']
