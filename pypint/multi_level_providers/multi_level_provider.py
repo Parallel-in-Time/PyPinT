@@ -4,8 +4,6 @@
 .. moduleauthor:: Torbjörn Klatt <t.klatt@fz-juelich.de>
 """
 
-from pypint.multi_level_providers.level_transition_providers import *
-
 
 class MultiLevelProvider(object):
     def __init__(self):

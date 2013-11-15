@@ -4,7 +4,7 @@
 .. moduleauthor: Torbjörn Klatt <t.klatt@fz-juelich.de>
 """
 
-from pypint.problems.i_problem import *
+from pypint.problems.i_problem import IProblem
 
 
 class IInitialValueProblem(IProblem):

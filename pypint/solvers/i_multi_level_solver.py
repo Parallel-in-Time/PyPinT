@@ -5,7 +5,6 @@
 """
 
 from pypint.solvers.i_iterative_time_solver import IIterativeTimeSolver
-from pypint.multi_level_providers.multi_level_provider import *
 
 
 class IMultiLevelSolver(IIterativeTimeSolver):

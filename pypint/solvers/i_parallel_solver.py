@@ -4,8 +4,6 @@
 .. moduleauthor: Torbjörn Klatt <t.klatt@fz-juelich.de>
 """
 
-from pypint.communicators.i_communication_provider import *
-
 
 class IParallelSolver(object):
     """

@@ -3,7 +3,7 @@
 .. moduleauthor:: Torbjörn Klatt <t.klatt@fz-juelich.de>
 """
 
-from .logger_base import *
+from pypint.plugins.loggers.logger_base import LoggerBase
 
 import sys as sys
 import logging as logging

@@ -4,7 +4,7 @@
 .. moduleauthor:: Torbjörn Klatt <t.klatt@fz-juelich.de>
 """
 
-from .i_communication_provider import *
+from pypint.communicators.i_communication_provider import ICommunicationProvider
 
 
 class ILinearMessaging(ICommunicationProvider):

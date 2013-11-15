@@ -4,7 +4,7 @@
 .. moduleauthor:: Torbjörn Klatt <t.klatt@fz-juelich.de>
 """
 
-from pypint.solutions.i_solution import *
+from pypint.solutions.i_solution import ISolution
 
 
 class IMultiLevelSolution(ISolution):

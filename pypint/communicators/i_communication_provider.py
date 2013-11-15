@@ -4,7 +4,7 @@
 .. moduleauthor:: Torbjörn Klatt <t.klatt@fz-juelich.de>
 """
 
-from pypint.plugins.loggers.logger_base import *
+from pypint.plugins.loggers.logger_base import LoggerBase
 
 
 class ICommunicationProvider(object):
