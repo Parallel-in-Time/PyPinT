@@ -1,14 +1,16 @@
-__all__ = []
+# coding=utf-8
 
 import unittest
 import nose
-from tests.pySDC.__init__ import PySDCTests
+from tests.pypint import *
 
 
-class PySDCTestSuite(unittest.TestSuite):
+class PyPintTestSuite(unittest.TestSuite):
     def __init__(self):
-        self.addTests(PySDCTests())
+        self.addTests(PyPinTTests())
 
 
 if __name__ == "__main__":
     nose.main()
+
+__all__ = ["PyPintTestSuite"]
