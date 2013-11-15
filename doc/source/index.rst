@@ -1,7 +1,7 @@
 Welcome to PyPinT's documentation!
-=================================
+==================================
 
-.. automodule:: PyPinT
+.. automodule:: pypint
 
 Table of Contents
 -----------------
