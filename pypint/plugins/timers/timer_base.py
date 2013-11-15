@@ -20,7 +20,7 @@ class TimerBase(object):
         self.__end_time = time.time()
 
     def past(self):
-        if self.__end_time is not None:
+        if self.__end_time is None:
             self.__end_time = time.time()
 
         return self.__end_time - self.__start_time
