@@ -7,9 +7,9 @@
 
 class LoggerBase(object):
     def __init__(self):
-        self.__sink = None
-        self.__level = 5
-        self.__format = None
+        self._sink = None
+        self._level = 5
+        self._format = None
 
     def info(self, message):
         pass
@@ -28,24 +28,24 @@ class LoggerBase(object):
 
     @property
     def sink(self):
-        return self.__sink
+        return self._sink
 
     @sink.setter
     def sink(self, sink):
-        self.__sink = sink
+        self._sink = sink
 
     @property
     def level(self):
-        return self.__level
+        return self._level
 
     @level.setter
     def level(self, level):
-        self.__level = level
+        self._level = level
 
     @property
     def format(self):
-        return self.__format
+        return self._format
 
     @format.setter
     def format(self, format):
-        self.__format = format
+        self._format = format

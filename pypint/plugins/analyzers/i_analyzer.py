@@ -4,16 +4,17 @@
 .. moduleauthor:: Torbjörn Klatt <t.klatt@fz-juelich.de>
 """
 
-from pypint.plugins.loggers import *
+from pypint.plugins.loggers.logger_base import LoggerBase
+
 
 class IAnalyzer(object):
     def __init__(self):
-        self.__solutions = []
-        self.__logger = LoggerBase
-        self.__plotter = None
+        self._solutions = []
+        self._logger = LoggerBase
+        self._plotter = None
 
     def run(self):
         pass
 
     def add_solution(self, solution):
-        self.__solutions.append(solution)
+        self._solutions.append(solution)

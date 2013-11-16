@@ -7,20 +7,20 @@
 
 class INodes(object):
     def __init__(self):
-        self.__num_nodes = None
-        self.__nodes = None
+        self._num_nodes = None
+        self._nodes = None
 
     def init(self, num_nodes):
         pass
 
     @property
     def nodes(self):
-        return self.__nodes
+        return self._nodes
 
     @property
     def num_nodes(self):
-        return self.__num_nodes
+        return self._num_nodes
 
     @num_nodes.setter
     def num_nodes(self, num_nodes):
-        self.__num_nodes = num_nodes
+        self._num_nodes = num_nodes

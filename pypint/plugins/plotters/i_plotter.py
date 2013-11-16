@@ -7,7 +7,7 @@
 
 class IPlotter(object):
     def __init__(self):
-        self.__file_name = None
+        self._file_name = None
 
     def plot(self):
         pass

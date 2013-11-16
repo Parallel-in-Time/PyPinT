@@ -7,9 +7,9 @@
 
 class IntegratorBase(object):
     def __init__(self):
-        self.__nodes = None
-        self.__weights_function = None
-        self.__weights = None
+        self._nodes = None
+        self._weights_function = None
+        self._weights = None
 
     def init(self, nodes_type, num_nodes, weights_function):
         pass
@@ -19,8 +19,8 @@ class IntegratorBase(object):
 
     @property
     def nodes(self):
-        return self.__nodes.nodes
+        return self._nodes.nodes
 
     @property
     def weights(self):
-        return self.__weights
+        return self._weights

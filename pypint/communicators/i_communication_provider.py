@@ -9,9 +9,9 @@ from pypint.plugins.loggers.logger_base import LoggerBase
 
 class ICommunicationProvider(object):
     def __init__(self):
-        self.__num_compute_nodes = None
-        self.__compute_nodes = None
-        self.__logger = LoggerBase
+        self._num_compute_nodes = None
+        self._compute_nodes = None
+        self._logger = LoggerBase
 
     def get_neighbours(self, node_id):
         pass
@@ -21,4 +21,4 @@ class ICommunicationProvider(object):
 
     @property
     def num_compute_nodes(self):
-        return self.__num_compute_nodes
+        return self._num_compute_nodes
