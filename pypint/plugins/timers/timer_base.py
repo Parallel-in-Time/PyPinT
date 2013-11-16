@@ -9,18 +9,18 @@ import time as time
 
 class TimerBase(object):
     def __init__(self):
-        self.__start_time = None
-        self.__end_time = None
+        self._start_time = None
+        self._end_time = None
 
     def start(self):
-        self.__start_time = time.time()
-        self.__end_time = None
+        self._start_time = time.time()
+        self._end_time = None
 
     def stop(self):
-        self.__end_time = time.time()
+        self._end_time = time.time()
 
     def past(self):
-        if self.__end_time is None:
-            self.__end_time = time.time()
+        if self._end_time is None:
+            self._end_time = time.time()
 
-        return self.__end_time - self.__start_time
+        return self._end_time - self._start_time

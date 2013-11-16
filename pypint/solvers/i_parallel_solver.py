@@ -11,12 +11,12 @@ class IParallelSolver(object):
     """
 
     def __init__(self):
-        self.__communicator = None
+        self._communicator = None
 
     @property
     def communicator(self):
-        return self.__communicator
+        return self._communicator
 
     @communicator.setter
     def communicator(self, communicator):
-        self.__communicator = communicator
+        self._communicator = communicator

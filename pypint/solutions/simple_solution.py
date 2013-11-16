@@ -16,9 +16,9 @@ class SimpleSolution(ISolution):
     """
     def __init__(self):
         super().__init__()
-        self.__data = np.array()
-        self.__used_iterations = 0
-        self.__reduction = 0.0
+        self._data = np.array()
+        self._used_iterations = 0
+        self._reduction = 0.0
 
     @property
     def data(self):
@@ -37,11 +37,11 @@ class SimpleSolution(ISolution):
 
         :raises: ValueError if ``data`` is not a ``numpy.ndarray``
         """
-        return self.__data
+        return self._data
 
     @data.setter
     def data(self, data):
         if not isinstance(data, np.ndarray):
             raise ValueError("pypint.solutions.SimpleSolution.data():" +
                              "Given data is not a numpy.ndarray.")
-        self.__data = data
+        self._data = data
