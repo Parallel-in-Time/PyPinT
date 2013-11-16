@@ -7,7 +7,7 @@
 
 class IWeightFunction(object):
     def __init__(self):
-        self.__weights = None
+        self._weights = None
 
     def init(self, function):
         pass
@@ -17,4 +17,4 @@ class IWeightFunction(object):
 
     @property
     def weights(self):
-        return self.__weights
+        return self._weights

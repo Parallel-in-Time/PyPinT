@@ -14,50 +14,50 @@ class IIterativeTimeSolver(object):
         """
 
         """
-        self.__problem = None
-        self.__logger = None
-        self.__timer = None
-        self.__max_iterations = -1
-        self.__min_reduction = -1
+        self._problem = None
+        self._logger = None
+        self._timer = None
+        self._max_iterations = -1
+        self._min_reduction = -1
 
     def init(self, problem):
-        self.__problem = problem
+        self._problem = problem
 
     def run(self):
         return None
 
     @property
     def problem(self):
-        return self.__problem
+        return self._problem
 
     @property
     def logger(self):
-        return self.__logger
+        return self._logger
 
     @logger.setter
     def logger(self, logger):
-        self.__logger = logger
+        self._logger = logger
 
     @property
     def timer(self):
-        return self.__timer
+        return self._timer
 
     @timer.setter
     def timer(self, timer):
-        self.__timer = timer
+        self._timer = timer
 
     @property
     def max_iterations(self):
-        return self.__max_iterations
+        return self._max_iterations
 
     @max_iterations.setter
     def max_iterations(self, max_iterations):
-        self.__max_iterations = max_iterations
+        self._max_iterations = max_iterations
 
     @property
     def min_reduction(self):
-        return self.__min_reduction
+        return self._min_reduction
 
     @min_reduction.setter
     def min_reduction(self, min_reduction):
-        self.__min_reduction = min_reduction
+        self._min_reduction = min_reduction
