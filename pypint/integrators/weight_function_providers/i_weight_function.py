@@ -13,8 +13,22 @@ class IWeightFunction(object):
         pass
 
     def evaluate(self, nodes):
+        """
+        computes weights for given nodes based on set polynomial weight function
+
+        :param nodes: array of nodes to compute weights for
+        :type nodes:  numpy.ndarray
+        :returns:     computed weights
+        :rtype:       numpy.ndarray
+        """
         pass
 
     @property
     def weights(self):
+        """
+        accessor for computed weights
+
+        :return: computed weights
+        :rtype:  numpy.ndarray
+        """
         return self._weights
