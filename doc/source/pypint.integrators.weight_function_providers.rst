@@ -17,3 +17,11 @@ weight_function_providers Package
     :undoc-members:
     :show-inheritance:
 
+:mod:`polynomial_weight_function` Module
+----------------------------------------
+
+.. automodule:: pypint.integrators.weight_function_providers.polynomial_weight_function
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
