@@ -10,19 +10,34 @@ import numpy as np
 
 class GaussLobattoNodes(INodes):
     """
-    provider for Gauss-Lobatto integration nodes with variable count
+    Summary
+    -------
+    Provider for Gauss-Lobatto integration nodes with variable count.
+
+    Extended Summary
+    ----------------
+
+    Examples
+    --------
     """
     def __init__(self):
         super().__init__()
 
     def init(self, n_nodes):
         """
-        initializes and computes Gauss-Lobatto nodes
+        Summary
+        -------
+        Initializes and computes Gauss-Lobatto nodes.
 
-        :param n_nodes: number of nodes
-        :type n_nodes:  integer
+        Parameters
+        ----------
+        n_nodes : integer
+            The number of desired Gauss-Lobatto nodes
 
-        :raises: see :py:func:`.num_nodes`
+        See Also
+        --------
+        pypint.integrators.node_providers.i_nodes.INodes.init
+            overridden method
         """
         self.num_nodes = n_nodes
         self._nodes = np.zeros(self.num_nodes)
@@ -31,20 +46,19 @@ class GaussLobattoNodes(INodes):
     @property
     def num_nodes(self):
         """
-        number of nodes
+        Summary
+        -------
+        Accessor of number of Gauss-Lobatto nodes.
 
-        **Getter**
+        Raises
+        ------
+        ValueError
+            If ``n_nodes`` is smaller than 2 *(only Setter)*.
 
-        :return: number of nodes
-        :rtype:  integer
-
-
-        **Setter**
-
-        :param n_nodes: number of desired nodes
-        :type n_nodes:  integer
-
-        :raises: **ValueError** if ``n_nodes`` smaller 2
+        See Also
+        --------
+        pypint.integrators.node_providers.i_nodes.INodes.num_nodes
+            overridden method
         """
         return self._num_nodes
 
