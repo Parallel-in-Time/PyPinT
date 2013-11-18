@@ -95,9 +95,9 @@ class GaussLegendreNodes(INodes):
     @num_nodes.setter
     def num_nodes(self, n_nodes):
         super(self.__class__, self.__class__).num_nodes.fset(self, n_nodes)
-        if n_nodes < 2:
+        if n_nodes < 1:
             raise ValueError(func_name(self) +
-                             "Gauss-Legendre with less than 2 nodes doesn't make any sense.")
+                             "Gauss-Legendre with less than one node doesn't make any sense.")
         self._num_nodes = n_nodes
 
     def _compute_nodes(self):
@@ -135,7 +135,7 @@ class GaussLegendreNodes(INodes):
         # Moreover, comp_mat will be constructed in such a way that it is
         # symmetrical.
         linspace = np.linspace(start=1, stop=self.num_nodes - 1,
-                        num=self.num_nodes - 1)
+                               num=self.num_nodes - 1)
         a = linspace / np.sqrt(4.0 * linspace ** 2 - 1.0)
         comp_mat = np.diag(a, 1) + np.diag(a, -1)
 
