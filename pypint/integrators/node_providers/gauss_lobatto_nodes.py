@@ -107,12 +107,15 @@ class GaussLobattoNodes(INodes):
         """
         Summary
         -------
-        Computes the Gauss-Lobatto Nodes via a root calculation of derivatives of the legendre polynomials
+        Computes Gauss-Lobatto integration nodes.
+
+        Extended Summary
+        ----------------
+        Calculates the Gauss-Lobatto integration nodes via a root calculation
+        of derivatives of the legendre polynomials.
         Note that the precision of float 64 is not guarantied.
-        See Also
-        --------
-        .INodes.
         """
-        m=self.num_nodes
-        roots=leg.legroots(leg.legder(np.array([0]*(m-1)+[1],dtype=np.float64)))
-        self.nodes=np.array(np.append([-1.0],np.append(roots,[1.0])),dtype=np.float64)
+        roots = leg.legroots(leg.legder(np.array([0] * (self.num_nodes - 1) +
+                                                 [1], dtype=np.float64)))
+        self._nodes = np.array(np.append([-1.0], np.append(roots, [1.0])),
+                               dtype=np.float64)

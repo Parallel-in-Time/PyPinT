@@ -75,10 +75,11 @@ class IntegratorBase(object):
                              "Given nodes type is not a valid type: {}"
                              .format(nodes_type.__name__))
         if isinstance(weights_function, dict):
-            if not isinstance(weights_function["class"], IWeightFunction):
+            if "class" not in weights_function or \
+                    not isinstance(weights_function["class"], IWeightFunction):
                 raise ValueError(func_name(self) +
                                  "Given weight function is not a valid type: {}"
-                                 .format(weights_function.__name__))
+                                 .format(weights_function))
         if not isinstance(num_nodes, int):
             raise ValueError(func_name(self) +
                              "Number of nodes need to be an integer (not {})."
@@ -86,7 +87,8 @@ class IntegratorBase(object):
         self._nodes = nodes_type
         self._nodes.init(num_nodes)
         self._weights_function = weights_function["class"]
-        _weight_function_options = weights_function
+        # copy() is necessary as dictionaries are passed by reference
+        _weight_function_options = weights_function.copy()
         del _weight_function_options["class"]
         self._weights_function.init(**_weight_function_options)
         self._weights_function.evaluate(self._nodes.nodes)
