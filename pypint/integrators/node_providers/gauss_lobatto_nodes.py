@@ -23,7 +23,7 @@ class GaussLobattoNodes(INodes):
     def __init__(self):
         super().__init__()
 
-    def init(self, n_nodes):
+    def init(self, n_nodes, interval=None):
         """
         Summary
         -------
@@ -42,6 +42,22 @@ class GaussLobattoNodes(INodes):
         self.num_nodes = n_nodes
         self._nodes = np.zeros(self.num_nodes)
         self._compute_nodes()
+        self.interval = interval
+        if interval is not None:
+            self.transform(self.interval)
+
+    @property
+    def interval(self):
+        return self._interval
+
+    @interval.setter
+    def interval(self, interval):
+        if interval is None:
+            self._interval = np.array([-1.0, 1.0])
+        elif not isinstance(interval, np.ndarray) or interval.size != 2:
+            ValueError("")
+        else:
+            self._interval = interval
 
     @property
     def num_nodes(self):

@@ -4,6 +4,8 @@
 .. moduleauthor: Torbjörn Klatt <t.klatt@fz-juelich.de>
 """
 
+import numpy as np
+
 
 class INodes(object):
     """
@@ -18,8 +20,9 @@ class INodes(object):
     def __init__(self):
         self._num_nodes = None
         self._nodes = None
+        self._interval = None
 
-    def init(self, n_nodes):
+    def init(self, n_nodes, interval=None):
         """
         Summary
         -------
@@ -36,6 +39,19 @@ class INodes(object):
         specializations of this interface.
         """
         pass
+
+    def transform(self):
+        # TODO
+
+    @property
+    def interval(self):
+        return self._interval
+
+    @interval.setter
+    def interval(self, interval):
+        if not isinstance(interval, np.ndarray) or interval.size != 2:
+            ValueError("")
+        self._interval = interval
 
     @property
     def nodes(self):
