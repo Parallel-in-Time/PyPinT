@@ -6,6 +6,7 @@
 
 from .i_nodes import INodes
 import numpy as np
+from pypint.utilities import *
 
 
 class GaussLobattoNodes(INodes):
@@ -94,11 +95,11 @@ class GaussLobattoNodes(INodes):
     def num_nodes(self, n_nodes):
         super(self.__class__, self.__class__).num_nodes.fset(self, n_nodes)
         if n_nodes < 2:
-            raise ValueError(self.__qualname__ + ".init(): " +
+            raise ValueError(func_name(self) +
                              "Gauss-Lobatto with less than 3 nodes doesn't make any sense.")
         self._num_nodes = n_nodes
 
     def _compute_nodes(self):
         # TODO: Implement computation of Gauss-Lobatto nodes
-        raise NotImplementedError(self.__qualname__ + "._compute_nodes(): " +
+        raise NotImplementedError(func_name(self) +
                                   "Computation of nodes not yet implemented.")

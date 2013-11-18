@@ -5,6 +5,7 @@
 """
 
 import numpy as np
+from pypint.utilities import *
 
 
 class INodes(object):
@@ -83,7 +84,7 @@ class INodes(object):
     @interval.setter
     def interval(self, interval):
         if not isinstance(interval, np.ndarray) or interval.size != 2:
-            ValueError(self.__qualname__ + ".interval(): " +
+            ValueError(func_name(self) +
                        "Given interval is not a numpy.ndarray or "
                        "is not of size 2: {:s} ({:s})"
                        .format(interval, type(interval)))

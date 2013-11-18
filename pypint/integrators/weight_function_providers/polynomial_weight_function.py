@@ -6,6 +6,7 @@
 
 from pypint.integrators.weight_function_providers.i_weight_function import IWeightFunction
 import numpy as np
+from pypint.utilities import *
 
 
 class PolynomialWeightFunction(IWeightFunction):
@@ -62,7 +63,7 @@ class PolynomialWeightFunction(IWeightFunction):
         super().init(coeffs, func)
         if func is not None and isinstance(func, str):
             # TODO: implement parsing of polynomial function string
-            raise NotImplementedError(self.__qualname__ + ".init(): " +
+            raise NotImplementedError(func_name(self) +
                                       "Parsing of polynomial function as string not yet possible.")
         elif coeffs is not None and \
                 (isinstance(coeffs, np.ndarray) or isinstance(coeffs, list)):
@@ -70,7 +71,7 @@ class PolynomialWeightFunction(IWeightFunction):
 
     def evaluate(self, nodes):
         super().evaluate(nodes)
-        raise NotImplementedError(self.__qualname__ + ".evaluate(): " +
+        raise NotImplementedError(func_name(self) +
                                   "Not yet implemented.")
 
     def add_coefficient(self, coefficient, power):
@@ -103,7 +104,7 @@ class PolynomialWeightFunction(IWeightFunction):
         >>> polyWeights.add_coefficient(42, 0)
         """
         if not isinstance(power, int) or power < 0:
-            raise ValueError(self.__qualname__ + ".add_coefficient(): " +
+            raise ValueError(func_name(self) +
                              "Given power ({}) is not an integer or is negative"
                              .format(power))
 
@@ -146,5 +147,5 @@ class PolynomialWeightFunction(IWeightFunction):
         if isinstance(coefficients, np.ndarray):
             self._coefficients = coefficients
         else:
-            raise ValueError(self.__qualname__ + ".coefficients(): "
+            raise ValueError(func_name(self) +
                              "Coefficients need to be a numpy.ndarray")

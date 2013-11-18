@@ -6,6 +6,7 @@
 
 from .node_providers.i_nodes import INodes
 from .weight_function_providers.i_weight_function import IWeightFunction
+from pypint.utilities import *
 
 
 class IntegratorBase(object):
@@ -70,16 +71,16 @@ class IntegratorBase(object):
         >>> integrator.init(**options)
         """
         if not isinstance(nodes_type, INodes):
-            raise ValueError(self.__qualname__ + ".init(): " +
+            raise ValueError(func_name(self) +
                              "Given nodes type is not a valid type: {}"
                              .format(nodes_type.__name__))
         if isinstance(weights_function, dict):
             if not isinstance(weights_function["class"], IWeightFunction):
-                raise ValueError(self.__qualname__ + ".init(): " +
+                raise ValueError(func_name(self) +
                                  "Given weight function is not a valid type: {}"
                                  .format(weights_function.__name__))
         if not isinstance(num_nodes, int):
-            raise ValueError(self.__qualname__ + ".init(): " +
+            raise ValueError(func_name(self) +
                              "Number of nodes need to be an integer (not {})."
                              .format(num_nodes.__name__))
         self._nodes = nodes_type
