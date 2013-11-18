@@ -22,8 +22,11 @@ class GaussLegendreNodes(INodes):
     Examples
     --------
     """
+
+    std_interval = np.array([-1.0, 1.0])
+
     def __init__(self):
-        super().__init__()
+        super(GaussLegendreNodes, self).__init__()
 
     def init(self, n_nodes, interval=None):
         """
@@ -41,7 +44,7 @@ class GaussLegendreNodes(INodes):
         .INodes.init
             overridden method
         """
-        super().init(n_nodes, interval)
+        super(GaussLegendreNodes, self).init(n_nodes, interval)
         self.num_nodes = n_nodes
         self._nodes = np.zeros(self.num_nodes)
         self._compute_nodes()

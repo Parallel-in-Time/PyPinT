@@ -19,7 +19,12 @@ class INodes(object):
     This is an abstract interface for providers of integration nodes.
     """
 
-    _std_interval = np.zeros([0, 1])
+    std_interval = np.array([0.0, 0.0])
+    """
+    Summary
+    -------
+    Standard interval for this integration nodes.
+    """
 
     def __init__(self):
         self._num_nodes = None
@@ -57,23 +62,31 @@ class INodes(object):
         """
         Summary
         -------
-        Transforms computed integration nodes to fit stored interval, using the standard interval of the
-        used Method e.g. [-1, 1] for Gauss-Lobatto
+        Transforms computed integration nodes to fit stored interval, using the
+        standard interval of the used Method e.g. :math:`[-1, 1]` for
+        Gauss-Lobatto.
 
         Raises
         ------
-        AssertionError if the standard interval is not suited for transformation
+        ValueError
+            If the standard interval is not suited for transformation, i.e. it
+            is not a ``numpy.ndarray`` of size 2 and not positive.
 
         Notes
         -----
-        It may be this transformation is numerically unconvenient because of the loss of significance
+        It may be this transformation is numerically unconvenient because of
+        the loss of significance.
         """
-
-        assert isinstance(self._std_interval,np.ndarray) and self._std_interval.size == 2 \
-                                and self._std_interval[0]<self._std_interval[1]
-        b = ( self.interval[0]-self.interval[1] ) / (self._std_interval[0] - self._std_interval[1])
-        a = self.interval[0] - b * self._std_interval[0]
-        self.nodes = a + b * self.nodes
+        if not isinstance(self.std_interval, np.ndarray) \
+            and self.std_interval.size != 2 \
+                and self.std_interval[0] >= self.std_interval[1]:
+            raise ValueError(func_name(self) +
+                             "Stored standard interval is not suitable: {:s}"
+                             .format(self.std_interval))
+        b = (self.interval[0] - self.interval[1]) \
+            / (self.std_interval[0] - self.std_interval[1])
+        a = self.interval[0] - b * self.std_interval[0]
+        self._nodes = a + b * self._nodes
 
     @property
     def interval(self):

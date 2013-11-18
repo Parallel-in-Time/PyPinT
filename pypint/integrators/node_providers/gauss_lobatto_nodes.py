@@ -23,10 +23,10 @@ class GaussLobattoNodes(INodes):
     --------
     """
 
-    _std_interval = np.array([-1.0, 1.0])
+    std_interval = np.array([-1.0, 1.0])
 
     def __init__(self):
-        super().__init__()
+        super(GaussLobattoNodes, self).__init__()
 
     def init(self, n_nodes, interval=None):
         """
@@ -44,7 +44,7 @@ class GaussLobattoNodes(INodes):
         .INodes.init
             overridden method
         """
-        super().init(n_nodes, interval)
+        super(GaussLobattoNodes, self).init(n_nodes, interval)
         self.num_nodes = n_nodes
         self._nodes = np.zeros(self.num_nodes)
         self._compute_nodes()
