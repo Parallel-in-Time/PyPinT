@@ -36,15 +36,16 @@ class GaussLobattoNodes(INodes):
 
         See Also
         --------
-        pypint.integrators.node_providers.i_nodes.INodes.init
+        .INodes.init
             overridden method
         """
+        super().init(n_nodes, interval)
         self.num_nodes = n_nodes
         self._nodes = np.zeros(self.num_nodes)
         self._compute_nodes()
         self.interval = interval
         if interval is not None:
-            self.transform(self.interval)
+            super().transform()
 
     @property
     def interval(self):
@@ -62,19 +63,13 @@ class GaussLobattoNodes(INodes):
         .INodes.interval
             overridden accessor
         """
-        return self._interval
+        return super(self.__class__, self.__class__).interval.fget(self)
 
     @interval.setter
     def interval(self, interval):
         if interval is None:
             self._interval = np.array([-1.0, 1.0])
-        elif not isinstance(interval, np.ndarray) or interval.size != 2:
-            ValueError(self.__qualname__ + ".interval(): " +
-                       "Given interval is not a numpy.ndarray or "
-                       "is not of size 2: {:s} ({:s})"
-                       .format(interval, type(interval)))
-        else:
-            self._interval = interval
+        super(self.__class__, self.__class__).interval.fset(self, interval)
 
     @property
     def num_nodes(self):
@@ -90,13 +85,14 @@ class GaussLobattoNodes(INodes):
 
         See Also
         --------
-        pypint.integrators.node_providers.i_nodes.INodes.num_nodes
+        .INodes.num_nodes
             overridden method
         """
-        return self._num_nodes
+        return super(self.__class__, self.__class__).num_nodes.fget(self)
 
     @num_nodes.setter
     def num_nodes(self, n_nodes):
+        super(self.__class__, self.__class__).num_nodes.fset(self, n_nodes)
         if n_nodes < 2:
             raise ValueError(self.__qualname__ + ".init(): " +
                              "Gauss-Lobatto with less than 3 nodes doesn't make any sense.")

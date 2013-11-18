@@ -19,7 +19,7 @@ class IWeightFunction(object):
     def __init__(self):
         self._weights = None
 
-    def init(self, function):
+    def init(self, *args, **kwargs):
         """
         Summary
         -------
@@ -27,7 +27,7 @@ class IWeightFunction(object):
 
         Parameters
         ----------
-        function
+        args, kwargs
             Implementation defined type to specify the weight function's
             parameters.
 
