@@ -49,15 +49,15 @@ class IterativeSolution(ISolution):
                  next iteration to set.
         """
         if not isinstance(data, np.ndarray):
-            raise ValueError(self.__class__ + ".add_solution(): " +
+            raise ValueError(self.__qualname__ + ".add_solution(): " +
                              "Given data is not a numpy.ndarray.")
         if len(self._data) >= iteration:
-            raise ValueError(self.__class__ + ".add_solution(): " +
+            raise ValueError(self.__qualname__ + ".add_solution(): " +
                              "Data for iteration {:d} is already present."
                              .format(iteration))
         if len(self._data) < iteration - 1:
             # TODO: fill in unused solutions
-            raise NotImplementedError(self.__class__ + ".add_solution(): " +
+            raise NotImplementedError(self.__qualname__ + ".add_solution(): " +
                                       "Skipping of solutions not yet implemented.")
         # append the given solution as the last one
         #  due to previous checks it will have the correct index
@@ -70,6 +70,6 @@ class IterativeSolution(ISolution):
     @data.setter
     def data(self, data):
         if not isinstance(data, np.ndarray):
-            raise ValueError(self.__class__ + ".data(): " +
+            raise ValueError(self.__qualname__ + ".data(): " +
                              "Given data is not a numpy.ndarray.")
         self._data = data
