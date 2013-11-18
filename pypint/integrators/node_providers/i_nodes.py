@@ -18,6 +18,9 @@ class INodes(object):
     ----------------
     This is an abstract interface for providers of integration nodes.
     """
+
+    _std_interval = np.zeros([0, 1])
+
     def __init__(self):
         self._num_nodes = None
         self._nodes = None
@@ -54,9 +57,23 @@ class INodes(object):
         """
         Summary
         -------
-        Transforms computed integration nodes to fit stored interval.
+        Transforms computed integration nodes to fit stored interval, using the standard interval of the
+        used Method e.g. [-1, 1] for Gauss-Lobatto
+
+        Raises
+        ------
+        AssertionError if the standard interval is not suited for transformation
+
+        Notes
+        -----
+        It may be this transformation is numerically unconvenient because of the loss of significance
         """
-        # TODO: implement transformation of integration nodes
+
+        assert isinstance(self._std_interval,np.ndarray) and self._std_interval.size == 2 \
+                                and self._std_interval[0]<self._std_interval[1]
+        b = ( self.interval[0]-self.interval[1] ) / (self._std_interval[0] - self._std_interval[1])
+        a = self.interval[0] - b * self._std_interval[0]
+        self.nodes = a + b * self.nodes
 
     @property
     def interval(self):

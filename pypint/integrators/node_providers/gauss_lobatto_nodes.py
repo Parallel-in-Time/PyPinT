@@ -6,6 +6,7 @@
 
 from .i_nodes import INodes
 import numpy as np
+import numpy.polynomial.legendre as leg
 from pypint.utilities import *
 
 
@@ -21,6 +22,9 @@ class GaussLobattoNodes(INodes):
     Examples
     --------
     """
+
+    _std_interval = np.array([-1.0, 1.0])
+
     def __init__(self):
         super().__init__()
 
@@ -100,6 +104,15 @@ class GaussLobattoNodes(INodes):
         self._num_nodes = n_nodes
 
     def _compute_nodes(self):
-        # TODO: Implement computation of Gauss-Lobatto nodes
-        raise NotImplementedError(func_name(self) +
-                                  "Computation of nodes not yet implemented.")
+        """
+        Summary
+        -------
+        Computes the Gauss-Lobatto Nodes via a root calculation of derivatives of the legendre polynomials
+        Note that the precision of float 64 is not guarantied.
+        See Also
+        --------
+        .INodes.
+        """
+        m=self.num_nodes
+        roots=leg.legroots(leg.legder(np.array([0]*(m-1)+[1],dtype=np.float64)))
+        self.nodes=np.array(np.append([-1.0],np.append(roots,[1.0])),dtype=np.float64)
