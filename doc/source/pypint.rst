@@ -21,4 +21,5 @@ Subpackages
     pypint.problems
     pypint.solutions
     pypint.solvers
+    pypint.utilities
 

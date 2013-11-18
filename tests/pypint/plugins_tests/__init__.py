@@ -17,5 +17,3 @@ class PluginsTests(unittest.TestSuite):
 
 if __name__ == "__main__":
     unittest.main()
-
-__all__ = ["PluginsTests"]
