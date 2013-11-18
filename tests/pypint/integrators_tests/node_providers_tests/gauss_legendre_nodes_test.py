@@ -9,7 +9,7 @@ import numpy as np
 test_num_nodes = range(2, 7)
 
 def manual_initialization(n_nodes):
-    nodes = GaussLegendreNodes
+    nodes = GaussLegendreNodes()
     nodes.init(n_nodes)
     assert_equal(nodes.num_nodes, n_nodes,
                  "Number of nodes should be set")
@@ -33,3 +33,20 @@ class GaussLegendreNodesTest(unittest.TestCase):
                           "Number of nodes should be initialized as 'None'")
         self.assertIsNone(self._test_obj.nodes,
                           "Nodes list should be initializes as 'None'")
+
+    def test_correctness_of_selected_nodes(self):
+        self._test_obj.init(1)
+        self.assertAlmostEqual(self._test_obj.nodes[0], 0.0)
+
+        self.setUp()
+        self._test_obj.init(2)
+        self.assertAlmostEqual(self._test_obj.nodes[0], -np.sqrt(1.0 / 3.0))
+        self.assertAlmostEqual(self._test_obj.nodes[1], np.sqrt(1.0 / 3.0))
+
+        self.setUp()
+        self._test_obj.init(5)
+        self.assertAlmostEqual(self._test_obj.nodes[0], -1.0 / 3.0 * np.sqrt(5.0 + 2.0 * np.sqrt(10.0 / 7.0)))
+        self.assertAlmostEqual(self._test_obj.nodes[1], -1.0 / 3.0 * np.sqrt(5.0 - 2.0 * np.sqrt(10.0 / 7.0)))
+        self.assertAlmostEqual(self._test_obj.nodes[2], 0.0)
+        self.assertAlmostEqual(self._test_obj.nodes[3], 1.0 / 3.0 * np.sqrt(5.0 - 2.0 * np.sqrt(10.0 / 7.0)))
+        self.assertAlmostEqual(self._test_obj.nodes[4], 1.0 / 3.0 * np.sqrt(5 + 2 * np.sqrt(10.0 / 7.0)))
