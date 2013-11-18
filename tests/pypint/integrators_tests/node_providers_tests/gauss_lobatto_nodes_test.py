@@ -8,6 +8,7 @@ import numpy as np
 
 test_num_nodes = range(3, 7)
 
+
 def manual_initialization(n_nodes):
     nodes = GaussLobattoNodes()
     nodes.init(n_nodes)
@@ -33,3 +34,24 @@ class GaussLobattoNodesTest(unittest.TestCase):
                           "Number of nodes should be initialized as 'None'")
         self.assertIsNone(self._test_obj.nodes,
                           "Nodes list should be initializes as 'None'")
+
+    def test_correctness_of_selected_nodes(self):
+        self._test_obj.init(3)
+        self.assertAlmostEqual(self._test_obj.nodes[0], -1.0)
+        self.assertAlmostEqual(self._test_obj.nodes[1], 0.0)
+        self.assertAlmostEqual(self._test_obj.nodes[2], 1.0)
+
+        self.setUp()
+        self._test_obj.init(4)
+        self.assertAlmostEqual(self._test_obj.nodes[0], -1.0)
+        self.assertAlmostEqual(self._test_obj.nodes[1], -np.sqrt(1.0 / 5.0))
+        self.assertAlmostEqual(self._test_obj.nodes[2], np.sqrt(1.0 / 5.0))
+        self.assertAlmostEqual(self._test_obj.nodes[3], 1.0)
+
+        self.setUp()
+        self._test_obj.init(5)
+        self.assertAlmostEqual(self._test_obj.nodes[0], -1.0)
+        self.assertAlmostEqual(self._test_obj.nodes[1], -np.sqrt(3.0 / 7.0))
+        self.assertAlmostEqual(self._test_obj.nodes[2], 0.0)
+        self.assertAlmostEqual(self._test_obj.nodes[3], np.sqrt(3.0 / 7.0))
+        self.assertAlmostEqual(self._test_obj.nodes[4], 1.0)
