@@ -10,4 +10,4 @@ class TimersTests(unittest.TestSuite):
 
 
 if __name__ == "__main__":
-    nose.main()
+    unittest.main()

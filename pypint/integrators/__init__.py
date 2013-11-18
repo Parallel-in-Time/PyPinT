@@ -7,6 +7,7 @@ Integrators for Iterative Time Solvers
 """
 
 from .node_providers.gauss_lobatto_nodes import GaussLobattoNodes
+from .node_providers.gauss_legendre_nodes import GaussLegendreNodes
 from .weight_function_providers.polynomial_weight_function import PolynomialWeightFunction
 
 #: Summary
@@ -30,6 +31,14 @@ from .weight_function_providers.polynomial_weight_function import PolynomialWeig
 integrator_presets = {
     "Gauss-Lobatto": {
         "nodes_type": GaussLobattoNodes(),
+        "weights_function": {
+            "class": PolynomialWeightFunction(),
+            "coeffs": [1.0]
+        },
+        "num_nodes": 3
+    },
+    "Gauss-Legendre": {
+        "nodes_type": GaussLegendreNodes(),
         "weights_function": {
             "class": PolynomialWeightFunction(),
             "coeffs": [1.0]
