@@ -5,7 +5,7 @@
 """
 
 from pypint.integrators.integrator_base import IntegratorBase
-from pypint.integrators import integrator_presets
+from pypint.integrators import INTEGRATOR_PRESETS
 import numpy
 import unittest
 from nose.tools import *
@@ -21,8 +21,8 @@ def init_with_presets(preset):
 
 
 def test_init_with_presets():
-    for preset in integrator_presets:
-        yield init_with_presets, integrator_presets[preset]
+    for preset in INTEGRATOR_PRESETS:
+        yield init_with_presets, INTEGRATOR_PRESETS[preset]
 
 
 class IntegratorBaseTest(unittest.TestCase):

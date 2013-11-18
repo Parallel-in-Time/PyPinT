@@ -27,8 +27,8 @@ from .weight_function_providers.polynomial_weight_function import PolynomialWeig
 #:
 #: Examples
 #: --------
-#: >>> integrator_base_params = integrator_presets["Gauss-Lobatto"]
-integrator_presets = {
+#: >>> integrator_base_params = INTEGRATOR_PRESETS["Gauss-Lobatto"]
+INTEGRATOR_PRESETS = {
     "Gauss-Lobatto": {
         "nodes_type": GaussLobattoNodes(),
         "weights_function": {

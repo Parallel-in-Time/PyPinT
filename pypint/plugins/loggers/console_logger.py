@@ -18,7 +18,7 @@ class ConsoleLogger(LoggerBase):
         levelname module.funcName: message
     """
     def __init__(self):
-        super().__init__()
+        super(self.__class__, self).__init__()
         logging.basicConfig(stream=sys.stdout)
         self._sink = logging.getLogger('ConsoleLogger')
         self.level = logging.INFO

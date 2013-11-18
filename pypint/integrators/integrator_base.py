@@ -63,10 +63,10 @@ class IntegratorBase(object):
 
         Examples
         --------
-        >>> from pypint.integrators import integrator_presets
+        >>> from pypint.integrators import INTEGRATOR_PRESETS
         >>> integrator = IntegratorBase()
         >>> # create classic Gauss-Lobatto integrator with four integration nodes
-        >>> options = integrator_presets["Gauss-Lobatto"]
+        >>> options = INTEGRATOR_PRESETS["Gauss-Lobatto"]
         >>> options["num_nodes"] = 4
         >>> integrator.init(**options)
         """

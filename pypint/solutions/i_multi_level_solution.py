@@ -9,7 +9,7 @@ from pypint.solutions.i_solution import ISolution
 
 class IMultiLevelSolution(ISolution):
     def __init__(self):
-        super().__init__()
+        super(self.__class__, self).__init__()
         self._used_levels = None
 
     @property

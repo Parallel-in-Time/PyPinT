@@ -17,7 +17,7 @@ class IterativeSolution(ISolution):
     :py:func:`.add_solution` and queried via :py:func:`.solution`.
     """
     def __init__(self):
-        super().__init__()
+        super(self.__class__, self).__init__()
         self._data = []
         self._used_iterations = 0
         self._reduction = 0.0
