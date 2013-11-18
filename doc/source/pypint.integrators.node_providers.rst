@@ -9,6 +9,14 @@ node_providers Package
     :undoc-members:
     :show-inheritance:
 
+:mod:`gauss_legendre_nodes` Module
+----------------------------------
+
+.. automodule:: pypint.integrators.node_providers.gauss_legendre_nodes
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 :mod:`gauss_lobatto_nodes` Module
 ---------------------------------
 
