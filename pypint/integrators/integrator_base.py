@@ -65,7 +65,7 @@ class IntegratorBase(object):
         --------
         >>> from pypint.integrators import INTEGRATOR_PRESETS
         >>> integrator = IntegratorBase()
-        >>> # create classic Gauss-Lobatto integrator with four integration nodes
+        >>> # create classic Gauss-Lobatto integrator with 4 integration nodes
         >>> options = INTEGRATOR_PRESETS["Gauss-Lobatto"]
         >>> options["num_nodes"] = 4
         >>> integrator.init(**options)
@@ -74,12 +74,12 @@ class IntegratorBase(object):
             raise ValueError(func_name(self) +
                              "Given nodes type is not a valid type: {}"
                              .format(nodes_type.__name__))
-        if isinstance(weights_function, dict):
-            if "class" not in weights_function or \
-                    not isinstance(weights_function["class"], IWeightFunction):
-                raise ValueError(func_name(self) +
-                                 "Given weight function is not a valid type: {}"
-                                 .format(weights_function))
+        if isinstance(weights_function, dict) \
+            and ("class" not in weights_function or
+                 not isinstance(weights_function["class"], IWeightFunction)):
+            raise ValueError(func_name(self) +
+                             "Given weight function is not a valid type: {}"
+                             .format(weights_function))
         if not isinstance(num_nodes, int):
             raise ValueError(func_name(self) +
                              "Number of nodes need to be an integer (not {})."

@@ -31,4 +31,5 @@ def func_name(obj=None):
     formatted function name : str
         Formatted function name of calling function.
     """
-    return "{:s}.{:s}(): ".format(obj.__class__.__name__, inspect.stack()[1][3])
+    return "{:s}.{:s}(): "\
+           .format(obj.__class__.__name__, inspect.stack()[1][3])

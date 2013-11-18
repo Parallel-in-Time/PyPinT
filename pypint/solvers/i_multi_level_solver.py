@@ -4,7 +4,7 @@
 .. moduleauthor: Torbjörn Klatt <t.klatt@fz-juelich.de>
 """
 
-from pypint.solvers.i_iterative_time_solver import IIterativeTimeSolver
+from .i_iterative_time_solver import IIterativeTimeSolver
 
 
 class IMultiLevelSolver(IIterativeTimeSolver):
@@ -16,12 +16,14 @@ class IMultiLevelSolver(IIterativeTimeSolver):
         """
 
         """
+        super(self.__class__, self).__init__()
         self._base_solver = None
         self._base_level = -1
         self._top_level = -1
         self._multi_level_provider = None
 
-    def init(self, problem, base_solver, base_level, top_level, multi_level_provider):
+    def init(self, problem, base_solver, base_level, top_level,
+             multi_level_provider):
         self._base_solver = base_solver
         self._base_level = base_level
         self._top_level = top_level

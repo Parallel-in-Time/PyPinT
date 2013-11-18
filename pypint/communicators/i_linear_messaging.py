@@ -4,12 +4,12 @@
 .. moduleauthor:: Torbjörn Klatt <t.klatt@fz-juelich.de>
 """
 
-from pypint.communicators.i_communication_provider import ICommunicationProvider
+from .i_communication_provider import ICommunicationProvider
 
 
 class ILinearMessaging(ICommunicationProvider):
     def __init__(self):
-        super().__init__()
+        super(self.__class__, self).__init__()
         self._compute_nodes = []
 
     def get_node(self, coordinate):

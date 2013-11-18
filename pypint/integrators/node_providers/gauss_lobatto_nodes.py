@@ -100,7 +100,7 @@ class GaussLobattoNodes(INodes):
         super(self.__class__, self.__class__).num_nodes.fset(self, n_nodes)
         if n_nodes < 2:
             raise ValueError(func_name(self) +
-                             "Gauss-Lobatto with less than 3 nodes doesn't make any sense.")
+                             "Fewer than 2 nodes do not make any sense.")
         self._num_nodes = n_nodes
 
     def _compute_nodes(self):

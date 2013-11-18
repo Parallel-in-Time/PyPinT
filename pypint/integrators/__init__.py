@@ -8,7 +8,8 @@ Integrators for Iterative Time Solvers
 
 from .node_providers.gauss_lobatto_nodes import GaussLobattoNodes
 from .node_providers.gauss_legendre_nodes import GaussLegendreNodes
-from .weight_function_providers.polynomial_weight_function import PolynomialWeightFunction
+from .weight_function_providers.polynomial_weight_function \
+    import PolynomialWeightFunction
 
 #: Summary
 #: -------

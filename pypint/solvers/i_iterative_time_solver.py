@@ -20,7 +20,7 @@ class IIterativeTimeSolver(object):
         self._max_iterations = -1
         self._min_reduction = -1
 
-    def init(self, problem):
+    def init(self, problem, *args, **kwargs):
         self._problem = problem
 
     def run(self):

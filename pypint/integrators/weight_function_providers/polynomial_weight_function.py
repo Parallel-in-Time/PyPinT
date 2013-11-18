@@ -4,7 +4,7 @@
 .. moduleauthor:: Torbjörn Klatt <t.klatt@fz-juelich.de>
 """
 
-from pypint.integrators.weight_function_providers.i_weight_function import IWeightFunction
+from .i_weight_function import IWeightFunction
 import numpy as np
 from pypint.utilities import *
 
