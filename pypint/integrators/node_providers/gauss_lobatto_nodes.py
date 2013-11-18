@@ -6,7 +6,7 @@
 
 from .i_nodes import INodes
 import numpy as np
-
+import numpy.polynomial.legendre as leg
 
 class GaussLobattoNodes(INodes):
     """
@@ -87,5 +87,11 @@ class GaussLobattoNodes(INodes):
 
     def _compute_nodes(self):
         # TODO: Implement computation of Gauss-Lobatto nodes
-        raise NotImplementedError(self.__qualname__ + "._compute_nodes(): " +
-                                  "Computation of nodes not yet implemented.")
+        #raise NotImplementedError(self.__qualname__ + "._compute_nodes(): " +
+        #                         "Computation of nodes not yet implemented.")
+        m=self.num_nodes
+        roots=leg.legroots(leg.legder(np.array([0]*(m-1)+[1],dtype=np.float64)))
+        # Note that the precision of float64 is not granted
+        # neither with the method which is implented in matlab
+
+        self.nodes=np.array(np.append([-1.0],np.append(roots,[1.0])),dtype=np.float64)
