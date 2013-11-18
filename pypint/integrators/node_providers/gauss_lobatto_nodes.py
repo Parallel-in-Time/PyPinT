@@ -48,6 +48,20 @@ class GaussLobattoNodes(INodes):
 
     @property
     def interval(self):
+        """
+        Summary
+        -------
+        Accessor for integration nodes interval.
+
+        Extended Summary
+        ----------------
+        Default nodes interval for Gauss integration is :math:`[-1,1]`.
+
+        See Also
+        --------
+        .INodes.interval
+            overridden accessor
+        """
         return self._interval
 
     @interval.setter
@@ -55,7 +69,10 @@ class GaussLobattoNodes(INodes):
         if interval is None:
             self._interval = np.array([-1.0, 1.0])
         elif not isinstance(interval, np.ndarray) or interval.size != 2:
-            ValueError("")
+            ValueError(self.__qualname__ + ".interval(): " +
+                       "Given interval is not a numpy.ndarray or "
+                       "is not of size 2: {:s} ({:s})"
+                       .format(interval, type(interval)))
         else:
             self._interval = interval
 
