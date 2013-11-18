@@ -22,6 +22,7 @@ class PolynomialWeightFunction(IWeightFunction):
 
     Examples
     --------
+        >>> import numpy
         >>> nodes = numpy.array([-1.0, 0.0, 1.0])
         >>> # To compute the integration weights for a given set of nodes based
         >>> # on the constant weight function 1.0 use:
