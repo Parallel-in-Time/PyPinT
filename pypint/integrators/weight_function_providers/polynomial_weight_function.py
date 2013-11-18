@@ -62,7 +62,7 @@ class PolynomialWeightFunction(IWeightFunction):
         super().init(coeffs, func)
         if func is not None and isinstance(func, str):
             # TODO: implement parsing of polynomial function string
-            raise NotImplementedError(self.__qualname__ + ".init(): " +
+            raise NotImplementedError(self.__class__ + ".init(): " +
                                       "Parsing of polynomial function as string not yet possible.")
         elif coeffs is not None and \
                 (isinstance(coeffs, np.ndarray) or isinstance(coeffs, list)):
@@ -70,7 +70,7 @@ class PolynomialWeightFunction(IWeightFunction):
 
     def evaluate(self, nodes):
         super().evaluate(nodes)
-        raise NotImplementedError(self.__qualname__ + ".evaluate(): " +
+        raise NotImplementedError(self.__class__ + ".evaluate(): " +
                                   "Not yet implemented.")
 
     def add_coefficient(self, coefficient, power):
@@ -103,7 +103,7 @@ class PolynomialWeightFunction(IWeightFunction):
         >>> polyWeights.add_coefficient(42, 0)
         """
         if not isinstance(power, int) or power < 0:
-            raise ValueError(self.__qualname__ + ".add_coefficient(): " +
+            raise ValueError(self.__class__ + ".add_coefficient(): " +
                              "Given power ({}) is not an integer or is negative"
                              .format(power))
 
@@ -146,5 +146,5 @@ class PolynomialWeightFunction(IWeightFunction):
         if isinstance(coefficients, np.ndarray):
             self._coefficients = coefficients
         else:
-            raise ValueError(self.__qualname__ + ".coefficients(): "
+            raise ValueError(self.__class__ + ".coefficients(): "
                              "Coefficients need to be a numpy.ndarray")
