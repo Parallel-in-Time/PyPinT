@@ -37,7 +37,7 @@ class PolynomialWeightFunction(IWeightFunction):
         >>> polyWeights.weights
     """
     def __init__(self):
-        super().__init__()
+        super(self.__class__, self).__init__()
         self._coefficients = np.zeros(0)
 
     def init(self, coeffs, func=None):
@@ -60,7 +60,7 @@ class PolynomialWeightFunction(IWeightFunction):
         implemented.
         Usage will lead to a `NotImplementedError` exception.
         """
-        super().init(coeffs, func)
+        super(self.__class__, self).init(coeffs, func)
         if func is not None and isinstance(func, str):
             # TODO: implement parsing of polynomial function string
             raise NotImplementedError(func_name(self) +
@@ -70,7 +70,7 @@ class PolynomialWeightFunction(IWeightFunction):
             self.coefficients = np.array(coeffs)
 
     def evaluate(self, nodes):
-        super().evaluate(nodes)
+        super(self.__class__, self).evaluate(nodes)
         raise NotImplementedError(func_name(self) +
                                   "Not yet implemented.")
 
