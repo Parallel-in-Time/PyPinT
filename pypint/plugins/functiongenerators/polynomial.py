@@ -7,7 +7,7 @@ class PolynomialFG:
     takes numpy arrays and
     constructs (rational) polynomials
     """
-    def __init__(self,exponents,coeffs,final_op=0):
+    def __init__(self,exponents,coeffs,final_op=None):
         # assert that exponents and coeffs have the right dimensions
         assert isinstance(exponents,np.ndarray) and isinstance(coeffs,np.ndarray)
         if exponents.ndim==1:
@@ -17,7 +17,7 @@ class PolynomialFG:
             assert coeffs.ndim==1 and exponents.ndim==2 and exponents.shape[1]==coeffs.size
             self.dim=coeffs.shape[0]
 
-        if final_op==0:
+        if final_op==None:
             self.f_op=lambda x:x
         elif hasattr(final_op,'__call__'):
             self.f_op=final_op
