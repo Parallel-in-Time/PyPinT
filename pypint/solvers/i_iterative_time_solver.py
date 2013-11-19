@@ -15,7 +15,6 @@ class IIterativeTimeSolver(object):
 
         """
         self._problem = None
-        self._logger = None
         self._timer = None
         self._max_iterations = -1
         self._min_reduction = -1
