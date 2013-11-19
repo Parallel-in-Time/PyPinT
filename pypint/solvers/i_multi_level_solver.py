@@ -9,7 +9,9 @@ from .i_iterative_time_solver import IIterativeTimeSolver
 
 class IMultiLevelSolver(IIterativeTimeSolver):
     """
-    basic interface for iterative multi-time-level solvers
+    Summary
+    -------
+    Basic interface for iterative multi-time-level solvers
     """
 
     def __init__(self):

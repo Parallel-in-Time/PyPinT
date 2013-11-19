@@ -6,6 +6,11 @@
 
 
 class ILevelTransitionProvider(object):
+    """
+    Summary
+    -------
+    Interface for level transition providers.
+    """
     def __init__(self):
         self._prolongation_operator = None
         self._restringation_operator = None
