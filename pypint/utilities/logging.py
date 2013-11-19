@@ -6,7 +6,6 @@ Logging Framework for PyPinT
 """
 
 import logging
-import logging.handlers
 import logging.config
 
 
@@ -24,6 +23,11 @@ class Logging(object):
     -------
     Logging framework providing easy access to a Python build-in
     ``logging.Logger``.
+
+    Examples
+    --------
+    >>> from pypint import LOG
+    >>> LOG.debug("My debug message.")
     """
 
     _logger = logging.getLogger()
@@ -88,14 +92,14 @@ STD_LOGGERS = {
     },
     "handlers": {
         "console": {
-            "class": logging.StreamHandler,
-            "level": logging.INFO,
+            "class": "logging.StreamHandler",
+            "level": "INFO",
             "formatter": "simple",
             "stream": "ext://sys.stdout"
         },
         "file": {
-            "class": logging.handlers.RotatingFileHandler,
-            "level": logging.INFO,
+            "class": "logging.handlers.RotatingFileHandler",
+            "level": "INFO",
             "formatter": "precise",
             "filename": "logger.log",
             "maxBytes": 1024,
@@ -104,17 +108,17 @@ STD_LOGGERS = {
     },
     "loggers": {
         "ConsoleLogger": {
-            "level": logging.DEBUG,
+            "level": "DEBUG",
             "handlers": ["console"],
             "propagate": "no"
         },
         "LogfileLogger": {
-            "level": logging.INFO,
+            "level": "INFO",
             "handlers": ["file"]
         }
     },
     "root": {
-        "level": logging.DEBUG,
+        "level": "DEBUG",
         "handlers": ["console"]
     }
 }
