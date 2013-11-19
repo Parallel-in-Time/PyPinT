@@ -3,6 +3,10 @@ Development
 
 These lines should help in development of *PyPinT*.
 
+.. toctree::
+
+    rationale
+
 
 Documentation
 -------------

@@ -11,7 +11,7 @@ Table of Contents
 
    requirements
    development
-   API Reference <pypint>
+   API Reference <api/package>
    license
 
 Further Lists

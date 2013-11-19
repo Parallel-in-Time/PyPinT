@@ -95,6 +95,18 @@ pygments_style = 'sphinx'
 #modindex_common_prefix = []
 
 
+# -- Options for autodoc Extension ---------------------------------------------
+
+autodoc_member_order = "bysource"
+
+autodoc_default_flags = [
+    "members",
+    "private-members",
+    "undoc-members",
+    "inherited-members",
+    "show-inheritance"
+]
+
 # -- Options for HTML output ---------------------------------------------------
 
 # The theme to use for HTML and HTML Help pages.  See the documentation for
