@@ -15,3 +15,15 @@ routines to a zoo of time integrators in various applications.
 from sys import version_info
 if version_info.major < 3:
     raise RuntimeError("PyPinT requires Python 3.x")
+
+# initialize Logging framework
+from .utilities.logging import Logging
+Logging.init()
+LOG = Logging.logger()
+"""
+Summary
+-------
+
+"""
+
+__all__ = ["LOG"]
