@@ -11,7 +11,8 @@ from pypint.utilities import *
 
 
 class MultiLevelProvider(object):
-    def __init__(self, num_levels=None, default_transitioner=None):
+    def __init__(self, num_levels=None, default_integrator=None,
+                 default_transitioner=None):
         """
         Paramters
         ---------
@@ -25,6 +26,9 @@ class MultiLevelProvider(object):
         self._default_transitioner = default_transitioner
         self._level_integrators = []
         self._num_levels = num_levels
+        if num_levels is not None and default_integrator is not None:
+            for level in range(0, num_levels):
+                self.add_coarse_level(default_integrator)
 
     def integrator(self, level):
         """

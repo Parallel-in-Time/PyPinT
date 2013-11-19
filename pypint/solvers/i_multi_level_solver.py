@@ -26,11 +26,11 @@ class IMultiLevelSolver(IIterativeTimeSolver):
 
     def init(self, problem, base_solver, base_level, top_level,
              multi_level_provider):
+        super(self.__class__, self).init(problem)
         self._base_solver = base_solver
         self._base_level = base_level
         self._top_level = top_level
         self._multi_level_provider = multi_level_provider
-        super().init(problem)
 
     @property
     def base_solver(self):
