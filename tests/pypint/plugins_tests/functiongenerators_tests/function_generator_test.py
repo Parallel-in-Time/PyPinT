@@ -22,7 +22,7 @@ def trig_polynom(x):
 def generic_polynom(x):
     return x**5+x*0.5+7*x**3+15
 
-def generic_mdim_polynomial(x)
+def generic_mdim_polynomial(x):
     return x[0]*x[1]+1
 def piecewise_function(x):
     if x < 0:
@@ -44,7 +44,12 @@ func_runge = lambda x : 1/x
 
 
 
+
 test_arguments = {"runge_glocke" :
-                        []
+                        [exponents_runge, coeffs_runge, func_runge],
+                  "trig_polynom" :
+                        [],
+
+
                     }
 

@@ -7,9 +7,14 @@ class TrigonometricFG:
     takes numpy arrays and
     constructs trigonometric polynomials
     """
-    def __init__(self,freqs, coeffs, translations, final_op=0):
+    def __init__(self,freqs, coeffs, translations = None, final_op=None):
         # assert that frequencies  and coeffs have the right dimensions
-        assert isinstance(freqs,np.ndarray) and isinstance(coeffs,np.ndarray) and isinstance(translations,np.ndarray)
+        if translations == None:
+            translations = np.zeros(coeffs.shape)
+            assert isinstance(freqs,np.ndarray) and isinstance(coeffs,np.ndarray)
+        else:
+            assert isinstance(freqs,np.ndarray) and isinstance(coeffs,np.ndarray) and isinstance(translations,np.ndarray)
+
         if freqs.ndim==1:
             assert coeffs.ndim==1 and freqs.size==coeffs.size
             self.dim=1
@@ -18,7 +23,7 @@ class TrigonometricFG:
             self.dim=coeffs.shape[0]
 
         assert translations.shape == freqs.shape
-        if final_op==0:
+        if final_op==None:
             self.f_op=lambda x:x
         elif hasattr(final_op,'__call__'):
             self.f_op=final_op
