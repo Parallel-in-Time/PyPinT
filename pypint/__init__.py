@@ -23,7 +23,12 @@ LOG = Logging.logger()
 """
 Summary
 -------
+Easy accessor for the currently configured logger.
 
+See Also
+--------
+.utilities.logging.Logging.logger
+    aliased accessor function
 """
 
 __all__ = ["LOG"]
