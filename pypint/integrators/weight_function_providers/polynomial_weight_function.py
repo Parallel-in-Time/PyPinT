@@ -19,7 +19,7 @@ class PolynomialWeightFunction(IWeightFunction):
     Extended Summary
     ----------------
     Computes weights of given nodes based on a polynomial weight function of
-    the form :math:`\sum_{i=0}^\infty c_i x^i`.
+    the form :math:`\\sum_{i=0}^\\infty c_i x^i`.
     By default, all powers have a coefficient of zero.
 
     Examples
@@ -51,7 +51,7 @@ class PolynomialWeightFunction(IWeightFunction):
 
         Parameters
         ----------
-        coeffs : numpy.ndarray|list
+        coeffs : numpy.ndarray | list
             Array of coefficients of the polynomial.
 
         func : string of format ``c0 + c1 x^1 + c2 x^2...``
@@ -82,6 +82,7 @@ class PolynomialWeightFunction(IWeightFunction):
         ----------------
         The weights are calculated with help of the Lagrange polynomials
         .. math::
+
             \\alpha_i = \\int_a^b\\omega (x) \\prod_{j=1,j \\neq i}^{n} \\frac{x-x_j}{x_i-x_j} \\mathrm{d}x
 
         See Also
