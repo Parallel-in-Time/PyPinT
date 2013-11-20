@@ -7,6 +7,7 @@
 from .i_weight_function import IWeightFunction
 import numpy as np
 from pypint.utilities import *
+import numpy.polynomial.polynomial as pol
 
 
 class PolynomialWeightFunction(IWeightFunction):
@@ -36,6 +37,7 @@ class PolynomialWeightFunction(IWeightFunction):
         >>> # access the weights
         >>> polyWeights.weights
     """
+
     def __init__(self):
         super(self.__class__, self).__init__()
         self._coefficients = np.zeros(0)
@@ -60,7 +62,7 @@ class PolynomialWeightFunction(IWeightFunction):
         implemented.
         Usage will lead to a `NotImplementedError` exception.
         """
-        super(self.__class__, self).init(coeffs, func)
+        super(self.__class__, self).init(coeffs, func=None)
         if func is not None and isinstance(func, str):
             # TODO: implement parsing of polynomial function string
             raise NotImplementedError(func_name(self) +
@@ -69,10 +71,36 @@ class PolynomialWeightFunction(IWeightFunction):
                 (isinstance(coeffs, np.ndarray) or isinstance(coeffs, list)):
             self.coefficients = np.array(coeffs)
 
-    def evaluate(self, nodes):
+    def evaluate(self, nodes, interval=None):
         super(self.__class__, self).evaluate(nodes)
-        raise NotImplementedError(func_name(self) +
-                                  "Not yet implemented.")
+        #raise NotImplementedError(func_name(self) +
+        #                          "Not yet implemented.")
+
+        if interval is None:
+            interval = np.array([nodes[0], nodes[-1]])
+
+        a = interval[0]
+        b = interval[1]
+
+        nnodes = nodes.size
+        alpha = np.zeros(nnodes)
+
+        for j in range(nnodes):
+            selection = []
+            selection = list(range(j))
+            selection.extend(list(range(j + 1, nnodes)))
+            poly = [1.0]
+
+            for ais in nodes[selection]:
+                poly = pol.polymul(poly, [ais / (ais - nodes[j]), 1 / (
+                nodes[j] - ais)])  # Builds lagrange polynomial p_i
+
+            #poly = pol.polyint(poly)
+            poly = pol.polyint(pol.polymul(poly,
+                                           self._coefficients))     # Computes \int w(x)p_i dx
+            alpha[j] = pol.polyval(b, poly) - pol.polyval(a, poly)
+
+        self._weights = alpha
 
     def add_coefficient(self, coefficient, power):
         """
@@ -108,8 +136,8 @@ class PolynomialWeightFunction(IWeightFunction):
                              "Given power ({}) is not an integer or is negative"
                              .format(power))
 
-        if self._coefficients.size <= power+1:
-            self._coefficients = np.resize(self._coefficients, (power+1))
+        if self._coefficients.size <= power + 1:
+            self._coefficients = np.resize(self._coefficients, (power + 1))
 
         self._coefficients[power] = coefficient
 
@@ -149,3 +177,6 @@ class PolynomialWeightFunction(IWeightFunction):
         else:
             raise ValueError(func_name(self) +
                              "Coefficients need to be a numpy.ndarray")
+
+
+
