@@ -1,4 +1,4 @@
-from pypint.plugins.functiongenerators import nested, trigonometric, piecewise, polynomial
+from pypint.plugins.function_generators import nested, trigonometric, piecewise, polynomial
 import unittest
 from nose.tools import *
 import numpy as np
