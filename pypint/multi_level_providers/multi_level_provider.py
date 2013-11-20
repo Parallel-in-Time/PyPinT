@@ -11,7 +11,7 @@ from pypint.utilities import *
 
 
 class MultiLevelProvider(object):
-    def __init__(self, num_levels=None, default_integrator=None,
+    def __init__(self, num_levels=0, default_integrator=None,
                  default_transitioner=None):
         """
         Paramters
@@ -75,7 +75,7 @@ class MultiLevelProvider(object):
             For details on prolongation.
         """
         return self._level_transition(coarse_level=coarse_level,
-                                      fine_level=fine_level) \
+                                      fine_level=fine_level)\
                    .prolongate(coarse_data)
 
     def restringate(self, fine_data, fine_level, coarse_level=None):
@@ -105,7 +105,7 @@ class MultiLevelProvider(object):
             For details on restringation.
         """
         return self._level_transition(coarse_level=coarse_level,
-                                      fine_level=fine_level) \
+                                      fine_level=fine_level)\
                    .restringate(fine_data)
 
     def add_coarse_level(self, integrator, top_level=-1):
@@ -131,7 +131,7 @@ class MultiLevelProvider(object):
             raise ValueError(func_name() +
                              "Integrator is of invalid type: {:s}"
                              .format(type(integrator)))
-        self.num_levels += 1
+        self._num_levels += 1
         self._level_integrators.insert(top_level, integrator)
 
     def add_level_transition(self, transitioner, coarse_level, fine_level):
@@ -173,30 +173,12 @@ class MultiLevelProvider(object):
         -------
         Accessor for the number of levels.
 
-        Parameters
-        ----------
-        num_levels : integer
-            Number of desired levels.
-
         Returns
         -------
         num_levels : integer
             Number of levels of this Multi-Level Provider.
-
-        Raises
-        ------
-        ValueError
-            If ``num_levels`` is not an integer.
         """
         return self._num_levels
-
-    @num_levels.setter
-    def num_levels(self, num_levels):
-        if not isinstance(num_levels, int):
-            raise ValueError(func_name() +
-                             "Number of levels must be an integer: {:s}"
-                             .format(type(num_levels)))
-        self._num_levels = num_levels
 
     def _level_transition(self, coarse_level=None, fine_level=None):
         """
@@ -243,6 +225,7 @@ class MultiLevelProvider(object):
             raise ValueError(func_name() +
                              "There is no coarser level than given fine one: {:d}"
                              .format(fine_level))
+
         if coarse_level in self._level_transitioners \
                 and fine_level in self._level_transitioners[coarse_level]:
             return self._level_transitioners[coarse_level][fine_level]
