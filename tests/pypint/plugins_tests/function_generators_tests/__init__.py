@@ -10,4 +10,3 @@ class FunctionGeneratorsTests(unittest.TestSuite):
 
 if __name__ == "__main__":
     unittest.main()
-

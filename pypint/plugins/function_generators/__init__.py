@@ -1,10 +1,6 @@
+# coding=utf-8
 """
 Function generators
+
+.. moduleauthor:: Dieter Moser <d.moser@fz-juelich.de>
 """
-
-from .piecewise import PiecewiseFG
-from .polynomial import PolynomialFG
-from .trigonometric import TrigonometricFG
-from .nested import NestedFG
-
-#__all__=["piecewise","polynomial","trigonometr#ic","nested"]

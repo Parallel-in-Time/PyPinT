@@ -1,4 +1,8 @@
-__author__ = 'moser'
+# coding=utf-8
+"""
+
+.. moduleauthor:: Dieter Moser <d.moser@fz-juelich.de>
+"""
 
 import numpy as np
 

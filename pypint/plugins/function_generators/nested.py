@@ -1,4 +1,8 @@
-__author__ = 'moser'
+# coding=utf-8
+"""
+
+.. moduleauthor:: Dieter Moser <d.moser@fz-juelich.de>
+"""
 
 
 class NestedFG:
@@ -22,6 +26,3 @@ class NestedFG:
             return val
 
         return func
-
-
-

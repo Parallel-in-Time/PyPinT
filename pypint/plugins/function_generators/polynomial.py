@@ -1,4 +1,8 @@
-__author__ = 'moser'
+# coding=utf-8
+"""
+
+.. moduleauthor:: Dieter Moser <d.moser@fz-juelich.de>
+"""
 
 import numpy as np
 
@@ -34,7 +38,6 @@ class PolynomialFG:
         self.cs = coeffs
 
     def generate_function(self):
-
         if self.exps.ndim > 1:
             def func(x):
                 f_x = 0.0
@@ -57,6 +60,3 @@ class PolynomialFG:
             func = lambda x: 0.0
 
         return func
-
-
-

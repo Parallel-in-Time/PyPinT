@@ -1,4 +1,8 @@
-__author__ = 'moser'
+# coding=utf-8
+"""
+
+.. moduleauthor:: Dieter Moser <d.moser@fz-juelich.de>
+"""
 
 import numpy as np
 
@@ -25,7 +29,6 @@ class PiecewiseFG:
         self.p = points
 
     def generate_function(self):
-
         def func(x):
             val = 0.0
             values = np.zeros(x.shape)
