@@ -26,13 +26,18 @@ class PiecewiseFG:
 
         def func(x):
             val=0.0
-            for i in range(self.p.size):
-                if ( x <= self.p[i] and i==0 ):
-                    val = self.funcs[0](x)
-                elif (x <= self.p[i] and x > self.p[i-1] ):
-                    val = self.funcs[i+1](x)
-                else:
-                    val = self.funcs[-1](x)
-            return val
+            values = np.zeros(x.shape)
+            for j in range(x.size):
+                for i in range(self.p.size):
+                    if ( x[j] <= self.p[i] and i==0 ):
+                        val = self.funcs[0](x)
+                    elif (x[j] <= self.p[i] and x > self.p[i-1] ):
+                        val = self.funcs[i+1](x)
+                    else:
+                        val = self.funcs[-1](x)
+
+                values[j] = val
+
+            return values
 
         return func

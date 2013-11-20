@@ -2,10 +2,9 @@
 Function generators
 """
 
-__author__ = 'moser'
+from .piecewise import PiecewiseFG
+from .polynomial import PolynomialFG
+from .trigonometric import TrigonometricFG
+from .nested import  NestedFG
 
-from .pypint.plugins.functiongenerators.piecewise import PiecewiseFG
-from .pypint.plugins.functiongenerators.polynomial import PolynomialFG
-from .pypint.plugins.functiongenerators.trigonometric import TrigonometricFG
-
-__all__=["piecewise","polynomial","trigonometric","nested"]
+#__all__=["piecewise","polynomial","trigonometr#ic","nested"]
