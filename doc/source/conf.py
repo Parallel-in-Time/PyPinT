@@ -107,6 +107,13 @@ autodoc_default_flags = [
     "show-inheritance"
 ]
 
+
+# -- Options for numpydoc ------------------------------------------------------
+
+# this gets rid of countless warnings about unreferenced toctree elements
+numpydoc_show_class_members = False
+
+
 # -- Options for HTML output ---------------------------------------------------
 
 # The theme to use for HTML and HTML Help pages.  See the documentation for
