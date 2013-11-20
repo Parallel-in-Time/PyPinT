@@ -38,10 +38,9 @@ class Injection(ILevelTransitionProvider):
 
     Notes
     -----
-    Injective restringation only works for fine levels with an odd number of
-    points.
-    Injective prolongation only works for coarse levels with an even number of
-    points.
+    Injective restringation and prolongation only works for a fine level with
+    an odd number of points.
+    The coarse level might have an even number of points.
 
     In addition, injection should only be used when the number of coarse points
     is a subset of the fine points.
