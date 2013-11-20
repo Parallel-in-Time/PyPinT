@@ -15,12 +15,14 @@ class IIterativeTimeSolver(object):
 
         """
         self._problem = None
+        self._integrator = None
         self._timer = None
         self._max_iterations = -1
         self._min_reduction = -1
 
-    def init(self, problem, *args, **kwargs):
+    def init(self, problem, integrator, *args, **kwargs):
         self._problem = problem
+        self._integrator = integrator
 
     def run(self):
         return None
@@ -28,14 +30,6 @@ class IIterativeTimeSolver(object):
     @property
     def problem(self):
         return self._problem
-
-    @property
-    def logger(self):
-        return self._logger
-
-    @logger.setter
-    def logger(self, logger):
-        self._logger = logger
 
     @property
     def timer(self):
