@@ -73,21 +73,21 @@ nested_function_list = [lambda x: x ** 6, lambda x: np.sqrt(x), lambda x: np.cos
 test_options = {
     "polynomial": {
         "runge_glocke":
-            [[runge_exp, runge_coeffs, final_func_runge], runge_glocke],
+        [[runge_exp, runge_coeffs, final_func_runge], runge_glocke],
         "generic_polynom":
-            [[gen_pol_exp, gen_pol_coeffs, None], generic_polynom]},
+        [[gen_pol_exp, gen_pol_coeffs, None], generic_polynom]},
     "mdim_polynomial": {
         "generic_mdim_polynom":
-            [[gen_mdim_pol_exp, gen_mdim_pol_coeffs, None], generic_mdim_polynomial]},
+        [[gen_mdim_pol_exp, gen_mdim_pol_coeffs, None], generic_mdim_polynomial]},
     "trigonometric": {
         "trig_polynom":
-            [[trig_freqs, trig_coeffs, trig_trans, None], trig_polynom]},
+        [[trig_freqs, trig_coeffs, trig_trans, None], trig_polynom]},
     "piecewise": {
         "piece_wise_function":
-            [[piecewise_functions, piecewise_points], piecewise_function]},
+        [[piecewise_functions, piecewise_points], piecewise_function]},
     "nested": {
         "nested_function":
-            [[nested_function_list], nested_function]}
+        [[nested_function_list], nested_function]}
 }
 
 # End of adding cases
