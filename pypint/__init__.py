@@ -18,7 +18,6 @@ if version_info.major < 3:
 
 # initialize Logging framework
 from .utilities.logging import Logging
-Logging.init()
 LOG = Logging.logger()
 """
 Summary

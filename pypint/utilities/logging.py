@@ -110,11 +110,12 @@ STD_LOGGERS = {
         "ConsoleLogger": {
             "level": "DEBUG",
             "handlers": ["console"],
-            "propagate": "no"
+            "propagate": "yes"
         },
         "LogfileLogger": {
             "level": "INFO",
-            "handlers": ["file"]
+            "handlers": ["file"],
+            "propagate": "yes"
         }
     },
     "root": {
@@ -122,3 +123,5 @@ STD_LOGGERS = {
         "handlers": ["console"]
     }
 }
+
+Logging.init()
