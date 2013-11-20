@@ -26,6 +26,7 @@ class FullWeighting(ILevelTransitionProvider):
         Number of points of the fine level.
     """
     def __init__(self, fine_level_points):
+        super(self.__class__, self).__init__()
         self._n_points = fine_level_points
         self._restringation_operator = \
             np.zeros([self.num_coarse_points, self.num_fine_points])
