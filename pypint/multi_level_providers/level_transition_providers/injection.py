@@ -19,7 +19,7 @@ class Injection(ILevelTransitionProvider):
     Extended Summary
     ----------------
     Injection restringates a fine level with :math:`n` points onto a
-    coarse level with :math:`\frac{n+1}{2}` points by leaving out every other
+    coarse level with :math:`\\frac{n+1}{2}` points by leaving out every other
     data point.
 
     On prolongation, injection interpolates a new point between two coarse
@@ -110,7 +110,7 @@ class Injection(ILevelTransitionProvider):
 
         Extended Summary
         ----------------
-        The number of coarse points equals :math:`\frac{n_{fine}+1}{2}`.
+        The number of coarse points equals :math:`\\frac{n_{fine}+1}{2}`.
 
         Returns
         -------

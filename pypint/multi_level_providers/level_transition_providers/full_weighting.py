@@ -18,7 +18,7 @@ class FullWeighting(ILevelTransitionProvider):
     Extended Summary
     ----------------
     Full weighting restringates a fine level with :math:`n` points onto a
-    coarse level with :math:`\frac{n+1}{2}` points.
+    coarse level with :math:`\\frac{n+1}{2}` points.
 
     Parameters
     ----------
