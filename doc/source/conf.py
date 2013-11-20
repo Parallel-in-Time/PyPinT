@@ -114,6 +114,11 @@ autodoc_default_flags = [
 numpydoc_show_class_members = False
 
 
+# -- Options for ToDo Lists ----------------------------------------------------
+
+todo_include_todos = True
+
+
 # -- Options for HTML output ---------------------------------------------------
 
 # The theme to use for HTML and HTML Help pages.  See the documentation for
