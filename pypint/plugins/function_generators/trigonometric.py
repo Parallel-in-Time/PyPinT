@@ -9,18 +9,25 @@ import numpy as np
 
 class TrigonometricFG:
     """
-    takes numpy arrays and
-    constructs trigonometric polynomials
+    Summary
+    -------
+    Takes up to multiple ``numpy.ndarray`` and constructs trigonometric polynomials.
+
+    Examples
+    --------
+    .. todo:: add examples for nested function generator
     """
 
     def __init__(self, freqs, coeffs, translations=None, final_op=None):
         # assert that frequencies  and coeffs have the right dimensions
         if translations is None:
             translations = np.zeros(coeffs.shape)
-            assert isinstance(freqs, np.ndarray) and isinstance(coeffs, np.ndarray)
+            assert isinstance(freqs, np.ndarray) \
+                and isinstance(coeffs, np.ndarray)
         else:
-            assert isinstance(freqs, np.ndarray) and isinstance(coeffs, np.ndarray) and isinstance(translations,
-                                                                                                   np.ndarray)
+            assert isinstance(freqs, np.ndarray) \
+                and isinstance(coeffs, np.ndarray) \
+                and isinstance(translations, np.ndarray)
 
         if freqs.ndim == 1:
             assert coeffs.ndim == 1 and freqs.size == coeffs.size == translations.size

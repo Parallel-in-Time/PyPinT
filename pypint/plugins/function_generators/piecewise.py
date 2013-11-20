@@ -9,8 +9,14 @@ import numpy as np
 
 class PiecewiseFG:
     """
-    takes numpy array and function list to generate a piecewise function
-    only for R -> R functions, #function = #points + 1
+    Summary
+    -------
+    Takes a ``numpy.ndarray`` and function list to generate a piecewise
+    function only for :math:`R \\rightarrow R` functions, #function = #points + 1.
+
+    Examples
+    --------
+    .. todo:: add examples for piecewise function generator
     """
 
     def __init__(self, functions, points):

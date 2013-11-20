@@ -7,8 +7,14 @@
 
 class NestedFG:
     """
-    Generates nested functions from functionlist
-    f_n(f_{n-1}(...f_0(x)...))
+    Summary
+    -------
+    Generates nested functions from a function list
+    :math:`f_n(f_{n-1}(...f_0(x)...))`.
+
+    Examples
+    --------
+    .. todo:: add examples for nested function generator
     """
 
     def __init__(self, functions):

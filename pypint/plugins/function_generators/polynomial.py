@@ -9,8 +9,13 @@ import numpy as np
 
 class PolynomialFG:
     """
-    takes numpy arrays and
-    constructs (rational) polynomials
+    Summary
+    -------
+    Takes up to multiple ``numpy.ndarray`` and constructs (rational) polynomials.
+
+    Examples
+    --------
+    .. todo:: add examples for polynomial function generator
     """
 
     def __init__(self, exponents, coeffs, final_op=None):
