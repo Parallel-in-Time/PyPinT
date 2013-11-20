@@ -18,7 +18,7 @@ class FullWeighting(ILevelTransitionProvider):
     Extended Summary
     ----------------
     Full weighting restringates a fine level with :math:`n` points onto a
-    coarse level with :math:`\frac{n+1}{2}` points.
+    coarse level with :math:`\\frac{n+1}{2}` points.
 
     Parameters
     ----------
@@ -35,42 +35,17 @@ class FullWeighting(ILevelTransitionProvider):
         self._construct_transform_matrices()
 
     def prolongate(self, coarse_data):
-        pass
+        super(self.__class__, self).prolongate(coarse_data)
+        raise NotImplementedError(func_name() +
+                                  "Full weighted prolongation not yet implemented.")
 
     def restringate(self, fine_data):
+        super(self.__class__, self).restringate(fine_data)
         if not isinstance(fine_data, np.ndarray):
             raise ValueError(func_name() +
                              "Given fine data is not a numpy.ndarray: {:s}"
                              .format(type(fine_data)))
         return np.dot(self.restringation_operator, fine_data.T) / 4.0
-
-    @property
-    def num_fine_points(self):
-        """
-        Summary
-        -------
-        Accessor for the number of points of the fine level.
-
-        Returns
-        -------
-        number of fine points : integer
-            Number of points on the fine level.
-        """
-        return self._n_points
-
-    @property
-    def num_coarse_points(self):
-        """
-        Summary
-        -------
-        Accessor for the number of points of the coarse level.
-
-        Returns
-        -------
-        number of coarse points : integer
-            Number of points on the fine level.
-        """
-        return (self.num_fine_points + 1) / 2
 
     def _construct_transform_matrices(self):
         # construct restringation operator

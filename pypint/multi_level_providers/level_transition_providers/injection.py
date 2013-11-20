@@ -19,7 +19,7 @@ class Injection(ILevelTransitionProvider):
     Extended Summary
     ----------------
     Injection restringates a fine level with :math:`n` points onto a
-    coarse level with :math:`\frac{n+1}{2}` points by leaving out every other
+    coarse level with :math:`\\frac{n+1}{2}` points by leaving out every other
     data point.
 
     On prolongation, injection interpolates a new point between two coarse
@@ -64,59 +64,11 @@ class Injection(ILevelTransitionProvider):
 
     def prolongate(self, coarse_data):
         super(self.__class__, self).prolongate(coarse_data)
-        if not isinstance(coarse_data, np.ndarray):
-            raise ValueError(func_name() +
-                             "Given coarse data is not a numpy.ndarray: {:s}"
-                             .format(type(coarse_data)))
-        if coarse_data.size != self.num_coarse_points:
-            raise ValueError(func_name() +
-                             "Given coarse data is of wrong size: {:d}"
-                             .format(coarse_data.size))
         return np.dot(self.prolongation_operator, coarse_data.transpose())
 
     def restringate(self, fine_data):
         super(self.__class__, self).restringate(fine_data)
-        if not isinstance(fine_data, np.ndarray):
-            raise ValueError(func_name() +
-                             "Given fine data is not a numpy.ndarray: {:s}"
-                             .format(type(fine_data)))
-        if fine_data.size != self.num_fine_points:
-            raise ValueError(func_name() +
-                             "Given fine data is of wrong size: {:d}"
-                             .format(fine_data.size))
         return np.dot(self.restringation_operator, fine_data.transpose())
-
-    @property
-    def num_fine_points(self):
-        """
-        Summary
-        -------
-        Accessor for the number of points of the fine level.
-
-        Returns
-        -------
-        number of fine points : integer
-            Number of points on the fine level.
-        """
-        return int(self._n_points)
-
-    @property
-    def num_coarse_points(self):
-        """
-        Summary
-        -------
-        Accessor for the number of points of the coarse level.
-
-        Extended Summary
-        ----------------
-        The number of coarse points equals :math:`\frac{n_{fine}+1}{2}`.
-
-        Returns
-        -------
-        number of coarse points : integer
-            Number of points on the fine level.
-        """
-        return int((self.num_fine_points + 1) / 2)
 
     def _construct_transform_matrices(self):
         # construct restringation operator
