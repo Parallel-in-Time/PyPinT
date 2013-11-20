@@ -2,6 +2,12 @@ Welcome to PyPinT's documentation!
 ==================================
 
 .. automodule:: pypint
+    :noindex:
+    :no-members:
+    :no-private-members:
+    :no-undoc-members:
+    :no-inherited-members:
+    :no-show-inheritance:
 
 Table of Contents
 -----------------

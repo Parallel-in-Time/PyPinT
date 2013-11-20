@@ -19,7 +19,7 @@ def func_name(obj=None):
     Extended Summary
     ----------------
     Formats the calling functions name in the format
-    ``ClassName.FunctionName(): ``.
+    ``'ClassName.FunctionName(): '``.
 
     Parameters
     ----------
