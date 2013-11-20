@@ -35,8 +35,9 @@ def func_name(obj=None):
     --------
     >>> from pypint.utilities import func_name
     >>> def my_func():
-    >>>     print(func_name() + "Hello World!")
+    ...     print(func_name() + "Hello World!")
     >>> my_func()
+    NoneType.my_func(): Hello World!
     """
     return "{:s}.{:s}(): "\
            .format(obj.__class__.__name__, inspect.stack()[1][3])
