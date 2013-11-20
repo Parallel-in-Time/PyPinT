@@ -4,7 +4,7 @@ Summary
 -------
 Collection of utility functions related to the callstack and traceback.
 
-.. moduleauthor: 'Torbjörn Klatt' <t.klatt@fz-juelich.de>
+.. moduleauthor:: Torbjörn Klatt <t.klatt@fz-juelich.de>
 """
 
 import inspect
