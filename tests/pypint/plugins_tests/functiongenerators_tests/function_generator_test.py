@@ -37,7 +37,7 @@ def piecewise_function(x):
     return values
 
 def nested_function(x):
-    return np.cos(np.sqrt(x**5))
+    return np.cos(np.sqrt(x**6))
 
 
 
@@ -64,7 +64,7 @@ piecewise_points = np.array([0.0])
 gen_mdim_pol_exp = np.array([[1,0,1],[1,0,0]])
 gen_mdim_pol_coeffs = np.array([1.0, 1.0,5.0])
 
-nested_function_list = [lambda x:x**5, lambda x:np.sqrt(x), lambda x:np.cos(x)]
+nested_function_list = [lambda x:x**6, lambda x:np.sqrt(x), lambda x:np.cos(x)]
 
 test_options = {
                     "polynomial":{
