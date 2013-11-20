@@ -52,15 +52,15 @@ class Injection(ILevelTransitionProvider):
                              "Number of fine level points needs to be odd: {:d}"
                              .format(fine_level_points))
         self._n_points = fine_level_points
-        self._restringation_operator = \
+        self.restringation_operator = \
             np.zeros([self.num_coarse_points, self.num_fine_points])
-        self._prolongation_operator = \
+        self.prolongation_operator = \
             np.zeros([self.num_fine_points, self.num_coarse_points])
         self._construct_transform_matrices()
         LOG.debug("Restringation operator: {:s}"
-                 .format(self._restringation_operator))
+                  .format(self.restringation_operator))
         LOG.debug("Prolongation operator: {:s}"
-                 .format(self._prolongation_operator))
+                  .format(self.prolongation_operator))
 
     def prolongate(self, coarse_data):
         super(self.__class__, self).prolongate(coarse_data)
@@ -72,7 +72,7 @@ class Injection(ILevelTransitionProvider):
             raise ValueError(func_name() +
                              "Given coarse data is of wrong size: {:d}"
                              .format(coarse_data.size))
-        return np.dot(self._prolongation_operator, coarse_data.transpose())
+        return np.dot(self.prolongation_operator, coarse_data.transpose())
 
     def restringate(self, fine_data):
         super(self.__class__, self).restringate(fine_data)
@@ -84,7 +84,7 @@ class Injection(ILevelTransitionProvider):
             raise ValueError(func_name() +
                              "Given fine data is of wrong size: {:d}"
                              .format(fine_data.size))
-        return np.dot(self._restringation_operator, fine_data.transpose())
+        return np.dot(self.restringation_operator, fine_data.transpose())
 
     @property
     def num_fine_points(self):
@@ -122,13 +122,13 @@ class Injection(ILevelTransitionProvider):
         # construct restringation operator
         for coarse in range(0, self.num_coarse_points):
             fine = (2 * (coarse + 1)) - 2
-            self._restringation_operator[coarse][fine] = 1
+            self.restringation_operator[coarse][fine] = 1
 
         # construct prolongation operator
-        self._prolongation_operator = \
-            self._restringation_operator.copy().transpose()
+        self.prolongation_operator = \
+            self.restringation_operator.copy().transpose()
         for fine in range(0, self.num_fine_points):
             if fine % 2 == 1:
                 coarse = int((fine + 1) / 2)
-                self._prolongation_operator[fine][coarse - 1] = 1.0 / 2.0
-                self._prolongation_operator[fine][coarse] = 1.0 / 2.0
+                self.prolongation_operator[fine][coarse - 1] = 1.0 / 2.0
+                self.prolongation_operator[fine][coarse] = 1.0 / 2.0
