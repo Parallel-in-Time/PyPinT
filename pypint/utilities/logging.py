@@ -85,9 +85,6 @@ STD_LOGGERS = {
         "simple": {
             "format": '%(levelname)s %(module)s.%(funcName)s: %(message)s',
             "datefmt": '%d.%m.%y %H:%M:%S %Z'
-        },
-        "precise": {
-            "format": '%(asctime)s - %(levelname)s - %(module)s.%(filename)s.%(funcname)s:%(lineno)d - %(message)s'
         }
     },
     "handlers": {
@@ -96,25 +93,12 @@ STD_LOGGERS = {
             "level": "INFO",
             "formatter": "simple",
             "stream": "ext://sys.stdout"
-        },
-        "file": {
-            "class": "logging.handlers.RotatingFileHandler",
-            "level": "INFO",
-            "formatter": "precise",
-            "filename": "logger.log",
-            "maxBytes": 1024,
-            "backupCount": 3
         }
     },
     "loggers": {
         "ConsoleLogger": {
             "level": "DEBUG",
             "handlers": ["console"],
-            "propagate": "yes"
-        },
-        "LogfileLogger": {
-            "level": "INFO",
-            "handlers": ["file"],
             "propagate": "yes"
         }
     },
