@@ -36,6 +36,7 @@ class PolynomialWeightFunction(IWeightFunction):
         >>> polyWeights.evaluate(nodes)
         >>> # access the weights
         >>> polyWeights.weights
+        array([ 0.33333333,  1.33333333,  0.33333333])
     """
 
     def __init__(self):
@@ -72,34 +73,45 @@ class PolynomialWeightFunction(IWeightFunction):
             self.coefficients = np.array(coeffs)
 
     def evaluate(self, nodes, interval=None):
-        super(self.__class__, self).evaluate(nodes)
-        #raise NotImplementedError(func_name(self) +
-        #                          "Not yet implemented.")
+        """
+        Summary
+        -------
+        Computes weights for stored polynomial and given nodes.
 
-        if interval is None:
-            interval = np.array([nodes[0], nodes[-1]])
+        Extended Summary
+        ----------------
+        The weights are calculated with help of the Lagrange polynomials
+        .. math::
+            \\alpha_i = \\int_a^b\\omega (x) \\prod_{j=1,j \\neq i}^{n} \\frac{x-x_j}{x_i-x_j} \\mathrm{d}x
 
-        a = interval[0]
-        b = interval[1]
+        See Also
+        --------
+        .IWeightFunction.evaluate
+            overridden method
+        """
+        super(self.__class__, self).evaluate(nodes, interval)
 
-        nnodes = nodes.size
-        alpha = np.zeros(nnodes)
+        a = self._interval[0]
+        b = self._interval[1]
 
-        for j in range(nnodes):
+        n_nodes = nodes.size
+        alpha = np.zeros(n_nodes)
+
+        for j in range(n_nodes):
             selection = []
             selection = list(range(j))
-            selection.extend(list(range(j + 1, nnodes)))
+            selection.extend(list(range(j + 1, n_nodes)))
             poly = [1.0]
 
             for ais in nodes[selection]:
-                poly = pol.polymul(poly, [ais / (ais - nodes[j]), 1 / (
-                nodes[j] - ais)])  # Builds lagrange polynomial p_i
+                # builds Lagrange polynomial p_i
+                poly = pol.polymul(poly, [ais / (ais - nodes[j]), 1 / (nodes[j] - ais)])
 
-            #poly = pol.polyint(poly)
-            poly = pol.polyint(pol.polymul(poly,
-                                           self._coefficients))     # Computes \int w(x)p_i dx
+            # computes \int w(x)p_i dx
+            poly = pol.polyint(pol.polymul(poly, self._coefficients))
             alpha[j] = pol.polyval(b, poly) - pol.polyval(a, poly)
 
+        del self._interval
         self._weights = alpha
 
     def add_coefficient(self, coefficient, power):

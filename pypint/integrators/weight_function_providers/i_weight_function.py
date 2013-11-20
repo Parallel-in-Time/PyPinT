@@ -4,6 +4,8 @@
 .. moduleauthor: Torbjörn Klatt <t.klatt@fz-juelich.de>
 """
 
+import numpy as np
+
 
 class IWeightFunction(object):
     """
@@ -39,7 +41,7 @@ class IWeightFunction(object):
         """
         pass
 
-    def evaluate(self, nodes, interval = None):
+    def evaluate(self, nodes, interval=None):
         """
         Summary
         -------
@@ -53,7 +55,8 @@ class IWeightFunction(object):
         nodes : numpy.ndarray
             Array of nodes to compute weights for.
         interval : numpy.ndarray
-            Array with the interval boundaries. If None one uses the the boundaries in nodes
+            Array with the interval boundaries.
+            If ``None`` the boundaries of the given nodes are used.
         Returns
         -------
         computed weights : numpy.ndarray
@@ -64,24 +67,21 @@ class IWeightFunction(object):
         The implementation and behaviour must and will be defined by
         specializations of this interface.
         """
-        pass
+        if interval is None:
+            self._interval = np.array([nodes[0], nodes[-1]])
+        else:
+            self._interval = interval
 
     @property
     def weights(self):
         """
         Summary
         -------
-        Accessor for cached computed weights,.
+        Accessor for cached computed weights.
 
         Returns
         -------
         computed weights : numpy.ndarray
             Cached computed weights.
-        Notes
-        -----
-        The weights are calculated with help of the Lagrangepolynomials
-        .. math::
-        \alpha_i = \int_{a)^{b}\omega (x) \Pi_{j=1,j \neq i}^{n} \frac{x - x_j}{x_i - x_j} \mathrm{d}x
-
         """
         return self._weights
