@@ -3,7 +3,7 @@
 from pypint.integrators.sdc_integrator import SdcIntegrator
 import unittest
 import numpy
-from tests.pypint.__init__ import NumpyAwareTestCase
+from tests.__init__ import NumpyAwareTestCase
 
 
 class SdcIntegratorTest(NumpyAwareTestCase):
