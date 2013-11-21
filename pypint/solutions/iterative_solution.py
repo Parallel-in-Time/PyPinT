@@ -6,7 +6,7 @@
 
 from .i_solution import ISolution
 import numpy as np
-from pypint.utilities import *
+from pypint.utilities import func_name
 
 
 class IterativeSolution(ISolution):
@@ -46,8 +46,8 @@ class IterativeSolution(ISolution):
         :raises: **ValueError** if either ``data`` is not a ``numpy.ndarray`` or
           there are more than ``iteration`` solutions already stored.
 
-        .. todo: Fill data of skipped iterations when ``iteration`` is not the
-                 next iteration to set.
+        .. todo:: Fill data of skipped iterations when ``iteration`` is not the
+                  next iteration to set.
         """
         if not isinstance(data, np.ndarray):
             raise ValueError(func_name(self) +
@@ -63,6 +63,7 @@ class IterativeSolution(ISolution):
         # append the given solution as the last one
         #  due to previous checks it will have the correct index
         self._data.append(data)
+        self._used_iterations += 1
 
     @property
     def data(self):
