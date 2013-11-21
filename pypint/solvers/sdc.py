@@ -14,6 +14,7 @@ from pypint.integrators.weight_function_providers.polynomial_weight_function \
 from pypint.problems.i_initial_value_problem import IInitialValueProblem
 from pypint.solutions.iterative_solution import IterativeSolution
 from pypint.utilities import func_name
+from pypint import LOG
 
 
 class Sdc(IIterativeTimeSolver):
@@ -60,7 +61,7 @@ class Sdc(IIterativeTimeSolver):
             kwargs["weights_type"] = PolynomialWeightFunction()
 
         # initialize integrator
-        self._integrator.init(kwargs["nodes_type"], kwargs["num_steps"], kwargs["weights_type"],
+        self._integrator.init(kwargs["nodes_type"], kwargs["num_steps"] + 1, kwargs["weights_type"],
                               np.array([self.problem.time_start, self.problem.time_end]))
 
         # initialize helper variables
@@ -68,7 +69,7 @@ class Sdc(IIterativeTimeSolver):
         self.__curr_sol = np.zeros(self.num_time_steps + 1)
 
         # compute time step distances
-        self.__delta_times = self.problem.time_end - self.problem.time_start
+        self.__delta_interval = self.problem.time_end - self.problem.time_start
         self.__delta_times = np.zeros(self.num_time_steps)
         for i in range(0, self.num_time_steps):
             self.__delta_times[i] = self._integrator.nodes[i+1] - self._integrator.nodes[i]
@@ -82,7 +83,7 @@ class Sdc(IIterativeTimeSolver):
 
                 # gather values for integration
                 _copy_mask = np.concatenate((np.array([True] * step),
-                                             np.array([False] * (self.num_time_steps - step))))
+                                             np.array([False] * (self.num_time_steps - step + 1))))
                 _integrate_values = np.where(_copy_mask, self.__curr_sol, self.__prev_sol)
 
                 # evaluate problem for integration values
@@ -97,7 +98,7 @@ class Sdc(IIterativeTimeSolver):
                     self.__curr_sol[step] + \
                     _dt * (self.problem.evaluate(_time, self.__curr_sol[step]) -
                            self.problem.evaluate(_time, self.__prev_sol[step])) + \
-                    self.__delta_times * integral
+                    self.__delta_interval * integral
             # end for:step
             _sol.add_solution(k, self.__curr_sol)
             self.__prev_sol = self.__curr_sol.copy()
