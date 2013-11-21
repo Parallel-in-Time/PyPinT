@@ -20,14 +20,14 @@ test_data = [
 
 
 def prolongate(data_pair):
-    full_weighting = FullWeighting(fine_level_points=data_pair["fine_data"].size)
+    full_weighting = FullWeighting(num_fine_points=data_pair["fine_data"].size)
     prolongated = full_weighting.prolongate(data_pair["coarse_data"])
     assert_equal(prolongated.size, data_pair["fine_data"].size)
     # TODO: element-wise compare of prolongated data
 
 
 def restringate(data_pair):
-    full_weighting = FullWeighting(fine_level_points=data_pair["fine_data"].size)
+    full_weighting = FullWeighting(num_fine_points=data_pair["fine_data"].size)
     restringated = full_weighting.restringate(data_pair["fine_data"])
     assert_equal(restringated.size, data_pair["coarse_data"].size)
     # TODO: element-wise compare of restringated data
@@ -45,8 +45,8 @@ def test_restringation():
 
 class FullWeightingTest(unittest.TestCase):
     def test_initialization(self):
-        _test_obj = FullWeighting(fine_level_points=5)
+        _test_obj = FullWeighting(num_fine_points=5)
 
     def test_wrong_num_fine_points(self):
         with self.assertRaises(ValueError):
-            _test_obj = FullWeighting(fine_level_points=4)
+            _test_obj = FullWeighting(num_fine_points=4)
