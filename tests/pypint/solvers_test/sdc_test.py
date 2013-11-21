@@ -1,13 +1,15 @@
 # coding=utf-8
 
 import unittest
+import numpy
+from tests.__init__ import NumpyAwareTestCase
 from unittest.mock import MagicMock
 from unittest.mock import PropertyMock
 from pypint.solvers.sdc import Sdc
 from pypint.problems.i_initial_value_problem import IInitialValueProblem
 
 
-class SdcTest(unittest.TestCase):
+class SdcTest(NumpyAwareTestCase):
     def setUp(self):
         self._test_obj = Sdc()
         self._ivp = MagicMock("Initial Value Problem")
@@ -29,3 +31,8 @@ class SdcTest(unittest.TestCase):
         self._ivp.evaluate = MagicMock(return_value=1.0)
         self._test_obj.init(self._ivp)
         _solution = self._test_obj.run()
+        self.assertNumpyArrayAlmostEqual(_solution.solution(0), numpy.array([0.0, 0.5, 1.0]))
+
+
+if __name__ == "__main__":
+    unittest.main()
