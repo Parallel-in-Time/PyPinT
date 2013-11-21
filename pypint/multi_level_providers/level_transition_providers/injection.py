@@ -25,12 +25,6 @@ class Injection(ILevelTransitionProvider):
     On prolongation, injection interpolates a new point between two coarse
     data points as their arithmetic mean.
 
-    Parameters
-    ----------
-    fine_level_points : integer
-        Number of points of the fine level.
-        Must be odd.
-
     Raises
     ------
     ValueError
@@ -45,13 +39,13 @@ class Injection(ILevelTransitionProvider):
     In addition, injection should only be used when the number of coarse points
     is a subset of the fine points.
     """
-    def __init__(self, fine_level_points):
-        super(self.__class__, self).__init__()
-        if fine_level_points % 2 == 0:
-            raise ValueError(func_name() +
+    def __init__(self, num_fine_points, num_coarse_points=-1):
+        if num_fine_points % 2 == 0:
+            raise ValueError(func_name(self) +
                              "Number of fine level points needs to be odd: {:d}"
-                             .format(fine_level_points))
-        self._n_points = fine_level_points
+                             .format(num_fine_points))
+        super(self.__class__, self).__init__(num_fine_points, num_coarse_points)
+        self._n_coarse_points = int((self.num_fine_points + 1) / 2)
         self.restringation_operator = \
             np.zeros([self.num_coarse_points, self.num_fine_points])
         self.prolongation_operator = \

@@ -19,15 +19,10 @@ class FullWeighting(ILevelTransitionProvider):
     ----------------
     Full weighting restringates a fine level with :math:`n` points onto a
     coarse level with :math:`\\frac{n+1}{2}` points.
-
-    Parameters
-    ----------
-    fine_level_points : integer
-        Number of points of the fine level.
     """
-    def __init__(self, fine_level_points):
-        super(self.__class__, self).__init__()
-        self._n_points = fine_level_points
+    def __init__(self, num_fine_points, num_coarse_points=-1):
+        super(self.__class__, self).__init__(num_fine_points, num_coarse_points)
+        self._n_coarse_points = int((self.num_fine_points + 1) / 2)
         self.restringation_operator = \
             np.zeros([self.num_coarse_points, self.num_fine_points])
         self.prolongation_operator = \
@@ -36,13 +31,13 @@ class FullWeighting(ILevelTransitionProvider):
 
     def prolongate(self, coarse_data):
         super(self.__class__, self).prolongate(coarse_data)
-        raise NotImplementedError(func_name() +
+        raise NotImplementedError(func_name(self) +
                                   "Full weighted prolongation not yet implemented.")
 
     def restringate(self, fine_data):
         super(self.__class__, self).restringate(fine_data)
         if not isinstance(fine_data, np.ndarray):
-            raise ValueError(func_name() +
+            raise ValueError(func_name(self) +
                              "Given fine data is not a numpy.ndarray: {:s}"
                              .format(type(fine_data)))
         return np.dot(self.restringation_operator, fine_data.T) / 4.0
@@ -70,6 +65,6 @@ class FullWeighting(ILevelTransitionProvider):
         # construct prolongation operator
 #        for fine in range(0, self.num_fine_points):
 #            pass
-        raise NotImplementedError(func_name() +
+        raise NotImplementedError(func_name(self) +
                                   "Construction of prolongation operator " +
                                   "not yet implemented.")
