@@ -128,7 +128,7 @@ class MultiLevelProvider(object):
             If ``integrator`` is not an :py:class:`.IntegratorBase`.
         """
         if not isinstance(integrator, IntegratorBase):
-            raise ValueError(func_name() +
+            raise ValueError(func_name(self) +
                              "Integrator is of invalid type: {:s}"
                              .format(type(integrator)))
         self._num_levels += 1
@@ -156,7 +156,7 @@ class MultiLevelProvider(object):
             if ``transitioner`` is not an :py:class:`.ILevelTransitionProvider`
         """
         if not isinstance(transitioner, ILevelTransitionProvider):
-            raise ValueError(func_name() +
+            raise ValueError(func_name(self) +
                              "Level transitioner is of invalid type: {:s}"
                              .format(type(transitioner)))
 
@@ -211,18 +211,18 @@ class MultiLevelProvider(object):
               coarsest one
         """
         if coarse_level is None and fine_level is None:
-            raise ValueError(func_name() +
+            raise ValueError(func_name(self) +
                              "Either coarse or fine level index must be given")
         if fine_level is None:
             fine_level = coarse_level - 1
         if coarse_level is None:
             coarse_level = fine_level + 1
         if fine_level < 0:
-            raise ValueError(func_name() +
+            raise ValueError(func_name(self) +
                              "There is no finer level than given coarse one: {:d}"
                              .format(coarse_level))
         if coarse_level >= self.num_levels:
-            raise ValueError(func_name() +
+            raise ValueError(func_name(self) +
                              "There is no coarser level than given fine one: {:d}"
                              .format(fine_level))
 
