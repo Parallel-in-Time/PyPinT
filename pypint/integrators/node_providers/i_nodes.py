@@ -58,7 +58,7 @@ class INodes(object):
         """
         pass
 
-    def transform(self):
+    def transform(self, interval):
         """
         Summary
         -------
@@ -77,6 +77,7 @@ class INodes(object):
         It may be this transformation is numerically unconvenient because of
         the loss of significance.
         """
+        self.interval = interval
         if not isinstance(self.std_interval, np.ndarray) \
             and self.std_interval.size != 2 \
                 and self.std_interval[0] >= self.std_interval[1]:
@@ -86,7 +87,7 @@ class INodes(object):
         b = (self.interval[0] - self.interval[1]) \
             / (self.std_interval[0] - self.std_interval[1])
         a = self.interval[0] - b * self.std_interval[0]
-        self._nodes = a + b * self._nodes
+        self._nodes = a + b * self.nodes
 
     @property
     def interval(self):

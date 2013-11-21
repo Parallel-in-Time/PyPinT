@@ -4,9 +4,10 @@
 .. moduleauthor:: Torbjörn Klatt <t.klatt@fz-juelich.de>
 """
 
+import numpy as np
 from .node_providers.i_nodes import INodes
 from .weight_function_providers.i_weight_function import IWeightFunction
-from pypint.utilities import *
+from pypint.utilities import func_name
 
 
 class IntegratorBase(object):
@@ -22,7 +23,7 @@ class IntegratorBase(object):
         self._nodes = None
         self._weights_function = None
 
-    def init(self, nodes_type, num_nodes, weights_function):
+    def init(self, nodes_type, num_nodes, weights_function, interval=None):
         """
         Summary
         -------
@@ -87,6 +88,8 @@ class IntegratorBase(object):
                              .format(num_nodes.__name__))
         self._nodes = nodes_type
         self._nodes.init(num_nodes)
+        if interval is not None:
+            self._nodes.transform(interval)
         self._weights_function = weights_function["class"]
         # copy() is necessary as dictionaries are passed by reference
         _weight_function_options = weights_function.copy()
@@ -94,28 +97,40 @@ class IntegratorBase(object):
         self._weights_function.init(**_weight_function_options)
         self._weights_function.evaluate(self._nodes.nodes)
 
-    def evaluate(self, data, time_start, time_end):
+    def evaluate(self, data, **kwargs):
         """
         Summary
         -------
         Applies this integrator to given data in specified time interval.
 
-        Extended Summary
-        ----------------
-
         Parameters
         ----------
-        data : numpy.ndarray|function pointer
-            Data vector or pointer to a function returning the values at given
-            time points.
-            If a vector is given, its length must equal the number of
-            integration nodes.
-        time_start : float
-            Begining of the time interval to integrate over.
-        time_end : float
-            End of the time interval to integrate over.
+        data : numpy.ndarray
+            Data vector of the values at given time points.
+            Its length must equal the number of integration nodes.
+        **kwargs : dict
+            time_start : float
+                Begining of the time interval to integrate over.
+            time_end : float
+                End of the time interval to integrate over.
+
+        Raises
+        ------
+        ValueError
+            * if ``data`` is not a ``numpy.ndarray``
+            * if either ``time_start`` or ``time_end`` are not given
+            * if ``time_start`` is larger or equals ``time_end``
         """
-        pass
+        if not isinstance(data, np.ndarray):
+            raise ValueError(func_name(self) +
+                             "Data to integrate must be an numpy.ndarray.")
+        if "time_start" not in kwargs or "time_end" not in kwargs:
+            raise ValueError(func_name(self) +
+                             "Either start or end of time interval need to be given.")
+        if kwargs["time_start"] >= kwargs["time_end"]:
+            raise ValueError(func_name(self) +
+                             "Time interval need to be non-zero positive: [{:f}, {:f}]"
+                             .format(kwargs["time_start"], kwargs["time_end"]))
 
     @property
     def nodes(self):
@@ -142,3 +157,11 @@ class IntegratorBase(object):
         .IWeightFunction.weights
         """
         return self._weights_function.weights
+
+    @property
+    def nodes_type(self):
+        return self._nodes
+
+    @property
+    def weights_function(self):
+        return self._weights_function
