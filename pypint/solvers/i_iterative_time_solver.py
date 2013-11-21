@@ -19,7 +19,7 @@ class IIterativeTimeSolver(object):
         self._max_iterations = -1
         self._min_reduction = -1
 
-    def init(self, problem, integrator, *args, **kwargs):
+    def init(self, problem, integrator, **kwargs):
         """
         Summary
         -------
@@ -34,8 +34,10 @@ class IIterativeTimeSolver(object):
         kwargs : further named arguments
             Supported names:
 
-              * max_iterations (see :py:attr:`.max_iterations`)
-              * min_reduction (see :py:attr:`.min_reduction`)
+            ``max_iterations`` : integer
+                see :py:attr:`.max_iterations`
+            ``min_reduction`` : integer
+                see :py:attr:`.min_reduction`
         """
         self._problem = problem
         self._integrator = integrator
