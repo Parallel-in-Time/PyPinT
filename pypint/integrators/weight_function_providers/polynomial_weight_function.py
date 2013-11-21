@@ -7,6 +7,7 @@
 from .i_weight_function import IWeightFunction
 import numpy as np
 from pypint.utilities import *
+import numpy.polynomial.polynomial as pol
 
 
 class PolynomialWeightFunction(IWeightFunction):
@@ -18,7 +19,7 @@ class PolynomialWeightFunction(IWeightFunction):
     Extended Summary
     ----------------
     Computes weights of given nodes based on a polynomial weight function of
-    the form :math:`\sum_{i=0}^\infty c_i x^i`.
+    the form :math:`\\sum_{i=0}^\\infty c_i x^i`.
     By default, all powers have a coefficient of zero.
 
     Examples
@@ -35,7 +36,9 @@ class PolynomialWeightFunction(IWeightFunction):
         >>> polyWeights.evaluate(nodes)
         >>> # access the weights
         >>> polyWeights.weights
+        array([ 0.33333333,  1.33333333,  0.33333333])
     """
+
     def __init__(self):
         super(self.__class__, self).__init__()
         self._coefficients = np.zeros(0)
@@ -48,9 +51,8 @@ class PolynomialWeightFunction(IWeightFunction):
 
         Parameters
         ----------
-        coeffs : numpy.ndarray|list
+        coeffs : numpy.ndarray | list
             Array of coefficients of the polynomial.
-
         func : string of format ``c0 + c1 x^1 + c2 x^2...``
             String representation of the polynomial.
 
@@ -60,7 +62,7 @@ class PolynomialWeightFunction(IWeightFunction):
         implemented.
         Usage will lead to a `NotImplementedError` exception.
         """
-        super(self.__class__, self).init(coeffs, func)
+        super(self.__class__, self).init(coeffs, func=None)
         if func is not None and isinstance(func, str):
             # TODO: implement parsing of polynomial function string
             raise NotImplementedError(func_name(self) +
@@ -69,10 +71,48 @@ class PolynomialWeightFunction(IWeightFunction):
                 (isinstance(coeffs, np.ndarray) or isinstance(coeffs, list)):
             self.coefficients = np.array(coeffs)
 
-    def evaluate(self, nodes):
-        super(self.__class__, self).evaluate(nodes)
-        raise NotImplementedError(func_name(self) +
-                                  "Not yet implemented.")
+    def evaluate(self, nodes, interval=None):
+        """
+        Summary
+        -------
+        Computes weights for stored polynomial and given nodes.
+
+        Extended Summary
+        ----------------
+        The weights are calculated with help of the Lagrange polynomials
+        .. math::
+
+            \\alpha_i = \\int_a^b\\omega (x) \\prod_{j=1,j \\neq i}^{n} \\frac{x-x_j}{x_i-x_j} \\mathrm{d}x
+
+        See Also
+        --------
+        .IWeightFunction.evaluate
+            overridden method
+        """
+        super(self.__class__, self).evaluate(nodes, interval)
+
+        a = self._interval[0]
+        b = self._interval[1]
+
+        n_nodes = nodes.size
+        alpha = np.zeros(n_nodes)
+
+        for j in range(n_nodes):
+            selection = []
+            selection = list(range(j))
+            selection.extend(list(range(j + 1, n_nodes)))
+            poly = [1.0]
+
+            for ais in nodes[selection]:
+                # builds Lagrange polynomial p_i
+                poly = pol.polymul(poly, [ais / (ais - nodes[j]), 1 / (nodes[j] - ais)])
+
+            # computes \int w(x)p_i dx
+            poly = pol.polyint(pol.polymul(poly, self._coefficients))
+            alpha[j] = pol.polyval(b, poly) - pol.polyval(a, poly)
+
+        del self._interval
+        self._weights = alpha
 
     def add_coefficient(self, coefficient, power):
         """
@@ -91,7 +131,6 @@ class PolynomialWeightFunction(IWeightFunction):
         ----------
         coefficient : float
             Coefficient :math:`c` of :math:`cx^p`.
-
         power : integer
              Power :math:`p` of :math:`cx^p`.
 
@@ -108,8 +147,8 @@ class PolynomialWeightFunction(IWeightFunction):
                              "Given power ({}) is not an integer or is negative"
                              .format(power))
 
-        if self._coefficients.size <= power+1:
-            self._coefficients = np.resize(self._coefficients, (power+1))
+        if self._coefficients.size <= power + 1:
+            self._coefficients = np.resize(self._coefficients, (power + 1))
 
         self._coefficients[power] = coefficient
 
@@ -128,7 +167,7 @@ class PolynomialWeightFunction(IWeightFunction):
         -------
         coefficients : numpy.ndarray
             Coefficients :math:`c_i` of the polynomial
-            :math:`\sum_{i=0}^\infty c_i x^i`.
+            :math:`\\sum_{i=0}^\\infty c_i x^i`.
 
         Parameters
         ----------
@@ -149,3 +188,6 @@ class PolynomialWeightFunction(IWeightFunction):
         else:
             raise ValueError(func_name(self) +
                              "Coefficients need to be a numpy.ndarray")
+
+
+

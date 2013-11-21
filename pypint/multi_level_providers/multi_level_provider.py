@@ -11,7 +11,7 @@ from pypint.utilities import *
 
 
 class MultiLevelProvider(object):
-    def __init__(self, num_levels=None, default_integrator=None,
+    def __init__(self, num_levels=0, default_integrator=None,
                  default_transitioner=None):
         """
         Paramters
@@ -75,7 +75,7 @@ class MultiLevelProvider(object):
             For details on prolongation.
         """
         return self._level_transition(coarse_level=coarse_level,
-                                      fine_level=fine_level) \
+                                      fine_level=fine_level)\
                    .prolongate(coarse_data)
 
     def restringate(self, fine_data, fine_level, coarse_level=None):
@@ -105,7 +105,7 @@ class MultiLevelProvider(object):
             For details on restringation.
         """
         return self._level_transition(coarse_level=coarse_level,
-                                      fine_level=fine_level) \
+                                      fine_level=fine_level)\
                    .restringate(fine_data)
 
     def add_coarse_level(self, integrator, top_level=-1):
@@ -128,10 +128,10 @@ class MultiLevelProvider(object):
             If ``integrator`` is not an :py:class:`.IntegratorBase`.
         """
         if not isinstance(integrator, IntegratorBase):
-            raise ValueError(func_name() +
+            raise ValueError(func_name(self) +
                              "Integrator is of invalid type: {:s}"
                              .format(type(integrator)))
-        self.num_levels += 1
+        self._num_levels += 1
         self._level_integrators.insert(top_level, integrator)
 
     def add_level_transition(self, transitioner, coarse_level, fine_level):
@@ -156,7 +156,7 @@ class MultiLevelProvider(object):
             if ``transitioner`` is not an :py:class:`.ILevelTransitionProvider`
         """
         if not isinstance(transitioner, ILevelTransitionProvider):
-            raise ValueError(func_name() +
+            raise ValueError(func_name(self) +
                              "Level transitioner is of invalid type: {:s}"
                              .format(type(transitioner)))
 
@@ -173,30 +173,12 @@ class MultiLevelProvider(object):
         -------
         Accessor for the number of levels.
 
-        Parameters
-        ----------
-        num_levels : integer
-            Number of desired levels.
-
         Returns
         -------
         num_levels : integer
             Number of levels of this Multi-Level Provider.
-
-        Raises
-        ------
-        ValueError
-            If ``num_levels`` is not an integer.
         """
         return self._num_levels
-
-    @num_levels.setter
-    def num_levels(self, num_levels):
-        if not isinstance(num_levels, int):
-            raise ValueError(func_name() +
-                             "Number of levels must be an integer: {:s}"
-                             .format(type(num_levels)))
-        self._num_levels = num_levels
 
     def _level_transition(self, coarse_level=None, fine_level=None):
         """
@@ -229,20 +211,21 @@ class MultiLevelProvider(object):
               coarsest one
         """
         if coarse_level is None and fine_level is None:
-            raise ValueError(func_name() +
+            raise ValueError(func_name(self) +
                              "Either coarse or fine level index must be given")
         if fine_level is None:
             fine_level = coarse_level - 1
         if coarse_level is None:
             coarse_level = fine_level + 1
         if fine_level < 0:
-            raise ValueError(func_name() +
+            raise ValueError(func_name(self) +
                              "There is no finer level than given coarse one: {:d}"
                              .format(coarse_level))
         if coarse_level >= self.num_levels:
-            raise ValueError(func_name() +
+            raise ValueError(func_name(self) +
                              "There is no coarser level than given fine one: {:d}"
                              .format(fine_level))
+
         if coarse_level in self._level_transitioners \
                 and fine_level in self._level_transitioners[coarse_level]:
             return self._level_transitioners[coarse_level][fine_level]

@@ -7,7 +7,7 @@
 from .i_nodes import INodes
 import numpy as np
 from scipy import linalg
-from pypint.utilities import *
+from pypint.utilities import func_name
 
 
 class GaussLegendreNodes(INodes):
@@ -145,7 +145,7 @@ class GaussLegendreNodes(INodes):
         # Determining the abscissas (nodes)
         # - since det(nodesI-comp_mat)=P_n(nodes), the abscissas are the roots
         #   of the characteristic polynomial, i.d. the eigenvalues of comp_mat
-        [eig_vals, eig_vecs] = linalg.eig(comp_mat)
+        [eig_vals, _] = linalg.eig(comp_mat)
         indizes = np.argsort(eig_vals)
         nodes = eig_vals[indizes]
 

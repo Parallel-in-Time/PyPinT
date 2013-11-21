@@ -6,7 +6,8 @@
 
 from .i_level_transition_provider import ILevelTransitionProvider
 import numpy as np
-from pypint.utilities import *
+from pypint.utilities import func_name
+from pypint import LOG
 
 
 class FullWeighting(ILevelTransitionProvider):
@@ -20,81 +21,65 @@ class FullWeighting(ILevelTransitionProvider):
     Full weighting restringates a fine level with :math:`n` points onto a
     coarse level with :math:`\\frac{n+1}{2}` points.
 
-    Parameters
-    ----------
-    fine_level_points : integer
-        Number of points of the fine level.
+    Raises
+    ------
+    ValueError
+        if number of fine level points is even (``fine_level_points``)
+
+    Notes
+    -----
+    The prolongation is equal to the injective prolongation, where the intermedia fine points
+    are calculated as the arithmetic mean of the sourounding coarse points.
+
+    See Also
+    --------
+    .Injection
+        Same prolongation operator.
     """
-    def __init__(self, fine_level_points):
-        super(self.__class__, self).__init__()
-        self._n_points = fine_level_points
-        self._restringation_operator = \
+    def __init__(self, num_fine_points, num_coarse_points=-1):
+        if num_fine_points % 2 == 0:
+            raise ValueError(func_name(self) +
+                             "Number of fine level points needs to be odd: {:d}"
+                             .format(num_fine_points))
+        super(self.__class__, self).__init__(num_fine_points, num_coarse_points)
+        self._n_coarse_points = int((self.num_fine_points + 1) / 2)
+        self.restringation_operator = \
             np.zeros([self.num_coarse_points, self.num_fine_points])
-        self._prolongation_operator = \
+        self.prolongation_operator = \
             np.zeros([self.num_fine_points, self.num_coarse_points])
         self._construct_transform_matrices()
+        LOG.debug("Restringation operator: {:s}"
+                  .format(self.restringation_operator))
+        LOG.debug("Prolongation operator: {:s}"
+                  .format(self.prolongation_operator))
 
     def prolongate(self, coarse_data):
-        pass
+        super(self.__class__, self).prolongate(coarse_data)
+        return np.dot(self.prolongation_operator, coarse_data.transpose()) / 2.0
 
     def restringate(self, fine_data):
-        if not isinstance(fine_data, np.ndarray):
-            raise ValueError(func_name() +
-                             "Given fine data is not a numpy.ndarray: {:s}"
-                             .format(type(fine_data)))
-        return np.dot(self._restringation_operator, fine_data.T) / 4.0
-
-    @property
-    def num_fine_points(self):
-        """
-        Summary
-        -------
-        Accessor for the number of points of the fine level.
-
-        Returns
-        -------
-        number of fine points : integer
-            Number of points on the fine level.
-        """
-        return self._n_points
-
-    @property
-    def num_coarse_points(self):
-        """
-        Summary
-        -------
-        Accessor for the number of points of the coarse level.
-
-        Returns
-        -------
-        number of coarse points : integer
-            Number of points on the fine level.
-        """
-        return (self.num_fine_points + 1) / 2
+        super(self.__class__, self).restringate(fine_data)
+        return np.dot(self.restringation_operator, fine_data.T) / 4.0
 
     def _construct_transform_matrices(self):
         # construct restringation operator
         for coarse in range(0, self.num_coarse_points):
             if coarse == 0:
-                self._restringation_operator[0][0] = 2
-                self._restringation_operator[0][1] = 1
+                self.restringation_operator[0][0] = 2
+                self.restringation_operator[0][1] = 1
             elif coarse == self.num_coarse_points - 1:
-                if self.num_fine_points % 2 == 0:
-                    self._restringation_operator[coarse][-3] = 1
-                    self._restringation_operator[coarse][-2] = 2
-                    self._restringation_operator[coarse][-1] = 1
-                else:
-                    self._restringation_operator[coarse][-2] = 1
-                    self._restringation_operator[coarse][-1] = 2
+                self.restringation_operator[coarse][-2] = 1
+                self.restringation_operator[coarse][-1] = 2
             else:
-                fine = (2 * coarse) - 1
-                self._restringation_operator[coarse][fine - 1] = 1
-                self._restringation_operator[coarse][fine] = 2
-                self._restringation_operator[coarse][fine + 1] = 1
+                fine = (2 * (coarse + 1)) - 2
+                self.restringation_operator[coarse][fine - 1] = 1
+                self.restringation_operator[coarse][fine] = 2
+                self.restringation_operator[coarse][fine + 1] = 1
 
         # construct prolongation operator
-#        for fine in range(0, self.num_fine_points):
-#            pass
-        raise NotImplementedError(func_name() +
-                                  "Construction of prolongation operator " +
-                                  "not yet implemented.")
+        self.prolongation_operator = self.restringation_operator.copy().transpose()
+        for fine in range(0, self.num_fine_points):
+            if fine % 2 == 1:
+                coarse = int((fine + 1) / 2)
+                self.prolongation_operator[fine][coarse - 1] = 1.0
+                self.prolongation_operator[fine][coarse] = 1.0

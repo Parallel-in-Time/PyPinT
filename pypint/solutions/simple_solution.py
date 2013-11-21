@@ -16,7 +16,7 @@ class SimpleSolution(ISolution):
     """
     def __init__(self):
         super(self.__class__, self).__init__()
-        self._data = np.array()
+        self._data = np.zeros(0)
         self._used_iterations = 0
         self._reduction = 0.0
 

@@ -4,7 +4,7 @@ Summary
 -------
 Collection of utility functions related to the callstack and traceback.
 
-.. moduleauthor: 'Torbjörn Klatt' <t.klatt@fz-juelich.de>
+.. moduleauthor:: Torbjörn Klatt <t.klatt@fz-juelich.de>
 """
 
 import inspect
@@ -19,7 +19,7 @@ def func_name(obj=None):
     Extended Summary
     ----------------
     Formats the calling functions name in the format
-    ``ClassName.FunctionName(): ``.
+    ``'ClassName.FunctionName(): '``.
 
     Parameters
     ----------
@@ -34,9 +34,12 @@ def func_name(obj=None):
     Examples
     --------
     >>> from pypint.utilities import func_name
-    >>> def my_func():
-    >>>     print(func_name() + "Hello World!")
-    >>> my_func()
+    >>> class MyClass(object):
+    ...     def my_func(self):
+    ...         print(func_name(self) + "Hello World!")
+    >>> my_obj = MyClass()
+    >>> my_obj.my_func()
+    MyClass.my_func(): Hello World!
     """
     return "{:s}.{:s}(): "\
            .format(obj.__class__.__name__, inspect.stack()[1][3])

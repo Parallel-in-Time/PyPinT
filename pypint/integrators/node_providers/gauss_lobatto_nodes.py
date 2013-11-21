@@ -7,7 +7,7 @@
 from .i_nodes import INodes
 import numpy as np
 import numpy.polynomial.legendre as leg
-from pypint.utilities import *
+from pypint.utilities import func_name
 
 
 class GaussLobattoNodes(INodes):
