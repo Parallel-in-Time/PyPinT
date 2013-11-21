@@ -6,7 +6,7 @@
 
 from .i_level_transition_provider import ILevelTransitionProvider
 import numpy as np
-from pypint.utilities import *
+from pypint.utilities import func_name
 from pypint import LOG
 
 
@@ -58,7 +58,7 @@ class Injection(ILevelTransitionProvider):
 
     def prolongate(self, coarse_data):
         super(self.__class__, self).prolongate(coarse_data)
-        return np.dot(self.prolongation_operator, coarse_data.transpose())
+        return np.dot(self.prolongation_operator, coarse_data.transpose()) / 2.0
 
     def restringate(self, fine_data):
         super(self.__class__, self).restringate(fine_data)
@@ -76,5 +76,5 @@ class Injection(ILevelTransitionProvider):
         for fine in range(0, self.num_fine_points):
             if fine % 2 == 1:
                 coarse = int((fine + 1) / 2)
-                self.prolongation_operator[fine][coarse - 1] = 1.0 / 2.0
-                self.prolongation_operator[fine][coarse] = 1.0 / 2.0
+                self.prolongation_operator[fine][coarse - 1] = 1.0
+                self.prolongation_operator[fine][coarse] = 1.0

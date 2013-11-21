@@ -159,7 +159,7 @@ class ILevelTransitionProvider(object):
 
         Extended Summary
         ----------------
-        The number of coarse points equals :math:`\frac{n_{fine}+1}{2}`.
+        The number of coarse points equals :math:`\\frac{n_{fine}+1}{2}`.
 
         Returns
         -------
