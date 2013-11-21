@@ -52,7 +52,7 @@ class IterativeSolution(ISolution):
         if not isinstance(data, np.ndarray):
             raise ValueError(func_name(self) +
                              "Given data is not a numpy.ndarray.")
-        if len(self._data) >= iteration:
+        if len(self._data) > iteration:
             raise ValueError(func_name(self) +
                              "Data for iteration {:d} is already present."
                              .format(iteration))
