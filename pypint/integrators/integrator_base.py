@@ -58,7 +58,7 @@ class IntegratorBase(object):
             * ``num_nodes`` must be an integer
             * ``weights_function`` must be an :py:class:`.IWeightFunction` or
               dictionary
-              
+
               * If ``weights_function`` is a dictionary, its field ``class``
                 must be an :py:class:`.IWeightFunction`.
 

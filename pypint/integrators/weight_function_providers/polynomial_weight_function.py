@@ -53,7 +53,6 @@ class PolynomialWeightFunction(IWeightFunction):
         ----------
         coeffs : numpy.ndarray | list
             Array of coefficients of the polynomial.
-
         func : string of format ``c0 + c1 x^1 + c2 x^2...``
             String representation of the polynomial.
 
@@ -132,7 +131,6 @@ class PolynomialWeightFunction(IWeightFunction):
         ----------
         coefficient : float
             Coefficient :math:`c` of :math:`cx^p`.
-
         power : integer
              Power :math:`p` of :math:`cx^p`.
 
@@ -169,7 +167,7 @@ class PolynomialWeightFunction(IWeightFunction):
         -------
         coefficients : numpy.ndarray
             Coefficients :math:`c_i` of the polynomial
-            :math:`\sum_{i=0}^\infty c_i x^i`.
+            :math:`\\sum_{i=0}^\\infty c_i x^i`.
 
         Parameters
         ----------

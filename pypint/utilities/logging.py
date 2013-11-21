@@ -5,16 +5,14 @@ Logging Framework for PyPinT
 .. moduleauthor:: Torbjörn Klatt <t.klatt@fz-juelich.de>
 """
 
-import logging
+import logging as log
 import logging.config
 
 
+#: Summary
+#: -------
+#: Dictionary of standard Logger configurations.
 STD_LOGGERS = {}
-"""
-Summary
--------
-Dictionary of standard Logger configurations.
-"""
 
 
 class Logging(object):
@@ -28,11 +26,16 @@ class Logging(object):
     --------
     >>> from pypint import LOG
     >>> LOG.debug("My debug message.")
+
+    Notes
+    -----
+    This module behaves like a singleton.
     """
 
-    _logger = logging.getLogger()
-    """
-    """
+    #: Summary
+    #: -------
+    #: Private storage for the currently active logger.
+    _logger = log.getLogger()
 
     @staticmethod
     def init(name="ConsoleLogger", options=None):
@@ -53,11 +56,11 @@ class Logging(object):
         """
         if options is not None \
                 and isinstance(options, dict):
-            logging.config.dictConfig(options)
+            log.config.dictConfig(options)
         else:
-            logging.config.dictConfig(STD_LOGGERS)
+            log.config.dictConfig(STD_LOGGERS)
         if name is not None or name != "":
-            Logging._logger = logging.getLogger(name)
+            Logging._logger = log.getLogger(name)
 
     @staticmethod
     def logger():
