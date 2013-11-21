@@ -76,12 +76,26 @@ class IntegratorBase(object):
             raise ValueError(func_name(self) +
                              "Given nodes type is not a valid type: {}"
                              .format(nodes_type.__name__))
-        if isinstance(weights_function, dict) \
-            and ("class" not in weights_function or
-                 not isinstance(weights_function["class"], IWeightFunction)):
-            raise ValueError(func_name(self) +
-                             "Given weight function is not a valid type: {}"
-                             .format(weights_function))
+        if isinstance(weights_function, dict):
+            if "class" not in weights_function or \
+                    not isinstance(weights_function["class"], IWeightFunction):
+                raise ValueError(func_name(self) +
+                                 "Given weight function is not a valid type: {}"
+                                 .format(type(weights_function)))
+            else:
+                self._weights_function = weights_function["class"]
+                # copy() is necessary as dictionaries are passed by reference
+                _weight_function_options = weights_function.copy()
+                del _weight_function_options["class"]
+                self._weights_function.init(**_weight_function_options)
+        else:
+            if not isinstance(weights_function, IWeightFunction):
+                raise ValueError(func_name(self) +
+                                 "Given weight function is not a vlid type: {}"
+                                 .format(type(weights_function)))
+            else:
+                self._weights_function = weights_function
+                self._weights_function.init()
         if not isinstance(num_nodes, int):
             raise ValueError(func_name(self) +
                              "Number of nodes need to be an integer (not {})."
@@ -90,11 +104,6 @@ class IntegratorBase(object):
         self._nodes.init(num_nodes)
         if interval is not None:
             self._nodes.transform(interval)
-        self._weights_function = weights_function["class"]
-        # copy() is necessary as dictionaries are passed by reference
-        _weight_function_options = weights_function.copy()
-        del _weight_function_options["class"]
-        self._weights_function.init(**_weight_function_options)
         self._weights_function.evaluate(self._nodes.nodes)
 
     def evaluate(self, data, **kwargs):

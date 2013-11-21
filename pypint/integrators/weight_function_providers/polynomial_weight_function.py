@@ -6,9 +6,8 @@
 
 from .i_weight_function import IWeightFunction
 import numpy as np
-from pypint.utilities import *
 import numpy.polynomial.polynomial as pol
-
+from pypint.utilities import func_name
 
 class PolynomialWeightFunction(IWeightFunction):
     """
@@ -43,7 +42,7 @@ class PolynomialWeightFunction(IWeightFunction):
         super(self.__class__, self).__init__()
         self._coefficients = np.zeros(0)
 
-    def init(self, coeffs, func=None):
+    def init(self, coeffs=[1.0], func=None):
         """
         Summary
         -------

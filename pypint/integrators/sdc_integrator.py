@@ -12,7 +12,7 @@ class SdcIntegrator(IntegratorBase):
         super(self.__class__, self).__init__()
         self._smat = np.zeros(0)
 
-    def init(self, nodes_type=GaussLobattoNodes(), num_nodes=2,
+    def init(self, nodes_type=GaussLobattoNodes(), num_nodes=3,
              weights_function=PolynomialWeightFunction(), interval=None):
         super(self.__class__, self).init(nodes_type, num_nodes, weights_function, interval)
         self._construct_s_matrix()
@@ -35,9 +35,8 @@ class SdcIntegrator(IntegratorBase):
         if isinstance(self._nodes, GaussLobattoNodes):
             self._smat = np.zeros((self.nodes.size - 1, self.nodes.size), dtype=float)
             for i in range(1, self.nodes.size):
-                self._smat[i - 1] = \
-                    self.weights_function.evaluate(self.nodes,
-                                                   np.array([self.nodes[i - 1], self.nodes[i]]))
+                self.weights_function.evaluate(self.nodes, np.array([self.nodes[i - 1], self.nodes[i]]))
+                self._smat[i - 1] = self.weights_function.weights
         else:
             raise ValueError(func_name(self) +
                              "Other than Gauss-Lobatto integration nodes not yet supported.")
