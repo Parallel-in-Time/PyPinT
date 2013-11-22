@@ -11,8 +11,8 @@ class IProblem(object):
         self._time_start = None
         self._time_end = None
 
-    def eval(self, time, phi_of_time):
-        pass
+    def evaluate(self, time, phi_of_time):
+        return self.function(time, phi_of_time)
 
     @property
     def function(self):

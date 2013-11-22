@@ -95,8 +95,10 @@ class Sdc(IIterativeTimeSolver):
         if "weights_type" not in kwargs:
             kwargs["weights_type"] = PolynomialWeightFunction()
 
+        self._num_time_steps = kwargs["num_time_steps"]
+
         # initialize integrator
-        self._integrator.init(kwargs["nodes_type"], kwargs["num_time_steps"] + 1,
+        self._integrator.init(kwargs["nodes_type"], self.num_time_steps + 1,
                               kwargs["weights_type"],
                               np.array([self.problem.time_start, self.problem.time_end]))
 

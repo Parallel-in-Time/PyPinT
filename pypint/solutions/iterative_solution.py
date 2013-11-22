@@ -75,3 +75,9 @@ class IterativeSolution(ISolution):
             raise ValueError(func_name(self) +
                              "Given data is not a numpy.ndarray.")
         self._data = data
+
+    def __str__(self):
+        str = "Iterative Solution:"
+        for iter in range(0, self.used_iterations):
+            str += "\n  Iteration {:d}: {:s}".format(iter+1, self.solution(iter))
+        return str
