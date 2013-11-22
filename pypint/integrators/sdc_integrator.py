@@ -5,6 +5,7 @@ import numpy as np
 from .node_providers.gauss_lobatto_nodes import GaussLobattoNodes
 from .weight_function_providers.polynomial_weight_function import PolynomialWeightFunction
 from pypint.utilities import func_name
+from pypint import LOG
 
 
 class SdcIntegrator(IntegratorBase):
@@ -27,8 +28,8 @@ class SdcIntegrator(IntegratorBase):
         if "until_node_index" not in kwargs:
             raise ValueError(func_name(self) +
                              "Last node index must be given.")
-        super(self.__class__, self).evaluate(data, time_start=self.nodes[0],
-                                             time_end=self.nodes[kwargs["until_node_index"] + 1])
+        super(SdcIntegrator, self).evaluate(data, time_start=self.nodes[0],
+                                            time_end=self.nodes[kwargs["until_node_index"] + 1])
         return np.dot(self._smat[kwargs["until_node_index"]], data)
 
     def _construct_s_matrix(self):

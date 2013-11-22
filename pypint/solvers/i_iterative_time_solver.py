@@ -4,6 +4,8 @@
 .. moduleauthor: Torbjörn Klatt <t.klatt@fz-juelich.de>
 """
 
+from pypint.solutions.iterative_solution import IterativeSolution
+
 
 class IIterativeTimeSolver(object):
     """
@@ -12,12 +14,12 @@ class IIterativeTimeSolver(object):
     Basic interface for iterative time solvers.
     """
 
-    def __init__(self):
+    def __init__(self, *args, **kwargs):
         self._problem = None
         self._integrator = None
         self._timer = None
-        self._max_iterations = -1
-        self._min_reduction = -1
+        self._max_iterations = None
+        self._min_reduction = None
 
     def init(self, problem, integrator, **kwargs):
         """
@@ -46,7 +48,7 @@ class IIterativeTimeSolver(object):
         if "min_reduction" in kwargs:
             self.min_reduction = kwargs["min_reduction"]
 
-    def run(self):
+    def run(self, solution_class=IterativeSolution):
         """
         Summary
         -------
@@ -64,7 +66,7 @@ class IIterativeTimeSolver(object):
         solution : :py:class:`.ISolution`
             The solution of the problem.
         """
-        return None
+        return IterativeSolution()
 
     @property
     def problem(self):
