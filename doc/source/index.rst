@@ -19,6 +19,7 @@ Table of Contents
    development
    API Reference <api/package>
    theory
+   Examples <examples/package>
    license
 
 Further Lists
