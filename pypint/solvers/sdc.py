@@ -42,6 +42,22 @@ class Sdc(IIterativeTimeSolver):
     -----
     Currently, only the explicit version is implemented.
 
+    Examples
+    --------
+    >>> from pypint.solvers.sdc import Sdc
+    >>> from examples.problems.constant import Constant
+    >>> # setup the problem
+    >>> my_problem = Constant(constant=-1.0)
+    >>> # create the solver
+    >>> my_solver = Sdc()
+    >>> # initialize the solver with the problem
+    >>> my_solver.init(problem=my_problem, num_time_steps=2, max_iterations=3)
+    >>> # run the solver and get the solution
+    >>> my_solution = my_solver.run()
+    >>> # print the solution of the last iteration
+    >>> print(my_solution.solution(-1))
+    [  1.00000000e+00   5.00000000e-01  -1.11022302e-16]
+
     .. todo:: Implement implicit SDC method for first order ODEs.
     """
     def __init__(self, **kwargs):
@@ -92,7 +108,9 @@ class Sdc(IIterativeTimeSolver):
         if not isinstance(problem, IInitialValueProblem):
             raise ValueError(func_name(self) +
                              "SDC requires an initial value.")
+
         super(Sdc, self).init(problem, integrator, **kwargs)
+
         if self.max_iterations is None:
             self.max_iterations = 5
 
@@ -101,11 +119,10 @@ class Sdc(IIterativeTimeSolver):
 
         if "num_time_steps" in kwargs:
             self._num_time_steps = kwargs["num_time_steps"]
-        else:
-            self._num_time_steps = 2
 
         if "nodes_type" not in kwargs:
             kwargs["nodes_type"] = GaussLobattoNodes()
+
         if "weights_type" not in kwargs:
             kwargs["weights_type"] = PolynomialWeightFunction()
 
@@ -185,8 +202,12 @@ class Sdc(IIterativeTimeSolver):
         -------
         solution : ISolution
             Solution object with solutions of each iteration.
-        """
 
+        See Also
+        --------
+        .IIterativeTimeSolver.run
+            overridden method
+        """
         # init solution object
         _sol = solution_class()
 
@@ -234,56 +255,7 @@ class Sdc(IIterativeTimeSolver):
             # iterate on time steps
             _iter_timer.start()
             for step in range(0, self.num_time_steps):
-                # get current steps' time data
-                _dt = self.__delta_times["steps"][step]
-                _time = self._integrator.nodes[step]
-
-                # gather values for integration
-                _copy_mask = np.concatenate((np.array([True] * step),
-                                             np.array([False] * (self.num_time_steps - step + 1))))
-                _integrate_values = np.where(_copy_mask, self.__sol["current"],
-                                             self.__sol["previous"])
-
-                # evaluate problem for integration values
-                _integrate_values = \
-                    np.array([self.problem.evaluate(self._integrator.nodes[step], val)
-                              for val in _integrate_values])
-
-                # integrate
-                integral = self._integrator.evaluate(_integrate_values, until_node_index=step)
-
-                # compute step
-                self.__sol["current"][step + 1] = \
-                    self.__sol["current"][step] + \
-                    _dt * (self.problem.evaluate(_time, self.__sol["current"][step]) -
-                           self.problem.evaluate(_time, self.__sol["previous"][step])) + \
-                    self.__delta_times["interval"] * integral
-                #LOG.debug("          {:f} = {:f} + {:f} * ({:f} - {:f}) + {:f} * {:f}"
-                          #.format(self.__sol["current"][step + 1], self.__sol["current"][step], _dt,
-                          #        self.problem.evaluate(_time, self.__sol["current"][step]),
-                          #        self.problem.evaluate(_time, self.__sol["previous"][step]),
-                          #        self.__delta_times["interval"], integral))
-
-                # calculate error and its reduction
-                if self.problem.has_exact():
-                    self.__err_vec["current"][step] = \
-                        fabs(self.__sol["current"][step+1] -
-                             self.problem.exact(_time, self._integrator.nodes[step + 1]))
-                else:
-                    # we need the exact solution for that
-                    #  (unless we find an error approximation method)
-                    pass
-
-                # log
-                if self.problem.has_exact():
-                    LOG.debug(' ' * 10 + "{: >4d}    {: 6.2f}    {: 6.2f}    {: 10.4f}    {: 10.2e}"
-                                         .format(step+1, _time, self._integrator.nodes[step+1],
-                                                 self.__sol["current"][step+1],
-                                                 self.__err_vec["current"][step]))
-                else:
-                    LOG.debug(' ' * 10 + "{: >4d}    {: 6.2f}    {: 6.2f}    {: 10.4f}"
-                                         .format(step+1, _time, self._integrator.nodes[step+1],
-                                                 self.__sol["current"][step+1]))
+                self._sdc_step(step)
             # end for:step
             _iter_timer.stop()
 
@@ -359,3 +331,55 @@ class Sdc(IIterativeTimeSolver):
             Number of intermediate time steps within the problem-given time interval.
         """
         return self._num_time_steps
+
+    def _sdc_step(self, step):
+        # get current steps' time data
+        _dt = self.__delta_times["steps"][step]
+        _time = self._integrator.nodes[step]
+
+        # gather values for integration
+        _copy_mask = np.concatenate((np.array([True] * step),
+                                     np.array([False] * (self.num_time_steps - step + 1))))
+        _integrate_values = np.where(_copy_mask, self.__sol["current"],
+                                     self.__sol["previous"])
+
+        # evaluate problem for integration values
+        _integrate_values = \
+            np.array([self.problem.evaluate(self._integrator.nodes[step], val)
+                      for val in _integrate_values])
+
+        # integrate
+        integral = self._integrator.evaluate(_integrate_values, until_node_index=step)
+
+        # compute step
+        self.__sol["current"][step + 1] = \
+            self.__sol["current"][step] + \
+            _dt * (self.problem.evaluate(_time, self.__sol["current"][step]) -
+                   self.problem.evaluate(_time, self.__sol["previous"][step])) + \
+            self.__delta_times["interval"] * integral
+        #LOG.debug("          {:f} = {:f} + {:f} * ({:f} - {:f}) + {:f} * {:f}"
+                  #.format(self.__sol["current"][step + 1], self.__sol["current"][step], _dt,
+                  #        self.problem.evaluate(_time, self.__sol["current"][step]),
+                  #        self.problem.evaluate(_time, self.__sol["previous"][step]),
+                  #        self.__delta_times["interval"], integral))
+
+        # calculate error and its reduction
+        if self.problem.has_exact():
+            self.__err_vec["current"][step] = \
+                fabs(self.__sol["current"][step+1] -
+                     self.problem.exact(_time, self._integrator.nodes[step + 1]))
+        else:
+            # we need the exact solution for that
+            #  (unless we find an error approximation method)
+            pass
+
+        # log
+        if self.problem.has_exact():
+            LOG.debug(' ' * 10 + "{: >4d}    {: 6.2f}    {: 6.2f}    {: 10.4f}    {: 10.2e}"
+                                 .format(step+1, _time, self._integrator.nodes[step+1],
+                                         self.__sol["current"][step+1],
+                                         self.__err_vec["current"][step]))
+        else:
+            LOG.debug(' ' * 10 + "{: >4d}    {: 6.2f}    {: 6.2f}    {: 10.4f}"
+                                 .format(step+1, _time, self._integrator.nodes[step+1],
+                                         self.__sol["current"][step+1]))
