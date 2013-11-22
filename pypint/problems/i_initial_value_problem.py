@@ -8,7 +8,7 @@ from pypint.problems.i_problem import IProblem
 
 
 class IInitialValueProblem(IProblem):
-    def __init__(self):
+    def __init__(self, **kwargs):
         self._initial_value = None
 
     @property

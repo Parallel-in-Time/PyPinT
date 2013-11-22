@@ -6,7 +6,7 @@
 
 
 class IProblem(object):
-    def __init__(self):
+    def __init__(self, **kwargs):
         self._function = None
         self._time_start = None
         self._time_end = None
