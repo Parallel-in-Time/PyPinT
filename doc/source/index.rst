@@ -18,6 +18,7 @@ Table of Contents
    requirements
    development
    API Reference <api/package>
+   theory
    license
 
 Further Lists
