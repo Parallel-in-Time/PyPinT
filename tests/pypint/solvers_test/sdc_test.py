@@ -31,6 +31,7 @@ class SdcTest(NumpyAwareTestCase):
         self._ivp.evaluate = MagicMock(return_value=1.0)
         self._test_obj.init(self._ivp)
         _solution = self._test_obj.run()
+        self.assertEqual(_solution.used_iterations, 1, "Explicit SDC should converge in one step")
         self.assertNumpyArrayAlmostEqual(_solution.solution(0), numpy.array([0.0, 0.5, 1.0]))
 
 
