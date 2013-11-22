@@ -7,6 +7,8 @@ from unittest.mock import MagicMock
 from unittest.mock import PropertyMock
 from pypint.solvers.sdc import Sdc
 from pypint.problems.i_initial_value_problem import IInitialValueProblem
+from examples.problems.lambda_u import LambdaU
+from examples.problems.constant import Constant
 
 
 class SdcTest(NumpyAwareTestCase):
@@ -27,12 +29,17 @@ class SdcTest(NumpyAwareTestCase):
     def test_solver_initialization(self):
         self._test_obj.init(problem=self._ivp)
 
-    def test_constant_one_function(self):
-        self._ivp.evaluate = MagicMock(return_value=1.0)
-        self._test_obj.init(self._ivp)
+    def test_constant_minus_one_function(self):
+        _constant = Constant(constant=-1.0, shift=1.0)
+        self._test_obj.init(problem=_constant)
         _solution = self._test_obj.run()
+        self.assertNumpyArrayAlmostEqual(_solution.solution(-1), numpy.array([1.0, 0.5, 0.0]))
         self.assertEqual(_solution.used_iterations, 1, "Explicit SDC should converge in one step")
-        self.assertNumpyArrayAlmostEqual(_solution.solution(0), numpy.array([0.0, 0.5, 1.0]))
+
+    def test_lambda_u(self):
+        _lambda_u = LambdaU(lmbda=1.0)
+        self._test_obj.init(problem=_lambda_u, num_time_steps=9, max_iterations=10)
+        _solution = self._test_obj.run()
 
 
 if __name__ == "__main__":
