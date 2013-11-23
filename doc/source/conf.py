@@ -97,6 +97,8 @@ pygments_style = 'sphinx'
 
 # -- Options for autodoc Extension ---------------------------------------------
 
+autoclass_content = "both"
+
 autodoc_member_order = "bysource"
 
 autodoc_default_flags = [

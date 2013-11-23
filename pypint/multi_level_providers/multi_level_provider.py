@@ -14,10 +14,11 @@ class MultiLevelProvider(object):
     def __init__(self, num_levels=0, default_integrator=None,
                  default_transitioner=None):
         """
-        Paramters
-        ---------
+        Parameters
+        ----------
         num_levels : integer
             Number of initial levels.
+
         default_transitioner : :py:class:`.ILevelTransitionProvider`
             Default level transitioner to be used for all level transitions
             unless a specific one is specified.
