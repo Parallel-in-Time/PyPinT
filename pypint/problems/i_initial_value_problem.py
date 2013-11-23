@@ -8,8 +8,12 @@ from pypint.problems.i_problem import IProblem
 
 
 class IInitialValueProblem(IProblem):
-    def __init__(self):
-        self._initial_value = None
+    def __init__(self, *args, **kwargs):
+        super(IInitialValueProblem, self).__init__(args, kwargs)
+        if "initial_value" in kwargs:
+            self._initial_value = kwargs["initial_value"]
+        else:
+            self._initial_value = None
 
     @property
     def initial_value(self):
@@ -18,3 +22,8 @@ class IInitialValueProblem(IProblem):
     @initial_value.setter
     def initial_value(self, initial_value):
         self._initial_value = initial_value
+
+    def __str__(self):
+        str = super(IInitialValueProblem, self).__str__()
+        str += " with initial value {:.3f}".format(self.initial_value)
+        return str

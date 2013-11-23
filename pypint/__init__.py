@@ -17,8 +17,8 @@ if version_info.major < 3:
     raise RuntimeError("PyPinT requires Python 3.x")
 
 # initialize Logging framework
-from .utilities.logging import Logging
-LOG = Logging.logger()
+from .utilities.logging import logger
+LOG = logger()
 """
 Summary
 -------

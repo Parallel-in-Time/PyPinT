@@ -10,38 +10,14 @@ import numpy as np
 
 class SimpleSolution(ISolution):
     """
-    storage for the final solution of a solver
-
-    Stores the solution as a numpy.ndarray.
+    Summary
+    -------
+    Storage for the final solution of a solver.
     """
     def __init__(self):
-        super(self.__class__, self).__init__()
-        self._data = np.zeros(0)
-        self._used_iterations = 0
-        self._reduction = 0.0
+        super(SimpleSolution, self).__init__()
+        self._data = np.zeros(0, dtype=np.float64)
 
-    @property
-    def data(self):
-        """
-        accessing the stored solution
-
-        **Getter**
-
-        :returns: stored solution
-        :rtype:   numpy.ndarray
-
-        **Setter**
-
-        :param data: solution to store
-        :type data:  numpy.ndarray
-
-        :raises: ValueError if ``data`` is not a ``numpy.ndarray``
-        """
-        return self._data
-
-    @data.setter
-    def data(self, data):
-        if not isinstance(data, np.ndarray):
-            raise ValueError("pypint.solutions.SimpleSolution.data():" +
-                             "Given data is not a numpy.ndarray.")
-        self._data = data
+    def add_solution(self, data, **kwargs):
+        super(SimpleSolution, self).add_solution(data, kwargs)
+        self._data = data.copy()

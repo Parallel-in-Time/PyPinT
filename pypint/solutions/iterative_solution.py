@@ -6,71 +6,147 @@
 
 from .i_solution import ISolution
 import numpy as np
-from pypint.utilities import *
+from pypint.utilities import func_name
+from pypint import LOG
 
 
 class IterativeSolution(ISolution):
     """
-    storage for the solutions of an iterative solver
+    Summary
+    -------
+    Storage for the solutions of an iterative solver.
 
+    Extended Summary
+    ----------------
     A new solution of a specific iteration can be added via
     :py:func:`.add_solution` and queried via :py:func:`.solution`.
     """
     def __init__(self):
-        super(self.__class__, self).__init__()
-        self._data = []
+        super(IterativeSolution, self).__init__()
+        # add one element to enable 1-based indizes
+        self._data = np.zeros(1, dtype=np.ndarray)
+        # make the first element a None value
+        self._data[0] = None
         self._used_iterations = 0
-        self._reduction = 0.0
 
-    def solution(self, iteration):
+    def add_solution(self, data, *args, **kwargs):
         """
-        queries the solution of the given iteration
+        Summary
+        -------
+        Adds a new solution of the specified iteration.
 
-        :param iteration: index of the desired solution
-        :type iteration:  integer
-        :returns: solution of the given iteration
-        :rtype:   numpy.ndarray
+        Extended Summary
+        ----------------
+        A copy of the given data is stored as a ``numpy.float64`` array at the given iteration
+        index.
+
+        Parameters
+        ----------
+        data : numpy.ndarray
+             solution data
+
+        kwargs : dict
+
+            ``iteration`` : integer
+                Index of the iteration of this solution (1-based).
+                ``-1`` auto-appends the solution.
+
+        Raises
+        ------
+        ValueError
+            * if ``iteration`` is not given
+            * if there are more than ``iteration`` solutions already stored
+
+        See Also
+        --------
+        .ISolution.add_solution
+            overridden method
         """
-        return self._data[iteration]
+        super(IterativeSolution, self).add_solution(data, kwargs)
+        if "iteration" not in kwargs:
+            kwargs["iteration"] = -1
+        iteration = int(kwargs["iteration"])
+        _old_size = self._data.size
+        # get True for each empty entry
+        _empty_mask = np.ma.masked_equal(self._data, None).mask
 
-    def add_solution(self, iteration, data):
-        """
-        adds a new solution of the specified iteration
+        # resize data to fit specified iteration
+        if iteration == -1 or iteration >= _old_size:
+            if iteration == -1:
+                _resize = _old_size + 1
+            else:
+                _resize = iteration + 1
+            # create new index at the end of the data
+            self._data = np.resize(self._data, _resize)
+            # and set newly created value to None
+            self._data[iteration] = None
 
-        :param iteration: index of the iteration of this solution
-                          (1-based)
-        :type iteration:  integer
-        :param data:      solution data
-        :type data:       numpy.ndarray
-
-        :raises: **ValueError** if either ``data`` is not a ``numpy.ndarray`` or
-          there are more than ``iteration`` solutions already stored.
-
-        .. todo: Fill data of skipped iterations when ``iteration`` is not the
-                 next iteration to set.
-        """
-        if not isinstance(data, np.ndarray):
+        if iteration != -1 and self._data[iteration] is not None:
             raise ValueError(func_name(self) +
-                             "Given data is not a numpy.ndarray.")
-        if len(self._data) >= iteration:
-            raise ValueError(func_name(self) +
-                             "Data for iteration {:d} is already present."
+                             "Data for iteration {:d} is already present. Not overriding."
                              .format(iteration))
-        if len(self._data) < iteration - 1:
-            # TODO: fill in unused solutions
-            raise NotImplementedError(func_name(self) +
-                                      "Skipping of solutions not yet implemented.")
-        # append the given solution as the last one
-        #  due to previous checks it will have the correct index
-        self._data.append(data)
+
+        # fill in non-set iterations
+        _empty_mask = np.concatenate((_empty_mask, [True] * (self._data.size - _old_size)))
+        self._data[_empty_mask] = None
+
+        self._data[iteration] = np.array(data, dtype=np.float64)
+        self._used_iterations += 1
+
+    def solution(self, *args, **kwargs):
+        """
+        Summary
+        -------
+        Queries the solution vector of the given iteration.
+
+        Parameters
+        ----------
+        kwargs : dict
+
+            ``iteration`` : integer
+                Index of the desired solution vector (1-based).
+                Defaults to -1.
+                Index ``1`` is the first solution, ``-1`` the last and final solution vector.
+
+        Returns
+        -------
+        solution vector : numpy.ndarray
+            Solution of the given iteration.
+
+        Raises
+        ------
+        ValueError
+            If ``iteration`` is not available.
+
+        See Also
+        --------
+        .ISolution.solution
+            overridden method
+        """
+        super(IterativeSolution, self).solution(args, kwargs)
+        if "iteration" not in kwargs:
+            iteration = -1
+        else:
+            iteration = kwargs["iteration"]
+
+        if iteration != -1 and iteration > self._data.size:
+            raise ValueError(func_name(self) +
+                             "Desired iteration is not available: {:d}".format(iteration))
+
+        return self._data[iteration]
 
     @property
     def data(self):
-        return self._data
+        """
+        Returns
+        -------
+        Raw solution data with 0-based index.
+        """
+        return self._data[1:]
 
-    @data.setter
-    def data(self, data):
-        if not isinstance(data, np.ndarray):
-            raise ValueError(func_name(self) +
-                             "Given data is not a numpy.ndarray.")
-        self._data = data
+    def __str__(self):
+        str = "Iterative Solution with {:d} iterations and reduction of {:.2e}:"\
+              .format(self.used_iterations, self.reduction)
+        for iter in range(1, self.used_iterations):
+            str += "\n  Iteration {:d}: {:s}".format(iter+1, self.solution(iter))
+        return str
