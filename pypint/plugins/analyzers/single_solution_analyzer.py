@@ -20,7 +20,7 @@ class SingleSolutionAnalyzer(IAnalyzer):
 
     def run(self):
         # plot the last solution
-        self._plotter.plot(integrator=self._solver.integrator,
+        self._plotter.plot(solver=self._solver,
                            solution=self._data,
                            title=self._title)
 
