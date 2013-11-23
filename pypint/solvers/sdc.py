@@ -77,7 +77,6 @@ class Sdc(IIterativeTimeSolver):
             "previous": np.zeros(0),
             "current": np.zeros(0)
         }
-        self.__err_red_rate_vec = np.zeros(0)
 
     def init(self, problem, integrator=SdcIntegrator(), **kwargs):
         """
@@ -99,6 +98,11 @@ class Sdc(IIterativeTimeSolver):
 
             ``weights_type`` : :py:class:`.IWeightFunction`
                 Integration weights function to be used.
+
+        Raises
+        ------
+        ValueError
+            If given problem is not an :py:class:`.IInitialValueProblem`.
 
         See Also
         --------
@@ -198,6 +202,11 @@ class Sdc(IIterativeTimeSolver):
                 Is only displayed if the given problem provides a function for the
                 exact solution (see :py:meth:`.IProblem.has_exact()`).
 
+        Parameters
+        ----------
+        solution_class : class
+            Class of the resulting solution.
+
         Returns
         -------
         solution : ISolution
@@ -280,7 +289,7 @@ class Sdc(IIterativeTimeSolver):
                                        .format(_iter + 1, _relred, _iter_timer.past()))
 
             # save solution for this iteration
-            _sol.add_solution(_iter, self.__sol["current"])
+            _sol.add_solution(data=self.__sol["current"], iteration=-1)
 
             # update converged flag
             _converged = _converged or _relred <= self.min_reduction
@@ -312,6 +321,8 @@ class Sdc(IIterativeTimeSolver):
             LOG.info("# FAILED: Relative reduction after {:d} iteration(s). Rel. Reduction: {:.3e}"
                      .format(_iter + 1, _relred))
             LOG.warn("SDC Failed: Maximum number iterations reached without convergence.")
+
+        _sol.reduction = _relred
 
         LOG.info("{:#<80}".format("# FINISHED: Explicit SDC ({:.3f} sec) "
                                   .format(self.timer.past())))
