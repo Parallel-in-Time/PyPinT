@@ -16,6 +16,7 @@ class ISolution(object):
     """
     def __init__(self):
         self._data = np.zeros(0, dtype=np.float64)
+        self._errors = np.zeros(0, dtype=np.float64)
         self._used_iterations = None
         self._reduction = None
 
@@ -44,6 +45,10 @@ class ISolution(object):
         if not isinstance(data, np.ndarray):
             raise ValueError(func_name(self) +
                              "Given data is not a numpy.ndarray.")
+        if "error" in kwargs:
+            if not isinstance(kwargs["error"], np.ndarray):
+                raise ValueError(func_name(self) +
+                                 "Given error data is not a numpy.ndarray.")
 
     def solution(self, *args, **kwargs):
         """
@@ -69,6 +74,9 @@ class ISolution(object):
         """
         pass
 
+    def error(self, *args, **kwargs):
+        pass
+
     @property
     def data(self):
         """
@@ -81,6 +89,10 @@ class ISolution(object):
         raw solution data : numpy.ndarray
         """
         return self._data
+
+    @property
+    def errors(self):
+        return self._errors
 
     @property
     def used_iterations(self):

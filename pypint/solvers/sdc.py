@@ -289,7 +289,13 @@ class Sdc(IIterativeTimeSolver):
                                        .format(_iter + 1, _relred, _iter_timer.past()))
 
             # save solution for this iteration
-            _sol.add_solution(data=self.__sol["current"], iteration=-1)
+            if self.problem.has_exact():
+                _sol.add_solution(data=self.__sol["current"],
+                                  error=self.__err_vec["current"],
+                                  iteration=-1)
+            else:
+                _sol.add_solution(data=self.__sol["current"],
+                                  iteration=-1)
 
             # update converged flag
             _converged = _converged or _relred <= self.min_reduction
