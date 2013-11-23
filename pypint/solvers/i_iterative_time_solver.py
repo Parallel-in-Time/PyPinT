@@ -145,3 +145,7 @@ class IIterativeTimeSolver(object):
     @min_reduction.setter
     def min_reduction(self, min_reduction):
         self._min_reduction = min_reduction
+
+    @property
+    def integrator(self):
+        return self._integrator

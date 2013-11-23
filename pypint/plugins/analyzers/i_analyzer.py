@@ -6,12 +6,12 @@
 
 
 class IAnalyzer(object):
-    def __init__(self):
-        self._solutions = []
+    def __init__(self, *args, **kwargs):
+        self._data = None
         self._plotter = None
 
     def run(self):
         pass
 
-    def add_solution(self, solution):
-        self._solutions.append(solution)
+    def add_data(self, *args, **kwargs):
+        pass

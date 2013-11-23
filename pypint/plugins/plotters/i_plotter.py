@@ -6,8 +6,8 @@
 
 
 class IPlotter(object):
-    def __init__(self):
+    def __init__(self, *args, **kwargs):
         self._file_name = None
 
-    def plot(self):
+    def plot(self, *args, **kwargs):
         pass
