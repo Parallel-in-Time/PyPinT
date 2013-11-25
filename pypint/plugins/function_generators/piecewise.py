@@ -7,7 +7,7 @@
 import numpy as np
 
 
-class PiecewiseFG:
+class PiecewiseFG(object):
     """
     Summary
     -------

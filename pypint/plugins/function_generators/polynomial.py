@@ -7,7 +7,7 @@
 import numpy as np
 
 
-class PolynomialFG:
+class PolynomialFG(object):
     """
     Summary
     -------

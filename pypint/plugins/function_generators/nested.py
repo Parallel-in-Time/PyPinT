@@ -5,7 +5,7 @@
 """
 
 
-class NestedFG:
+class NestedFG(object):
     """
     Summary
     -------

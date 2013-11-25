@@ -7,7 +7,7 @@
 import numpy as np
 
 
-class TrigonometricFG:
+class TrigonometricFG(object):
     """
     Summary
     -------
