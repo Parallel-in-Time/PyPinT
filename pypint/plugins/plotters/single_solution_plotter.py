@@ -1,5 +1,4 @@
 # coding=utf-8
-
 """
 
 .. moduleauthor:: Torbjörn Klatt <t.klatt@fz-juelich.de>
@@ -12,52 +11,85 @@ from pypint.utilities import func_name
 
 
 class SingleSolutionPlotter(IPlotter):
+    """
+    Summary
+    -------
+    Plotter for a single solution of an iterative time solver.
+    """
     def __init__(self, *args, **kwargs):
         super(SingleSolutionPlotter, self).__init__(args, kwargs)
+        self._solver = None
+        self._solution = None
+        self._nodes = None
+        self._errplot = False
 
     def plot(self, *args, **kwargs):
+        """
+        Summary
+        -------
+        Plots the solution and optional also the error for each iteration.
+
+        Parameters
+        ----------
+        kwargs : dict
+            ``solver`` : IIterativeTimeSolver
+                The solver instance used to calculate the solution.
+
+            ``solution`` : ISolution
+                The solution.
+
+            ``errplot`` : boolean
+                (optional)
+                If given and ``True`` also plots the errors for each iteration found in the solution.
+        """
         super(SingleSolutionPlotter, self).plot(args, kwargs)
         if "solver" not in kwargs or "solution" not in kwargs:
             raise ValueError(func_name(self) +
                              "Both, solver and solution, must be given.")
-        solver = kwargs["solver"]
-        solution = kwargs["solution"]
-        nodes = solver.integrator.nodes
-        if solver.problem.time_start != nodes[0]:
-            nodes = np.concatenate(([solver.problem.time_start], nodes))
-        if solver.problem.time_end != nodes[-1]:
-            nodes = np.concatenate((nodes, [solver.problem.time_end]))
 
-        plt.suptitle(r"after {:d} iterations; overall reduction: {:.2e}"
-                     .format(solution.used_iterations, solution.reduction))
-        plt.subplot(2, 1, 1)
-        if "title" in kwargs:
-            plt.title(kwargs["title"])
-        if solver.problem.has_exact() and solution.errors[-1].max() > 1e-2:
-            self._final_solution(solution, nodes, exact=[[solver.problem.exact(0.0, node)] for node in nodes])
-        else:
-            self._final_solution(solution, nodes)
-        plt.subplot(2, 1, 2)
-        self._error_plot(solution, nodes)
+        self._solver = kwargs["solver"]
+        self._solution = kwargs["solution"]
+        self._nodes = self._solver.integrator.nodes
+        if "errorplot" in kwargs and kwargs["errorplot"]:
+            self._errplot = True
+
+        if self._solver.problem.time_start != self._nodes[0]:
+            self._nodes = np.concatenate(([self._solver.problem.time_start], self._nodes))
+        if self._solver.problem.time_end != self._nodes[-1]:
+            self._nodes = np.concatenate((self._nodes, [self._solver.problem.time_end]))
+
+        if self._errplot:
+            plt.suptitle(r"after {:d} iterations; overall reduction: {:.2e}"
+                         .format(self._solution.used_iterations, self._solution.reduction))
+            plt.subplot(2, 1, 1)
+
+        self._final_solution()
+        plt.title(self._solver.problem.__str__())
+
+        if self._errplot:
+            plt.subplot(2, 1, 2)
+            self._error_plot()
+
         plt.show()
 
-    def _final_solution(self, solution, nodes, *args, **kwargs):
-        if "exact" in kwargs:
-            plt.plot(nodes, solution.solution(), nodes, kwargs["exact"])
+    def _final_solution(self, *args, **kwargs):
+        if self._solver.problem.has_exact() and self._solution.errors[-1].max() > 1e-2:
+            exact = [[self._solver.problem.exact(0.0, node)] for node in self._nodes]
+            plt.plot(self._nodes, self._solution.solution(), self._nodes, exact)
         else:
-            plt.plot(nodes, solution.solution())
-        plt.xticks(nodes)
+            plt.plot(self._nodes, self._solution.solution())
+        plt.xticks(self._nodes)
         plt.xlabel("integration nodes")
         plt.ylabel(r'$u(t, \phi_t)$')
-        plt.xlim(nodes[0], nodes[-1])
+        plt.xlim(self._nodes[0], self._nodes[-1])
         plt.grid(True)
 
-    def _error_plot(self, solution, nodes):
-        errors = solution.errors
+    def _error_plot(self):
+        errors = self._solution.errors
         for i in range(0, errors.size):
-            plt.plot(nodes[1:], errors[i], label=r"Iteraion {:d}".format(i+1))
-        plt.xticks(nodes)
-        plt.xlim(nodes[0], nodes[-1])
+            plt.plot(self._nodes[1:], errors[i], label=r"Iteraion {:d}".format(i+1))
+        plt.xticks(self._nodes)
+        plt.xlim(self._nodes[0], self._nodes[-1])
         plt.yscale("log")
         plt.xlabel("integration nodes")
         plt.ylabel(r'absolute error of iterations')

@@ -13,16 +13,12 @@ class SingleSolutionAnalyzer(IAnalyzer):
         super(SingleSolutionAnalyzer, self).__init__(args, kwargs)
         self._solver = None
         self._plotter = SingleSolutionPlotter()
-        if "title" in kwargs:
-            self._title = kwargs["title"]
-        else:
-            self._title = "Solution"
 
     def run(self):
         # plot the last solution
         self._plotter.plot(solver=self._solver,
                            solution=self._data,
-                           title=self._title)
+                           errorplot=True)
 
     def add_data(self, *args, **kwargs):
         super(SingleSolutionAnalyzer, self).add_data(args, kwargs)
