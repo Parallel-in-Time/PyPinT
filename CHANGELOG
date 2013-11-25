@@ -1,0 +1,8 @@
+Release 0.0.1
+=============
+
+* thorough framework design for high flexibility and easy understanding
+* basic implementation of explicit SDC
+* basic solution analyzer and solution plotter
+* simple example for applying SDC
+* unit tests for core functionality
