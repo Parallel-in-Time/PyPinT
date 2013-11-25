@@ -10,9 +10,12 @@ from pypint.plugins.plotters.single_solution_plotter import SingleSolutionPlotte
 
 class SingleSolutionAnalyzer(IAnalyzer):
     def __init__(self, *args, **kwargs):
-        super(SingleSolutionAnalyzer, self).__init__(args, kwargs)
+        super(SingleSolutionAnalyzer, self).__init__(args, **kwargs)
         self._solver = None
-        self._plotter = SingleSolutionPlotter()
+        if "plotter_file_name" in kwargs:
+            self._plotter = SingleSolutionPlotter(file_name=kwargs["plotter_file_name"])
+        else:
+            self._plotter = SingleSolutionPlotter()
 
     def run(self):
         # plot the last solution

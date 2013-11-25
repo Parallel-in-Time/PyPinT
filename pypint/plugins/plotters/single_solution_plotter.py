@@ -7,6 +7,7 @@
 from .i_plotter import IPlotter
 import numpy as np
 import matplotlib.pyplot as plt
+from matplotlib import is_interactive
 from pypint.utilities import func_name
 
 
@@ -15,9 +16,14 @@ class SingleSolutionPlotter(IPlotter):
     Summary
     -------
     Plotter for a single solution of an iterative time solver.
+
+    See Also
+    --------
+    .IPlotter
+        overridden class
     """
     def __init__(self, *args, **kwargs):
-        super(SingleSolutionPlotter, self).__init__(args, kwargs)
+        super(SingleSolutionPlotter, self).__init__(args, **kwargs)
         self._solver = None
         self._solution = None
         self._nodes = None
@@ -31,18 +37,17 @@ class SingleSolutionPlotter(IPlotter):
 
         Parameters
         ----------
-        kwargs : dict
-            ``solver`` : IIterativeTimeSolver
-                The solver instance used to calculate the solution.
+        solver : IIterativeTimeSolver
+            The solver instance used to calculate the solution.
 
-            ``solution`` : ISolution
-                The solution.
+        solution : ISolution
+            The solution.
 
-            ``errplot`` : boolean
-                (optional)
-                If given and ``True`` also plots the errors for each iteration found in the solution.
+        errplot : boolean
+            (optional)
+            If given and ``True`` also plots the errors for each iteration found in the solution.
         """
-        super(SingleSolutionPlotter, self).plot(args, kwargs)
+        super(SingleSolutionPlotter, self).plot(args, **kwargs)
         if "solver" not in kwargs or "solution" not in kwargs:
             raise ValueError(func_name(self) +
                              "Both, solver and solution, must be given.")
@@ -70,9 +75,15 @@ class SingleSolutionPlotter(IPlotter):
             plt.subplot(2, 1, 2)
             self._error_plot()
 
-        plt.show()
+        if self._file_name is not None:
+            plt.savefig(self._file_name)
 
-    def _final_solution(self, *args, **kwargs):
+        if is_interactive():
+            plt.show()
+        else:
+            plt.close('all')
+
+    def _final_solution(self):
         if self._solver.problem.has_exact() and self._solution.errors[-1].max() > 1e-2:
             exact = [[self._solver.problem.exact(0.0, node)] for node in self._nodes]
             plt.plot(self._nodes, self._solution.solution(), self._nodes, exact)
