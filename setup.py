@@ -15,7 +15,7 @@ setup(
     long_description=read('README.md'),
     license="MIT",
     url="http://fz-juelich.de/ias/jsc/pint",
-    install_requires=['numpy', 'scipy'],
+    install_requires=['numpy', 'scipy', 'matplotlib'],
     packages=['pypint', 'tests'],
     test_suite="tests",
     classifiers=[
