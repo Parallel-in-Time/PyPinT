@@ -77,6 +77,11 @@ class Sdc(IIterativeTimeSolver):
             "previous": np.zeros(0),
             "current": np.zeros(0)
         }
+        # residuals
+        self.__residuals = {
+            "previous": np.zeros(0),
+            "current": np.zeros(0)
+        }
 
     def init(self, problem, integrator=SdcIntegrator(), **kwargs):
         """
@@ -140,6 +145,8 @@ class Sdc(IIterativeTimeSolver):
         self.__sol["current"] = self.__sol["previous"].copy()
         self.__err_vec["previous"] = np.array([0.0] * self.num_time_steps)
         self.__err_vec["current"] = self.__err_vec["previous"].copy()
+        self.__residuals["previous"] = np.array([0.0] * (self.num_time_steps + 1))
+        self.__residuals["current"] = self.__residuals["previous"].copy()
 
         # compute time step distances
         self.__delta_times["interval"] = self.problem.time_end - self.problem.time_start
@@ -233,11 +240,11 @@ class Sdc(IIterativeTimeSolver):
 
         # itartion result table header
         if self.problem.has_exact():
-            LOG.info(' ' * 4 + "{: >4s}    {: >10s}    {: >8s}    {: >10s}"
-                               .format("iter", "rel red", "time", "err red"))
+            LOG.info(' ' * 4 + "{: >4s}    {: >10s}    {: >8s}    {: >8s}    {: >10s}"
+                               .format("iter", "rel red", "time", "resid", "err red"))
         else:
-            LOG.info(' ' * 4 + "{: >4s}    {: >10s}    {: >8s}"
-                               .format("iter", "rel red", "time"))
+            LOG.info(' ' * 4 + "{: >4s}    {: >10s}    {: >8s}    {: >8s}"
+                               .format("iter", "rel red", "time", "resid"))
 
         # initialize iteration timer of same type as global timer
         _iter_timer = self.timer.__class__()
@@ -255,11 +262,11 @@ class Sdc(IIterativeTimeSolver):
 
             # step result table header
             if self.problem.has_exact():
-                LOG.debug(' ' * 10 + "{: >4s}    {: >6s}    {: >6s}    {: >10s}    {: >10s}"
-                                     .format("step", "t_0", "t_1", "sol", "err"))
+                LOG.debug(' ' * 10 + "{: >4s}    {: >6s}    {: >6s}    {: >10s}    {: >8s}    {: >10s}"
+                                     .format("step", "t_0", "t_1", "sol", "resid", "err"))
             else:
-                LOG.debug(' ' * 10 + "{: >4s}    {: >6s}    {: >6s}    {: >10s}"
-                                     .format("step", "t_0", "t_1", "sol"))
+                LOG.debug(' ' * 10 + "{: >4s}    {: >6s}    {: >6s}    {: >10s}    {: >8s}"
+                                     .format("step", "t_0", "t_1", "sol", "resid"))
 
             # iterate on time steps
             _iter_timer.start()
@@ -282,23 +289,28 @@ class Sdc(IIterativeTimeSolver):
             else:
                 if self.problem.has_exact() and _iter > 0:
                     # we could compute the correct error of our current solution
-                    LOG.info(' ' * 4 + "{: 4d}    {: 10.2e}    {: 8.4f}    {: 10.2e}"
-                                       .format(_iter + 1, _relred, _iter_timer.past(), _errred))
+                    LOG.info(' ' * 4 + "{: 4d}    {: 10.2e}    {: 8.4f}    {: 8.2e}    {: 10.2e}"
+                                       .format(_iter + 1, _relred, _iter_timer.past(),
+                                               self.__residuals["current"][-1], _errred))
                 else:
-                    LOG.info(' ' * 4 + "{: 4d}    {: 10.2e}    {: 8.4f}"
-                                       .format(_iter + 1, _relred, _iter_timer.past()))
+                    LOG.info(' ' * 4 + "{: 4d}    {: 10.2e}    {: 8.4f}    {: 8.2e}"
+                                       .format(_iter + 1, _relred, _iter_timer.past(),
+                                               self.__residuals["current"][-1]))
 
             # save solution for this iteration
             if self.problem.has_exact():
-                _sol.add_solution(data=self.__sol["current"],
-                                  error=self.__err_vec["current"],
+                _sol.add_solution(data=self.__sol["current"].copy(),
+                                  error=self.__err_vec["current"].copy(),
+                                  residual=self.__residuals["current"].copy(),
                                   iteration=-1)
             else:
-                _sol.add_solution(data=self.__sol["current"],
+                _sol.add_solution(data=self.__sol["current"].copy(),
+                                  residual=self.__residuals["current"].copy(),
                                   iteration=-1)
 
             # update converged flag
             _converged = _converged or _relred <= self.min_reduction
+            _converged = _converged or self.__residuals["current"][-1] <= self.min_reduction
             if self.problem.has_exact:
                 _converged = _converged or _errred <= self.min_reduction
 
@@ -309,6 +321,8 @@ class Sdc(IIterativeTimeSolver):
 
             # reset helper variables
             self.__sol["previous"] = self.__sol["current"].copy()
+            self.__residuals["previous"] = self.__residuals["current"].copy()
+            self.__residuals["current"] = np.array([0.0] * (self.num_time_steps + 1))
             if self.problem.has_exact():
                 self.__err_vec["previous"] = self.__err_vec["current"].copy()
                 self.__err_vec["current"] = np.array([0.0] * self.num_time_steps)
@@ -317,15 +331,16 @@ class Sdc(IIterativeTimeSolver):
 
         if _converged:
             LOG.info("# Converged after {:d} iteration(s).".format(_iter + 1))
-            LOG.info("# Rel. Reduction: {:.3e}"
-                     .format(_relred))
+            LOG.info("# Rel. Reduction: {:.3e}".format(_relred))
+            LOG.info("# Final Residual: {:.3e}".format(self.__residuals["previous"][-1]))
             if self.problem.has_exact():
                 LOG.info("# Rel. Error: {:.3e}"
                          .format(_errred))
         else:
             warnings.warn("Explicit SDC: Did not converged!")
-            LOG.info("# FAILED: Relative reduction after {:d} iteration(s). Rel. Reduction: {:.3e}"
-                     .format(_iter + 1, _relred))
+            LOG.info("# FAILED: After {:d} iteration(s).".format(_iter + 1))
+            LOG.info("#         Rel. Reduction: {:.3e}".format(_relred))
+            LOG.info("#         Final Residual: {:.3e}".format(self.__residuals["previous"][-1]))
             LOG.warn("SDC Failed: Maximum number iterations reached without convergence.")
 
         _sol.reduction = _relred
@@ -374,11 +389,27 @@ class Sdc(IIterativeTimeSolver):
             _dt * (self.problem.evaluate(_time, self.__sol["current"][step]) -
                    self.problem.evaluate(_time, self.__sol["previous"][step])) + \
             self.__delta_times["interval"] * integral
-        #LOG.debug("          {:f} = {:f} + {:f} * ({:f} - {:f}) + {:f} * {:f}"
-                  #.format(self.__sol["current"][step + 1], self.__sol["current"][step], _dt,
-                  #        self.problem.evaluate(_time, self.__sol["current"][step]),
-                  #        self.problem.evaluate(_time, self.__sol["previous"][step]),
-                  #        self.__delta_times["interval"], integral))
+        LOG.debug("          {:f} = {:f} + {:f} * ({:f} - {:f}) + {:f} * {:f}"
+                  .format(self.__sol["current"][step + 1], self.__sol["current"][step], _dt,
+                          self.problem.evaluate(_time, self.__sol["current"][step]),
+                          self.problem.evaluate(_time, self.__sol["previous"][step]),
+                          self.__delta_times["interval"], integral))
+
+        # calculate residual
+        # (residual is 0-based)
+        #_integrate_values[step + 1] = self.__sol["current"][step + 1]
+        _integrate_values = np.where(_copy_mask, self.__sol["current"], self.__sol["previous"])
+        _integrate_values[step + 1] = self.__sol["current"][step + 1]
+        _integrate_values = \
+            np.array([self.problem.evaluate(self._integrator.nodes[step], val)
+                      for val in _integrate_values])
+        _residual_integral = 0
+        for i in range(0, step+1):
+            _residual_integral += self._integrator.evaluate(_integrate_values, until_node_index=i)
+
+        self.__residuals["current"][step + 1] = \
+            fabs(self.problem.initial_value + self.__delta_times["interval"] * _residual_integral
+                 - self.__sol["current"][step + 1])
 
         # calculate error and its reduction
         if self.problem.has_exact():
@@ -392,11 +423,13 @@ class Sdc(IIterativeTimeSolver):
 
         # log
         if self.problem.has_exact():
-            LOG.debug(' ' * 10 + "{: >4d}    {: 6.2f}    {: 6.2f}    {: 10.4f}    {: 10.2e}"
+            LOG.debug(' ' * 10 + "{: >4d}    {: 6.2f}    {: 6.2f}    {: 10.4f}    {: 8.2e}    {: 10.2e}"
                                  .format(step+1, _time, self._integrator.nodes[step+1],
                                          self.__sol["current"][step+1],
+                                         self.__residuals["current"][step + 1],
                                          self.__err_vec["current"][step]))
         else:
-            LOG.debug(' ' * 10 + "{: >4d}    {: 6.2f}    {: 6.2f}    {: 10.4f}"
+            LOG.debug(' ' * 10 + "{: >4d}    {: 6.2f}    {: 6.2f}    {: 10.4f}    {: 8.2e}"
                                  .format(step+1, _time, self._integrator.nodes[step+1],
-                                         self.__sol["current"][step+1]))
+                                         self.__sol["current"][step+1]),
+                                         self.__residuals["current"][step + 1])
