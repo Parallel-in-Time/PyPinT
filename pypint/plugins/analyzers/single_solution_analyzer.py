@@ -30,7 +30,8 @@ class SingleSolutionAnalyzer(IAnalyzer):
         # plot the last solution
         self._plotter.plot(solver=self._solver,
                            solution=self._data,
-                           errorplot=True)
+                           errorplot=True,
+                           residualplot=True)
 
     def add_data(self, *args, **kwargs):
         """
