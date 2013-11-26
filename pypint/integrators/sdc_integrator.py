@@ -43,19 +43,24 @@ class SdcIntegrator(IntegratorBase):
         Raises
         ------
         ValueError
-            if ``until_node_index`` is not given
+            if ``last_node_index`` is not given
 
         See Also
         --------
         .IntegratorBase.evaluate
             overridden method
         """
-        if "until_node_index" not in kwargs:
+        if "last_node_index" not in kwargs:
             raise ValueError(func_name(self) +
                              "Last node index must be given.")
+        _index = kwargs["last_node_index"]
+        if _index == 0 or _index > self._smat.shape[0]:
+            raise ValueError(func_name(self) +
+                             "Last node index {:d} too small or too large.".format(_index) +
+                             "Must be within [{:d},{:d})".format(1, self._smat.shape[0]))
         super(SdcIntegrator, self).evaluate(data, time_start=self.nodes[0],
-                                            time_end=self.nodes[kwargs["until_node_index"] + 1])
-        return np.dot(self._smat[kwargs["until_node_index"]], data)
+                                            time_end=self.nodes[_index])
+        return np.dot(self._smat[_index - 1], data)
 
     def _construct_s_matrix(self):
         if isinstance(self._nodes, GaussLobattoNodes):
