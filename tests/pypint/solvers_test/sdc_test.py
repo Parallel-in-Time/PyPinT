@@ -34,12 +34,16 @@ class SdcTest(NumpyAwareTestCase):
         self._test_obj.init(problem=_constant)
         _solution = self._test_obj.run()
         self.assertNumpyArrayAlmostEqual(_solution.solution(-1), numpy.array([1.0, 0.5, 0.0]))
-        self.assertEqual(_solution.used_iterations, 1, "Explicit SDC should converge in one step")
+        self.assertEqual(_solution.used_iterations, 1,
+                         "Explicit SDC should converge in 1 iteration.")
 
     def test_lambda_u(self):
-        _lambda_u = LambdaU(lmbda=1.0)
-        self._test_obj.init(problem=_lambda_u, num_time_steps=9, max_iterations=10)
+        _lambda_u = LambdaU(lmbda=-1.0)
+        self._test_obj.init(problem=_lambda_u, num_time_steps=9,
+                            max_iterations=10, min_reduction=1e-7)
         _solution = self._test_obj.run()
+        self.assertEqual(_solution.used_iterations, 6,
+                         "Explicit SDC should converge in 6 iterations.")
 
 
 if __name__ == "__main__":
