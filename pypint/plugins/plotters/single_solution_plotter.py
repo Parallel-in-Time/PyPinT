@@ -7,8 +7,8 @@
 from .i_plotter import IPlotter
 import numpy as np
 import matplotlib.pyplot as plt
+from matplotlib import is_interactive
 from pypint.utilities import func_name
-from pypint import LOG
 
 
 class SingleSolutionPlotter(IPlotter):
@@ -16,9 +16,14 @@ class SingleSolutionPlotter(IPlotter):
     Summary
     -------
     Plotter for a single solution of an iterative time solver.
+
+    See Also
+    --------
+    .IPlotter
+        overridden class
     """
     def __init__(self, *args, **kwargs):
-        super(SingleSolutionPlotter, self).__init__(args, kwargs)
+        super(SingleSolutionPlotter, self).__init__(args, **kwargs)
         self._solver = None
         self._solution = None
         self._nodes = None
@@ -32,22 +37,21 @@ class SingleSolutionPlotter(IPlotter):
 
         Parameters
         ----------
-        kwargs : dict
-            ``solver`` : IIterativeTimeSolver
-                The solver instance used to calculate the solution.
+        solver : IIterativeTimeSolver
+            The solver instance used to calculate the solution.
 
-            ``solution`` : ISolution
-                The solution.
+        solution : ISolution
+            The solution.
 
-            ``errplot`` : boolean
-                (optional)
-                If given and ``True`` also plots the errors for each iteration found in the solution.
+        errplot : boolean
+            (optional)
+            If given and ``True`` also plots the errors for each iteration found in the solution.
 
-            ``residualplot`` : boolean
-                (optional)
-                If given and ``True`` also plots the residual for each iteration found in the solution.
+        residualplot : boolean
+            (optional)
+            If given and ``True`` also plots the residual for each iteration found in the solution.
         """
-        super(SingleSolutionPlotter, self).plot(args, kwargs)
+        super(SingleSolutionPlotter, self).plot(args, **kwargs)
         if "solver" not in kwargs or "solution" not in kwargs:
             raise ValueError(func_name(self) +
                              "Both, solver and solution, must be given.")
@@ -69,8 +73,6 @@ class SingleSolutionPlotter(IPlotter):
         if self._solver.problem.time_end != self._nodes[-1]:
             self._nodes = np.concatenate((self._nodes, [self._solver.problem.time_end]))
 
-        LOG.debug("nodes: {:s}".format(self._nodes))
-
         if self._errplot or self._residualplot:
             plt.suptitle(r"after {:d} iterations; overall reduction: {:.2e}"
                          .format(self._solution.used_iterations, self._solution.reduction))
@@ -90,9 +92,15 @@ class SingleSolutionPlotter(IPlotter):
             plt.subplot(3, 1, _curr_subplot)
             self._residual_plot()
 
-        plt.show()
+        if self._file_name is not None:
+            plt.savefig(self._file_name)
 
-    def _final_solution(self, *args, **kwargs):
+        if is_interactive():
+            plt.show()
+        else:
+            plt.close('all')
+
+    def _final_solution(self):
         if self._solver.problem.has_exact() and self._solution.errors[-1].max() > 1e-2:
             exact = [[self._solver.problem.exact(0.0, node)] for node in self._nodes]
             plt.plot(self._nodes, self._solution.solution(), self._nodes, exact)
@@ -118,7 +126,6 @@ class SingleSolutionPlotter(IPlotter):
 
     def _residual_plot(self):
         residuals = self._solution.residuals
-        print(str(residuals))
         for i in range(0, residuals.size):
             plt.plot(self._nodes, residuals[i], label=r"Iteraion {:d}".format(i+1))
         plt.xticks(self._nodes)
