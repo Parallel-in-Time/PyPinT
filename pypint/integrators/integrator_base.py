@@ -117,10 +117,13 @@ class IntegratorBase(object):
         data : numpy.ndarray
             Data vector of the values at given time points.
             Its length must equal the number of integration nodes.
+
         **kwargs : dict
-            time_start : float
+
+            ``time_start`` : float
                 Begining of the time interval to integrate over.
-            time_end : float
+
+            ``time_end`` : float
                 End of the time interval to integrate over.
 
         Raises
