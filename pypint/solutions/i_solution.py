@@ -57,7 +57,7 @@ class ISolution(object):
                 raise ValueError(func_name(self) +
                                  "Given residual data is not a numpy.ndarray.")
 
-    def solution(self, **kwargs):
+    def solution(self, *args, **kwargs):
         """
         Summary
         -------
@@ -78,7 +78,7 @@ class ISolution(object):
         """
         pass
 
-    def error(self, **kwargs):
+    def error(self, *args, **kwargs):
         """
         Summary
         -------
@@ -99,7 +99,7 @@ class ISolution(object):
         """
         pass
 
-    def residual(self, **kwargs):
+    def residual(self, *args, **kwargs):
         """
         Summary
         -------

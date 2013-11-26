@@ -109,7 +109,7 @@ class IterativeSolution(ISolution):
             self._residuals[iteration] = np.array(kwargs["residual"], dtype=np.float64)
         self._used_iterations += 1
 
-    def solution(self, **kwargs):
+    def solution(self, *args, **kwargs):
         """
         Summary
         -------
@@ -137,7 +137,7 @@ class IterativeSolution(ISolution):
         .ISolution.solution
             overridden method
         """
-        super(IterativeSolution, self).solution(kwargs)
+        super(IterativeSolution, self).solution(args, kwargs)
         if "iteration" not in kwargs:
             iteration = -1
         else:
@@ -149,7 +149,7 @@ class IterativeSolution(ISolution):
 
         return self._data[iteration]
 
-    def error(self, **kwargs):
+    def error(self, *args, **kwargs):
         """
         Parameters
         ----------
@@ -173,7 +173,7 @@ class IterativeSolution(ISolution):
         .ISolution.error
             overridden method
         """
-        super(IterativeSolution, self).error(kwargs)
+        super(IterativeSolution, self).error(args, kwargs)
         if "iteration" not in kwargs:
             iteration = -1
         else:
@@ -185,7 +185,7 @@ class IterativeSolution(ISolution):
 
         return self._errors[iteration]
 
-    def residual(self, **kwargs):
+    def residual(self, *args, **kwargs):
         """
         Parameters
         ----------
@@ -210,7 +210,7 @@ class IterativeSolution(ISolution):
         .ISolution.residual
             overridden method
         """
-        super(IterativeSolution, self).residual(kwargs)
+        super(IterativeSolution, self).residual(args, kwargs)
         if "iteration" not in kwargs:
             iteration = -1
         else:
