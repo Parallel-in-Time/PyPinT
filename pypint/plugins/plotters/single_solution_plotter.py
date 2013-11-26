@@ -126,7 +126,6 @@ class SingleSolutionPlotter(IPlotter):
 
     def _residual_plot(self):
         residuals = self._solution.residuals
-        print(str(residuals))
         for i in range(0, residuals.size):
             plt.plot(self._nodes, residuals[i], label=r"Iteraion {:d}".format(i+1))
         plt.xticks(self._nodes)
