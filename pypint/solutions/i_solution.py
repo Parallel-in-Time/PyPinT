@@ -17,6 +17,7 @@ class ISolution(object):
     def __init__(self):
         self._data = np.zeros(0, dtype=np.float64)
         self._errors = np.zeros(0, dtype=np.float64)
+        self._residuals = np.zeros(0, dtype=np.float64)
         self._used_iterations = None
         self._reduction = None
 
@@ -29,18 +30,20 @@ class ISolution(object):
         Parameters
         ----------
         data : numpy.ndarray
-             Solution data.
+            Solution data.
 
-        args : list
-            Further arguments not processed by this class.
+        error : numpy.ndarray
+            (optional)
+            Absolute error of the data.
 
-        kwargs : dict
-            Further named arguments not processed by this class.
+        residual : numpy.ndarray
+            (optional)
+            Residual of the data.
 
         Raises
         ------
         ValueError
-            If either ``data`` is not a ``numpy.ndarray``
+            If either ``data``, ``error`` or ``residual`` is not a ``numpy.ndarray``.
         """
         if not isinstance(data, np.ndarray):
             raise ValueError(func_name(self) +
@@ -49,6 +52,10 @@ class ISolution(object):
             if not isinstance(kwargs["error"], np.ndarray):
                 raise ValueError(func_name(self) +
                                  "Given error data is not a numpy.ndarray.")
+        if "residual" in kwargs:
+            if not isinstance(kwargs["residual"], np.ndarray):
+                raise ValueError(func_name(self) +
+                                 "Given residual data is not a numpy.ndarray.")
 
     def solution(self, *args, **kwargs):
         """
@@ -77,6 +84,9 @@ class ISolution(object):
     def error(self, *args, **kwargs):
         pass
 
+    def residual(self, *args, **kwargs):
+        pass
+
     @property
     def data(self):
         """
@@ -93,6 +103,10 @@ class ISolution(object):
     @property
     def errors(self):
         return self._errors
+
+    @property
+    def residuals(self):
+        return self._residuals
 
     @property
     def used_iterations(self):
