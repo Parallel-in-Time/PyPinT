@@ -389,7 +389,7 @@ class Sdc(IIterativeTimeSolver):
                       for val in _integrate_values])
 
         # integrate
-        integral = self._integrator.evaluate(_integrate_values, until_node_index=step)
+        integral = self._integrator.evaluate(_integrate_values, last_node_index=step+1)
 
         # compute step
         self.__sol["current"][step + 1] = \
@@ -411,7 +411,7 @@ class Sdc(IIterativeTimeSolver):
                       for val in _integrate_values])
         _residual_integral = 0
         for i in range(0, step+1):
-            _residual_integral += self._integrator.evaluate(_integrate_values, until_node_index=i)
+            _residual_integral += self._integrator.evaluate(_integrate_values, last_node_index=i+1)
 
         self.__residuals["current"][step + 1] = \
             fabs(self.problem.initial_value + self.__delta_times["interval"] * _residual_integral
