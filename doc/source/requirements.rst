@@ -1,8 +1,8 @@
 Requirements
 ============
 
-Python 3.x
-    *pySDC* has been tested with Python versions 3.2 and 3.3.
+Python 3.3
+    *PyPinT* has been tested with Python version 3.3.
     All 2.x versions are known to not be compatible. This is on purpose.
 
 numPy
@@ -10,6 +10,9 @@ numPy
 
 sciPy
     Required for its linear algebra module
+
+matplotlib
+    Required for the plotters
 
 Sphinx (optional)
     Required to generate the documentation.

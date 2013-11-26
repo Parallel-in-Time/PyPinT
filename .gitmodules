@@ -1,3 +1,6 @@
 [submodule "doc/sphinxext"]
 	path = doc/sphinxext
-	url = https://github.com/numpy/numpydoc.git
+  url = https://github.com/numpy/numpydoc.git
+[submodule "examples"]
+	path = examples
+	url = git@pint.fz-juelich.de:PyPinT-examples.git
