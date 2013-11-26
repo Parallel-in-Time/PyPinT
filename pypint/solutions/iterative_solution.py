@@ -106,11 +106,10 @@ class IterativeSolution(ISolution):
         if "error" in kwargs:
             self._errors[iteration] = np.array(kwargs["error"], dtype=np.float64)
         if "residual" in kwargs:
-            LOG.debug("residuals {:d}: {:s}".format(kwargs["residual"].size, kwargs["residual"]))
             self._residuals[iteration] = np.array(kwargs["residual"], dtype=np.float64)
         self._used_iterations += 1
 
-    def solution(self, *args, **kwargs):
+    def solution(self, **kwargs):
         """
         Summary
         -------
@@ -118,12 +117,10 @@ class IterativeSolution(ISolution):
 
         Parameters
         ----------
-        kwargs : dict
-
-            ``iteration`` : integer
-                Index of the desired solution vector (1-based).
-                Defaults to -1.
-                Index ``1`` is the first solution, ``-1`` the last and final solution vector.
+        iteration : integer
+            Index of the desired solution vector (1-based).
+            Defaults to -1.
+            Index ``1`` is the first solution, ``-1`` the last and final solution vector.
 
         Returns
         -------
@@ -140,7 +137,7 @@ class IterativeSolution(ISolution):
         .ISolution.solution
             overridden method
         """
-        super(IterativeSolution, self).solution(args, kwargs)
+        super(IterativeSolution, self).solution(kwargs)
         if "iteration" not in kwargs:
             iteration = -1
         else:
@@ -152,8 +149,31 @@ class IterativeSolution(ISolution):
 
         return self._data[iteration]
 
-    def error(self, *args, **kwargs):
-        super(IterativeSolution, self).error(args, kwargs)
+    def error(self, **kwargs):
+        """
+        Parameters
+        ----------
+        iteration : integer
+            Index of the iteration of the desired error (1-based).
+            Defaults to -1.
+            Index ``1`` is the first error, ``-1`` the last and final error vector.
+
+        Returns
+        -------
+        error vector : numpy.ndarray
+            Error of the given iteration.
+
+        Raises
+        ------
+        ValueError
+            If ``iteration`` is not available.
+
+        See Also
+        --------
+        .ISolution.error
+            overridden method
+        """
+        super(IterativeSolution, self).error(kwargs)
         if "iteration" not in kwargs:
             iteration = -1
         else:
@@ -165,8 +185,32 @@ class IterativeSolution(ISolution):
 
         return self._errors[iteration]
 
-    def residual(self, *args, **kwargs):
-        super(IterativeSolution, self).residual(args, kwargs)
+    def residual(self, **kwargs):
+        """
+        Parameters
+        ----------
+        iteration : integer
+            Index of the iteration of the desired residual (1-based).
+            Defaults to -1.
+            Index ``1`` is the first residual, ``-1`` the last and final residual vector.
+
+        Returns
+        -------
+        residual vector : numpy.ndarray
+            Residual of the given iteration.
+
+        Raises
+        ------
+        ValueError
+            If ``iteration`` is not available.
+
+
+        See Also
+        --------
+        .ISolution.residual
+            overridden method
+        """
+        super(IterativeSolution, self).residual(kwargs)
         if "iteration" not in kwargs:
             iteration = -1
         else:
@@ -199,6 +243,5 @@ class IterativeSolution(ISolution):
         str = "Iterative Solution with {:d} iterations and reduction of {:.2e}:"\
               .format(self.used_iterations, self.reduction)
         for iter in range(1, self.used_iterations):
-            str += "\n  Iteration {:d}:\n    Sol: {:s}\n    Err: {:s}\n    Res: {:s}"\
-                   .format(iter+1, self.solution(iter), self.error(iter), self.residual(iter))
+            str += "\n  Iteration {:d}: {:s}".format(iter+1, self.solution(iter))
         return str

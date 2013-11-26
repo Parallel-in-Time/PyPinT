@@ -179,6 +179,10 @@ class Sdc(IIterativeTimeSolver):
 
                 Seconds taken for the iteration.
 
+            **resid**
+
+                Residual of the last time step of the iteration.
+
             **err red**
 
                 Reduction of the absolute error from the first iteration to the current.
@@ -202,6 +206,10 @@ class Sdc(IIterativeTimeSolver):
             **sol**
 
                 Computed solution for the time step.
+
+            **resid**
+
+                Residual of the time step.
 
             **err**
 
@@ -389,15 +397,13 @@ class Sdc(IIterativeTimeSolver):
             _dt * (self.problem.evaluate(_time, self.__sol["current"][step]) -
                    self.problem.evaluate(_time, self.__sol["previous"][step])) + \
             self.__delta_times["interval"] * integral
-        LOG.debug("          {:f} = {:f} + {:f} * ({:f} - {:f}) + {:f} * {:f}"
-                  .format(self.__sol["current"][step + 1], self.__sol["current"][step], _dt,
-                          self.problem.evaluate(_time, self.__sol["current"][step]),
-                          self.problem.evaluate(_time, self.__sol["previous"][step]),
-                          self.__delta_times["interval"], integral))
+        #LOG.debug("          {:f} = {:f} + {:f} * ({:f} - {:f}) + {:f} * {:f}"
+        #          .format(self.__sol["current"][step + 1], self.__sol["current"][step], _dt,
+        #                  self.problem.evaluate(_time, self.__sol["current"][step]),
+        #                  self.problem.evaluate(_time, self.__sol["previous"][step]),
+        #                  self.__delta_times["interval"], integral))
 
         # calculate residual
-        # (residual is 0-based)
-        #_integrate_values[step + 1] = self.__sol["current"][step + 1]
         _integrate_values = np.where(_copy_mask, self.__sol["current"], self.__sol["previous"])
         _integrate_values[step + 1] = self.__sol["current"][step + 1]
         _integrate_values = \

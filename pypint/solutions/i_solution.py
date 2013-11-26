@@ -57,11 +57,11 @@ class ISolution(object):
                 raise ValueError(func_name(self) +
                                  "Given residual data is not a numpy.ndarray.")
 
-    def solution(self, *args, **kwargs):
+    def solution(self, **kwargs):
         """
         Summary
         -------
-        Accessor for a specific solution
+        Accessor for a specific solution.
 
         Extended Summary
         ----------------
@@ -69,9 +69,6 @@ class ISolution(object):
 
         Parameters
         ----------
-        args : list
-            Not processed (unnamed) arguments.
-
         kwargs : dict
             Descriptors (named arguments) of the desired solution.
 
@@ -81,10 +78,46 @@ class ISolution(object):
         """
         pass
 
-    def error(self, *args, **kwargs):
+    def error(self, **kwargs):
+        """
+        Summary
+        -------
+        Accessor for a specific error.
+
+        Extended Summary
+        ----------------
+        Should be overridden by derived classes if applicable.
+
+        Parameters
+        ----------
+        kwargs : dict
+            Descriptors (named arguments) of the desired error.
+
+        Returns
+        -------
+        Nothing
+        """
         pass
 
-    def residual(self, *args, **kwargs):
+    def residual(self, **kwargs):
+        """
+        Summary
+        -------
+        Accessor for a specific residual.
+
+        Extended Summary
+        ----------------
+        Should be overridden by derived classes if applicable.
+
+        Parameters
+        ----------
+        kwargs : dict
+            Descriptors (named arguments) of the desired residual.
+
+        Returns
+        -------
+        Nothing
+        """
         pass
 
     @property
