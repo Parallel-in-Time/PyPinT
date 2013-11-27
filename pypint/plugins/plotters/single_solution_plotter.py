@@ -115,7 +115,7 @@ class SingleSolutionPlotter(IPlotter):
     def _error_plot(self):
         errors = self._solution.errors
         for i in range(0, errors.size):
-            plt.plot(self._nodes[1:], errors[i], label=r"Iteraion {:d}".format(i+1))
+            plt.plot(self._nodes, errors[i], label=r"Iteraion {:d}".format(i+1))
         plt.xticks(self._nodes)
         plt.xlim(self._nodes[0], self._nodes[-1])
         plt.yscale("log")
