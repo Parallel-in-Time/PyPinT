@@ -114,3 +114,9 @@ class IIterativeTimeSolver(object):
     @property
     def integrator(self):
         return self._integrator
+
+    def _print_header(self):
+        pass
+
+    def _print_footer(self):
+        pass

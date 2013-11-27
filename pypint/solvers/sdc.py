@@ -190,7 +190,8 @@ class Sdc(IIterativeTimeSolver):
                 Is only displayed from the second iteration onwards and only if the given problem
                 provides a function of the exact solution (see :py:meth:`.IProblem.has_exact()`).
 
-        The output for the time steps of an iteration explained:
+        The output for the time steps of an iteration explained (will only show up when running with
+        logger level ``DEBUG``):
 
             **step**
 
@@ -237,24 +238,7 @@ class Sdc(IIterativeTimeSolver):
         _sol = solution_class()
 
         # start logging output
-        LOG.info("> " + '#' * 78)
-        LOG.info("{:#<80}".format("> START: Explicit SDC "))
-        LOG.info(">   Interval:               [{:.3f}, {:.3f}]".format(self.problem.time_start,
-                                                                       self.problem.time_end))
-        LOG.info(">   Time Steps:             {:d}".format(self.num_time_steps))
-        LOG.info(">   Termination Conditions: {:s}".format(self._threshold_check.print_conditions()))
-        LOG.info(">   Problem: {:s}".format(self.problem))
-        LOG.info("> " + '-' * 78)
-
-        # itartion result table header
-        if self.problem.has_exact():
-            LOG.info("> " + ' ' * 4 +
-                     "{: >4s}    {: >10s}    {: >8s}    {: >8s}    {: >10s}"
-                     .format("iter", "rel red", "time", "resid", "err red"))
-        else:
-            LOG.info("> " + ' ' * 4 +
-                     "{: >4s}    {: >10s}    {: >8s}    {: >8s}"
-                     .format("iter", "rel red", "time", "resid"))
+        self._print_header()
 
         # initialize iteration timer of same type as global timer
         _iter_timer = self.timer.__class__()
@@ -310,24 +294,20 @@ class Sdc(IIterativeTimeSolver):
                              .format(_iter + 1, _relred, _iter_timer.past(),
                                      self.__residuals["current"][-1]))
 
-            # save solution for this iteration
+            # save solution for this iteration and check termination criteria
             if self.problem.has_exact():
                 _sol.add_solution(data=self.__sol["current"].copy(),
                                   error=self.__err_vec["current"].copy(),
                                   residual=self.__residuals["current"].copy(),
                                   iteration=-1)
-            else:
-                _sol.add_solution(data=self.__sol["current"].copy(),
-                                  residual=self.__residuals["current"].copy(),
-                                  iteration=-1)
-
-            # update converged flag
-            if self.problem.has_exact:
                 self._threshold_check.check(reduction=_relred,
                                             residual=self.__residuals["current"][-1],
                                             error=_errred,
                                             iterations=_iter)
             else:
+                _sol.add_solution(data=self.__sol["current"].copy(),
+                                  residual=self.__residuals["current"].copy(),
+                                  iteration=-1)
                 self._threshold_check.check(reduction=_relred,
                                             residual=self.__residuals["current"][-1],
                                             iterations=_iter)
@@ -336,7 +316,7 @@ class Sdc(IIterativeTimeSolver):
             self.__sol["previous"] = self.__sol["current"].copy()
             self.__residuals["previous"] = self.__residuals["current"].copy()
             self.__residuals["current"] = np.array([0.0] * (self.num_time_steps + 1))
-            if self.problem.has_exact:
+            if self.problem.has_exact():
                 self.__err_vec["previous"] = self.__err_vec["current"].copy()
                 self.__err_vec["current"] = np.array([0.0] * self.num_time_steps)
         # end while:self._threshold_check.has_reached() is None
@@ -360,10 +340,8 @@ class Sdc(IIterativeTimeSolver):
 
         _sol.reduction = _relred
 
-        LOG.info("{:#<80}".format("> FINISHED: Explicit SDC ({:.3f} sec) "
-                                  .format(self.timer.past())))
+        self._print_footer()
 
-        LOG.info("> " + '#' * 78)
         return _sol
 
     @property
@@ -425,7 +403,7 @@ class Sdc(IIterativeTimeSolver):
             fabs(self.problem.initial_value + self.__delta_times["interval"] * _residual_integral
                  - self.__sol["current"][step + 1])
 
-        # calculate error and its reduction
+        # calculate error
         if self.problem.has_exact():
             self.__err_vec["current"][step] = \
                 fabs(self.__sol["current"][step+1] -
@@ -449,3 +427,28 @@ class Sdc(IIterativeTimeSolver):
                       .format(step+1, _time, self._integrator.nodes[step+1],
                               self.__sol["current"][step+1]),
                               self.__residuals["current"][step + 1])
+
+    def _print_header(self):
+        LOG.info("> " + '#' * 78)
+        LOG.info("{:#<80}".format("> START: Explicit SDC "))
+        LOG.info(">   Interval:               [{:.3f}, {:.3f}]".format(self.problem.time_start,
+                                                                       self.problem.time_end))
+        LOG.info(">   Time Steps:             {:d}".format(self.num_time_steps))
+        LOG.info(">   Termination Conditions: {:s}".format(self._threshold_check.print_conditions()))
+        LOG.info(">   Problem: {:s}".format(self.problem))
+        LOG.info("> " + '-' * 78)
+
+        # itartion result table header
+        if self.problem.has_exact():
+            LOG.info("> " + ' ' * 4 +
+                     "{: >4s}    {: >10s}    {: >8s}    {: >8s}    {: >10s}"
+                     .format("iter", "rel red", "time", "resid", "err red"))
+        else:
+            LOG.info("> " + ' ' * 4 +
+                     "{: >4s}    {: >10s}    {: >8s}    {: >8s}"
+                     .format("iter", "rel red", "time", "resid"))
+
+    def _print_footer(self):
+        LOG.info("{:#<80}".format("> FINISHED: Explicit SDC ({:.3f} sec) "
+                                  .format(self.timer.past())))
+        LOG.info("> " + '#' * 78)
