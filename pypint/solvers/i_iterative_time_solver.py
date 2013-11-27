@@ -5,6 +5,7 @@
 """
 
 from pypint.solutions.iterative_solution import IterativeSolution
+from pypint.utilities.threshold_check import ThresholdCheck
 from pypint import LOG
 
 
@@ -19,8 +20,7 @@ class IIterativeTimeSolver(object):
         self._problem = None
         self._integrator = None
         self._timer = None
-        self._max_iterations = None
-        self._threshold = None
+        self._threshold_check = ThresholdCheck()
 
     def init(self, problem, integrator, **kwargs):
         """
@@ -32,21 +32,19 @@ class IIterativeTimeSolver(object):
         ----------
         problem : :py:class:`.IProblem`
             The problem this solver should solve.
+
         integrator : :py:class:`.IntegratorBase`
             Integrator to be used by this solver.
+
         kwargs : further named arguments
             Supported names:
 
-            ``max_iterations`` : integer
-                see :py:attr:`.max_iterations`
-            ``threshold`` : float
+            ``threshold`` : :py:class:`.ThresholdCheck`
                 see :py:attr:`.threshold`
         """
         self._problem = problem
         self._integrator = integrator
-        if "max_iterations" in kwargs:
-            self.max_iterations = kwargs["max_iterations"]
-        if "threshold" in kwargs:
+        if "threshold" in kwargs and isinstance(kwargs["threshold"], ThresholdCheck):
             self.threshold = kwargs["threshold"]
 
     def run(self, solution_class=IterativeSolution):
@@ -86,53 +84,26 @@ class IIterativeTimeSolver(object):
         self._timer = timer
 
     @property
-    def max_iterations(self):
-        """
-        Summary
-        -------
-        Accessor for the maximum number of iterations for this solver.
-
-        Extended Summary
-        ----------------
-        The solver will never carry out more iterations than this number.
-
-        Parameters
-        ----------
-        max_iterations : integer
-            Maximum iterations of this solver.
-
-        Returns
-        -------
-        maximum iterations : integer
-            Maximum iterations of this solver.
-        """
-        return self._max_iterations
-
-    @max_iterations.setter
-    def max_iterations(self, max_iterations):
-        self._max_iterations = max_iterations
-
-    @property
     def threshold(self):
         """
         Summary
         -------
-        Accessor for general threshold of this solver.
+        Accessor for threshold check of this solver.
 
         Extended Summary
         ----------------
-        Depending on the solver's algorithm the threshold is used in multiple ways to create
+        Depending on the solver's algorithm the threshold is used in multiple ways to check for
         termination conditions.
 
         Parameters
         ----------
-        threshold : float
+        threshold : :py:class:`.ThresholdCheck`
             Desired threshold.
 
         Returns
         -------
-        threshold : float
-            Desired threshold.
+        threshold : :py:class:`.ThresholdCheck`
+            Stored and used threshold.
         """
         return self._threshold
 

@@ -16,6 +16,7 @@ from pypint.integrators.weight_function_providers.polynomial_weight_function \
 from pypint.problems.i_initial_value_problem import IInitialValueProblem
 from pypint.solutions.iterative_solution import IterativeSolution
 from pypint.plugins.timers.timer_base import TimerBase
+from pypint.utilities.threshold_check import ThresholdCheck
 from pypint.utilities import func_name
 from pypint import LOG
 
@@ -32,11 +33,16 @@ class Sdc(IIterativeTimeSolver):
 
     Default Values:
 
-        :py:attr:`.max_iterations`: 5
+        * :py:attr:`.ThresholdCheck.max_iterations`: 5
 
-        :py:attr:`.threshold`: 1e-7
+        * :py:attr:`.ThresholdCheck.min_reduction`: 1e-7
 
-        :py:attr:`.num_time_steps`: 2
+        * :py:attr:`.num_time_steps`: 2
+
+    See Also
+    --------
+    .IIterativeTimeSolver :
+        implemented interface
 
     Notes
     -----
@@ -64,14 +70,8 @@ class Sdc(IIterativeTimeSolver):
         super(Sdc, self).__init__(**kwargs)
         self.timer = TimerBase()
         self._num_time_steps = 2
-        self.threshold = 1e-7
-        self.max_iterations = 5
-        self._term_condition = {
-            "reduction": {"active": False, "reason": False, "value": self.threshold},
-            "residual": {"active": False, "reason": False, "value": self.threshold},
-            "error": {"active": False, "reason": False, "value": self.threshold},
-            "iterations": {"active": False, "reason": False, "value": self.max_iterations}
-        }
+        self._threshold_check = ThresholdCheck(min_threshold=1e-7, max_threshold=10,
+                                               conditions=("residual", "iterations"))
         self.__sol = {
             "previous": np.zeros(0),
             "current": np.zeros(0)
@@ -110,34 +110,6 @@ class Sdc(IIterativeTimeSolver):
 
         weights_type : :py:class:`.IWeightFunction`
             Integration weights function to be used.
-        
-        term_condition : string | dict{string: bool | float | int}
-            String or dict specifying termination condition.
-            Mapping a key to ``True`` activates the condition with its default value.
-            If specifying more than one condition, the first condition met wins.
-            Possible strings are
-            
-            * ``reduction``: Relative change of the solution value from one step to the next is
-              smaller than the specified value.
-              Defaults to :py:attr:`.threshold`.
-
-            * ``residual``: Residual at the last time point is smaller than specified value.
-              Defaults to :py:attr:`.threshold`.
-
-            * ``error``: In case the problem provides an exact solution, the absolute error at the
-              last time point is smaller than specified value.
-              Defaults to :py:attr:`.threshold`.
-
-            * ``iterations``: No matter how the reduction, residual or absolute error look like,
-              always do the specified number of iterations.
-              Defaults to :py:attr:`.max_iterations`.
-
-            Defaults to::
-
-                {
-                    "residual": True,
-                    "iterations": True
-                }
 
         Raises
         ------
@@ -163,17 +135,6 @@ class Sdc(IIterativeTimeSolver):
 
         if "weights_type" not in kwargs:
             kwargs["weights_type"] = PolynomialWeightFunction()
-
-        if "term_condition" not in kwargs:
-            kwargs["term_condition"] = {"residual": True, "iterations": True}
-
-        for condition in kwargs["term_condition"]:
-            self._term_condition[condition]["active"] = True
-            if not isinstance(kwargs["term_condition"][condition], bool):
-                self._term_condition[condition]["value"] = kwargs["term_condition"][condition]
-
-        for condition in self._term_condition:
-            self._term_condition[condition]["reason"] = False
 
         # initialize integrator
         self._integrator.init(kwargs["nodes_type"], self.num_time_steps + 1,
@@ -278,18 +239,10 @@ class Sdc(IIterativeTimeSolver):
         # start logging output
         LOG.info("> " + '#' * 78)
         LOG.info("{:#<80}".format("> START: Explicit SDC "))
-        LOG.info(">   Interval:       [{:.3f}, {:.3f}]".format(self.problem.time_start,
-                                                              self.problem.time_end))
-        LOG.info(">   Time Steps:     {:d}".format(self.num_time_steps))
-        LOG.info(">   Termination Condition(s):")
-        for condition in self._term_condition:
-            if self._term_condition[condition]["active"]:
-                if condition is not "iterations":
-                    LOG.info(">     {:s}: {:.2e}"
-                             .format(condition, self._term_condition[condition]["value"]))
-                else:
-                    LOG.info(">     {:s}: {:d}"
-                             .format(condition, self._term_condition[condition]["value"]))
+        LOG.info(">   Interval:               [{:.3f}, {:.3f}]".format(self.problem.time_start,
+                                                                       self.problem.time_end))
+        LOG.info(">   Time Steps:             {:d}".format(self.num_time_steps))
+        LOG.info(">   Termination Conditions: {:s}".format(self._threshold_check.print_conditions()))
         LOG.info(">   Problem: {:s}".format(self.problem))
         LOG.info("> " + '-' * 78)
 
@@ -313,8 +266,7 @@ class Sdc(IIterativeTimeSolver):
         _relred = 1.0
         _errred = 1.0
         _iter = -1
-        _converged = False
-        while not _converged:
+        while self._threshold_check.has_reached() is None:
             _iter += 1
 
             # step result table header
@@ -370,54 +322,33 @@ class Sdc(IIterativeTimeSolver):
                                   iteration=-1)
 
             # update converged flag
-            if self._term_condition["reduction"]["active"]:
-                _converged = _converged \
-                    or _relred <= self._term_condition["reduction"]["value"]
-                if _converged:
-                    self._term_condition["reduction"]["reason"] = True
-                    LOG.debug("Termination triggered by minimal reduction.")
-
-            if self._term_condition["residual"]["active"]:
-                _converged = _converged \
-                    or self.__residuals["current"][-1] <= self._term_condition["residual"]["value"]
-                if _converged:
-                    self._term_condition["residual"]["reason"] = True
-                    LOG.debug("Termination triggered by minimal residual.")
-
-            if self.problem.has_exact and self._term_condition["error"]["active"]:
-                _converged = _converged \
-                    or _errred <= self._term_condition["error"]["value"]
-                if _converged:
-                    self._term_condition["error"]["reason"] = True
-                    LOG.debug("Termination triggered by minimal error.")
-
-            # check maximum iterations
-            if self._term_condition["iterations"]["active"]:
-                if _iter > self._term_condition["iterations"]["value"]:
-                    self._term_condition["iterations"]["reason"] = True
-                    LOG.debug("Termination triggered by maximum iteration.")
-                    break
+            if self.problem.has_exact:
+                self._threshold_check.check(reduction=_relred,
+                                            residual=self.__residuals["current"][-1],
+                                            error=_errred,
+                                            iterations=_iter)
+            else:
+                self._threshold_check.check(reduction=_relred,
+                                            residual=self.__residuals["current"][-1],
+                                            iterations=_iter)
 
             # reset helper variables
             self.__sol["previous"] = self.__sol["current"].copy()
             self.__residuals["previous"] = self.__residuals["current"].copy()
             self.__residuals["current"] = np.array([0.0] * (self.num_time_steps + 1))
-            if self.problem.has_exact():
+            if self.problem.has_exact:
                 self.__err_vec["previous"] = self.__err_vec["current"].copy()
                 self.__err_vec["current"] = np.array([0.0] * self.num_time_steps)
-        # end while:_converged
+        # end while:self._threshold_check.has_reached() is None
         self.timer.stop()
 
-        if _converged:
+        if _iter <= self._threshold_check.max_iterations:
             LOG.info("> Converged after {:d} iteration(s).".format(_iter + 1))
-            LOG.info(">   Rel. Reduction: {:.3e} ({:s})"
-                     .format(_relred, str(self._term_condition["reduction"]["reason"])))
-            LOG.info(">   Final Residual: {:.3e} ({:s})"
-                     .format(self.__residuals["previous"][-1],
-                             str(self._term_condition["residual"]["reason"])))
+            LOG.info(">   {:s}".format(self._threshold_check.has_reached(human=True)))
+            LOG.info(">   Rel. Reduction: {:.3e}".format(_relred))
+            LOG.info(">   Final Residual: {:.3e}".format(self.__residuals["previous"][-1]))
             if self.problem.has_exact():
-                LOG.info(">   Absolute Error: {:.3e} ({:s})"
-                         .format(_errred, str(self._term_condition["error"]["reason"])))
+                LOG.info(">   Absolute Error: {:.3e}".format(_errred))
         else:
             warnings.warn("Explicit SDC: Did not converged!")
             LOG.info("> FAILED: After maximum of {:d} iteration(s).".format(_iter + 1))
