@@ -101,7 +101,7 @@ class SingleSolutionPlotter(IPlotter):
             plt.close('all')
 
     def _final_solution(self):
-        if self._solver.problem.has_exact() and self._solution.errors[-1].max() > 1e-2:
+        if self._solver.problem.has_exact and self._solution.errors[-1].max() > 1e-2:
             exact = [[self._solver.problem.exact(0.0, node)] for node in self._nodes]
             plt.plot(self._nodes, self._solution.solution(), self._nodes, exact)
         else:
