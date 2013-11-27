@@ -5,6 +5,7 @@
 """
 
 from pypint.solutions.iterative_solution import IterativeSolution
+from pypint import LOG
 
 
 class IIterativeTimeSolver(object):
@@ -19,7 +20,7 @@ class IIterativeTimeSolver(object):
         self._integrator = None
         self._timer = None
         self._max_iterations = None
-        self._min_reduction = None
+        self._threshold = None
 
     def init(self, problem, integrator, **kwargs):
         """
@@ -38,28 +39,21 @@ class IIterativeTimeSolver(object):
 
             ``max_iterations`` : integer
                 see :py:attr:`.max_iterations`
-            ``min_reduction`` : integer
-                see :py:attr:`.min_reduction`
+            ``threshold`` : float
+                see :py:attr:`.threshold`
         """
         self._problem = problem
         self._integrator = integrator
         if "max_iterations" in kwargs:
             self.max_iterations = kwargs["max_iterations"]
-        if "min_reduction" in kwargs:
-            self.min_reduction = kwargs["min_reduction"]
+        if "threshold" in kwargs:
+            self.threshold = kwargs["threshold"]
 
     def run(self, solution_class=IterativeSolution):
         """
         Summary
         -------
         Applies this solver.
-
-        Extended Summary
-        ----------------
-        It is guaranteed that the solver does not carry out more than
-        :py:attr:`.max_iterations` iterations.
-        In case the desired :py:attr:`.min_reduction` is reached, the solver
-        will abort prior reaching :py:attr:`.max_iterations`.
 
         Returns
         -------
@@ -119,32 +113,32 @@ class IIterativeTimeSolver(object):
         self._max_iterations = max_iterations
 
     @property
-    def min_reduction(self):
+    def threshold(self):
         """
         Summary
         -------
-        Accessor for the minimum reduction of this solver.
+        Accessor for general threshold of this solver.
 
         Extended Summary
         ----------------
-        The solver will try to reach the specified minimum error reduction by
-        additional iterations, not exceeding :py:attr:`.max_iterations`.
+        Depending on the solver's algorithm the threshold is used in multiple ways to create
+        termination conditions.
 
         Parameters
         ----------
-        min_reduction : float
-            Desired minimum error reduction.
+        threshold : float
+            Desired threshold.
 
         Returns
         -------
-        minimum reduction : float
-            Desired minimum error reduction.
+        threshold : float
+            Desired threshold.
         """
-        return self._min_reduction
+        return self._threshold
 
-    @min_reduction.setter
-    def min_reduction(self, min_reduction):
-        self._min_reduction = min_reduction
+    @threshold.setter
+    def threshold(self, threshold):
+        self._threshold = threshold
 
     @property
     def integrator(self):
