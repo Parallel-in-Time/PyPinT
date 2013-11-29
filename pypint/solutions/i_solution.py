@@ -15,13 +15,14 @@ class ISolution(object):
     Generalized storage for solutions of solvers.
     """
     def __init__(self):
-        self._data = np.zeros(0, dtype=np.float64)
+        self._points = np.zeros(0, dtype=np.float64)
+        self._values = np.zeros(0, dtype=np.float64)
         self._errors = np.zeros(0, dtype=np.float64)
         self._residuals = np.zeros(0, dtype=np.float64)
         self._used_iterations = None
         self._reduction = None
 
-    def add_solution(self, data, *args, **kwargs):
+    def add_solution(self, points, values, *args, **kwargs):
         """
         Summary
         -------
@@ -29,8 +30,11 @@ class ISolution(object):
 
         Parameters
         ----------
-        data : numpy.ndarray
-            Solution data.
+        points : numpy.ndarray
+            Time points of the values.
+
+        values : numpy.ndarray
+            Solution values.
 
         error : numpy.ndarray
             (optional)
@@ -43,11 +47,15 @@ class ISolution(object):
         Raises
         ------
         ValueError
-            If either ``data``, ``error`` or ``residual`` is not a ``numpy.ndarray``.
+            * if either ``points``, ``values``, ``error`` or ``residual`` is not a ``numpy.ndarray``
+            * if ``points`` and ``values`` are not of same size
         """
-        if not isinstance(data, np.ndarray):
+        if not isinstance(points, np.ndarray) or not isinstance(values, np.ndarray):
             raise ValueError(func_name(self) +
-                             "Given data is not a numpy.ndarray.")
+                             "Given points or values is not a numpy.ndarray.")
+        if points.size != values.size:
+            raise ValueError(func_name(self) +
+                             "Points and values must have same size.")
         if "error" in kwargs:
             if not isinstance(kwargs["error"], np.ndarray):
                 raise ValueError(func_name(self) +
@@ -74,7 +82,7 @@ class ISolution(object):
 
         Returns
         -------
-        Nothing
+        implementation specific
         """
         pass
 
@@ -95,7 +103,7 @@ class ISolution(object):
 
         Returns
         -------
-        Nothing
+        implementation specific
         """
         pass
 
@@ -116,12 +124,25 @@ class ISolution(object):
 
         Returns
         -------
-        Nothing
+        implementation specific
         """
         pass
 
     @property
-    def data(self):
+    def points(self):
+        """
+        Summary
+        -------
+        Accessor for all points.
+
+        Returns
+        -------
+        raw points data : numpy.ndarray
+        """
+        return self._points
+
+    @property
+    def values(self):
         """
         Summary
         -------
@@ -131,14 +152,32 @@ class ISolution(object):
         -------
         raw solution data : numpy.ndarray
         """
-        return self._data
+        return self._values
 
     @property
     def errors(self):
+        """
+        Summary
+        -------
+        Accessor for the complete errors data.
+
+        Returns
+        -------
+        raw errors data : numpy.ndarray
+        """
         return self._errors
 
     @property
     def residuals(self):
+        """
+        Summary
+        -------
+        Accessor for the complete residuals data.
+
+        Returns
+        -------
+        raw residuals data : numpy.ndarray
+        """
         return self._residuals
 
     @property

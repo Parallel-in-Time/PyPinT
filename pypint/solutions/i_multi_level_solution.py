@@ -19,10 +19,10 @@ class IMultiLevelSolution(ISolution):
     """
     def __init__(self):
         super(IMultiLevelSolution, self).__init__()
-        self._data = np.zeros(0, dtype=np.ndarray)
+        self._values = np.zeros(0, dtype=np.ndarray)
         self._used_levels = None
 
-    def add_solution(self, data, *args, **kwargs):
+    def add_solution(self, points, values, *args, **kwargs):
         """
         Summary
         -------
@@ -54,12 +54,12 @@ class IMultiLevelSolution(ISolution):
         .ISolution.add_solution
             overridden method
         """
-        super(IMultiLevelSolution, self).add_solution(data, args, kwargs)
+        super(IMultiLevelSolution, self).add_solution(points, values, args, kwargs)
         if "level" not in kwargs:
             kwargs["level"] = -1
 
         level = int(kwargs["level"])
-        _old_level_size = self._data.size
+        _old_level_size = self._values.size
 
         # resize data to fit specified level
         if level == -1 or level >= _old_level_size:
@@ -68,15 +68,15 @@ class IMultiLevelSolution(ISolution):
             else:
                 _level_resize = level + 1
             # create new index at the end of the data
-            self._data = np.resize(self._data, _level_resize)
-            self._data[level] = np.zeros(0, dtype=np.ndarray)
+            self._values = np.resize(self._values, _level_resize)
+            self._values[level] = np.zeros(0, dtype=np.ndarray)
 
         if "iteration" not in kwargs:
             kwargs["iteration"] = -1
         iteration = int(kwargs["iteration"])
-        _old_iter_size = self._data[level].size
+        _old_iter_size = self._values[level].size
         # get True for each empty iteration
-        _empty_iter_mask = np.ma.masked_equal(self._data[level], None).mask
+        _empty_iter_mask = np.ma.masked_equal(self._values[level], None).mask
 
         # resize data of level to fit specified iteration
         if iteration == -1 or iteration >= _old_iter_size:
@@ -85,21 +85,21 @@ class IMultiLevelSolution(ISolution):
             else:
                 _iter_resize = iteration + 1
             # create new index at the end of the data
-            self._data[level] = np.resize(self._data[level], _iter_resize)
+            self._values[level] = np.resize(self._values[level], _iter_resize)
             # and set newly created value to None
-            self._data[level][iteration] = None
+            self._values[level][iteration] = None
 
-        if iteration != -1 and self._data[level][iteration] is not None:
+        if iteration != -1 and self._values[level][iteration] is not None:
             raise ValueError(func_name(self) +
                              "Data for iteration {:d} of level {:d} is already present. "
                              .format(iteration, level) + " Not overriding.")
 
         # fill in non-set iterations
         _empty_iter_mask = np.concatenate((_empty_iter_mask,
-                                           [True] * (self._data[level].size - _old_iter_size)))
-        self._data[level][_empty_iter_mask] = None
+                                           [True] * (self._values[level].size - _old_iter_size)))
+        self._values[level][_empty_iter_mask] = None
 
-        self._data[level][iteration] = np.array(data, dtype=np.float64)
+        self._values[level][iteration] = np.array(values, dtype=np.float64)
         # TODO: handle iteration count
 
     def solution(self, *args, **kwargs):
@@ -144,7 +144,7 @@ class IMultiLevelSolution(ISolution):
         else:
             level = kwargs["level"]
 
-        if level != -1 and self._data.size > level:
+        if level != -1 and self._values.size > level:
             raise ValueError(func_name(self) +
                              "Desired level is not available: {:d}"
                              .format(level))
@@ -154,12 +154,12 @@ class IMultiLevelSolution(ISolution):
         else:
             iteration = kwargs["iteration"]
 
-        if iteration != -1 and iteration > self._data[level].size:
+        if iteration != -1 and iteration > self._values[level].size:
             raise ValueError(func_name(self) +
                              "Desired iteration is not available in levle {:d}: {:d}"
                              .format(level, iteration))
 
-        return self._data[level][iteration]
+        return self._values[level][iteration]
 
     @property
     def used_levels(self):

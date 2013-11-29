@@ -356,7 +356,7 @@ class Sdc(IIterativeTimeSolver):
 
             # save solution for this iteration and check termination criteria
             if self.problem.has_exact():
-                _sol.add_solution(data=self.__sol["current"].copy(),
+                _sol.add_solution(values=self.__sol["current"].copy(),
                                   error=self.__errors["current"].copy(),
                                   residual=self.__residuals["current"].copy(),
                                   iteration=-1)
@@ -365,7 +365,7 @@ class Sdc(IIterativeTimeSolver):
                                             error=self.__reductions["errors"][_iter - 2],
                                             iterations=_iter)
             else:
-                _sol.add_solution(data=self.__sol["current"].copy(),
+                _sol.add_solution(values=self.__sol["current"].copy(),
                                   residual=self.__residuals["current"].copy(),
                                   iteration=-1)
                 self._threshold_check.check(reduction=self.__reductions["solution"][_iter - 2],
