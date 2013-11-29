@@ -58,7 +58,7 @@ class SingleSolutionPlotter(IPlotter):
 
         self._solver = kwargs["solver"]
         self._solution = kwargs["solution"]
-        self._nodes = self._solver.integrator.nodes
+        self._nodes = self._solution.points
         _subplots = 1
         _curr_subplot = 0
         if "errorplot" in kwargs and kwargs["errorplot"]:
