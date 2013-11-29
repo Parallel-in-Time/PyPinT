@@ -102,9 +102,7 @@ class IntegratorBase(object):
                              .format(num_nodes.__name__))
         self._nodes = nodes_type
         self._nodes.init(num_nodes)
-        if interval is not None:
-            self._nodes.transform(interval)
-        self._weights_function.evaluate(self._nodes.nodes)
+        self.transform_interval(interval)
 
     def evaluate(self, data, **kwargs):
         """
@@ -143,6 +141,11 @@ class IntegratorBase(object):
             raise ValueError(func_name(self) +
                              "Time interval need to be non-zero positive: [{:f}, {:f}]"
                              .format(kwargs["time_start"], kwargs["time_end"]))
+
+    def transform_interval(self, interval):
+        if interval is not None:
+            self._nodes.transform(interval)
+        self._weights_function.evaluate(self._nodes.nodes)
 
     @property
     def nodes(self):

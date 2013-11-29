@@ -27,6 +27,7 @@ class GaussLegendreNodes(INodes):
 
     def __init__(self):
         super(GaussLegendreNodes, self).__init__()
+        self._interval = GaussLegendreNodes.std_interval
 
     def init(self, n_nodes, interval=None):
         """
@@ -48,33 +49,8 @@ class GaussLegendreNodes(INodes):
         self.num_nodes = n_nodes
         self._nodes = np.zeros(self.num_nodes)
         self._compute_nodes()
-        self.interval = interval
         if interval is not None:
             self.transform(interval)
-
-    @property
-    def interval(self):
-        """
-        Summary
-        -------
-        Accessor for integration nodes interval.
-
-        Extended Summary
-        ----------------
-        Default nodes interval for Gauss integration is :math:`[-1,1]`.
-
-        See Also
-        --------
-        .INodes.interval
-            overridden accessor
-        """
-        return super(self.__class__, self.__class__).interval.fget(self)
-
-    @interval.setter
-    def interval(self, interval):
-        if interval is None:
-            self._interval = np.array([-1.0, 1.0])
-        super(self.__class__, self.__class__).interval.fset(self, interval)
 
     @property
     def num_nodes(self):
