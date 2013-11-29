@@ -53,6 +53,9 @@ class ISolution(object):
         if not isinstance(points, np.ndarray) or not isinstance(values, np.ndarray):
             raise ValueError(func_name(self) +
                              "Given points or values is not a numpy.ndarray.")
+        if points.size == 0:
+            raise ValueError(func_name(self) +
+                             "Number of points must be positive.")
         if points.size != values.size:
             raise ValueError(func_name(self) +
                              "Points and values must have same size.")
@@ -64,6 +67,9 @@ class ISolution(object):
             if not isinstance(kwargs["residual"], np.ndarray):
                 raise ValueError(func_name(self) +
                                  "Given residual data is not a numpy.ndarray.")
+
+        if self._points.size == 0:
+            self._points = points
 
     def solution(self, *args, **kwargs):
         """
