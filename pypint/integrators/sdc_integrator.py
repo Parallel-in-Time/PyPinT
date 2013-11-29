@@ -5,6 +5,7 @@ import numpy as np
 from .node_providers.gauss_lobatto_nodes import GaussLobattoNodes
 from .weight_function_providers.polynomial_weight_function import PolynomialWeightFunction
 from pypint.utilities import func_name
+from pypint import LOG
 
 
 class SdcIntegrator(IntegratorBase):
@@ -60,6 +61,7 @@ class SdcIntegrator(IntegratorBase):
                              "Must be within [{:d},{:d})".format(1, self._smat.shape[0]))
         super(SdcIntegrator, self).evaluate(data, time_start=self.nodes[0],
                                             time_end=self.nodes[_index])
+        #LOG.debug("Integrating with S-Mat row {:d}.".format(_index - 1))
         return np.dot(self._smat[_index - 1], data)
 
     def _construct_s_matrix(self):
