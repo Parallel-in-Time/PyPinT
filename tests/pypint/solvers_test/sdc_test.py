@@ -39,7 +39,7 @@ class SdcTest(NumpyAwareTestCase):
 
     def test_lambda_u(self):
         _lambda_u = LambdaU(lmbda=-1.0)
-        self._test_obj.init(problem=_lambda_u, num_nodes=9)
+        self._test_obj.init(problem=_lambda_u, num_time_steps=2, num_nodes=9)
         _solution = self._test_obj.run()
         self.assertEqual(_solution.used_iterations, 6,
                          "Explicit SDC should converge in 6 iterations.")
