@@ -76,7 +76,7 @@ class SingleSolutionPlotter(IPlotter):
 
         if self._errplot or self._residualplot:
             plt.suptitle(r"after {:d} iterations; overall reduction: {:.2e}"
-                         .format(self._solution.used_iterations, self._solution.reduction))
+                         .format(self._solution.used_iterations, self._solution.reductions["solution"][-1]))
             _curr_subplot += 1
             plt.subplot(_subplots, 1, _curr_subplot)
 
