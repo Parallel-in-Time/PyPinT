@@ -6,3 +6,5 @@ Plotters (:mod:`plotters`)
 .. toctree::
 
     i_plotter
+    single_solution_plotter
+    reduction_residual_plotter

@@ -6,3 +6,5 @@ Analyzers (:mod:`analyzers`)
 .. toctree::
 
     i_analyzer
+    single_solution_analyzer
+    multi_solution_analyzer
