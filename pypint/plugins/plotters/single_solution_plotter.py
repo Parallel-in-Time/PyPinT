@@ -94,7 +94,12 @@ class SingleSolutionPlotter(IPlotter):
             self._residual_plot()
 
         if self._file_name is not None:
-            plt.savefig(self._file_name)
+            fig = plt.gcf()
+            fig.set_dpi(300)
+            fig.set_size_inches((15., 15.))
+            LOG.debug("Plotting figure with size (w,h) {:s} inches and {:d} DPI."
+                      .format(fig.get_size_inches(), fig.get_dpi()))
+            fig.savefig(self._file_name)
 
         if is_interactive():
             plt.show(block=True)
