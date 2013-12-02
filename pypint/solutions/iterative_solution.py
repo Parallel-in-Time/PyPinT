@@ -247,7 +247,7 @@ class IterativeSolution(ISolution):
 
     def __str__(self):
         str = "Iterative Solution with {:d} iterations and reduction of {:.2e}:"\
-              .format(self.used_iterations, self.reduction)
+              .format(self.used_iterations, self.reductions["solution"][-1])
         for iter in range(1, self.used_iterations):
             str += "\n  Iteration {:d}: {:s}".format(iter+1, self.solution(iter))
         return str

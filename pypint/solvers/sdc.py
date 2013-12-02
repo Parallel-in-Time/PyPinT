@@ -407,7 +407,7 @@ class Sdc(IIterativeTimeSolver):
                 LOG.info(">         Absolute Error: {:.3e}".format(self.__reductions["errors"][_iter - 1]))
             LOG.warn("SDC Failed: Maximum number iterations reached without convergence.")
 
-        _sol.reduction = self.__reductions["solution"][_iter - 1]
+        _sol.reductions = self.__reductions
 
         self._print_footer()
 

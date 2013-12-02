@@ -20,7 +20,7 @@ class ISolution(object):
         self._errors = np.zeros(0, dtype=np.float64)
         self._residuals = np.zeros(0, dtype=np.float64)
         self._used_iterations = None
-        self._reduction = None
+        self._reductions = None
 
     def add_solution(self, points, values, *args, **kwargs):
         """
@@ -210,26 +210,26 @@ class ISolution(object):
         self._used_iterations = int(used_iterations)
 
     @property
-    def reduction(self):
+    def reductions(self):
         """
         Summary
         -------
-        Accessor for the overall reduction of the solver.
+        Accessor for the reductions of the solver.
 
         Parameters
         ----------
-        reduction : float
+        reduction : dict
             Reduction to be set.
 
         Returns
         -------
         reduction : float
         """
-        return self._reduction
+        return self._reductions
 
-    @reduction.setter
-    def reduction(self, reduction):
-        self._reduction = reduction
+    @reductions.setter
+    def reductions(self, reductions):
+        self._reductions = reductions
 
     def __str__(self):
-        return self.__class__.__name__ + ": {:s}".format(self._data)
+        return self.__class__.__name__ + ": {:s}".format(self._values)
