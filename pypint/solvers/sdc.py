@@ -206,13 +206,16 @@ class Sdc(IIterativeTimeSolver):
         # copy the node provider so we do not alter the integrator's one
         _nodes = deepcopy(self._integrator.nodes_type)
         for _t in range(0, self.num_time_steps):
-            _nodes.interval = np.array([self.__time_points["steps"][_t], self.__time_points["steps"][_t + 1]])
+            _nodes.interval = \
+                np.array([self.__time_points["steps"][_t], self.__time_points["steps"][_t + 1]])
             for _n in range(0, self.num_nodes - 1):
                 _i = _t * (self.num_nodes - 1) + _n
                 self.__time_points["nodes"][_i] = _nodes.nodes[_n]
                 #LOG.debug("    i={:d}*{:d}+{:d}={:d}".format(_t, (self.num_nodes-1), _n, _i))
                 self.__deltas["n"][_i + 1] = _nodes.nodes[_n + 1] - _nodes.nodes[_n]
-                #LOG.debug("      dist([{:.2f}, {:.2f}]) = {:.2f}".format(self._integrator.nodes[_n], self._integrator.nodes[_n + 1], self.__deltas["n"][_i + 1]))
+                #LOG.debug("      dist([{:.2f}, {:.2f}]) = {:.2f}"
+                #          .format(self._integrator.nodes[_n], self.
+                #                  integrator.nodes[_n + 1], self.__deltas["n"][_i + 1]))
         self.__time_points["nodes"][-1] = _nodes.nodes[-1]
         #LOG.debug("self.__deltas['n']: {:s}".format(self.__deltas["n"]))
 
@@ -314,13 +317,13 @@ class Sdc(IIterativeTimeSolver):
 
             # step result table header
             if self.problem.has_exact():
-                LOG.debug("!> " + ' ' * 10 +
-                          "{: >4s}    {: >6s}    {: >6s}    {: >10s}    {: >8s}    {: >10s}"
-                          .format("node", "t_0", "t_1", "sol", "resid", "err"))
+                self._output(["node", "t_0", "t_1", "sol", "resid", "err"],
+                             ["str", "str", "str", "str", "str", "str"],
+                             padding=10, debug=True)
             else:
-                LOG.debug("!> " + ' ' * 10 +
-                          "{: >4s}    {: >6s}    {: >6s}    {: >10s}    {: >8s}"
-                          .format("node", "t_0", "t_1", "sol", "resid"))
+                self._output(["node", "t_0", "t_1", "sol", "resid"],
+                             ["str", "str", "str", "str", "str"],
+                             padding=10, debug=True)
 
             # iterate on time steps
             _iter_timer.start()
@@ -341,25 +344,22 @@ class Sdc(IIterativeTimeSolver):
             # log this iteration's summary
             if _iter == 1:
                 # on first iteration we do not have comparison values
-                LOG.info("> " + ' ' * 4 +
-                         "{: 4d}    {:s}    {: 8.4f}".format(1, ' ' * 10, _iter_timer.past()))
+                self._output([_iter, None, _iter_timer.past()],
+                             ["int", None, "float"],
+                             padding=4)
             else:
                 if self.problem.has_exact() and _iter > 0:
                     # we could compute the correct error of our current solution
-                    LOG.info("> " + ' ' * 4 +
-                             "{: 4d}    {: 10.2e}    {: 8.4f}    {: 8.2e}    {: 10.2e}"
-                             .format(_iter,
-                                     self.__reductions["solution"][_iter - 1],
-                                     _iter_timer.past(),
-                                     self.__residuals["current"][-1],
-                                     self.__reductions["errors"][_iter - 1]))
+                    self._output([_iter, self.__reductions["solution"][_iter - 1],
+                                  _iter_timer.past(), self.__residuals["current"][-1],
+                                  self.__reductions["errors"][_iter - 1]],
+                                 ["int", "exp", "float", "exp", "exp"],
+                                 padding=4)
                 else:
-                    LOG.info("> " + ' ' * 4 +
-                             "{: 4d}    {: 10.2e}    {: 8.4f}    {: 8.2e}"
-                             .format(_iter,
-                                     self.__reductions["solution"][_iter - 1],
-                                     _iter_timer.past(),
-                                     self.__residuals["current"][-1]))
+                    self._output([_iter, self.__reductions["solution"][_iter - 1],
+                                  _iter_timer.past(), self.__residuals["current"][-1]],
+                                 ["int", "exp", "float", "exp"],
+                                 padding=4)
 
             # save solution for this iteration and check termination criteria
             if self.problem.has_exact():
@@ -397,14 +397,18 @@ class Sdc(IIterativeTimeSolver):
             LOG.info(">   Rel. Reduction: {:.3e}".format(self.__reductions["solution"][_iter - 1]))
             LOG.info(">   Final Residual: {:.3e}".format(self.__residuals["previous"][-1]))
             if self.problem.has_exact():
-                LOG.info(">   Absolute Error: {:.3e}".format(self.__reductions["errors"][_iter - 1]))
+                LOG.info(">   Absolute Error: {:.3e}"
+                         .format(self.__reductions["errors"][_iter - 1]))
         else:
             warnings.warn("Explicit SDC: Did not converged!")
             LOG.info("> FAILED: After maximum of {:d} iteration(s).".format(_iter))
-            LOG.info(">         Rel. Reduction: {:.3e}".format(self.__reductions["solution"][_iter - 1]))
-            LOG.info(">         Final Residual: {:.3e}".format(self.__residuals["previous"][-1]))
+            LOG.info(">         Rel. Reduction: {:.3e}"
+                     .format(self.__reductions["solution"][_iter - 1]))
+            LOG.info(">         Final Residual: {:.3e}"
+                     .format(self.__residuals["previous"][-1]))
             if self.problem.has_exact():
-                LOG.info(">         Absolute Error: {:.3e}".format(self.__reductions["errors"][_iter - 1]))
+                LOG.info(">         Absolute Error: {:.3e}"
+                         .format(self.__reductions["errors"][_iter - 1]))
             LOG.warn("SDC Failed: Maximum number iterations reached without convergence.")
 
         _sol.reductions = self.__reductions
@@ -491,7 +495,9 @@ class Sdc(IIterativeTimeSolver):
         #                  self.__delta_times["interval"], integral))
 
         # calculate residual
-        _integrate_values = np.where(_copy_mask, self.__sol["current"][_i0:(_i1 + 1)], self.__sol["previous"][_i0:(_i1 + 1)])
+        _integrate_values = np.where(_copy_mask,
+                                     self.__sol["current"][_i0:(_i1 + 1)],
+                                     self.__sol["previous"][_i0:(_i1 + 1)])
         _integrate_values[n] = self.__sol["current"][_i]
         _integrate_values = \
             np.array([self.problem.evaluate(self._integrator.nodes[n - 1], val)
@@ -515,24 +521,20 @@ class Sdc(IIterativeTimeSolver):
 
         # log
         if self.problem.has_exact():
-            LOG.debug("!> " + ' ' * 10 +
-                      "{: >4d}    {: 6.2f}    {: 6.2f}    {: 10.4f}    {: 8.2e}    {: 10.2e}"
-                      .format(_i, _t0, _t1,
-                              self.__sol["current"][_i],
-                              self.__residuals["current"][_i],
-                              self.__errors["current"][_i]))
+            self._output([_i, _t0, _t1, self.__sol["current"][_i], self.__residuals["current"][_i],
+                          self.__errors["current"][_i]],
+                         ["int", "float", "float", "float", "exp", "exp"],
+                         padding=10, debug=True)
         else:
-            LOG.debug("!> " + ' ' * 10 +
-                      "{: >4d}    {: 6.2f}    {: 6.2f}    {: 10.4f}    {: 8.2e}"
-                      .format(_i, _t0, _t1,
-                              self.__sol["current"][_i],
-                              self.__residuals["current"][_i]))
+            self._output([_i, _t0, _t1, self.__sol["current"][_i], self.__residuals["current"][_i]],
+                         ["int", "float", "float", "float", "exp"],
+                         padding=10, debug=True)
 
     def _print_header(self):
         LOG.info("> " + '#' * 78)
         LOG.info("{:#<80}".format("> START: Explicit SDC "))
-        LOG.info(">   Interval:               [{:.3f}, {:.3f}]".format(self.problem.time_start,
-                                                                       self.problem.time_end))
+        LOG.info(">   Interval:               [{:.3f}, {:.3f}]"
+                 .format(self.problem.time_start, self.problem.time_end))
         LOG.info(">   Time Steps:             {:d}".format(self.num_time_steps))
         LOG.info(">   Integration Nodes:      {:d}".format(self.num_nodes))
         LOG.info(">   Termination Conditions: {:s}".format(self.threshold.print_conditions()))
@@ -541,15 +543,42 @@ class Sdc(IIterativeTimeSolver):
 
         # itartion result table header
         if self.problem.has_exact():
-            LOG.info("> " + ' ' * 4 +
-                     "{: >4s}    {: >10s}    {: >8s}    {: >8s}    {: >10s}"
-                     .format("iter", "rel red", "time", "resid", "err red"))
+            self._output(["iter", "rel red", "time", "resid", "err red"],
+                         ["str", "str", "str", "str", "str"],
+                         padding=4)
         else:
-            LOG.info("> " + ' ' * 4 +
-                     "{: >4s}    {: >10s}    {: >8s}    {: >8s}"
-                     .format("iter", "rel red", "time", "resid"))
+            self._output(["iter", "rel red", "time", "resid"],
+                         ["str", "str", "str", "str"],
+                         padding=4)
 
     def _print_footer(self):
         LOG.info("{:#<80}".format("> FINISHED: Explicit SDC ({:.3f} sec) "
                                   .format(self.timer.past())))
         LOG.info("> " + '#' * 78)
+
+    def _output(self, values, types, padding=0, debug=False):
+        if len(values) != len(types):
+            raise ValueError(func_name(self) +
+                             "Number of values must equal number of types.")
+        outstr = ' ' * padding
+        for i in range(0, len(values)):
+            if values[i] is None:
+                outstr += ' ' * 10
+            else:
+                if types[i] == "float":
+                    outstr += "{: 10.2f}".format(values[i])
+                elif types[i] == "int":
+                    outstr += "{: 10d}".format(values[i])
+                elif types[i] == "exp":
+                    outstr += "{: 10.2e}".format(values[i])
+                elif types[i] == "str":
+                    outstr += "{: >10s}".format(values[i])
+                else:
+                    raise ValueError(func_name(self) +
+                                     "Given type for value '{:s}' is invalid: {:s}"
+                                     .format(values[i], types[i]))
+            outstr += "    "
+        if debug:
+            LOG.debug("!> {:s}".format(outstr))
+        else:
+            LOG.info("> {:s}".format(outstr))
