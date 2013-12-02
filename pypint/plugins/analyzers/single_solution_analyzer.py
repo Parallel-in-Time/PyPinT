@@ -22,8 +22,8 @@ class SingleSolutionAnalyzer(IAnalyzer):
     def __init__(self, *args, **kwargs):
         super(SingleSolutionAnalyzer, self).__init__(args, **kwargs)
         self._solver = None
-        if "plotter_file_name" in kwargs:
-            self._plotter = SingleSolutionPlotter(file_name=kwargs["plotter_file_name"])
+        if "plotter_options" in kwargs:
+            self._plotter = SingleSolutionPlotter(**kwargs["plotter_options"])
         else:
             self._plotter = SingleSolutionPlotter()
 

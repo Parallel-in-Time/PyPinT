@@ -9,6 +9,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib import is_interactive
 from pypint.utilities import func_name
+from pypint import LOG
 
 
 class SingleSolutionPlotter(IPlotter):
@@ -96,7 +97,7 @@ class SingleSolutionPlotter(IPlotter):
             plt.savefig(self._file_name)
 
         if is_interactive():
-            plt.show()
+            plt.show(block=True)
         else:
             plt.close('all')
 
