@@ -9,6 +9,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib import is_interactive
 from pypint.utilities import func_name
+from pypint import LOG
 
 
 class SingleSolutionPlotter(IPlotter):
@@ -58,7 +59,7 @@ class SingleSolutionPlotter(IPlotter):
 
         self._solver = kwargs["solver"]
         self._solution = kwargs["solution"]
-        self._nodes = self._solver.integrator.nodes
+        self._nodes = self._solution.points
         _subplots = 1
         _curr_subplot = 0
         if "errorplot" in kwargs and kwargs["errorplot"]:
@@ -75,7 +76,7 @@ class SingleSolutionPlotter(IPlotter):
 
         if self._errplot or self._residualplot:
             plt.suptitle(r"after {:d} iterations; overall reduction: {:.2e}"
-                         .format(self._solution.used_iterations, self._solution.reduction))
+                         .format(self._solution.used_iterations, self._solution.reductions["solution"][-1]))
             _curr_subplot += 1
             plt.subplot(_subplots, 1, _curr_subplot)
 
@@ -93,10 +94,15 @@ class SingleSolutionPlotter(IPlotter):
             self._residual_plot()
 
         if self._file_name is not None:
-            plt.savefig(self._file_name)
+            fig = plt.gcf()
+            fig.set_dpi(300)
+            fig.set_size_inches((15., 15.))
+            LOG.debug("Plotting figure with size (w,h) {:s} inches and {:d} DPI."
+                      .format(fig.get_size_inches(), fig.get_dpi()))
+            fig.savefig(self._file_name)
 
         if is_interactive():
-            plt.show()
+            plt.show(block=True)
         else:
             plt.close('all')
 

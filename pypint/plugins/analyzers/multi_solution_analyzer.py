@@ -6,33 +6,32 @@
 
 from .i_analyzer import IAnalyzer
 import numpy as np
-from pypint.plugins.plotters.single_solution_plotter import SingleSolutionPlotter
+from pypint.plugins.plotters.reduction_residual_plotter import ReductionResidualPlotter
 
 
-class SingleSolutionAnalyzer(IAnalyzer):
+class MultiSolutionAnalyzer(IAnalyzer):
     """
     Summary
     -------
-    Analyzer for a single solution instance.
+    Analyzer for multiple solution instance.
 
     Extended Summary
     ----------------
     For now, it only plots the final solution and the error of each iteration.
     """
     def __init__(self, *args, **kwargs):
-        super(SingleSolutionAnalyzer, self).__init__(args, **kwargs)
+        super(MultiSolutionAnalyzer, self).__init__(args, **kwargs)
         self._solver = None
         if "plotter_options" in kwargs:
-            self._plotter = SingleSolutionPlotter(**kwargs["plotter_options"])
+            self._plotter = ReductionResidualPlotter(**kwargs["plotter_options"])
         else:
-            self._plotter = SingleSolutionPlotter()
+            self._plotter = ReductionResidualPlotter()
+        self._data = []
 
     def run(self):
         # plot the last solution
         self._plotter.plot(solver=self._solver,
-                           solution=self._data,
-                           errorplot=True,
-                           residualplot=True)
+                           solutions=np.array(self._data))
 
     def add_data(self, *args, **kwargs):
         """
@@ -44,8 +43,8 @@ class SingleSolutionAnalyzer(IAnalyzer):
         solution : ISolution
             Solution returned by the solver.
         """
-        super(SingleSolutionAnalyzer, self).add_data(args, kwargs)
+        super(MultiSolutionAnalyzer, self).add_data(args, kwargs)
         if "solver" in kwargs:
             self._solver = kwargs["solver"]
         if "solution" in kwargs:
-            self._data = kwargs["solution"]
+            self._data.append(kwargs["solution"])
