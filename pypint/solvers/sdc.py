@@ -102,8 +102,8 @@ class Sdc(IIterativeTimeSolver):
         self.timer = TimerBase()
         self._num_time_steps = 1
         self.__num_nodes = 3
-        self._threshold_check = ThresholdCheck(min_threshold=1e-7, max_threshold=10,
-                                               conditions=("residual", "iterations"))
+        self._threshold = ThresholdCheck(min_threshold=1e-7, max_threshold=10,
+                                         conditions=("residual", "iterations"))
         self.__num_points = 0
         self.__sol = {
             "previous": np.zeros(0),
@@ -191,8 +191,8 @@ class Sdc(IIterativeTimeSolver):
         self.__sol["previous"] = self.__sol["current"].copy()
         self.__errors["current"] = np.array([0.0] * self.__num_points)
         self.__errors["previous"] = self.__errors["current"].copy()
-        self.__reductions["solution"] = np.ones(self._threshold_check.max_iterations + 1)
-        self.__reductions["errors"] = np.ones(self._threshold_check.max_iterations + 1)
+        self.__reductions["solution"] = np.ones(self.threshold.max_iterations + 1)
+        self.__reductions["errors"] = np.ones(self.threshold.max_iterations + 1)
         self.__residuals["current"] = np.array([0.0] * self.__num_points)
         self.__residuals["previous"] = self.__residuals["current"].copy()
 
@@ -309,7 +309,7 @@ class Sdc(IIterativeTimeSolver):
 
         # start iterations
         _iter = 0
-        while self._threshold_check.has_reached() is None:
+        while self.threshold.has_reached() is None:
             _iter += 1
 
             # step result table header
@@ -368,18 +368,18 @@ class Sdc(IIterativeTimeSolver):
                                   error=self.__errors["current"].copy(),
                                   residual=self.__residuals["current"].copy(),
                                   iteration=-1)
-                self._threshold_check.check(reduction=self.__reductions["solution"][_iter - 2],
-                                            residual=self.__residuals["current"][-1],
-                                            error=self.__reductions["errors"][_iter - 2],
-                                            iterations=_iter)
+                self.threshold.check(reduction=self.__reductions["solution"][_iter - 2],
+                                     residual=self.__residuals["current"][-1],
+                                     error=self.__reductions["errors"][_iter - 2],
+                                     iterations=_iter)
             else:
                 _sol.add_solution(points=self.__time_points["nodes"],
                                   values=self.__sol["current"].copy(),
                                   residual=self.__residuals["current"].copy(),
                                   iteration=-1)
-                self._threshold_check.check(reduction=self.__reductions["solution"][_iter - 2],
-                                            residual=self.__residuals["current"][-1],
-                                            iterations=_iter)
+                self.threshold.check(reduction=self.__reductions["solution"][_iter - 2],
+                                     residual=self.__residuals["current"][-1],
+                                     iterations=_iter)
 
             # reset helper variables
             self.__sol["previous"] = self.__sol["current"].copy()
@@ -391,9 +391,9 @@ class Sdc(IIterativeTimeSolver):
         # end while:self._threshold_check.has_reached() is None
         self.timer.stop()
 
-        if _iter <= self._threshold_check.max_iterations:
+        if _iter <= self.threshold.max_iterations:
             LOG.info("> Converged after {:d} iteration(s).".format(_iter))
-            LOG.info(">   {:s}".format(self._threshold_check.has_reached(human=True)))
+            LOG.info(">   {:s}".format(self.threshold.has_reached(human=True)))
             LOG.info(">   Rel. Reduction: {:.3e}".format(self.__reductions["solution"][_iter - 1]))
             LOG.info(">   Final Residual: {:.3e}".format(self.__residuals["previous"][-1]))
             if self.problem.has_exact():
@@ -535,7 +535,7 @@ class Sdc(IIterativeTimeSolver):
                                                                        self.problem.time_end))
         LOG.info(">   Time Steps:             {:d}".format(self.num_time_steps))
         LOG.info(">   Integration Nodes:      {:d}".format(self.num_nodes))
-        LOG.info(">   Termination Conditions: {:s}".format(self._threshold_check.print_conditions()))
+        LOG.info(">   Termination Conditions: {:s}".format(self.threshold.print_conditions()))
         LOG.info(">   Problem: {:s}".format(self.problem))
         LOG.info("> " + '-' * 78)
 
