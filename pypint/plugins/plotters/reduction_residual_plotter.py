@@ -26,7 +26,6 @@ class ReductionResidualPlotter(IPlotter):
 
     _colors = np.array(['b', 'g', 'r', 'c', 'm', 'y', 'k'])
     _styles = np.array(['o', 'v', '^', '<', '>', 's', 'p', '*', '+', 'x', 'D'])
-    __lambdas = np.linspace(start=-1.0, stop=1.0, num=7)
 
     def __init__(self, *args, **kwargs):
         super(ReductionResidualPlotter, self).__init__(args, **kwargs)
@@ -95,17 +94,17 @@ class ReductionResidualPlotter(IPlotter):
         for sol in range(0, self._solutions.size):
             self._add_solution_plot(sol)
         LOG.debug("Plotting within {:s} x {:s}".format(self.__residual_limits, self.__reduction_limits))
+        _limits = [0.0, 0.0]
+        _limits[0] = min(self.__residual_limits[0], self.__reduction_limits[0])
+        _limits[1] = max(self.__residual_limits[0], self.__reduction_limits[1])
         plt.xlabel("residual")
-        plt.xlim(self.__residual_limits[0], self.__residual_limits[1])
+        plt.xlim(_limits)
         plt.ylabel("reduction")
-        plt.ylim(self.__reduction_limits[0], self.__reduction_limits[1])
-        plt.legend()
+        plt.ylim(_limits)
+        #plt.legend(loc=4)
         plt.grid(True)
 
     def _add_solution_plot(self, index):
-        if ReductionResidualPlotter.__lambdas[index] == 0.0:
-            ReductionResidualPlotter.__lambdas = np.delete(ReductionResidualPlotter.__lambdas, index)
-
         _residuals = self._solutions[index].residuals
         _reductions = self._solutions[index].reductions
         _res = np.zeros(_residuals.size - 1)
@@ -124,6 +123,4 @@ class ReductionResidualPlotter(IPlotter):
         if _red.max() > self.__reduction_limits[1]:
             self.__reduction_limits[1] = _red.max()
 
-        plt.loglog(_res, _red,
-                   color=ReductionResidualPlotter._colors[index],
-                   label="Lambda={:.2f}".format(ReductionResidualPlotter.__lambdas[index]))
+        plt.loglog(_res, _red, color=ReductionResidualPlotter._colors[index])
