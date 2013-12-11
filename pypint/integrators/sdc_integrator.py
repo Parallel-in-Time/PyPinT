@@ -1,6 +1,7 @@
 # coding=utf-8
 
 from .integrator_base import IntegratorBase
+from copy import deepcopy
 import numpy as np
 from .node_providers.gauss_lobatto_nodes import GaussLobattoNodes
 from .weight_function_providers.polynomial_weight_function import PolynomialWeightFunction
@@ -61,8 +62,20 @@ class SdcIntegrator(IntegratorBase):
                              "Must be within [{:d},{:d})".format(1, self._smat.shape[0]))
         super(SdcIntegrator, self).evaluate(data, time_start=self.nodes[0],
                                             time_end=self.nodes[_index])
-        #LOG.debug("Integrating with S-Mat row {:d}.".format(_index - 1))
+        #LOG.debug("Integrating with S-Mat row {:d} ({:s}) on interval {:s}."
+        #          .format(_index - 1, self._smat[_index - 1], self.nodes_type.interval))
         return np.dot(self._smat[_index - 1], data)
+
+    def transform_interval(self, interval):
+        if interval is not None:
+            if interval[0] - interval[-1] != self.nodes[0] - self.nodes[-1]:
+                #LOG.debug("Size of interval changed. Recalculating weights.")
+                super(SdcIntegrator, self).transform_interval(interval)
+                self._construct_s_matrix()
+                #LOG.debug("S-Matrix for interval {:s}: {:s}".format(interval, self._smat))
+        else:
+            LOG.debug("Cannot transform interval to None.")
+            pass
 
     def _construct_s_matrix(self):
         if isinstance(self._nodes, GaussLobattoNodes):
@@ -73,3 +86,15 @@ class SdcIntegrator(IntegratorBase):
         else:
             raise ValueError(func_name(self) +
                              "Other than Gauss-Lobatto integration nodes not yet supported.")
+
+    def __copy__(self):
+        copy = self.__class__.__new__(self.__class__)
+        copy.__dict__.update(self.__dict__)
+        return copy
+
+    def __deepcopy__(self, memo):
+        copy = self.__class__.__new__(self.__class__)
+        memo[id(self)] = copy
+        for item, value in self.__dict__.items():
+            setattr(copy, item, deepcopy(value, memo))
+        return copy

@@ -4,7 +4,9 @@
 .. moduleauthor: Torbjörn Klatt <t.klatt@fz-juelich.de>
 """
 
+from copy import deepcopy
 import numpy as np
+from pypint import LOG
 
 
 class IWeightFunction(object):
@@ -85,3 +87,15 @@ class IWeightFunction(object):
             Cached computed weights.
         """
         return self._weights
+
+    def __copy__(self):
+        copy = self.__class__.__new__(self.__class__)
+        copy.__dict__.update(self.__dict__)
+        return copy
+
+    def __deepcopy__(self, memo):
+        copy = self.__class__.__new__(self.__class__)
+        memo[id(self)] = copy
+        for item, value in self.__dict__.items():
+            setattr(copy, item, deepcopy(value, memo))
+        return copy

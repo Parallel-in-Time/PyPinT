@@ -65,7 +65,7 @@ class IterativeSolution(ISolution):
         .ISolution.add_solution
             overridden method; see for further named arguments
         """
-        super(IterativeSolution, self).add_solution(points, values, args, kwargs)
+        super(IterativeSolution, self).add_solution(points, values, *args, **kwargs)
 
         if self._points.size > 0 and (self._points.size != points.size or np.all(self._points != points)):
             raise ValueError(func_name(self) +

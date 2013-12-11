@@ -8,6 +8,8 @@ from .i_weight_function import IWeightFunction
 import numpy as np
 import numpy.polynomial.polynomial as pol
 from pypint.utilities import func_name
+from pypint import LOG
+
 
 class PolynomialWeightFunction(IWeightFunction):
     """
@@ -39,7 +41,7 @@ class PolynomialWeightFunction(IWeightFunction):
     """
 
     def __init__(self):
-        super(self.__class__, self).__init__()
+        super(PolynomialWeightFunction, self).__init__()
         self._coefficients = np.zeros(0)
 
     def init(self, coeffs=[1.0], func=None):
@@ -61,7 +63,7 @@ class PolynomialWeightFunction(IWeightFunction):
         implemented.
         Usage will lead to a `NotImplementedError` exception.
         """
-        super(self.__class__, self).init(coeffs, func=None)
+        super(PolynomialWeightFunction, self).init(coeffs, func=None)
         if func is not None and isinstance(func, str):
             # TODO: implement parsing of polynomial function string
             raise NotImplementedError(func_name(self) +
@@ -88,7 +90,7 @@ class PolynomialWeightFunction(IWeightFunction):
         .IWeightFunction.evaluate
             overridden method
         """
-        super(self.__class__, self).evaluate(nodes, interval)
+        super(PolynomialWeightFunction, self).evaluate(nodes, interval)
 
         a = self._interval[0]
         b = self._interval[1]
@@ -110,6 +112,8 @@ class PolynomialWeightFunction(IWeightFunction):
             poly = pol.polyint(pol.polymul(poly, self._coefficients))
             alpha[j] = pol.polyval(b, poly) - pol.polyval(a, poly)
 
+        #LOG.debug("Computed polynomial weights for nodes {:s} in {:s}."
+        #          .format(nodes, self._interval))
         del self._interval
         self._weights = alpha
 

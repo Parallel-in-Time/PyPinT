@@ -74,6 +74,8 @@ class SingleSolutionPlotter(IPlotter):
         if self._solver.problem.time_end != self._nodes[-1]:
             self._nodes = np.concatenate((self._nodes, [self._solver.problem.time_end]))
 
+        print("Nodes:" + str(self._nodes))
+
         if self._errplot or self._residualplot:
             plt.suptitle(r"after {:d} iterations; overall reduction: {:.2e}"
                          .format(self._solution.used_iterations, self._solution.reductions["solution"][-1]))
@@ -107,15 +109,18 @@ class SingleSolutionPlotter(IPlotter):
             plt.close('all')
 
     def _final_solution(self):
+        plt.plot(self._nodes, self._solution.solution(), label="Solution")
+        #print(self._solver.problem.exact(0.0, 1.0))
         if self._solver.problem.has_exact() and self._solution.errors[-1].max() > 1e-2:
-            exact = [[self._solver.problem.exact(0.0, node)] for node in self._nodes]
-            plt.plot(self._nodes, self._solution.solution(), self._nodes, exact)
-        else:
-            plt.plot(self._nodes, self._solution.solution())
+            exact = self._solution.exact()
+            #print("Exact:" + str(exact))
+            plt.plot(self._nodes, exact, label="Exact")
+        #print("Solution:" + str(self._solution.solution()))
         plt.xticks(self._nodes)
         plt.xlabel("integration nodes")
         plt.ylabel(r'$u(t, \phi_t)$')
         plt.xlim(self._nodes[0], self._nodes[-1])
+        plt.legend()
         plt.grid(True)
 
     def _error_plot(self):
@@ -132,12 +137,15 @@ class SingleSolutionPlotter(IPlotter):
 
     def _residual_plot(self):
         residuals = self._solution.residuals
-        for i in range(0, residuals.size):
-            plt.plot(self._nodes, residuals[i], label=r"Iteraion {:d}".format(i+1))
-        plt.xticks(self._nodes)
-        plt.xlim(self._nodes[0], self._nodes[-1])
-        plt.yscale("log")
-        plt.xlabel("integration nodes")
-        plt.ylabel(r'residual')
-        #plt.legend(loc="upper center", fontsize="x-small")
-        plt.grid(True)
+        if np.flatnonzero(residuals).size > 0:
+            for i in range(0, residuals.size):
+                plt.plot(self._nodes, residuals[i], label=r"Iteraion {:d}".format(i+1))
+            plt.xticks(self._nodes)
+            plt.xlim(self._nodes[0], self._nodes[-1])
+            plt.yscale("log")
+            plt.xlabel("integration nodes")
+            plt.ylabel(r'residual')
+            #plt.legend(loc="upper center", fontsize="x-small")
+            plt.grid(True)
+        else:
+            LOG.info("All residual values are exact zero. Not plotting residuals.")

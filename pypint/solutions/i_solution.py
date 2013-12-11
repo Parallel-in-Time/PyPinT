@@ -6,6 +6,7 @@
 
 import numpy as np
 from pypint.utilities import func_name
+from pypint import LOG
 
 
 class ISolution(object):
@@ -16,6 +17,7 @@ class ISolution(object):
     """
     def __init__(self):
         self._points = np.zeros(0, dtype=np.float64)
+        self._exact = np.zeros(0, dtype=np.float64)
         self._values = np.zeros(0, dtype=np.float64)
         self._errors = np.zeros(0, dtype=np.float64)
         self._residuals = np.zeros(0, dtype=np.float64)
@@ -70,6 +72,8 @@ class ISolution(object):
 
         if self._points.size == 0:
             self._points = points
+        if self._exact.size == 0 and "exact" in kwargs:
+            self._exact = kwargs["exact"]
 
     def solution(self, *args, **kwargs):
         """
@@ -91,6 +95,9 @@ class ISolution(object):
         implementation specific
         """
         pass
+
+    def exact(self, *args, **kwargs):
+        return self._exact
 
     def error(self, *args, **kwargs):
         """

@@ -109,11 +109,13 @@ class Sdc(IIterativeTimeSolver):
             "previous": np.zeros(0),
             "current": np.zeros(0)
         }
+        self.__exact = np.zeros(0)
         self.__time_points = {
             "steps": np.zeros(0),
             "nodes": np.zeros(0)
         }
         self.__deltas = {
+            "I": 0.0,
             "t": np.zeros(0),
             "n": np.zeros(0)
         }
@@ -173,6 +175,13 @@ class Sdc(IIterativeTimeSolver):
 
         if "num_nodes" in kwargs:
             self.__num_nodes = kwargs["num_nodes"]
+        elif "nodes_type" in kwargs and kwargs["nodes_type"].num_nodes is not None:
+            self.__num_nodes = kwargs["nodes_type"].num_nodes
+        elif integrator.nodes_type.num_nodes is not None:
+            self.__num_nodes = integrator.nodes_type.num_nodes
+        else:
+            raise ValueError(func_name(self) +
+                             "Number of nodes per time step not given.")
 
         if "nodes_type" not in kwargs:
             kwargs["nodes_type"] = GaussLobattoNodes()
@@ -180,15 +189,11 @@ class Sdc(IIterativeTimeSolver):
         if "weights_type" not in kwargs:
             kwargs["weights_type"] = PolynomialWeightFunction()
 
-        # initialize integrator
-        self._integrator.init(kwargs["nodes_type"], self.__num_nodes,
-                              kwargs["weights_type"],
-                              np.array([self.problem.time_start, self.problem.time_end]))
-
         # initialize helper variables
-        self.__num_points = self.num_time_steps * (self.num_nodes - 1) + 1
+        self.__num_points = self.num_time_steps * (self.__num_nodes - 1) + 1
         self.__sol["current"] = np.array([self.problem.initial_value] * self.__num_points)
         self.__sol["previous"] = self.__sol["current"].copy()
+        self.__exact = np.zeros(self.__num_points)
         self.__errors["current"] = np.array([0.0] * self.__num_points)
         self.__errors["previous"] = self.__errors["current"].copy()
         self.__reductions["solution"] = np.ones(self.threshold.max_iterations + 1)
@@ -197,15 +202,21 @@ class Sdc(IIterativeTimeSolver):
         self.__residuals["previous"] = self.__residuals["current"].copy()
 
         # compute time step and node distances
-        _dt = (self.problem.time_end - self.problem.time_start) / self.num_time_steps
+        self.__deltas["I"] = self.problem.time_end - self.problem.time_start
+        _dt = self.__deltas["I"] / self.num_time_steps
         self.__deltas["t"] = np.array([_dt] * self.num_time_steps)
         self.__time_points["steps"] = np.linspace(self.problem.time_start,
                                                   self.problem.time_end, self.num_time_steps + 1)
+        # initialize and transform integrator for time step width
+        self._integrator.init(kwargs["nodes_type"], self.__num_nodes, kwargs["weights_type"],
+                              interval=np.array([self.__time_points["steps"][0],
+                                                 self.__time_points["steps"][1]]))
         self.__time_points["nodes"] = np.zeros(self.__num_points)
         self.__deltas["n"] = np.zeros(self.num_time_steps * (self.num_nodes - 1) + 1)
         # copy the node provider so we do not alter the integrator's one
         _nodes = deepcopy(self._integrator.nodes_type)
         for _t in range(0, self.num_time_steps):
+            # transform Nodes (copy) onto new time step for retrieving actual integration nodes
             _nodes.interval = \
                 np.array([self.__time_points["steps"][_t], self.__time_points["steps"][_t + 1]])
             for _n in range(0, self.num_nodes - 1):
@@ -311,6 +322,7 @@ class Sdc(IIterativeTimeSolver):
         self.timer.start()
 
         # start iterations
+        self.__exact[0] = self.problem.initial_value
         _iter = 0
         while self.threshold.has_reached() is None:
             _iter += 1
@@ -363,11 +375,19 @@ class Sdc(IIterativeTimeSolver):
 
             # save solution for this iteration and check termination criteria
             if self.problem.has_exact():
-                _sol.add_solution(points=self.__time_points["nodes"],
-                                  values=self.__sol["current"].copy(),
-                                  error=self.__errors["current"].copy(),
-                                  residual=self.__residuals["current"].copy(),
-                                  iteration=-1)
+                if _iter == 1:
+                    _sol.add_solution(points=self.__time_points["nodes"],
+                                      values=self.__sol["current"].copy(),
+                                      exact=self.__exact,
+                                      error=self.__errors["current"].copy(),
+                                      residual=self.__residuals["current"].copy(),
+                                      iteration=-1)
+                else:
+                    _sol.add_solution(points=self.__time_points["nodes"],
+                                      values=self.__sol["current"].copy(),
+                                      error=self.__errors["current"].copy(),
+                                      residual=self.__residuals["current"].copy(),
+                                      iteration=-1)
                 self.threshold.check(reduction=self.__reductions["solution"][_iter - 2],
                                      residual=self.__residuals["current"][-1],
                                      error=self.__reductions["errors"][_iter - 2],
@@ -450,7 +470,6 @@ class Sdc(IIterativeTimeSolver):
         _dT = self.__deltas["t"][t]
         _T0 = self.__time_points["steps"][t]
         _T1 = self.__time_points["steps"][t + 1]
-        self._integrator.transform_interval(np.array([_T0, _T1]))
         #LOG.debug("Time step {:d}: [{:2f}, {:.2f}] (dT={:2f}) with nodes: {:s}"
         #          .format(t + 1, _T0, _T1, _dT, self._integrator.nodes))
         for n in range(1, self.num_nodes):
@@ -463,8 +482,8 @@ class Sdc(IIterativeTimeSolver):
 
         # get current steps' time data
         _dt = self.__deltas["n"][n]
-        _t0 = self._integrator.nodes[n - 1]
-        _t1 = self._integrator.nodes[n]
+        _t0 = self.__time_points["nodes"][_i - 1]
+        _t1 = self.__time_points["nodes"][_i]
 
         #LOG.debug("integration step {:d}: [{:2f}, {:.2f}] (dT={:2f})".format(n, _t0, _t1, _dt))
 
@@ -487,12 +506,12 @@ class Sdc(IIterativeTimeSolver):
             self.__sol["current"][_i - 1] + \
             _dt * (self.problem.evaluate(_t0, self.__sol["current"][_i - 1]) -
                    self.problem.evaluate(_t0, self.__sol["previous"][_i - 1])) + \
-            self.__deltas["t"][t] * integral
+            self.__deltas["I"] * integral
         #LOG.debug("          {:f} = {:f} + {:f} * ({:f} - {:f}) + {:f} * {:f}"
-        #          .format(self.__sol["current"][step + 1], self.__sol["current"][step], _dt,
-        #                  self.problem.evaluate(_time, self.__sol["current"][step]),
-        #                  self.problem.evaluate(_time, self.__sol["previous"][step]),
-        #                  self.__delta_times["interval"], integral))
+        #          .format(self.__sol["current"][_i], self.__sol["current"][_i - 1], _dt,
+        #                  self.problem.evaluate(_t0, self.__sol["current"][_i - 1]),
+        #                  self.problem.evaluate(_t0, self.__sol["previous"][_i - 1]),
+        #                  self.__deltas["I"], integral))
 
         # calculate residual
         _integrate_values = np.where(_copy_mask,
@@ -507,13 +526,16 @@ class Sdc(IIterativeTimeSolver):
             _residual_integral += self._integrator.evaluate(_integrate_values, last_node_index=i)
 
         self.__residuals["current"][_i] = \
-            fabs(self.__sol["current"][_i0] + self.__deltas["t"][t] * _residual_integral
+            fabs(self.__sol["current"][_i0] + self.__deltas["I"] * _residual_integral
                  - self.__sol["current"][_i])
+        #LOG.debug("          Residual: {:f} = abs({:f} + {:f} * {:f} - {:f})"
+        #          .format(self.__residuals["current"][_i], self.__sol["current"][_i0],
+        #                  self.__deltas["I"], _residual_integral, self.__sol["current"][_i]))
 
         # calculate error
         if self.problem.has_exact():
-            self.__errors["current"][_i] = \
-                fabs(self.__sol["current"][_i] - self.problem.exact(_t0, self._integrator.nodes[n]))
+            self.__exact[_i] = self.problem.exact(_t0, self.__time_points["nodes"][_i])
+            self.__errors["current"][_i] = fabs(self.__sol["current"][_i] - self.__exact[_i])
         else:
             # we need the exact solution for that
             #  (unless we find an error approximation method)
@@ -566,7 +588,7 @@ class Sdc(IIterativeTimeSolver):
                 outstr += ' ' * 10
             else:
                 if types[i] == "float":
-                    outstr += "{: 10.2f}".format(values[i])
+                    outstr += "{: 10.3f}".format(values[i])
                 elif types[i] == "int":
                     outstr += "{: 10d}".format(values[i])
                 elif types[i] == "exp":
