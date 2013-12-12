@@ -101,6 +101,7 @@ class Sdc(IIterativeTimeSolver):
         super(Sdc, self).__init__(**kwargs)
         self.timer = TimerBase()
         self._num_time_steps = 1
+        self._implicit = False
         self.__num_nodes = 3
         self._threshold = ThresholdCheck(min_threshold=1e-7, max_threshold=10,
                                          conditions=("residual", "iterations"))
@@ -169,6 +170,9 @@ class Sdc(IIterativeTimeSolver):
                              "SDC requires an initial value.")
 
         super(Sdc, self).init(problem, integrator, **kwargs)
+
+        if "implicit" in kwargs and isinstance(kwargs["implicit"], bool):
+            self._implicit = kwargs["implicit"]
 
         if "num_time_steps" in kwargs:
             self._num_time_steps = kwargs["num_time_steps"]
@@ -438,6 +442,10 @@ class Sdc(IIterativeTimeSolver):
         return _sol
 
     @property
+    def is_implicit(self):
+        return self._implicit
+
+    @property
     def num_time_steps(self):
         """
         Summary
@@ -502,16 +510,21 @@ class Sdc(IIterativeTimeSolver):
         integral = self._integrator.evaluate(_integrate_values, last_node_index=n)
 
         # compute step
-        self.__sol["current"][_i] = \
-            self.__sol["current"][_i - 1] + \
-            _dt * (self.problem.evaluate(_t0, self.__sol["current"][_i - 1]) -
-                   self.problem.evaluate(_t0, self.__sol["previous"][_i - 1])) + \
-            self.__deltas["I"] * integral
-        #LOG.debug("          {:f} = {:f} + {:f} * ({:f} - {:f}) + {:f} * {:f}"
-        #          .format(self.__sol["current"][_i], self.__sol["current"][_i - 1], _dt,
-        #                  self.problem.evaluate(_t0, self.__sol["current"][_i - 1]),
-        #                  self.problem.evaluate(_t0, self.__sol["previous"][_i - 1]),
-        #                  self.__deltas["I"], integral))
+        if self.is_implicit:
+            _expl_term = self.__sol["current"][_i - 1] - _dt * self.problem.evaluate(_t0, self.__sol["previous"][_i]) + self.__deltas["I"] * integral
+            _func = lambda x_next: _expl_term + _dt * self.problem.evaluate(_t0, x_next[0]) - x_next
+            self.__sol["current"][_i] = self.problem.implicit_solve(np.array([self.__sol["current"][_i]]), _func)
+        else:
+            self.__sol["current"][_i] = \
+                self.__sol["current"][_i - 1] + \
+                _dt * (self.problem.evaluate(_t0, self.__sol["current"][_i - 1]) -
+                       self.problem.evaluate(_t0, self.__sol["previous"][_i - 1])) + \
+                self.__deltas["I"] * integral
+            #LOG.debug("          {:f} = {:f} + {:f} * ({:f} - {:f}) + {:f} * {:f}"
+            #          .format(self.__sol["current"][_i], self.__sol["current"][_i - 1], _dt,
+            #                  self.problem.evaluate(_t0, self.__sol["current"][_i - 1]),
+            #                  self.problem.evaluate(_t0, self.__sol["previous"][_i - 1]),
+            #                  self.__deltas["I"], integral))
 
         # calculate residual
         _integrate_values = np.where(_copy_mask,
@@ -554,7 +567,7 @@ class Sdc(IIterativeTimeSolver):
 
     def _print_header(self):
         LOG.info("> " + '#' * 78)
-        LOG.info("{:#<80}".format("> START: Explicit SDC "))
+        LOG.info("{:#<80}".format("> START: {:s} SDC ".format("Implicit" if self.is_implicit else "Explicit")))
         LOG.info(">   Interval:               [{:.3f}, {:.3f}]"
                  .format(self.problem.time_start, self.problem.time_end))
         LOG.info(">   Time Steps:             {:d}".format(self.num_time_steps))
