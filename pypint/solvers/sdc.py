@@ -511,8 +511,9 @@ class Sdc(IIterativeTimeSolver):
 
         # compute step
         if self.is_implicit:
-            _expl_term = self.__sol["current"][_i - 1] - _dt * self.problem.evaluate(_t0, self.__sol["previous"][_i]) + self.__deltas["I"] * integral
-            _func = lambda x_next: _expl_term + _dt * self.problem.evaluate(_t0, x_next[0]) - x_next
+            _expl_term = self.__sol["current"][_i - 1] - \
+                _dt * self.problem.evaluate(_t1, self.__sol["previous"][_i]) + self.__deltas["I"] * integral
+            _func = lambda x_next: _expl_term + _dt * self.problem.evaluate(_t1, x_next) - x_next
             self.__sol["current"][_i] = self.problem.implicit_solve(np.array([self.__sol["current"][_i]]), _func)
         else:
             self.__sol["current"][_i] = \
