@@ -50,7 +50,7 @@ class IProblem(object):
         if "function" in kwargs:
             self._function = kwargs["function"]
         else:
-            self._exact = None
+            self._function = None
 
         if "time_start" in kwargs:
             self._time_start = kwargs["time_start"]
