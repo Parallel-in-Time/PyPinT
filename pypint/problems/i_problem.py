@@ -4,6 +4,11 @@
 .. moduleauthor: Torbjörn Klatt <t.klatt@fz-juelich.de>
 """
 
+import numpy as np
+import scipy.optimize as SciOpt
+from pypint import LOG
+from pypint.utilities.tracing import func_name
+
 
 class IProblem(object):
     """
@@ -91,6 +96,48 @@ class IProblem(object):
         RHS value : numpy.ndarray
         """
         return self.function(time, phi_of_time)
+
+    def implicit_solve(self, next_x, func, method="hybr"):
+        """
+        Summary
+        -------
+        A solver for implicit equations.
+
+        Extended Summary
+        ----------------
+        Finds the implicitly defined :math:`x_{i+1}` for the given right hand side function :math:`f(x_{i+1})`, such
+        that :math:`x_{i+1}=f(x_{i+1})`.
+
+        Parameters
+        ----------
+        next_x : numpy.ndarray
+            A starting guess for the implicitly defined value.
+
+        rhs_call : callable
+            The right hand side function depending on the implicitly defined new value.
+
+        method : str
+            Method fo the root finding algorithm. See `scipy.optimize.root`_ for details.
+
+        Returns
+        -------
+        next_x : numpy.ndarray
+            The calculated new value.
+
+        .. _scipy.optimize.root: http://docs.scipy.org/doc/scipy/reference/generated/scipy.optimize.root.html#scipy.optimize.root
+        """
+        if not isinstance(next_x, np.ndarray):
+            raise ValueError(func_name(self) +
+                              "Need a numpy.ndarray.")
+        if not callable(func):
+            raise ValueError(func_name(self) +
+                              "Need a callable function.")
+        sol = SciOpt.root(fun=func, x0=next_x, method=method)
+        if sol.success:
+            return sol.x
+        else:
+            LOG.debug("sol.x: " + str(sol.x))
+            LOG.error("Implicit solver failed: {:s}".format(sol.message))
 
     def exact(self, time, phi_of_time):
         """
