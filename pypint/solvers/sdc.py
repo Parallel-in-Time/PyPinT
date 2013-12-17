@@ -101,7 +101,8 @@ class Sdc(IIterativeTimeSolver):
         super(Sdc, self).__init__(**kwargs)
         self.timer = TimerBase()
         self._num_time_steps = 1
-        self._implicit = False
+        self._type = "expl"
+        self._type_str = "Explicit"
         self.__num_nodes = 3
         self._threshold = ThresholdCheck(min_threshold=1e-7, max_threshold=10,
                                          conditions=("residual", "iterations"))
@@ -155,6 +156,11 @@ class Sdc(IIterativeTimeSolver):
         weights_type : :py:class:`.IWeightFunction`
             Integration weights function to be used.
 
+        type : str
+            Specifying the type of the SDC steps being implicit (``impl``), explicit (``expl``) or semi-implicit
+            (``semi``).
+            Default is ``expl``.
+
         Raises
         ------
         ValueError
@@ -171,8 +177,16 @@ class Sdc(IIterativeTimeSolver):
 
         super(Sdc, self).init(problem, integrator, **kwargs)
 
-        if "implicit" in kwargs and isinstance(kwargs["implicit"], bool):
-            self._implicit = kwargs["implicit"]
+        if "type" in kwargs and isinstance(kwargs["type"], str) and\
+                (kwargs["type"] == "impl" or kwargs["type"] == "expl" or kwargs["type"] == "semi"):
+            self._type = kwargs["type"]
+
+        if self.is_implicit:
+            self._type_str = "Implicit"
+        elif self.is_explicit:
+            self._type_str = "Explicit"
+        else:
+            self._type_str = "Semi-Implicit"
 
         if "num_time_steps" in kwargs:
             self._num_time_steps = kwargs["num_time_steps"]
@@ -195,9 +209,9 @@ class Sdc(IIterativeTimeSolver):
 
         # initialize helper variables
         self.__num_points = self.num_time_steps * (self.__num_nodes - 1) + 1
-        self.__sol["current"] = np.array([self.problem.initial_value] * self.__num_points)
+        self.__sol["current"] = np.array([self.problem.initial_value] * self.__num_points, dtype=self.problem.numeric_type)
         self.__sol["previous"] = self.__sol["current"].copy()
-        self.__exact = np.zeros(self.__num_points)
+        self.__exact = np.zeros(self.__num_points, dtype=self.problem.numeric_type)
         self.__errors["current"] = np.array([0.0] * self.__num_points)
         self.__errors["previous"] = self.__errors["current"].copy()
         self.__reductions["solution"] = np.ones(self.threshold.max_iterations + 1)
@@ -314,7 +328,7 @@ class Sdc(IIterativeTimeSolver):
             overridden method
         """
         # init solution object
-        _sol = solution_class()
+        _sol = solution_class(numeric_type=self.problem.numeric_type)
 
         # start logging output
         self._print_header()
@@ -351,11 +365,11 @@ class Sdc(IIterativeTimeSolver):
             # compute reduction
             if _iter > 1:
                 self.__reductions["solution"][_iter - 1] = \
-                    fabs((self.__sol["previous"][-1] - self.__sol["current"][-1])
-                         / self.__sol["previous"][-1] * 100.0)
+                    np.abs((self.__sol["previous"][-1] - self.__sol["current"][-1])
+                           / self.__sol["previous"][-1] * 100.0)
                 if self.problem.has_exact():
                     self.__reductions["errors"][_iter - 1] = \
-                        fabs(self.__errors["previous"][-1] - self.__errors["current"][-1])
+                        np.abs(self.__errors["previous"][-1] - self.__errors["current"][-1])
 
             # log this iteration's summary
             if _iter == 1:
@@ -443,7 +457,15 @@ class Sdc(IIterativeTimeSolver):
 
     @property
     def is_implicit(self):
-        return self._implicit
+        return self._type == "impl"
+
+    @property
+    def is_explicit(self):
+        return self._type == "expl"
+
+    @property
+    def is_semi_implicit(self):
+        return self._type == "semi"
 
     @property
     def num_time_steps(self):
@@ -504,7 +526,7 @@ class Sdc(IIterativeTimeSolver):
         # evaluate problem for integration values
         _integrate_values = \
             np.array([self.problem.evaluate(self._integrator.nodes[n - 1], val)
-                      for val in _integrate_values])
+                      for val in _integrate_values], dtype=self.problem.numeric_type)
 
         # integrate
         integral = self._integrator.evaluate(_integrate_values, last_node_index=n)
@@ -514,8 +536,19 @@ class Sdc(IIterativeTimeSolver):
             _expl_term = self.__sol["current"][_i - 1] - \
                 _dt * self.problem.evaluate(_t1, self.__sol["previous"][_i]) + self.__deltas["I"] * integral
             _func = lambda x_next: _expl_term + _dt * self.problem.evaluate(_t1, x_next) - x_next
-            self.__sol["current"][_i] = self.problem.implicit_solve(np.array([self.__sol["current"][_i]]), _func)
-        else:
+            self.__sol["current"][_i] = self.problem.implicit_solve(np.array([self.__sol["current"][_i]], dtype=self.problem.numeric_type), _func)
+        elif self.is_semi_implicit:
+            _expl_term = self.__sol["current"][_i - 1] + \
+                _dt * (self.problem.evaluate(_t0, self.__sol["current"][_i - 1], partial="expl") -
+                       self.problem.evaluate(_t0, self.__sol["previous"][_i - 1], partial="expl")) + \
+                self.__deltas["I"] * integral
+            _func = lambda x_next:\
+                _expl_term + _dt * (self.problem.evaluate(_t1, x_next, partial="impl") -
+                                    self.problem.evaluate(_t1, self.__sol["previous"][_i], partial="impl")) - x_next
+            _sol = self.problem.implicit_solve(np.array([self.__sol["current"][_i]], dtype=self.problem.numeric_type), _func)
+            # LOG.debug("TYPE: {:s}, {:s}, {:s}".format(type(_sol), _sol.dtype, self.__sol["current"].dtype))
+            self.__sol["current"][_i] = _sol[0]
+        elif self.is_explicit:
             self.__sol["current"][_i] = \
                 self.__sol["current"][_i - 1] + \
                 _dt * (self.problem.evaluate(_t0, self.__sol["current"][_i - 1]) -
@@ -526,6 +559,9 @@ class Sdc(IIterativeTimeSolver):
             #                  self.problem.evaluate(_t0, self.__sol["current"][_i - 1]),
             #                  self.problem.evaluate(_t0, self.__sol["previous"][_i - 1]),
             #                  self.__deltas["I"], integral))
+        else:
+            # should not reach here
+            pass
 
         # calculate residual
         _integrate_values = np.where(_copy_mask,
@@ -534,14 +570,14 @@ class Sdc(IIterativeTimeSolver):
         _integrate_values[n] = self.__sol["current"][_i]
         _integrate_values = \
             np.array([self.problem.evaluate(self._integrator.nodes[n - 1], val)
-                      for val in _integrate_values])
+                      for val in _integrate_values], dtype=self.problem.numeric_type)
         _residual_integral = 0
         for i in range(1, n + 1):
             _residual_integral += self._integrator.evaluate(_integrate_values, last_node_index=i)
 
         self.__residuals["current"][_i] = \
-            fabs(self.__sol["current"][_i0] + self.__deltas["I"] * _residual_integral
-                 - self.__sol["current"][_i])
+            np.abs(self.__sol["current"][_i0] + self.__deltas["I"] * _residual_integral
+                   - self.__sol["current"][_i])
         #LOG.debug("          Residual: {:f} = abs({:f} + {:f} * {:f} - {:f})"
         #          .format(self.__residuals["current"][_i], self.__sol["current"][_i0],
         #                  self.__deltas["I"], _residual_integral, self.__sol["current"][_i]))
@@ -568,9 +604,8 @@ class Sdc(IIterativeTimeSolver):
 
     def _print_header(self):
         LOG.info("> " + '#' * 78)
-        LOG.info("{:#<80}".format("> START: {:s} SDC ".format("Implicit" if self.is_implicit else "Explicit")))
-        LOG.info(">   Interval:               [{:.3f}, {:.3f}]"
-                 .format(self.problem.time_start, self.problem.time_end))
+        LOG.info("{:#<80}".format("> START: {:s} SDC ".format(self._type_str)))
+        LOG.info(">   Interval:               [{:.3f}, {:.3f}]".format(self.problem.time_start, self.problem.time_end))
         LOG.info(">   Time Steps:             {:d}".format(self.num_time_steps))
         LOG.info(">   Integration Nodes:      {:d}".format(self.num_nodes))
         LOG.info(">   Termination Conditions: {:s}".format(self.threshold.print_conditions()))
@@ -588,8 +623,7 @@ class Sdc(IIterativeTimeSolver):
                          padding=4)
 
     def _print_footer(self):
-        LOG.info("{:#<80}".format("> FINISHED: Explicit SDC ({:.3f} sec) "
-                                  .format(self.timer.past())))
+        LOG.info("{:#<80}".format("> FINISHED: {:s} SDC ({:.3f} sec) ".format(self._type_str, self.timer.past())))
         LOG.info("> " + '#' * 78)
 
     def _output(self, values, types, padding=0, debug=False):

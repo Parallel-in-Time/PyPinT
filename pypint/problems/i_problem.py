@@ -5,7 +5,7 @@
 """
 
 import numpy as np
-import scipy.optimize as SciOpt
+from pypint.plugins.implicit_solvers.find_root import find_root
 from pypint import LOG
 from pypint.utilities.tracing import func_name
 
@@ -66,6 +66,8 @@ class IProblem(object):
             self._exact_function = kwargs["exact_function"]
         else:
             self._exact_function = None
+
+        self._numeric_type = np.float
 
         self._strings = {
             "rhs": None,
@@ -146,7 +148,8 @@ class IProblem(object):
         if not callable(func):
             raise ValueError(func_name(self) +
                               "Need a callable function.")
-        sol = SciOpt.root(fun=func, x0=next_x, method=method)
+        sol = find_root(fun=func, x0=next_x, method=method)
+        # LOG.debug("Root is: {:s}, {:s}".format(sol.x, sol.x.dtype))
         if sol.success:
             return sol.x
         else:
@@ -277,6 +280,10 @@ class IProblem(object):
     @exact_function.setter
     def exact_function(self, exact_function):
         self._exact_function = exact_function
+
+    @property
+    def numeric_type(self):
+        return self._numeric_type
 
     def __str__(self):
         str = ""
