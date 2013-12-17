@@ -77,7 +77,7 @@ class IProblem(object):
             if "exact" in kwargs["strings"]:
                 self._strings["exact"] = kwargs["strings"]["exact"]
 
-    def evaluate(self, time, phi_of_time):
+    def evaluate(self, time, phi_of_time, partial=None):
         """
         Summary
         -------
@@ -91,11 +91,25 @@ class IProblem(object):
         phi_of_time : ``numpy.ndarray``
             Time-dependent data.
 
+        partial : str
+            Specifying whether only a certain part of the problem function should be evaluated.
+            E.g. useful for semi-implicit SDC where the imaginary part of the function is explicitly evaluated and
+            the real part of the function implicitly.
+            Usually ``partial`` is one of ``None``, ``impl`` or ``expl``.
+
         Returns
         -------
         RHS value : numpy.ndarray
+
+        Raises
+        ------
+        ValueError
+            if ``time`` or ``phi_of_time`` are not of correct type.
         """
-        return self.function(time, phi_of_time)
+        if not isinstance(time, float):
+            raise ValueError(func_name(self) +
+                             "Time must be given as a floating point number.")
+        pass
 
     def implicit_solve(self, next_x, func, method="hybr"):
         """
