@@ -21,13 +21,13 @@ class IterativeSolution(ISolution):
     A new solution of a specific iteration can be added via
     :py:func:`.add_solution` and queried via :py:func:`.solution`.
     """
-    def __init__(self):
-        super(IterativeSolution, self).__init__()
+    def __init__(self, numeric_type=np.float):
+        super(IterativeSolution, self).__init__(numeric_type)
         # add one element to enable 1-based indices
-        self._points = np.zeros(0, dtype=np.float64)
-        self._values = np.zeros(1, dtype=np.ndarray)
-        self._errors = np.zeros(1, dtype=np.ndarray)
-        self._residuals = np.zeros(1, dtype=np.ndarray)
+        self._points = np.zeros(0, dtype=self.numeric_type)
+        self._values = np.zeros(1, dtype=object)
+        self._errors = np.zeros(1, dtype=object)
+        self._residuals = np.zeros(1, dtype=object)
         # make the first element a None value
         self._values[0] = None
         self._errors[0] = None
@@ -77,8 +77,14 @@ class IterativeSolution(ISolution):
         _old_size = self._values.size
         # get True for each empty entry
         _empty_values_mask = np.ma.masked_equal(self._values, None).mask
+        if not isinstance(_empty_values_mask, np.ndarray):
+            _empty_values_mask = np.array([_empty_values_mask], dtype=bool)
         _empty_errors_mask = np.ma.masked_equal(self._errors, None).mask
+        if not isinstance(_empty_errors_mask, np.ndarray):
+            _empty_errors_mask = np.array([_empty_errors_mask], dtype=bool)
         _empty_residuals_mask = np.ma.masked_equal(self._residuals, None).mask
+        if not isinstance(_empty_residuals_mask, np.ndarray):
+            _empty_residuals_mask = np.array([_empty_residuals_mask], dtype=bool)
 
         # resize data to fit specified iteration
         if iteration == -1 or iteration >= _old_size:
@@ -108,11 +114,11 @@ class IterativeSolution(ISolution):
         self._errors[_empty_errors_mask] = None
         self._residuals[_empty_residuals_mask] = None
 
-        self._values[iteration] = np.array(values, dtype=np.float64)
+        self._values[iteration] = np.array(values, dtype=self.numeric_type)
         if "error" in kwargs:
-            self._errors[iteration] = np.array(kwargs["error"], dtype=np.float64)
+            self._errors[iteration] = np.array(kwargs["error"], dtype=self.numeric_type)
         if "residual" in kwargs:
-            self._residuals[iteration] = np.array(kwargs["residual"], dtype=np.float64)
+            self._residuals[iteration] = np.array(kwargs["residual"], dtype=self.numeric_type)
         self._used_iterations += 1
 
     def solution(self, *args, **kwargs):

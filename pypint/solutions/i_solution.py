@@ -15,12 +15,13 @@ class ISolution(object):
     -------
     Generalized storage for solutions of solvers.
     """
-    def __init__(self):
-        self._points = np.zeros(0, dtype=np.float64)
-        self._exact = np.zeros(0, dtype=np.float64)
-        self._values = np.zeros(0, dtype=np.float64)
-        self._errors = np.zeros(0, dtype=np.float64)
-        self._residuals = np.zeros(0, dtype=np.float64)
+    def __init__(self, numeric_type=np.float):
+        self._numeric_type = numeric_type
+        self._points = np.zeros(0, dtype=self.numeric_type)
+        self._exact = np.zeros(0, dtype=self.numeric_type)
+        self._values = np.zeros(0, dtype=self.numeric_type)
+        self._errors = np.zeros(0, dtype=self.numeric_type)
+        self._residuals = np.zeros(0, dtype=self.numeric_type)
         self._used_iterations = None
         self._reductions = None
 
@@ -237,6 +238,10 @@ class ISolution(object):
     @reductions.setter
     def reductions(self, reductions):
         self._reductions = reductions
+
+    @property
+    def numeric_type(self):
+        return self._numeric_type
 
     def __str__(self):
         return self.__class__.__name__ + ": {:s}".format(self._values)

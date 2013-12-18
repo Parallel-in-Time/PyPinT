@@ -8,6 +8,7 @@ from .i_plotter import IPlotter
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib import is_interactive
+from pypint.plugins.plotters.__init__ import colorline
 from pypint.utilities import func_name
 from pypint import LOG
 
@@ -107,18 +108,25 @@ class SingleSolutionPlotter(IPlotter):
             plt.close('all')
 
     def _final_solution(self):
-        plt.plot(self._nodes, self._solution.solution(), label="Solution")
-        #print(self._solver.problem.exact(0.0, 1.0))
+        if self._solution.solution().dtype == np.complex:
+            colorline(self._solution.solution().real, self._solution.solution().imag)
+        else:
+            plt.plot(self._nodes, self._solution.solution(), label="Solution")
         if self._solver.problem.has_exact() and self._solution.errors[-1].max() > 1e-2:
             exact = self._solution.exact()
-            #print("Exact:" + str(exact))
-            plt.plot(self._nodes, exact, label="Exact")
-        #print("Solution:" + str(self._solution.solution()))
-        plt.xticks(self._nodes)
-        plt.xlabel("integration nodes")
-        plt.ylabel(r'$u(t, \phi_t)$')
-        plt.xlim(self._nodes[0], self._nodes[-1])
-        plt.legend()
+            if exact.dtype == np.complex:
+                colorline(exact.real, exact.imag)
+            else:
+                plt.plot(self._nodes, exact, label="Exact")
+        if self._solution.solution().dtype == np.complex:
+            plt.xlabel("real")
+            plt.ylabel("imag")
+        else:
+            plt.xticks(self._nodes)
+            plt.xlabel("integration nodes")
+            plt.ylabel(r'$u(t, \phi_t)$')
+            plt.xlim(self._nodes[0], self._nodes[-1])
+            plt.legend()
         plt.grid(True)
 
     def _error_plot(self):
