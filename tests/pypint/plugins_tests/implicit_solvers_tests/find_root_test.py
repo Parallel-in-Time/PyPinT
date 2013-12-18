@@ -2,19 +2,19 @@
 
 import unittest
 from tests.__init__ import NumpyAwareTestCase
-from pypint.plugins.implicit_solvers.find_root import find_root, transform_to_real, transform_to_complex
+from pypint.plugins.implicit_solvers.find_root import find_root, _transform_to_real, _transform_to_complex
 import numpy as np
 
 
 class FindRootTest(NumpyAwareTestCase):
     def testTransformFromComplex(self):
         _complex = np.array([1 + 1j], dtype=np.complex)
-        _real = transform_to_real(_complex, {0: [0, 1]}, 2)
+        _real = _transform_to_real(_complex, {0: [0, 1]}, 2)
         self.assertNumpyArrayAlmostEqual(_real, np.array([1.0, 1.0], dtype=np.float))
 
     def testTransformToComplex(self):
         _real = np.array([1.0, 1.0], dtype=np.float)
-        _complex = transform_to_complex(_real, {0: [0, 1]})
+        _complex = _transform_to_complex(_real, {0: [0, 1]})
         self.assertNumpyArrayAlmostEqual(_complex, np.array([1+1j], dtype=np.complex))
 
     def testSimpleRoot(self):

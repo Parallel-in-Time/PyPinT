@@ -12,9 +12,38 @@ def find_root(fun, x0, method="hybr"):
     """
     Summary
     -------
+    Wrapper around SciPy's generic root finding algorithm to support complex numbers.
+
+    Extended Summary
+    ----------------
+    SciPy's generic root finding algorithm (``scipy.optimize.root``) is not able to deal with functions returning
+    and/or accepting arrays with complex numbers.
+
+    This wrapped call will first convert all arrays of complex numbers into arrays of floats while splitting each
+    complex number up into two floats.
 
     Parameters
     ----------
+    fun : callable
+        Complex function to find the root of
+
+    x0 : numpy.ndarray
+        Initial guess.
+
+    method : str
+        Root finding method to be used.
+        See ``scipy.optimize.root`` for details.
+
+    Returns
+    -------
+    Same solution object as ``scipy.optimize.root`` but with ``x`` being converted back including complex numbers.
+
+    Examples
+    --------
+    from pypint.plugins.implicit_solvers import find_root
+    import numpy
+    fun = lambda x: (-1.0 + 1.0j) * x
+    sol = find_root(fun, numpy.array([0.0]))
     """
     if not isinstance(x0, np.ndarray):
         raise ValueError(func_name() +
@@ -37,15 +66,15 @@ def find_root(fun, x0, method="hybr"):
             _transformed_size += 1
 
     _wrapped_func = \
-        lambda x_next: transform_to_real(fun(transform_to_complex(x_next, _value_map)), _value_map, _transformed_size)
+        lambda x_next: _transform_to_real(fun(_transform_to_complex(x_next, _value_map)), _value_map, _transformed_size)
 
-    sol = root(fun=_wrapped_func, x0=transform_to_real(x0, _value_map, _transformed_size), method=method)
+    sol = root(fun=_wrapped_func, x0=_transform_to_real(x0, _value_map, _transformed_size), method=method)
     if sol.success:
-        sol.x = transform_to_complex(sol.x, _value_map)
+        sol.x = _transform_to_complex(sol.x, _value_map)
     return sol
 
 
-def transform_to_real(x_complex, value_map, transformed_size):
+def _transform_to_real(x_complex, value_map, transformed_size):
     _x_real = np.zeros(transformed_size, dtype=np.float)
     for elem in value_map:
         if len(value_map[elem]) == 2:
@@ -56,7 +85,7 @@ def transform_to_real(x_complex, value_map, transformed_size):
     return _x_real
 
 
-def transform_to_complex(x_real, value_map):
+def _transform_to_complex(x_real, value_map):
     _x_complex = np.zeros(len(value_map), dtype=np.complex)
     for elem in value_map:
         if len(value_map[elem]) == 2:
