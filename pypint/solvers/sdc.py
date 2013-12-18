@@ -173,7 +173,7 @@ class Sdc(IIterativeTimeSolver):
         """
         if not isinstance(problem, IInitialValueProblem):
             raise ValueError(func_name(self) +
-                             "SDC requires an initial value.")
+                             "SDC requires an initial value problem: {:s}".format(problem.__class__.__name__))
 
         super(Sdc, self).init(problem, integrator, **kwargs)
 
