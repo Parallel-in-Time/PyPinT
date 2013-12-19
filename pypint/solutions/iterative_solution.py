@@ -142,7 +142,8 @@ class IterativeSolution(ISolution):
         if iteration > len(self._data):
             raise ValueError(func_name(self) + "Desired iteration is not available: {:d}".format(iteration))
 
-        return self._data[iteration-1].values if isinstance(self._data[iteration-1], ISolution.IterationData) else None
+        return self._data[iteration - 1].values if isinstance(self._data[iteration - 1], ISolution.IterationData) \
+            else None
 
     def error(self, *args, **kwargs):
         """
@@ -175,7 +176,8 @@ class IterativeSolution(ISolution):
         if iteration > len(self._data):
             raise ValueError(func_name(self) + "Desired iteration is not available: {:d}".format(iteration))
 
-        return self._data[iteration].errors if isinstance(self._data[iteration], ISolution.IterationData) else None
+        return self._data[iteration - 1].errors if isinstance(self._data[iteration - 1], ISolution.IterationData) \
+            else None
 
     def residual(self, *args, **kwargs):
         """
@@ -208,7 +210,8 @@ class IterativeSolution(ISolution):
         if iteration > len(self._data):
             raise ValueError(func_name(self) + "Desired iteration is not available: {:d}".format(iteration))
 
-        return self._data[iteration].residuals if isinstance(self._data[iteration], ISolution.IterationData) else None
+        return self._data[iteration - 1].residuals if isinstance(self._data[iteration - 1], ISolution.IterationData) \
+            else None
 
     @property
     def values(self):
@@ -217,19 +220,19 @@ class IterativeSolution(ISolution):
         -------
         Raw solution data with 0-based index.
         """
-        return [iter.values if isinstance(iter, ISolution.IterationData) else None for iter in self._data]
+        return [i.values if isinstance(i, ISolution.IterationData) else None for i in self._data]
 
     @property
     def errors(self):
-        return [iter.errors if isinstance(iter, ISolution.IterationData) else None for iter in self._data]
+        return [i.errors if isinstance(i, ISolution.IterationData) else None for i in self._data]
 
     @property
     def residuals(self):
-        return [iter.residuals if isinstance(iter, ISolution.IterationData) else None for iter in self._data]
+        return [i.residuals if isinstance(i, ISolution.IterationData) else None for i in self._data]
 
     def __str__(self):
-        str = "Iterative Solution with {:d} iterations and reduction of {:.2e}:"\
+        out = "Iterative Solution with {:d} iterations and reduction of {:.2e}:"\
               .format(self.used_iterations, self.reductions["solution"][-1])
-        for iter in range(1, self.used_iterations):
-            str += "\n  Iteration {:d}: {:s}".format(iter+1, self.solution(iter))
-        return str
+        for i in range(1, self.used_iterations):
+            out += "\n  Iteration {:d}: {:s}".format(i + 1, self.solution(iteration=i))
+        return out
