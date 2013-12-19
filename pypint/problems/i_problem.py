@@ -143,18 +143,15 @@ class IProblem(object):
         .. _scipy.optimize.root: http://docs.scipy.org/doc/scipy/reference/generated/scipy.optimize.root.html#scipy.optimize.root
         """
         if not isinstance(next_x, np.ndarray):
-            raise ValueError(func_name(self) +
-                              "Need a numpy.ndarray.")
+            raise ValueError(func_name(self) + "Need a numpy.ndarray.")
         if not callable(func):
-            raise ValueError(func_name(self) +
-                              "Need a callable function.")
+            raise ValueError(func_name(self) + "Need a callable function.")
         sol = find_root(fun=func, x0=next_x, method=method)
         # LOG.debug("Root is: {:s}, {:s}".format(sol.x, sol.x.dtype))
-        if sol.success:
-            return sol.x
-        else:
+        if not sol.success:
             LOG.debug("sol.x: " + str(sol.x))
             LOG.error("Implicit solver failed: {:s}".format(sol.message))
+        return sol.x
 
     def exact(self, time, phi_of_time):
         """
