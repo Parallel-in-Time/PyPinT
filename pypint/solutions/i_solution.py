@@ -15,13 +15,41 @@ class ISolution(object):
     -------
     Generalized storage for solutions of solvers.
     """
+
+    class IterationData(object):
+        def __init__(self):
+            self._iteration = None
+            self._values = None
+            self._errors = None
+            self._residuals = None
+
+        def init(self, iteration, values, errors=None, residuals=None, numeric_type=np.float):
+            self._iteration = iteration
+            self._values = np.array(values, dtype=numeric_type)
+            self._errors = errors
+            self._residuals = residuals
+
+        @property
+        def iteration(self):
+            return self._iteration
+
+        @property
+        def values(self):
+            return self._values
+
+        @property
+        def errors(self):
+            return self._errors
+
+        @property
+        def residuals(self):
+            return self._residuals
+
     def __init__(self, numeric_type=np.float):
         self._numeric_type = numeric_type
-        self._points = np.zeros(0, dtype=self.numeric_type)
+        self._points = np.zeros(0, dtype=np.float)
         self._exact = np.zeros(0, dtype=self.numeric_type)
-        self._values = np.zeros(0, dtype=self.numeric_type)
-        self._errors = np.zeros(0, dtype=self.numeric_type)
-        self._residuals = np.zeros(0, dtype=self.numeric_type)
+        self._data = ISolution.IterationData()
         self._used_iterations = None
         self._reductions = None
 
@@ -95,7 +123,7 @@ class ISolution(object):
         -------
         implementation specific
         """
-        pass
+        return self._data.values
 
     def exact(self, *args, **kwargs):
         return self._exact
@@ -119,7 +147,7 @@ class ISolution(object):
         -------
         implementation specific
         """
-        pass
+        return self._data.errors
 
     def residual(self, *args, **kwargs):
         """
@@ -140,7 +168,7 @@ class ISolution(object):
         -------
         implementation specific
         """
-        pass
+        return self._data.residuals
 
     @property
     def points(self):
@@ -154,45 +182,6 @@ class ISolution(object):
         raw points data : numpy.ndarray
         """
         return self._points
-
-    @property
-    def values(self):
-        """
-        Summary
-        -------
-        Accessor for the complete solution data.
-
-        Returns
-        -------
-        raw solution data : numpy.ndarray
-        """
-        return self._values
-
-    @property
-    def errors(self):
-        """
-        Summary
-        -------
-        Accessor for the complete errors data.
-
-        Returns
-        -------
-        raw errors data : numpy.ndarray
-        """
-        return self._errors
-
-    @property
-    def residuals(self):
-        """
-        Summary
-        -------
-        Accessor for the complete residuals data.
-
-        Returns
-        -------
-        raw residuals data : numpy.ndarray
-        """
-        return self._residuals
 
     @property
     def used_iterations(self):

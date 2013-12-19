@@ -16,8 +16,11 @@ class SimpleSolution(ISolution):
     """
     def __init__(self, numeric_type=np.float):
         super(SimpleSolution, self).__init__(numeric_type)
-        self._data = np.zeros(0, dtype=self.numeric_type)
 
-    def add_solution(self, data, **kwargs):
-        super(SimpleSolution, self).add_solution(data, kwargs)
-        self._data = data.copy()
+    def add_solution(self, points, values, *args, **kwargs):
+        super(SimpleSolution, self).add_solution(points, values, *args, **kwargs)
+        _values = np.array(values, dtype=self.numeric_type)
+        _errors = np.array(kwargs["error"], dtype=self.numeric_type) if "error" in kwargs else None
+        _residuals = np.array(kwargs["residual"], dtype=self.numeric_type) if "residual" in kwargs else None
+        self._data.init(iteration=-1, values=_values, errors=_errors, residuals=_residuals,
+                                   numeric_type=self.numeric_type)

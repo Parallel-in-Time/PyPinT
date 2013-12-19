@@ -21,17 +21,12 @@ class IterativeSolution(ISolution):
     A new solution of a specific iteration can be added via
     :py:func:`.add_solution` and queried via :py:func:`.solution`.
     """
+
     def __init__(self, numeric_type=np.float):
         super(IterativeSolution, self).__init__(numeric_type)
         # add one element to enable 1-based indices
-        self._points = np.zeros(0, dtype=self.numeric_type)
-        self._values = np.zeros(1, dtype=object)
-        self._errors = np.zeros(1, dtype=object)
-        self._residuals = np.zeros(1, dtype=object)
-        # make the first element a None value
-        self._values[0] = None
-        self._errors[0] = None
-        self._residuals[0] = None
+        self._points = np.zeros(0, dtype=np.float)
+        self._data = []
         self._used_iterations = 0
 
     def add_solution(self, points, values, *args, **kwargs):
@@ -68,57 +63,48 @@ class IterativeSolution(ISolution):
         super(IterativeSolution, self).add_solution(points, values, *args, **kwargs)
 
         if self._points.size > 0 and (self._points.size != points.size or np.all(self._points != points)):
+            raise ValueError(func_name(self) + "Given points are not equal stored ones.")
+
+        # get iteration index (1-based)
+        iteration = int(kwargs["iteration"]) if "iteration" in kwargs else -1
+
+        # given iteration index of -1 means appending as last
+        if iteration == -1:
+            iteration = len(self._data) + 1  # (+1 because of 1-based index)
+
+        # convert iteration index to be 0-based
+        iteration -= 1
+
+        # NOTE: from here on, iteration is 0-based
+
+        # will we insert or append (incl. possible skipping)?
+        _append = (iteration >= len(self._data))
+
+        # we do not allow to override existing solutions (non-None elements)
+        if not _append and self._data[iteration] is not None:
             raise ValueError(func_name(self) +
-                             "Given points are not equal stored ones.")
+                             "Data for iteration {:d} is already present. Not overriding.".format(iteration + 1))
 
-        if "iteration" not in kwargs:
-            kwargs["iteration"] = -1
-        iteration = int(kwargs["iteration"])
-        _old_size = self._values.size
-        # get True for each empty entry
-        _empty_values_mask = np.ma.masked_equal(self._values, None).mask
-        if not isinstance(_empty_values_mask, np.ndarray):
-            _empty_values_mask = np.array([_empty_values_mask], dtype=bool)
-        _empty_errors_mask = np.ma.masked_equal(self._errors, None).mask
-        if not isinstance(_empty_errors_mask, np.ndarray):
-            _empty_errors_mask = np.array([_empty_errors_mask], dtype=bool)
-        _empty_residuals_mask = np.ma.masked_equal(self._residuals, None).mask
-        if not isinstance(_empty_residuals_mask, np.ndarray):
-            _empty_residuals_mask = np.array([_empty_residuals_mask], dtype=bool)
+        # if not simple append, fill in skipped iterations
+        while _append and len(self._data) < iteration:
+            self._data.append(None)
 
-        # resize data to fit specified iteration
-        if iteration == -1 or iteration >= _old_size:
-            if iteration == -1:
-                _resize = _old_size + 1
-            else:
-                _resize = iteration + 1
-            # create new index at the end of the data
-            self._values = np.resize(self._values, _resize)
-            self._errors = np.resize(self._errors, _resize)
-            self._residuals = np.resize(self._residuals, _resize)
-            # and set newly created value to None
-            self._values[iteration] = None
-            self._errors[iteration] = None
-            self._residuals[iteration] = None
+        _append = (iteration == len(self._data))
 
-        if iteration != -1 and self._values[iteration] is not None:
-            raise ValueError(func_name(self) +
-                             "Data for iteration {:d} is already present. Not overriding."
-                             .format(iteration))
+        # prepare values
+        _values = values.astype(dtype=self.numeric_type)
+        _errors = kwargs["error"].astype(np.float) if "error" in kwargs else None
+        _residuals = kwargs["residual"].astype(np.float) if "residual" in kwargs else None
 
-        # fill in non-set iterations
-        _empty_values_mask = np.concatenate((_empty_values_mask, [True] * (self._values.size - _old_size)))
-        _empty_errors_mask = np.concatenate((_empty_errors_mask, [True] * (self._values.size - _old_size)))
-        _empty_residuals_mask = np.concatenate((_empty_residuals_mask, [True] * (self._values.size - _old_size)))
-        self._values[_empty_values_mask] = None
-        self._errors[_empty_errors_mask] = None
-        self._residuals[_empty_residuals_mask] = None
+        # prepare data object
+        if _append:
+            self._data.append(ISolution.IterationData())
+        else:
+            self._data[iteration] = ISolution.IterationData()
 
-        self._values[iteration] = np.array(values, dtype=self.numeric_type)
-        if "error" in kwargs:
-            self._errors[iteration] = np.array(kwargs["error"], dtype=self.numeric_type)
-        if "residual" in kwargs:
-            self._residuals[iteration] = np.array(kwargs["residual"], dtype=self.numeric_type)
+        # fill data object with values
+        self._data[iteration].init(iteration=iteration, values=_values, errors=_errors, residuals=_residuals,
+                                   numeric_type=self.numeric_type)
         self._used_iterations += 1
 
     def solution(self, *args, **kwargs):
@@ -149,17 +135,14 @@ class IterativeSolution(ISolution):
         .ISolution.solution
             overridden method
         """
-        super(IterativeSolution, self).solution(args, kwargs)
-        if "iteration" not in kwargs:
-            iteration = -1
-        else:
-            iteration = kwargs["iteration"]
+        iteration = kwargs["iteration"] if "iteration" in kwargs else -1
+        if iteration == -1:
+            iteration = len(self._data)
 
-        if iteration != -1 and iteration > self._values.size:
-            raise ValueError(func_name(self) +
-                             "Desired iteration is not available: {:d}".format(iteration))
+        if iteration > len(self._data):
+            raise ValueError(func_name(self) + "Desired iteration is not available: {:d}".format(iteration))
 
-        return self._values[iteration]
+        return self._data[iteration-1].values if isinstance(self._data[iteration-1], ISolution.IterationData) else None
 
     def error(self, *args, **kwargs):
         """
@@ -185,17 +168,14 @@ class IterativeSolution(ISolution):
         .ISolution.error
             overridden method
         """
-        super(IterativeSolution, self).error(args, kwargs)
-        if "iteration" not in kwargs:
-            iteration = -1
-        else:
-            iteration = kwargs["iteration"]
+        iteration = kwargs["iteration"] if "iteration" in kwargs else -1
+        if iteration == -1:
+            iteration = len(self._data)
 
-        if iteration != -1 and iteration > self._errors.size:
-            raise ValueError(func_name(self) +
-                             "Desired iteration is not available: {:d}".format(iteration))
+        if iteration > len(self._data):
+            raise ValueError(func_name(self) + "Desired iteration is not available: {:d}".format(iteration))
 
-        return self._errors[iteration]
+        return self._data[iteration].errors if isinstance(self._data[iteration], ISolution.IterationData) else None
 
     def residual(self, *args, **kwargs):
         """
@@ -216,40 +196,36 @@ class IterativeSolution(ISolution):
         ValueError
             If ``iteration`` is not available.
 
-
         See Also
         --------
         .ISolution.residual
             overridden method
         """
-        super(IterativeSolution, self).residual(args, kwargs)
-        if "iteration" not in kwargs:
-            iteration = -1
-        else:
-            iteration = kwargs["iteration"]
+        iteration = kwargs["iteration"] if "iteration" in kwargs else -1
+        if iteration == -1:
+            iteration = len(self._data)
 
-        if iteration != -1 and iteration > self._residuals.size:
-            raise ValueError(func_name(self) +
-                             "Desired iteration is not available: {:d}".format(iteration))
+        if iteration > len(self._data):
+            raise ValueError(func_name(self) + "Desired iteration is not available: {:d}".format(iteration))
 
-        return self._residuals[iteration]
+        return self._data[iteration].residuals if isinstance(self._data[iteration], ISolution.IterationData) else None
 
     @property
-    def data(self):
+    def values(self):
         """
         Returns
         -------
         Raw solution data with 0-based index.
         """
-        return self._values[1:]
+        return [iter.values if isinstance(iter, ISolution.IterationData) else None for iter in self._data]
 
     @property
     def errors(self):
-        return self._errors[1:]
+        return [iter.errors if isinstance(iter, ISolution.IterationData) else None for iter in self._data]
 
     @property
     def residuals(self):
-        return self._residuals[1:]
+        return [iter.residuals if isinstance(iter, ISolution.IterationData) else None for iter in self._data]
 
     def __str__(self):
         str = "Iterative Solution with {:d} iterations and reduction of {:.2e}:"\
