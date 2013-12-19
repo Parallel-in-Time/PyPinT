@@ -57,19 +57,24 @@ def find_root(fun, x0, method="hybr"):
 
     _value_map = {}
     _transformed_size = 0
+    _transform_necessary = False
     for i in range(0, x0.size):
         if isinstance(x0[i], complex):
             _value_map[i] = [_transformed_size, _transformed_size + 1]
             _transformed_size += 2
+            _transform_necessary = True
         else:
             _value_map[i] = [_transformed_size]
             _transformed_size += 1
 
-    _wrapped_func = \
-        lambda x_next: _transform_to_real(fun(_transform_to_complex(x_next, _value_map)), _value_map, _transformed_size)
+    if _transform_necessary:
+        _wrapped_func = \
+            lambda x_next: _transform_to_real(fun(_transform_to_complex(x_next, _value_map)), _value_map, _transformed_size)
+        sol = root(fun=_wrapped_func, x0=_transform_to_real(x0, _value_map, _transformed_size), method=method)
+    else:
+        sol = root(fun=fun, x0=x0, method=method)
 
-    sol = root(fun=_wrapped_func, x0=_transform_to_real(x0, _value_map, _transformed_size), method=method)
-    if sol.success:
+    if sol.success and _transform_necessary:
         sol.x = _transform_to_complex(sol.x, _value_map)
     return sol
 
