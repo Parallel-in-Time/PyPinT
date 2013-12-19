@@ -399,7 +399,7 @@ class Sdc(IIterativeTimeSolver):
                                       exact=self.__exact,
                                       error=self.__errors["current"].copy(),
                                       residual=self.__residuals["current"].copy(),
-                                      iteration=-1)
+                                      iteration=1)
                 else:
                     _sol.add_solution(points=self.__time_points["nodes"],
                                       values=self.__sol["current"].copy(),
