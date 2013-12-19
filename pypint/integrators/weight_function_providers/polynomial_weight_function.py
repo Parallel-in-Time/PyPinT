@@ -145,7 +145,7 @@ class PolynomialWeightFunction(IWeightFunction):
         >>> # Similar, to set the constant coefficient 42, e.i. 42*x^0, use:
         >>> polyWeights.add_coefficient(42, 0)
         """
-        assert_is_instance(power, int, checking_obj=self)
+        assert_is_instance(power, int, "Power must be an integer.", checking_obj=self)
         critical_assert(power >= 0, ValueError, "Power must be zero or positive: {:d}".format(power), self)
 
         if self._coefficients.size <= power + 1:
