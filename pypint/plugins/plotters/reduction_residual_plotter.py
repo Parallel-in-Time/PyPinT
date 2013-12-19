@@ -70,9 +70,6 @@ class ReductionResidualPlotter(IPlotter):
         if self._solver.problem.time_end != self._nodes[-1]:
             self._nodes = np.concatenate((self._nodes, [self._solver.problem.time_end]))
 
-        #plt.suptitle(r""
-        #             .format())
-
         plt.title("Residuals and Reduction per Iteration for different Lambdas")
         self._plot_residuals_reductions()
 
@@ -107,9 +104,9 @@ class ReductionResidualPlotter(IPlotter):
     def _add_solution_plot(self, index):
         _residuals = self._solutions[index].residuals
         _reductions = self._solutions[index].reductions
-        _res = np.zeros(_residuals.size - 1)
-        _red = np.zeros(_residuals.size - 1)
-        for i in range(1, _residuals.size):
+        _res = np.zeros(len(_residuals) - 1)
+        _red = np.zeros(len(_residuals) - 1)
+        for i in range(1, len(_residuals)):
             _res[i - 1] = _residuals[i][-1]
             _red[i - 1] = _reductions["solution"][i]
 
