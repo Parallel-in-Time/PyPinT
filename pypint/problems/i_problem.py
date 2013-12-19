@@ -7,7 +7,7 @@
 import numpy as np
 from pypint.plugins.implicit_solvers.find_root import find_root
 from pypint import LOG
-from pypint.utilities.tracing import critical_assert
+from pypint.utilities.tracing import assert_is_callable, assert_is_instance, critical_assert
 
 
 class IProblem(object):
@@ -91,7 +91,7 @@ class IProblem(object):
         ValueError
             if ``time`` or ``phi_of_time`` are not of correct type.
         """
-        critical_assert(isinstance(time, float), ValueError, "Time must be given as a floating point number.", self)
+        assert_is_instance(time, float, "Time must be given as a floating point number.", self)
 
     def implicit_solve(self, next_x, func, method="hybr"):
         """
@@ -122,8 +122,8 @@ class IProblem(object):
 
         .. _scipy.optimize.root: http://docs.scipy.org/doc/scipy/reference/generated/scipy.optimize.root.html#scipy.optimize.root
         """
-        critical_assert(isinstance(next_x, np.ndarray), ValueError, "Need a numpy.ndarray.", self)
-        critical_assert(callable(func), ValueError, "Need a callable function.", self)
+        assert_is_instance(next_x, np.ndarray, "Need a numpy.ndarray.", self)
+        assert_is_callable(func, "Need a callable function.", self)
         sol = find_root(fun=func, x0=next_x, method=method)
         # LOG.debug("Root is: {:s}, {:s}".format(sol.x, sol.x.dtype))
         if not sol.success:

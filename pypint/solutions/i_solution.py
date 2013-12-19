@@ -5,7 +5,7 @@
 """
 
 import numpy as np
-from pypint.utilities import critical_assert
+from pypint.utilities import assert_is_instance, critical_assert
 
 
 class ISolution(object):
@@ -80,16 +80,14 @@ class ISolution(object):
             * if either ``points``, ``values``, ``error`` or ``residual`` is not a ``numpy.ndarray``
             * if ``points`` and ``values`` are not of same size
         """
-        critical_assert(isinstance(points, np.ndarray) and isinstance(values, np.ndarray),
-                        ValueError, "Given points or values is not a numpy.ndarray.", self)
+        assert_is_instance(points, np.ndarray, "Points must be a numpy.ndarray.", self)
+        assert_is_instance(values, np.ndarray, "Values must be a numpy.ndarray.", self)
         critical_assert(points.size != 0, ValueError, "Number of points must be positive.", self)
         critical_assert(points.size == values.size, ValueError, "Points and values must have same size.", self)
         if "error" in kwargs:
-            critical_assert(isinstance(kwargs["error"], np.ndarray),
-                            ValueError, "Given error data is not a numpy.ndarray.", self)
+            assert_is_instance(kwargs["error"], np.ndarray, "Error data must be a numpy.ndarray.", self)
         if "residual" in kwargs:
-            critical_assert(isinstance(kwargs["residual"], np.ndarray),
-                            ValueError, "Given residual data is not a numpy.ndarray.", self)
+            assert_is_instance(kwargs["residual"], np.ndarray, "Residual data must be a numpy.ndarray.", self)
 
         if self._points.size == 0:
             self._points = points

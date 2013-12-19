@@ -17,7 +17,7 @@ from pypint.problems.i_initial_value_problem import IInitialValueProblem
 from pypint.solutions.iterative_solution import IterativeSolution
 from pypint.plugins.timers.timer_base import TimerBase
 from pypint.utilities.threshold_check import ThresholdCheck
-from pypint.utilities import func_name, critical_assert
+from pypint.utilities import assert_is_instance, critical_assert, func_name
 from pypint import LOG
 
 # General Notes on Implementation
@@ -170,9 +170,9 @@ class Sdc(IIterativeTimeSolver):
         .IIterativeTimeSolver.init
             overridden method
         """
-        critical_assert(isinstance(problem, IInitialValueProblem),
-                        ValueError, "SDC requires an initial value problem: {:s}".format(problem.__class__.__name__),
-                        self)
+        assert_is_instance(problem, IInitialValueProblem,
+                           "SDC requires an initial value problem: {:s}".format(problem.__class__.__name__),
+                           self)
 
         super(Sdc, self).init(problem, integrator, **kwargs)
 

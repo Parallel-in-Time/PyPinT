@@ -6,7 +6,7 @@
 
 from copy import deepcopy
 import numpy as np
-from pypint.utilities import critical_assert
+from pypint.utilities import assert_is_instance, critical_assert
 
 
 class INodes(object):
@@ -88,9 +88,9 @@ class INodes(object):
         It may be this transformation is numerically inconvenient because of
         the loss of significance.
         """
-        critical_assert(isinstance(interval, np.ndarray) and interval.size == 2,
-                        ValueError, "Given interval is not a numpy.ndarray or is not of size 2: {:s} ({:s})"
-                                    .format(interval, type(interval)), self)
+        assert_is_instance(interval, np.ndarray, "Interval must be a numpy.ndarray.", self)
+        critical_assert(interval.size == 2,
+                        ValueError, "Intervals must be of size 2: {:s} ({:s})".format(interval, type(interval)), self)
         critical_assert(interval[0] < interval[1],
                         ValueError, "Given interval is not positive: {:.2f} > {:.2f}".format(interval[0], interval[1]),
                         self)

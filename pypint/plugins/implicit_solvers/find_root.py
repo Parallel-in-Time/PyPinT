@@ -5,7 +5,7 @@
 """
 import numpy as np
 from scipy.optimize import root
-from pypint.utilities.tracing import critical_assert
+from pypint.utilities.tracing import assert_is_callable, assert_is_instance
 
 
 def find_root(fun, x0, method="hybr"):
@@ -45,9 +45,9 @@ def find_root(fun, x0, method="hybr"):
     fun = lambda x: (-1.0 + 1.0j) * x
     sol = find_root(fun, numpy.array([0.0]))
     """
-    critical_assert(isinstance(x0, np.ndarray), ValueError, "Initial start value must be a numpy.ndarray.")
-    critical_assert(callable(fun), ValueError, "Function to find root of must be callable.")
-    critical_assert(isinstance(method, str), ValueError, "Root finding method must be defined as a string.")
+    assert_is_instance(x0, np.ndarray, "Initial start value must be a numpy.ndarray.")
+    assert_is_callable(fun, "Function to find root of must be callable.")
+    assert_is_instance(method, str, "Root finding method must be defined as a string.")
 
     _value_map = {}
     _transformed_size = 0

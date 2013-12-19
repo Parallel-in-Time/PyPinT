@@ -5,7 +5,7 @@ from copy import deepcopy
 import numpy as np
 from .node_providers.gauss_lobatto_nodes import GaussLobattoNodes
 from .weight_function_providers.polynomial_weight_function import PolynomialWeightFunction
-from pypint.utilities import critical_assert
+from pypint.utilities import assert_is_instance, critical_assert
 from pypint import LOG
 
 
@@ -76,9 +76,8 @@ class SdcIntegrator(IntegratorBase):
             pass
 
     def _construct_s_matrix(self):
-        critical_assert(isinstance(self._nodes, GaussLobattoNodes),
-                        ValueError, "Other than Gauss-Lobatto integration nodes not yet supported.",
-                        self)
+        assert_is_instance(self._nodes, GaussLobattoNodes,
+                           "Other than Gauss-Lobatto integration nodes not yet supported.", self)
         self._smat = np.zeros((self.nodes.size - 1, self.nodes.size), dtype=float)
         for i in range(1, self.nodes.size):
             self.weights_function.evaluate(self.nodes, np.array([self.nodes[i - 1], self.nodes[i]]))

@@ -7,7 +7,7 @@
 from .i_weight_function import IWeightFunction
 import numpy as np
 import numpy.polynomial.polynomial as pol
-from pypint.utilities import func_name
+from pypint.utilities import func_name, assert_is_instance, critical_assert
 from pypint import LOG
 
 
@@ -145,10 +145,8 @@ class PolynomialWeightFunction(IWeightFunction):
         >>> # Similar, to set the constant coefficient 42, e.i. 42*x^0, use:
         >>> polyWeights.add_coefficient(42, 0)
         """
-        if not isinstance(power, int) or power < 0:
-            raise ValueError(func_name(self) +
-                             "Given power ({}) is not an integer or is negative"
-                             .format(power))
+        assert_is_instance(power, int, checking_obj=self)
+        critical_assert(power >= 0, ValueError, "Power must be zero or positive: {:d}".format(power), self)
 
         if self._coefficients.size <= power + 1:
             self._coefficients = np.resize(self._coefficients, (power + 1))
@@ -186,11 +184,5 @@ class PolynomialWeightFunction(IWeightFunction):
 
     @coefficients.setter
     def coefficients(self, coefficients):
-        if isinstance(coefficients, np.ndarray):
-            self._coefficients = coefficients
-        else:
-            raise ValueError(func_name(self) +
-                             "Coefficients need to be a numpy.ndarray")
-
-
-
+        assert_is_instance(coefficients, np.ndarray, "Coefficients need to be a numpy.ndarray", self)
+        self._coefficients = coefficients

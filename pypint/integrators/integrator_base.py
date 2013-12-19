@@ -7,7 +7,7 @@
 import numpy as np
 from .node_providers.i_nodes import INodes
 from .weight_function_providers.i_weight_function import IWeightFunction
-from pypint.utilities import critical_assert
+from pypint.utilities import assert_is_instance, critical_assert
 
 
 class IntegratorBase(object):
@@ -72,8 +72,8 @@ class IntegratorBase(object):
         >>> options["num_nodes"] = 4
         >>> integrator.init(**options)
         """
-        critical_assert(isinstance(nodes_type, INodes),
-                        ValueError, "Given nodes type is not a valid type: {:s}".format(type(nodes_type)), self)
+        assert_is_instance(nodes_type, INodes,
+                           "Given nodes type is not a valid type: {:s}".format(type(nodes_type)), self)
         if isinstance(weights_function, dict):
             critical_assert("class" in weights_function or isinstance(weights_function["class"], IWeightFunction),
                             ValueError, "Given weight function is not a valid type: {:s}"
@@ -85,15 +85,12 @@ class IntegratorBase(object):
             del _weight_function_options["class"]
             self._weights_function.init(**_weight_function_options)
         else:
-            critical_assert(isinstance(weights_function, IWeightFunction),
-                            ValueError, "Given weight function is not a valid type: {:s}"
-                                        .format(type(weights_function)),
-                            self)
+            assert_is_instance(weights_function, IWeightFunction,
+                               "Given weight function is not a valid type: {:s}".format(type(weights_function)), self)
             self._weights_function = weights_function
             self._weights_function.init()
-        critical_assert(isinstance(num_nodes, int),
-                        ValueError, "Number of nodes need to be an integer (not {:s}).".format(type(num_nodes)),
-                        self)
+        assert_is_instance(num_nodes, int,
+                           "Number of nodes need to be an integer (not {:s}).".format(type(num_nodes)), self)
         self._nodes = nodes_type
         self._nodes.init(num_nodes)
         self.transform_interval(interval)
@@ -125,7 +122,7 @@ class IntegratorBase(object):
             * if either ``time_start`` or ``time_end`` are not given
             * if ``time_start`` is larger or equals ``time_end``
         """
-        critical_assert(isinstance(data, np.ndarray), ValueError, "Data to integrate must be an numpy.ndarray.", self)
+        assert_is_instance(data, np.ndarray, "Data to integrate must be an numpy.ndarray.", self)
         critical_assert("time_start" in kwargs or "time_end" in kwargs,
                         ValueError, "Either start or end of time interval need to be given.", self)
         critical_assert(kwargs["time_start"] < kwargs["time_end"],
