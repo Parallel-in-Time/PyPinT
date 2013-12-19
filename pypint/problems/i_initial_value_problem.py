@@ -24,10 +24,7 @@ class IInitialValueProblem(IProblem):
     """
     def __init__(self, *args, **kwargs):
         super(IInitialValueProblem, self).__init__(args, kwargs)
-        if "initial_value" in kwargs:
-            self._initial_value = kwargs["initial_value"]
-        else:
-            self._initial_value = None
+        self._initial_value = kwargs["initial_value"] if "initial_value" in kwargs else None
 
     @property
     def initial_value(self):
@@ -53,6 +50,6 @@ class IInitialValueProblem(IProblem):
         self._initial_value = initial_value
 
     def __str__(self):
-        str = super(IInitialValueProblem, self).__str__()
-        str += r", u({:.2f})={:.2f}".format(self.time_start, self.initial_value)
-        return str
+        _out = super(IInitialValueProblem, self).__str__()
+        _out += r", u({:.2f})={:.2f}".format(self.time_start, self.initial_value)
+        return _out

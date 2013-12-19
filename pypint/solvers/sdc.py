@@ -8,7 +8,6 @@ from .i_iterative_time_solver import IIterativeTimeSolver
 from copy import deepcopy
 import warnings as warnings
 import numpy as np
-from math import fabs
 from pypint.integrators.sdc_integrator import SdcIntegrator
 from pypint.integrators.node_providers.gauss_lobatto_nodes \
     import GaussLobattoNodes
@@ -18,7 +17,7 @@ from pypint.problems.i_initial_value_problem import IInitialValueProblem
 from pypint.solutions.iterative_solution import IterativeSolution
 from pypint.plugins.timers.timer_base import TimerBase
 from pypint.utilities.threshold_check import ThresholdCheck
-from pypint.utilities import func_name
+from pypint.utilities import func_name, critical_assert
 from pypint import LOG
 
 # General Notes on Implementation
@@ -171,9 +170,9 @@ class Sdc(IIterativeTimeSolver):
         .IIterativeTimeSolver.init
             overridden method
         """
-        if not isinstance(problem, IInitialValueProblem):
-            raise ValueError(func_name(self) +
-                             "SDC requires an initial value problem: {:s}".format(problem.__class__.__name__))
+        critical_assert(isinstance(problem, IInitialValueProblem),
+                        ValueError, "SDC requires an initial value problem: {:s}".format(problem.__class__.__name__),
+                        self)
 
         super(Sdc, self).init(problem, integrator, **kwargs)
 
@@ -630,28 +629,26 @@ class Sdc(IIterativeTimeSolver):
         LOG.info("> " + '#' * 78)
 
     def _output(self, values, types, padding=0, debug=False):
-        if len(values) != len(types):
-            raise ValueError(func_name(self) +
-                             "Number of values must equal number of types.")
-        outstr = ' ' * padding
+        critical_assert(len(values) == len(types), ValueError, "Number of values must equal number of types.", self)
+        _outstr = ' ' * padding
         for i in range(0, len(values)):
             if values[i] is None:
-                outstr += ' ' * 10
+                _outstr += ' ' * 10
             else:
                 if types[i] == "float":
-                    outstr += "{: 10.3f}".format(values[i])
+                    _outstr += "{: 10.3f}".format(values[i])
                 elif types[i] == "int":
-                    outstr += "{: 10d}".format(values[i])
+                    _outstr += "{: 10d}".format(values[i])
                 elif types[i] == "exp":
-                    outstr += "{: 10.2e}".format(values[i])
+                    _outstr += "{: 10.2e}".format(values[i])
                 elif types[i] == "str":
-                    outstr += "{: >10s}".format(values[i])
+                    _outstr += "{: >10s}".format(values[i])
                 else:
                     raise ValueError(func_name(self) +
                                      "Given type for value '{:s}' is invalid: {:s}"
                                      .format(values[i], types[i]))
-            outstr += "    "
+            _outstr += "    "
         if debug:
-            LOG.debug("!> {:s}".format(outstr))
+            LOG.debug("!> {:s}".format(_outstr))
         else:
-            LOG.info("> {:s}".format(outstr))
+            LOG.info("> {:s}".format(_outstr))

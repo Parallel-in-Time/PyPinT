@@ -5,8 +5,7 @@
 """
 
 import numpy as np
-from pypint.utilities import func_name
-from pypint import LOG
+from pypint.utilities import critical_assert
 
 
 class ISolution(object):
@@ -81,23 +80,16 @@ class ISolution(object):
             * if either ``points``, ``values``, ``error`` or ``residual`` is not a ``numpy.ndarray``
             * if ``points`` and ``values`` are not of same size
         """
-        if not isinstance(points, np.ndarray) or not isinstance(values, np.ndarray):
-            raise ValueError(func_name(self) +
-                             "Given points or values is not a numpy.ndarray.")
-        if points.size == 0:
-            raise ValueError(func_name(self) +
-                             "Number of points must be positive.")
-        if points.size != values.size:
-            raise ValueError(func_name(self) +
-                             "Points and values must have same size.")
+        critical_assert(isinstance(points, np.ndarray) and isinstance(values, np.ndarray),
+                        ValueError, "Given points or values is not a numpy.ndarray.", self)
+        critical_assert(points.size != 0, ValueError, "Number of points must be positive.", self)
+        critical_assert(points.size == values.size, ValueError, "Points and values must have same size.", self)
         if "error" in kwargs:
-            if not isinstance(kwargs["error"], np.ndarray):
-                raise ValueError(func_name(self) +
-                                 "Given error data is not a numpy.ndarray.")
+            critical_assert(isinstance(kwargs["error"], np.ndarray),
+                            ValueError, "Given error data is not a numpy.ndarray.", self)
         if "residual" in kwargs:
-            if not isinstance(kwargs["residual"], np.ndarray):
-                raise ValueError(func_name(self) +
-                                 "Given residual data is not a numpy.ndarray.")
+            critical_assert(isinstance(kwargs["residual"], np.ndarray),
+                            ValueError, "Given residual data is not a numpy.ndarray.", self)
 
         if self._points.size == 0:
             self._points = points
@@ -233,4 +225,4 @@ class ISolution(object):
         return self._numeric_type
 
     def __str__(self):
-        return self.__class__.__name__ + ": {:s}".format(self._values)
+        return self.__class__.__name__ + ": {:s}".format(self._data)

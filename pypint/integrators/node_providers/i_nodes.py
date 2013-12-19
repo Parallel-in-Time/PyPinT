@@ -6,8 +6,7 @@
 
 from copy import deepcopy
 import numpy as np
-from pypint.utilities import *
-from pypint import LOG
+from pypint.utilities import critical_assert
 
 
 class INodes(object):
@@ -89,20 +88,16 @@ class INodes(object):
         It may be this transformation is numerically inconvenient because of
         the loss of significance.
         """
-        if not isinstance(interval, np.ndarray) or interval.size != 2:
-            raise ValueError(func_name(self) +
-                             "Given interval is not a numpy.ndarray or is not of size 2: {:s} ({:s})"
-                             .format(interval, type(interval)))
-        if interval[0] >= interval[1]:
-            raise ValueError(func_name(self) +
-                             "Given interval is not positive: {:.2f} > {:.2f}"
-                             .format(interval[0], interval[1]))
+        critical_assert(isinstance(interval, np.ndarray) and interval.size == 2,
+                        ValueError, "Given interval is not a numpy.ndarray or is not of size 2: {:s} ({:s})"
+                                    .format(interval, type(interval)), self)
+        critical_assert(interval[0] < interval[1],
+                        ValueError, "Given interval is not positive: {:.2f} > {:.2f}".format(interval[0], interval[1]),
+                        self)
         _old_interval = self.interval
         self._interval = interval
         self._nodes = (self.nodes - _old_interval[0]) * (interval[1] - interval[0]) / \
                       (_old_interval[1] - _old_interval[0]) + interval[0]
-        #LOG.debug("Transformed nodes from {:s} -> {:s}: {:s}"
-        #          .format(_old_interval, self.interval, self._nodes))
 
     @property
     def interval(self):

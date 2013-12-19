@@ -8,8 +8,8 @@ from .i_plotter import IPlotter
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib import is_interactive
-from pypint.plugins.plotters.__init__ import colorline
-from pypint.utilities import func_name
+from pypint.plugins.plotters import colorline
+from pypint.utilities import critical_assert
 from pypint import LOG
 
 
@@ -54,9 +54,8 @@ class SingleSolutionPlotter(IPlotter):
             If given and ``True`` also plots the residual for each iteration found in the solution.
         """
         super(SingleSolutionPlotter, self).plot(args, **kwargs)
-        if "solver" not in kwargs or "solution" not in kwargs:
-            raise ValueError(func_name(self) +
-                             "Both, solver and solution, must be given.")
+        critical_assert("solver" in kwargs and "solution" in kwargs,
+                        ValueError, "Both, solver and solution, must be given.", self)
 
         self._solver = kwargs["solver"]
         self._solution = kwargs["solution"]

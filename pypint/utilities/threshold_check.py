@@ -4,7 +4,7 @@
 .. moduleauthor:: Torbjörn Klatt <t.klatt@fz-juelich.de>
 """
 
-from pypint.utilities import func_name
+from pypint.utilities import critical_assert, func_name
 from pypint import LOG
 
 
@@ -76,24 +76,22 @@ class ThresholdCheck(object):
 
     def _check(self, operator, name, value):
         if name in self._conditions and self._conditions[name] is not None:
-            if value is None:
-                human_name = name[0].capitalize() + name[1:]  # capitalizes the first letter
-                raise ValueError(func_name(self) +
-                                 "'{:s}' is a termination condition but not available to check."
-                                 .format(human_name))
+            critical_assert(value is not None,
+                            ValueError, "'{:s}' is a termination condition but not available to check."
+                                        .format(name[0].capitalize() + name[1:]), self)
+
+            if operator == "min":
+                if value <= self._conditions[name]:
+                    LOG.debug("Minimum of {:s} reached: {:.2e} <= {:.2e}"
+                              .format(name, value, self._conditions[name]))
+                    self._reason = name
+            elif operator == "max":
+                if value > self._conditions[name]:
+                    LOG.debug("Maximum of {:s} exceeded: {:d} > {:d}"
+                              .format(name, value, self._conditions[name]))
+                    self._reason = name
             else:
-                if operator == "min":
-                    if value <= self._conditions[name]:
-                        LOG.debug("Minimum of {:s} reached: {:.2e} <= {:.2e}"
-                                  .format(name, value, self._conditions[name]))
-                        self._reason = name
-                elif operator == "max":
-                    if value > self._conditions[name]:
-                        LOG.debug("Maximum of {:s} exceeded: {:d} > {:d}"
-                                  .format(name, value, self._conditions[name]))
-                        self._reason = name
-                else:
-                    raise ValueError("Given operator '{:s}' is invalid.".format(operator))
+                raise ValueError("Given operator '{:s}' is invalid.".format(operator))
         else:
             # $name is not a condition
             pass

@@ -5,7 +5,7 @@
 """
 
 import numpy as np
-from pypint.utilities import func_name
+from pypint.utilities import critical_assert
 
 
 class ILevelTransitionProvider(object):
@@ -50,14 +50,12 @@ class ILevelTransitionProvider(object):
             * if ``coarse_data`` is not a ``numpy.ndarray``
             * if ``coarse_data`` has more or less entries than :py:attr:`.num_coarse_points`
         """
-        if not isinstance(coarse_data, np.ndarray):
-            raise ValueError(func_name(self) +
-                             "Given coarse data is not a numpy.ndarray: {:s}"
-                             .format(type(coarse_data)))
-        if coarse_data.size != self.num_coarse_points:
-            raise ValueError(func_name(self) +
-                             "Given coarse data is of wrong size: {:d}"
-                             .format(coarse_data.size))
+        critical_assert(isinstance(coarse_data, np.ndarray),
+                        ValueError, "Given coarse data is not a numpy.ndarray: {:s}".format(type(coarse_data)),
+                        self)
+        critical_assert(coarse_data.size == self.num_coarse_points,
+                        ValueError, "Given coarse data is of wrong size: {:d}".format(coarse_data.size),
+                        self)
 
     def restringate(self, fine_data):
         """
@@ -81,14 +79,12 @@ class ILevelTransitionProvider(object):
             * if ``fine_data`` is not a ``numpy.ndarray``
             * if ``fine_data`` has more or less entries than :py:attr:`.num_fine_points`
         """
-        if not isinstance(fine_data, np.ndarray):
-            raise ValueError(func_name(self) +
-                             "Given fine data is not a numpy.ndarray: {:s}"
-                             .format(type(fine_data)))
-        if fine_data.size != self.num_fine_points:
-            raise ValueError(func_name(self) +
-                             "Given fine data is of wrong size: {:d}"
-                             .format(fine_data.size))
+        critical_assert(isinstance(fine_data, np.ndarray),
+                        ValueError, "Given fine data is not a numpy.ndarray: {:s}".format(type(fine_data)),
+                        self)
+        critical_assert(fine_data.size == self.num_fine_points,
+                        ValueError, "Given fine data is of wrong size: {:d}".format(fine_data.size),
+                        self)
 
     @property
     def prolongation_operator(self):
