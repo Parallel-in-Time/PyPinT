@@ -5,7 +5,7 @@ from copy import deepcopy
 import numpy as np
 from .node_providers.gauss_lobatto_nodes import GaussLobattoNodes
 from .weight_function_providers.polynomial_weight_function import PolynomialWeightFunction
-from pypint.utilities import func_name
+from pypint.utilities import assert_is_instance, critical_assert
 from pypint import LOG
 
 
@@ -52,14 +52,12 @@ class SdcIntegrator(IntegratorBase):
         .IntegratorBase.evaluate
             overridden method
         """
-        if "last_node_index" not in kwargs:
-            raise ValueError(func_name(self) +
-                             "Last node index must be given.")
+        critical_assert("last_node_index" in kwargs, ValueError, "Last node index must be given.", self)
         _index = kwargs["last_node_index"]
-        if _index == 0 or _index > self._smat.shape[0]:
-            raise ValueError(func_name(self) +
-                             "Last node index {:d} too small or too large.".format(_index) +
-                             "Must be within [{:d},{:d})".format(1, self._smat.shape[0]))
+        critical_assert(_index != 0 and _index <= self._smat.shape[0],
+                        ValueError, "Last node index {:d} too small or too large. Must be within [{:d},{:d})"
+                                    .format(_index, 1, self._smat.shape[0]),
+                        self)
         super(SdcIntegrator, self).evaluate(data, time_start=self.nodes[0],
                                             time_end=self.nodes[_index])
         #LOG.debug("Integrating with S-Mat row {:d} ({:s}) on interval {:s}."
@@ -78,14 +76,12 @@ class SdcIntegrator(IntegratorBase):
             pass
 
     def _construct_s_matrix(self):
-        if isinstance(self._nodes, GaussLobattoNodes):
-            self._smat = np.zeros((self.nodes.size - 1, self.nodes.size), dtype=float)
-            for i in range(1, self.nodes.size):
-                self.weights_function.evaluate(self.nodes, np.array([self.nodes[i - 1], self.nodes[i]]))
-                self._smat[i - 1] = self.weights_function.weights
-        else:
-            raise ValueError(func_name(self) +
-                             "Other than Gauss-Lobatto integration nodes not yet supported.")
+        assert_is_instance(self._nodes, GaussLobattoNodes,
+                           "Other than Gauss-Lobatto integration nodes not yet supported.", self)
+        self._smat = np.zeros((self.nodes.size - 1, self.nodes.size), dtype=float)
+        for i in range(1, self.nodes.size):
+            self.weights_function.evaluate(self.nodes, np.array([self.nodes[i - 1], self.nodes[i]]))
+            self._smat[i - 1] = self.weights_function.weights
 
     def __copy__(self):
         copy = self.__class__.__new__(self.__class__)

@@ -7,7 +7,7 @@
 from .i_nodes import INodes
 import numpy as np
 import numpy.polynomial.legendre as leg
-from pypint.utilities import func_name
+from pypint.utilities import critical_assert
 
 
 class GaussLobattoNodes(INodes):
@@ -74,9 +74,7 @@ class GaussLobattoNodes(INodes):
     @num_nodes.setter
     def num_nodes(self, n_nodes):
         super(self.__class__, self.__class__).num_nodes.fset(self, n_nodes)
-        if n_nodes < 2:
-            raise ValueError(func_name(self) +
-                             "Fewer than 2 nodes do not make any sense.")
+        critical_assert(n_nodes >= 2, ValueError, "Fewer than 2 nodes do not make any sense.", self)
         self._num_nodes = n_nodes
 
     def _compute_nodes(self):

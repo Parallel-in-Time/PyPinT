@@ -8,7 +8,6 @@ from .i_iterative_time_solver import IIterativeTimeSolver
 from copy import deepcopy
 import warnings as warnings
 import numpy as np
-from math import fabs
 from pypint.integrators.sdc_integrator import SdcIntegrator
 from pypint.integrators.node_providers.gauss_lobatto_nodes \
     import GaussLobattoNodes
@@ -18,7 +17,7 @@ from pypint.problems.i_initial_value_problem import IInitialValueProblem
 from pypint.solutions.iterative_solution import IterativeSolution
 from pypint.plugins.timers.timer_base import TimerBase
 from pypint.utilities.threshold_check import ThresholdCheck
-from pypint.utilities import func_name
+from pypint.utilities import assert_is_instance, critical_assert, func_name
 from pypint import LOG
 
 # General Notes on Implementation
@@ -171,9 +170,9 @@ class Sdc(IIterativeTimeSolver):
         .IIterativeTimeSolver.init
             overridden method
         """
-        if not isinstance(problem, IInitialValueProblem):
-            raise ValueError(func_name(self) +
-                             "SDC requires an initial value problem: {:s}".format(problem.__class__.__name__))
+        assert_is_instance(problem, IInitialValueProblem,
+                           "SDC requires an initial value problem: {:s}".format(problem.__class__.__name__),
+                           self)
 
         super(Sdc, self).init(problem, integrator, **kwargs)
 
@@ -399,7 +398,7 @@ class Sdc(IIterativeTimeSolver):
                                       exact=self.__exact,
                                       error=self.__errors["current"].copy(),
                                       residual=self.__residuals["current"].copy(),
-                                      iteration=-1)
+                                      iteration=1)
                 else:
                     _sol.add_solution(points=self.__time_points["nodes"],
                                       values=self.__sol["current"].copy(),
@@ -536,7 +535,9 @@ class Sdc(IIterativeTimeSolver):
             _expl_term = self.__sol["current"][_i - 1] - \
                 _dt * self.problem.evaluate(_t1, self.__sol["previous"][_i]) + self.__deltas["I"] * integral
             _func = lambda x_next: _expl_term + _dt * self.problem.evaluate(_t1, x_next) - x_next
-            self.__sol["current"][_i] = self.problem.implicit_solve(np.array([self.__sol["current"][_i]], dtype=self.problem.numeric_type), _func)
+            _sol = self.problem.implicit_solve(np.array([self.__sol["current"][_i]], dtype=self.problem.numeric_type), _func)
+            self.__sol["current"][_i] = _sol if type(self.__sol["current"][_i]) == type(_sol) else _sol[0]
+
         elif self.is_semi_implicit:
             _expl_term = self.__sol["current"][_i - 1] + \
                 _dt * (self.problem.evaluate(_t0, self.__sol["current"][_i - 1], partial="expl") -
@@ -546,8 +547,8 @@ class Sdc(IIterativeTimeSolver):
                 _expl_term + _dt * (self.problem.evaluate(_t1, x_next, partial="impl") -
                                     self.problem.evaluate(_t1, self.__sol["previous"][_i], partial="impl")) - x_next
             _sol = self.problem.implicit_solve(np.array([self.__sol["current"][_i]], dtype=self.problem.numeric_type), _func)
-            # LOG.debug("TYPE: {:s}, {:s}, {:s}".format(type(_sol), _sol.dtype, self.__sol["current"].dtype))
-            self.__sol["current"][_i] = _sol[0]
+            self.__sol["current"][_i] = _sol if type(self.__sol["current"][_i]) == type(_sol) else _sol[0]
+
         elif self.is_explicit:
             self.__sol["current"][_i] = \
                 self.__sol["current"][_i - 1] + \
@@ -559,6 +560,7 @@ class Sdc(IIterativeTimeSolver):
             #                  self.problem.evaluate(_t0, self.__sol["current"][_i - 1]),
             #                  self.problem.evaluate(_t0, self.__sol["previous"][_i - 1]),
             #                  self.__deltas["I"], integral))
+
         else:
             # should not reach here
             pass
@@ -585,7 +587,7 @@ class Sdc(IIterativeTimeSolver):
         # calculate error
         if self.problem.has_exact():
             self.__exact[_i] = self.problem.exact(_t0, self.__time_points["nodes"][_i])
-            self.__errors["current"][_i] = fabs(self.__sol["current"][_i] - self.__exact[_i])
+            self.__errors["current"][_i] = np.abs(self.__sol["current"][_i] - self.__exact[_i])
         else:
             # we need the exact solution for that
             #  (unless we find an error approximation method)
@@ -627,28 +629,26 @@ class Sdc(IIterativeTimeSolver):
         LOG.info("> " + '#' * 78)
 
     def _output(self, values, types, padding=0, debug=False):
-        if len(values) != len(types):
-            raise ValueError(func_name(self) +
-                             "Number of values must equal number of types.")
-        outstr = ' ' * padding
+        critical_assert(len(values) == len(types), ValueError, "Number of values must equal number of types.", self)
+        _outstr = ' ' * padding
         for i in range(0, len(values)):
             if values[i] is None:
-                outstr += ' ' * 10
+                _outstr += ' ' * 10
             else:
                 if types[i] == "float":
-                    outstr += "{: 10.3f}".format(values[i])
+                    _outstr += "{: 10.3f}".format(values[i])
                 elif types[i] == "int":
-                    outstr += "{: 10d}".format(values[i])
+                    _outstr += "{: 10d}".format(values[i])
                 elif types[i] == "exp":
-                    outstr += "{: 10.2e}".format(values[i])
+                    _outstr += "{: 10.2e}".format(values[i])
                 elif types[i] == "str":
-                    outstr += "{: >10s}".format(values[i])
+                    _outstr += "{: >10s}".format(values[i])
                 else:
                     raise ValueError(func_name(self) +
                                      "Given type for value '{:s}' is invalid: {:s}"
                                      .format(values[i], types[i]))
-            outstr += "    "
+            _outstr += "    "
         if debug:
-            LOG.debug("!> {:s}".format(outstr))
+            LOG.debug("!> {:s}".format(_outstr))
         else:
-            LOG.info("> {:s}".format(outstr))
+            LOG.info("> {:s}".format(_outstr))

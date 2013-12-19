@@ -5,7 +5,7 @@
 """
 import numpy as np
 from scipy.optimize import root
-from pypint.utilities.tracing import func_name
+from pypint.utilities.tracing import assert_is_callable, assert_is_instance
 
 
 def find_root(fun, x0, method="hybr"):
@@ -45,31 +45,30 @@ def find_root(fun, x0, method="hybr"):
     fun = lambda x: (-1.0 + 1.0j) * x
     sol = find_root(fun, numpy.array([0.0]))
     """
-    if not isinstance(x0, np.ndarray):
-        raise ValueError(func_name() +
-                         "Initial start value must be a numpy.ndarray.")
-    if not callable(fun):
-        raise ValueError(func_name() +
-                         "Function to find root of must be callable.")
-    if not isinstance(method, str):
-        raise ValueError(func_name() +
-                         "Root finding method must be defined as a string.")
+    assert_is_instance(x0, np.ndarray, "Initial start value must be a numpy.ndarray.")
+    assert_is_callable(fun, "Function to find root of must be callable.")
+    assert_is_instance(method, str, "Root finding method must be defined as a string.")
 
     _value_map = {}
     _transformed_size = 0
+    _transform_necessary = False
     for i in range(0, x0.size):
         if isinstance(x0[i], complex):
             _value_map[i] = [_transformed_size, _transformed_size + 1]
             _transformed_size += 2
+            _transform_necessary = True
         else:
             _value_map[i] = [_transformed_size]
             _transformed_size += 1
 
-    _wrapped_func = \
-        lambda x_next: _transform_to_real(fun(_transform_to_complex(x_next, _value_map)), _value_map, _transformed_size)
+    if _transform_necessary:
+        _wrapped_func = \
+            lambda x_next: _transform_to_real(fun(_transform_to_complex(x_next, _value_map)), _value_map, _transformed_size)
+        sol = root(fun=_wrapped_func, x0=_transform_to_real(x0, _value_map, _transformed_size), method=method)
+    else:
+        sol = root(fun=fun, x0=x0, method=method)
 
-    sol = root(fun=_wrapped_func, x0=_transform_to_real(x0, _value_map, _transformed_size), method=method)
-    if sol.success:
+    if sol.success and _transform_necessary:
         sol.x = _transform_to_complex(sol.x, _value_map)
     return sol
 

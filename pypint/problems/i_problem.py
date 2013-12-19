@@ -7,7 +7,7 @@
 import numpy as np
 from pypint.plugins.implicit_solvers.find_root import find_root
 from pypint import LOG
-from pypint.utilities.tracing import func_name
+from pypint.utilities.tracing import assert_is_callable, assert_is_instance, critical_assert
 
 
 class IProblem(object):
@@ -47,28 +47,11 @@ class IProblem(object):
                 String representation of the exact solution for logging output.
     """
     def __init__(self, *args, **kwargs):
-        if "function" in kwargs:
-            self._function = kwargs["function"]
-        else:
-            self._function = None
-
-        if "time_start" in kwargs:
-            self._time_start = kwargs["time_start"]
-        else:
-            self._time_start = None
-
-        if "time_end" in kwargs:
-            self._time_end = kwargs["time_end"]
-        else:
-            self._time_end = None
-
-        if "exact_function" in kwargs:
-            self._exact_function = kwargs["exact_function"]
-        else:
-            self._exact_function = None
-
+        self._function = kwargs["function"] if "function" in kwargs else None
+        self._time_start = kwargs["time_start"] if "time_start" in kwargs else None
+        self._time_end = kwargs["time_end"] if "time_end" in kwargs else None
+        self._exact_function = kwargs["exact_function"] if "exact_function" in kwargs else None
         self._numeric_type = np.float
-
         self._strings = {
             "rhs": None,
             "exact": None
@@ -108,10 +91,7 @@ class IProblem(object):
         ValueError
             if ``time`` or ``phi_of_time`` are not of correct type.
         """
-        if not isinstance(time, float):
-            raise ValueError(func_name(self) +
-                             "Time must be given as a floating point number.")
-        pass
+        assert_is_instance(time, float, "Time must be given as a floating point number.", self)
 
     def implicit_solve(self, next_x, func, method="hybr"):
         """
@@ -142,19 +122,14 @@ class IProblem(object):
 
         .. _scipy.optimize.root: http://docs.scipy.org/doc/scipy/reference/generated/scipy.optimize.root.html#scipy.optimize.root
         """
-        if not isinstance(next_x, np.ndarray):
-            raise ValueError(func_name(self) +
-                              "Need a numpy.ndarray.")
-        if not callable(func):
-            raise ValueError(func_name(self) +
-                              "Need a callable function.")
+        assert_is_instance(next_x, np.ndarray, "Need a numpy.ndarray.", self)
+        assert_is_callable(func, "Need a callable function.", self)
         sol = find_root(fun=func, x0=next_x, method=method)
         # LOG.debug("Root is: {:s}, {:s}".format(sol.x, sol.x.dtype))
-        if sol.success:
-            return sol.x
-        else:
+        if not sol.success:
             LOG.debug("sol.x: " + str(sol.x))
             LOG.error("Implicit solver failed: {:s}".format(sol.message))
+        return sol.x
 
     def exact(self, time, phi_of_time):
         """

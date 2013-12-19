@@ -5,8 +5,7 @@
 """
 
 import numpy as np
-from pypint.utilities import func_name
-from pypint import LOG
+from pypint.utilities import assert_is_instance, critical_assert
 
 
 class ISolution(object):
@@ -15,13 +14,41 @@ class ISolution(object):
     -------
     Generalized storage for solutions of solvers.
     """
+
+    class IterationData(object):
+        def __init__(self):
+            self._iteration = None
+            self._values = None
+            self._errors = None
+            self._residuals = None
+
+        def init(self, iteration, values, errors=None, residuals=None, numeric_type=np.float):
+            self._iteration = iteration
+            self._values = np.array(values, dtype=numeric_type)
+            self._errors = errors
+            self._residuals = residuals
+
+        @property
+        def iteration(self):
+            return self._iteration
+
+        @property
+        def values(self):
+            return self._values
+
+        @property
+        def errors(self):
+            return self._errors
+
+        @property
+        def residuals(self):
+            return self._residuals
+
     def __init__(self, numeric_type=np.float):
         self._numeric_type = numeric_type
-        self._points = np.zeros(0, dtype=self.numeric_type)
+        self._points = np.zeros(0, dtype=np.float)
         self._exact = np.zeros(0, dtype=self.numeric_type)
-        self._values = np.zeros(0, dtype=self.numeric_type)
-        self._errors = np.zeros(0, dtype=self.numeric_type)
-        self._residuals = np.zeros(0, dtype=self.numeric_type)
+        self._data = ISolution.IterationData()
         self._used_iterations = None
         self._reductions = None
 
@@ -53,23 +80,14 @@ class ISolution(object):
             * if either ``points``, ``values``, ``error`` or ``residual`` is not a ``numpy.ndarray``
             * if ``points`` and ``values`` are not of same size
         """
-        if not isinstance(points, np.ndarray) or not isinstance(values, np.ndarray):
-            raise ValueError(func_name(self) +
-                             "Given points or values is not a numpy.ndarray.")
-        if points.size == 0:
-            raise ValueError(func_name(self) +
-                             "Number of points must be positive.")
-        if points.size != values.size:
-            raise ValueError(func_name(self) +
-                             "Points and values must have same size.")
+        assert_is_instance(points, np.ndarray, "Points must be a numpy.ndarray.", self)
+        assert_is_instance(values, np.ndarray, "Values must be a numpy.ndarray.", self)
+        critical_assert(points.size != 0, ValueError, "Number of points must be positive.", self)
+        critical_assert(points.size == values.size, ValueError, "Points and values must have same size.", self)
         if "error" in kwargs:
-            if not isinstance(kwargs["error"], np.ndarray):
-                raise ValueError(func_name(self) +
-                                 "Given error data is not a numpy.ndarray.")
+            assert_is_instance(kwargs["error"], np.ndarray, "Error data must be a numpy.ndarray.", self)
         if "residual" in kwargs:
-            if not isinstance(kwargs["residual"], np.ndarray):
-                raise ValueError(func_name(self) +
-                                 "Given residual data is not a numpy.ndarray.")
+            assert_is_instance(kwargs["residual"], np.ndarray, "Residual data must be a numpy.ndarray.", self)
 
         if self._points.size == 0:
             self._points = points
@@ -95,7 +113,7 @@ class ISolution(object):
         -------
         implementation specific
         """
-        pass
+        return self._data.values
 
     def exact(self, *args, **kwargs):
         return self._exact
@@ -119,7 +137,7 @@ class ISolution(object):
         -------
         implementation specific
         """
-        pass
+        return self._data.errors
 
     def residual(self, *args, **kwargs):
         """
@@ -140,7 +158,7 @@ class ISolution(object):
         -------
         implementation specific
         """
-        pass
+        return self._data.residuals
 
     @property
     def points(self):
@@ -154,45 +172,6 @@ class ISolution(object):
         raw points data : numpy.ndarray
         """
         return self._points
-
-    @property
-    def values(self):
-        """
-        Summary
-        -------
-        Accessor for the complete solution data.
-
-        Returns
-        -------
-        raw solution data : numpy.ndarray
-        """
-        return self._values
-
-    @property
-    def errors(self):
-        """
-        Summary
-        -------
-        Accessor for the complete errors data.
-
-        Returns
-        -------
-        raw errors data : numpy.ndarray
-        """
-        return self._errors
-
-    @property
-    def residuals(self):
-        """
-        Summary
-        -------
-        Accessor for the complete residuals data.
-
-        Returns
-        -------
-        raw residuals data : numpy.ndarray
-        """
-        return self._residuals
 
     @property
     def used_iterations(self):
@@ -244,4 +223,4 @@ class ISolution(object):
         return self._numeric_type
 
     def __str__(self):
-        return self.__class__.__name__ + ": {:s}".format(self._values)
+        return self.__class__.__name__ + ": {:s}".format(self._data)

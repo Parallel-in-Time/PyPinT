@@ -8,7 +8,7 @@ from .i_plotter import IPlotter
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib import is_interactive
-from pypint.utilities import func_name
+from pypint.utilities import critical_assert
 from pypint import LOG
 
 
@@ -51,17 +51,14 @@ class ReductionResidualPlotter(IPlotter):
         """
         super(ReductionResidualPlotter, self).plot(args, **kwargs)
 
-        if "solver" not in kwargs or "solutions" not in kwargs:
-            raise ValueError(func_name(self) +
-                             "Both, solver and solution, must be given.")
+        critical_assert("solver" in kwargs and "solutions" in kwargs,
+                        ValueError, "Both, solver and solutions, must be given.", self)
 
         self._solver = kwargs["solver"]
-        if not isinstance(kwargs["solutions"], np.ndarray):
-            raise ValueError(func_name(self) +
-                             "Solutions must be a numpy.ndarray of solutions.")
-        if kwargs["solutions"].size > 7:
-            raise ValueError(func_name(self) +
-                             "Can only handle up to 7 solutions: {:d}".format(kwargs["solutions"].size))
+        critical_assert(isinstance(kwargs["solutions"], np.ndarray),
+                        ValueError, "Solutions must be a numpy.ndarray of solutions.", self)
+        critical_assert(kwargs["solutions"].size <= 7,
+                        ValueError, "Can only handle up to 7 solutions: {:d}".format(kwargs["solutions"].size), self)
         self._solutions = kwargs["solutions"]
         self._nodes = self._solutions[0].points
 
@@ -69,9 +66,6 @@ class ReductionResidualPlotter(IPlotter):
             self._nodes = np.concatenate(([self._solver.problem.time_start], self._nodes))
         if self._solver.problem.time_end != self._nodes[-1]:
             self._nodes = np.concatenate((self._nodes, [self._solver.problem.time_end]))
-
-        #plt.suptitle(r""
-        #             .format())
 
         plt.title("Residuals and Reduction per Iteration for different Lambdas")
         self._plot_residuals_reductions()
@@ -107,9 +101,9 @@ class ReductionResidualPlotter(IPlotter):
     def _add_solution_plot(self, index):
         _residuals = self._solutions[index].residuals
         _reductions = self._solutions[index].reductions
-        _res = np.zeros(_residuals.size - 1)
-        _red = np.zeros(_residuals.size - 1)
-        for i in range(1, _residuals.size):
+        _res = np.zeros(len(_residuals) - 1)
+        _red = np.zeros(len(_residuals) - 1)
+        for i in range(1, len(_residuals)):
             _res[i - 1] = _residuals[i][-1]
             _red[i - 1] = _reductions["solution"][i]
 
