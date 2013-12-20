@@ -428,6 +428,8 @@ class Sdc(IIterativeTimeSolver):
         # end while:self._threshold_check.has_reached() is None
         self.timer.stop()
 
+        _sol.used_iterations = _iter
+
         if _iter <= self.threshold.max_iterations:
             LOG.info("> Converged after {:d} iteration(s).".format(_iter))
             LOG.info(">   {:s}".format(self.threshold.has_reached(human=True)))
