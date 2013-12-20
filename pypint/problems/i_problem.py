@@ -7,7 +7,7 @@
 import numpy as np
 from pypint.plugins.implicit_solvers.find_root import find_root
 from pypint import LOG
-from pypint.utilities.tracing import assert_is_callable, assert_is_instance, critical_assert
+from pypint.utilities.tracing import assert_is_callable, assert_is_instance
 
 
 class IProblem(object):
@@ -130,6 +130,12 @@ class IProblem(object):
             LOG.debug("sol.x: " + str(sol.x))
             LOG.error("Implicit solver failed: {:s}".format(sol.message))
         return sol.x
+
+    def has_direct_implicit(self):
+        return self.direct_implicit() is not None
+
+    def direct_implicit(self, *args, **kwargs):
+        return None
 
     def exact(self, time, phi_of_time):
         """
@@ -261,10 +267,10 @@ class IProblem(object):
         return self._numeric_type
 
     def __str__(self):
-        str = ""
+        _outstr = ""
         if self._strings["rhs"] is not None:
-            str = r"u'(t,\phi(t))={:s}".format(self._strings["rhs"])
+            _outstr = r"u'(t,\phi(t))={:s}".format(self._strings["rhs"])
         else:
-            str = r"{:s}".format(self.__class__.__name__)
-        str += r", t \in [{:.2f}, {:.2f}]".format(self.time_start, self.time_end)
-        return str
+            _outstr = r"{:s}".format(self.__class__.__name__)
+        _outstr += r", t \in [{:.2f}, {:.2f}]".format(self.time_start, self.time_end)
+        return _outstr

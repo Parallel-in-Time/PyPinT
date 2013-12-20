@@ -8,7 +8,7 @@ from .i_plotter import IPlotter
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib import is_interactive
-from pypint.utilities import critical_assert
+from pypint.utilities import assert_condition
 from pypint import LOG
 
 
@@ -51,13 +51,13 @@ class ReductionResidualPlotter(IPlotter):
         """
         super(ReductionResidualPlotter, self).plot(args, **kwargs)
 
-        critical_assert("solver" in kwargs and "solutions" in kwargs,
+        assert_condition("solver" in kwargs and "solutions" in kwargs,
                         ValueError, "Both, solver and solutions, must be given.", self)
 
         self._solver = kwargs["solver"]
-        critical_assert(isinstance(kwargs["solutions"], np.ndarray),
+        assert_condition(isinstance(kwargs["solutions"], np.ndarray),
                         ValueError, "Solutions must be a numpy.ndarray of solutions.", self)
-        critical_assert(kwargs["solutions"].size <= 7,
+        assert_condition(kwargs["solutions"].size <= 7,
                         ValueError, "Can only handle up to 7 solutions: {:d}".format(kwargs["solutions"].size), self)
         self._solutions = kwargs["solutions"]
         self._nodes = self._solutions[0].points

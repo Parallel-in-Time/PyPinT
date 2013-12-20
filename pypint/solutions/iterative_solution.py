@@ -6,7 +6,7 @@
 
 from .i_solution import ISolution
 import numpy as np
-from pypint.utilities import critical_assert
+from pypint.utilities import assert_condition
 
 
 class IterativeSolution(ISolution):
@@ -61,7 +61,7 @@ class IterativeSolution(ISolution):
         """
         super(IterativeSolution, self).add_solution(points, values, *args, **kwargs)
 
-        critical_assert(np.all(self._points == points), ValueError, "Given points are not equal stored ones.", self)
+        assert_condition(np.all(self._points == points), ValueError, "Given points are not equal stored ones.", self)
 
         # get iteration index (1-based)
         iteration = int(kwargs["iteration"]) if "iteration" in kwargs else -1
@@ -80,7 +80,7 @@ class IterativeSolution(ISolution):
 
         # we do not allow to override existing solutions (non-None elements)
         if not _append:
-            critical_assert(self._data[iteration] is None,
+            assert_condition(self._data[iteration] is None,
                             ValueError, "Data for iteration {:d} is already present. Not overriding."
                                         .format(iteration + 1), self)
 
@@ -138,7 +138,7 @@ class IterativeSolution(ISolution):
         if iteration == -1:
             iteration = len(self._data)
 
-        critical_assert(iteration <= len(self._data),
+        assert_condition(iteration <= len(self._data),
                         ValueError, "Desired iteration is not available: {:d}".format(iteration), self)
 
         return self._data[iteration - 1].values if isinstance(self._data[iteration - 1], ISolution.IterationData) \
@@ -172,7 +172,7 @@ class IterativeSolution(ISolution):
         if iteration == -1:
             iteration = len(self._data)
 
-        critical_assert(iteration <= len(self._data),
+        assert_condition(iteration <= len(self._data),
                         ValueError, "Desired iteration is not available: {:d}".format(iteration), self)
 
         return self._data[iteration - 1].errors if isinstance(self._data[iteration - 1], ISolution.IterationData) \
@@ -206,7 +206,7 @@ class IterativeSolution(ISolution):
         if iteration == -1:
             iteration = len(self._data)
 
-        critical_assert(iteration <= len(self._data),
+        assert_condition(iteration <= len(self._data),
                         ValueError, "Desired iteration is not available: {:d}".format(iteration), self)
 
         return self._data[iteration - 1].residuals if isinstance(self._data[iteration - 1], ISolution.IterationData) \

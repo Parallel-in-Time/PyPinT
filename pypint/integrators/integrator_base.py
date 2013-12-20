@@ -7,7 +7,7 @@
 import numpy as np
 from .node_providers.i_nodes import INodes
 from .weight_function_providers.i_weight_function import IWeightFunction
-from pypint.utilities import assert_is_instance, critical_assert
+from pypint.utilities import assert_is_instance, assert_condition
 
 
 class IntegratorBase(object):
@@ -75,7 +75,7 @@ class IntegratorBase(object):
         assert_is_instance(nodes_type, INodes,
                            "Given nodes type is not a valid type: {:s}".format(type(nodes_type)), self)
         if isinstance(weights_function, dict):
-            critical_assert("class" in weights_function or isinstance(weights_function["class"], IWeightFunction),
+            assert_condition("class" in weights_function or isinstance(weights_function["class"], IWeightFunction),
                             ValueError, "Given weight function is not a valid type: {:s}"
                                         .format(type(weights_function)),
                             self)
@@ -123,9 +123,9 @@ class IntegratorBase(object):
             * if ``time_start`` is larger or equals ``time_end``
         """
         assert_is_instance(data, np.ndarray, "Data to integrate must be an numpy.ndarray.", self)
-        critical_assert("time_start" in kwargs or "time_end" in kwargs,
+        assert_condition("time_start" in kwargs or "time_end" in kwargs,
                         ValueError, "Either start or end of time interval need to be given.", self)
-        critical_assert(kwargs["time_start"] < kwargs["time_end"],
+        assert_condition(kwargs["time_start"] < kwargs["time_end"],
                         ValueError, "Time interval need to be non-zero positive: [{:f}, {:f}]"
                                     .format(kwargs["time_start"], kwargs["time_end"]),
                         self)

@@ -45,7 +45,7 @@ def func_name(obj=None):
            .format(_checking_obj_name(obj), inspect.stack()[1][3])
 
 
-def critical_assert(condition, exception_type, message, checking_obj=None):
+def assert_condition(condition, exception_type, message, checking_obj=None):
     if not condition:
         raise exception_type("{:s}.{:s}(): {:s}".format(_checking_obj_name(checking_obj), inspect.stack()[2][3], message))
 
@@ -63,8 +63,13 @@ def assert_is_instance(obj, instances, message, checking_obj=None):
         raise ValueError("{:s}.{:s}(): {:s}".format(_checking_obj_name(checking_obj), inspect.stack()[2][3], message))
 
 
+def assert_is_key(dictionary, key, message, checking_obj=None):
+    if not key in dictionary:
+        raise ValueError("{:s}.{:s}(): {:s}".format(_checking_obj_name(checking_obj), inspect.stack()[2][3], message))
+
+
 def _checking_obj_name(obj=None):
     return obj.__class__.__name__ if obj is not None else "unknown"
 
 
-__all__ = ['assert_is_callable', 'assert_is_instance', 'critical_assert', 'func_name']
+__all__ = ['assert_is_callable', 'assert_is_instance', 'assert_condition', 'func_name']

@@ -7,7 +7,7 @@
 from .i_weight_function import IWeightFunction
 import numpy as np
 import numpy.polynomial.polynomial as pol
-from pypint.utilities import func_name, assert_is_instance, critical_assert
+from pypint.utilities import func_name, assert_is_instance, assert_condition
 from pypint import LOG
 
 
@@ -146,7 +146,7 @@ class PolynomialWeightFunction(IWeightFunction):
         >>> polyWeights.add_coefficient(42, 0)
         """
         assert_is_instance(power, int, "Power must be an integer.", checking_obj=self)
-        critical_assert(power >= 0, ValueError, "Power must be zero or positive: {:d}".format(power), self)
+        assert_condition(power >= 0, ValueError, "Power must be zero or positive: {:d}".format(power), self)
 
         if self._coefficients.size <= power + 1:
             self._coefficients = np.resize(self._coefficients, (power + 1))

@@ -9,7 +9,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib import is_interactive
 from pypint.plugins.plotters import colorline
-from pypint.utilities import critical_assert
+from pypint.utilities import assert_condition
 from pypint import LOG
 
 
@@ -54,7 +54,7 @@ class SingleSolutionPlotter(IPlotter):
             If given and ``True`` also plots the residual for each iteration found in the solution.
         """
         super(SingleSolutionPlotter, self).plot(args, **kwargs)
-        critical_assert("solver" in kwargs and "solution" in kwargs,
+        assert_condition("solver" in kwargs and "solution" in kwargs,
                         ValueError, "Both, solver and solution, must be given.", self)
 
         self._solver = kwargs["solver"]

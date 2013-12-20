@@ -4,7 +4,7 @@
 .. moduleauthor:: Torbjörn Klatt <t.klatt@fz-juelich.de>
 """
 
-from pypint.utilities import critical_assert, func_name
+from pypint.utilities import assert_condition, func_name
 from pypint import LOG
 
 
@@ -76,7 +76,7 @@ class ThresholdCheck(object):
 
     def _check(self, operator, name, value):
         if name in self._conditions and self._conditions[name] is not None:
-            critical_assert(value is not None,
+            assert_condition(value is not None,
                             ValueError, "'{:s}' is a termination condition but not available to check."
                                         .format(name[0].capitalize() + name[1:]), self)
 

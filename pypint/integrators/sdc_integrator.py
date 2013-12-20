@@ -5,7 +5,7 @@ from copy import deepcopy
 import numpy as np
 from .node_providers.gauss_lobatto_nodes import GaussLobattoNodes
 from .weight_function_providers.polynomial_weight_function import PolynomialWeightFunction
-from pypint.utilities import assert_is_instance, critical_assert
+from pypint.utilities import assert_is_instance, assert_condition
 from pypint import LOG
 
 
@@ -52,9 +52,9 @@ class SdcIntegrator(IntegratorBase):
         .IntegratorBase.evaluate
             overridden method
         """
-        critical_assert("last_node_index" in kwargs, ValueError, "Last node index must be given.", self)
+        assert_condition("last_node_index" in kwargs, ValueError, "Last node index must be given.", self)
         _index = kwargs["last_node_index"]
-        critical_assert(_index != 0 and _index <= self._smat.shape[0],
+        assert_condition(_index != 0 and _index <= self._smat.shape[0],
                         ValueError, "Last node index {:d} too small or too large. Must be within [{:d},{:d})"
                                     .format(_index, 1, self._smat.shape[0]),
                         self)

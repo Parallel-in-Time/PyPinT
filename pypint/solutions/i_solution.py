@@ -5,7 +5,7 @@
 """
 
 import numpy as np
-from pypint.utilities import assert_is_instance, critical_assert
+from pypint.utilities import assert_is_instance, assert_condition
 
 
 class ISolution(object):
@@ -82,8 +82,8 @@ class ISolution(object):
         """
         assert_is_instance(points, np.ndarray, "Points must be a numpy.ndarray.", self)
         assert_is_instance(values, np.ndarray, "Values must be a numpy.ndarray.", self)
-        critical_assert(points.size != 0, ValueError, "Number of points must be positive.", self)
-        critical_assert(points.size == values.size, ValueError, "Points and values must have same size.", self)
+        assert_condition(points.size != 0, ValueError, "Number of points must be positive.", self)
+        assert_condition(points.size == values.size, ValueError, "Points and values must have same size.", self)
         if "error" in kwargs:
             assert_is_instance(kwargs["error"], np.ndarray, "Error data must be a numpy.ndarray.", self)
         if "residual" in kwargs:

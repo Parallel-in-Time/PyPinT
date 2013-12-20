@@ -6,7 +6,7 @@
 
 from copy import deepcopy
 import numpy as np
-from pypint.utilities import assert_is_instance, critical_assert
+from pypint.utilities import assert_is_instance, assert_condition
 
 
 class INodes(object):
@@ -89,9 +89,9 @@ class INodes(object):
         the loss of significance.
         """
         assert_is_instance(interval, np.ndarray, "Interval must be a numpy.ndarray.", self)
-        critical_assert(interval.size == 2,
+        assert_condition(interval.size == 2,
                         ValueError, "Intervals must be of size 2: {:s} ({:s})".format(interval, type(interval)), self)
-        critical_assert(interval[0] < interval[1],
+        assert_condition(interval[0] < interval[1],
                         ValueError, "Given interval is not positive: {:.2f} > {:.2f}".format(interval[0], interval[1]),
                         self)
         _old_interval = self.interval

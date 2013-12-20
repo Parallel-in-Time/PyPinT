@@ -7,7 +7,7 @@
 from .i_nodes import INodes
 import numpy as np
 from scipy import linalg
-from pypint.utilities import critical_assert
+from pypint.utilities import assert_condition
 
 
 class GaussLegendreNodes(INodes):
@@ -74,7 +74,7 @@ class GaussLegendreNodes(INodes):
     @num_nodes.setter
     def num_nodes(self, n_nodes):
         super(self.__class__, self.__class__).num_nodes.fset(self, n_nodes)
-        critical_assert(n_nodes >= 1,
+        assert_condition(n_nodes >= 1,
                         ValueError, "Gauss-Legendre with less than one node doesn't make any sense.",
                         self)
         self._num_nodes = n_nodes

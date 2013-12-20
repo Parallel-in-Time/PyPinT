@@ -5,7 +5,7 @@
 """
 
 import numpy as np
-from pypint.utilities import critical_assert
+from pypint.utilities import assert_condition
 
 
 class ILevelTransitionProvider(object):
@@ -50,10 +50,10 @@ class ILevelTransitionProvider(object):
             * if ``coarse_data`` is not a ``numpy.ndarray``
             * if ``coarse_data`` has more or less entries than :py:attr:`.num_coarse_points`
         """
-        critical_assert(isinstance(coarse_data, np.ndarray),
+        assert_condition(isinstance(coarse_data, np.ndarray),
                         ValueError, "Given coarse data is not a numpy.ndarray: {:s}".format(type(coarse_data)),
                         self)
-        critical_assert(coarse_data.size == self.num_coarse_points,
+        assert_condition(coarse_data.size == self.num_coarse_points,
                         ValueError, "Given coarse data is of wrong size: {:d}".format(coarse_data.size),
                         self)
 
@@ -79,10 +79,10 @@ class ILevelTransitionProvider(object):
             * if ``fine_data`` is not a ``numpy.ndarray``
             * if ``fine_data`` has more or less entries than :py:attr:`.num_fine_points`
         """
-        critical_assert(isinstance(fine_data, np.ndarray),
+        assert_condition(isinstance(fine_data, np.ndarray),
                         ValueError, "Given fine data is not a numpy.ndarray: {:s}".format(type(fine_data)),
                         self)
-        critical_assert(fine_data.size == self.num_fine_points,
+        assert_condition(fine_data.size == self.num_fine_points,
                         ValueError, "Given fine data is of wrong size: {:d}".format(fine_data.size),
                         self)
 

@@ -7,7 +7,7 @@
 from pypint.integrators.integrator_base import IntegratorBase
 from .level_transition_providers.i_level_transition_provider \
     import ILevelTransitionProvider
-from pypint.utilities import critical_assert
+from pypint.utilities import assert_condition
 
 
 class MultiLevelProvider(object):
@@ -128,7 +128,7 @@ class MultiLevelProvider(object):
         ValueError
             If ``integrator`` is not an :py:class:`.IntegratorBase`.
         """
-        critical_assert(isinstance(integrator, IntegratorBase),
+        assert_condition(isinstance(integrator, IntegratorBase),
                         ValueError, "Integrator is of invalid type: {:s}".format(type(integrator)),
                         self)
         self._num_levels += 1
@@ -155,7 +155,7 @@ class MultiLevelProvider(object):
         ValueError
             if ``transitioner`` is not an :py:class:`.ILevelTransitionProvider`
         """
-        critical_assert(isinstance(transitioner, ILevelTransitionProvider),
+        assert_condition(isinstance(transitioner, ILevelTransitionProvider),
                         ValueError, "Level transitioner is of invalid type: {:s}".format(type(transitioner)),
                         self)
 
@@ -209,16 +209,16 @@ class MultiLevelProvider(object):
             * if ``coarse_level`` is ``None`` and ``fine_level`` is the
               coarsest one
         """
-        critical_assert(coarse_level is not None or fine_level is not None,
+        assert_condition(coarse_level is not None or fine_level is not None,
                         ValueError, "Either coarse or fine level index must be given", self)
         if fine_level is None:
             fine_level = coarse_level - 1
         if coarse_level is None:
             coarse_level = fine_level + 1
-        critical_assert(fine_level >= 0,
+        assert_condition(fine_level >= 0,
                         ValueError, "There is no finer level than given coarse one: {:d}".format(coarse_level),
                         self)
-        critical_assert(coarse_level < self.num_levels,
+        assert_condition(coarse_level < self.num_levels,
                         ValueError, "There is no coarser level than given fine one: {:d}".format(fine_level),
                         self)
 

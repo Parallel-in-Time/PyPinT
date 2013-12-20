@@ -6,7 +6,7 @@
 
 from .i_level_transition_provider import ILevelTransitionProvider
 import numpy as np
-from pypint.utilities import critical_assert
+from pypint.utilities import assert_condition
 from pypint import LOG
 
 
@@ -37,7 +37,7 @@ class FullWeighting(ILevelTransitionProvider):
         Same prolongation operator.
     """
     def __init__(self, num_fine_points, num_coarse_points=-1):
-        critical_assert(num_fine_points % 2 != 0,
+        assert_condition(num_fine_points % 2 != 0,
                         ValueError, "Number of fine level points needs to be odd: {:d}".format(num_fine_points),
                         self)
         super(self.__class__, self).__init__(num_fine_points, num_coarse_points)
