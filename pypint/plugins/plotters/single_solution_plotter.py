@@ -9,6 +9,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib import is_interactive
 from pypint.plugins.plotters import colorline
+from pypint.problems import problem_has_exact_solution
 from pypint.utilities import assert_condition
 from pypint import LOG
 
@@ -111,7 +112,7 @@ class SingleSolutionPlotter(IPlotter):
             colorline(self._solution.solution(iteration=-1).real, self._solution.solution(iteration=-1).imag)
         else:
             plt.plot(self._nodes, self._solution.solution(iteration=-1), label="Solution")
-        if self._solver.problem.has_exact() and self._solution.error(iteration=-1).max() > 1e-2:
+        if problem_has_exact_solution(self._solver.problem, self) and self._solution.error(iteration=-1).max() > 1e-2:
             exact = self._solution.exact()
             if exact.dtype == np.complex:
                 colorline(exact.real, exact.imag)
