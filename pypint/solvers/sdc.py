@@ -13,7 +13,7 @@ from pypint.integrators.node_providers.gauss_lobatto_nodes \
     import GaussLobattoNodes
 from pypint.integrators.weight_function_providers.polynomial_weight_function \
     import PolynomialWeightFunction
-from pypint.problems.i_initial_value_problem import IInitialValueProblem
+from pypint.problems import IInitialValueProblem, problem_has_exact_solution, problem_has_direct_implicit
 from pypint.solutions.iterative_solution import IterativeSolution
 from pypint.plugins.timers.timer_base import TimerBase
 from pypint.utilities.threshold_check import ThresholdCheck
@@ -280,7 +280,7 @@ class Sdc(IIterativeTimeSolver):
 
                 Reduction of the absolute error from the first iteration to the current.
                 Is only displayed from the second iteration onwards and only if the given problem
-                provides a function of the exact solution (see :py:meth:`.IProblem.has_exact()`).
+                provides a function of the exact solution (see :py:meth:`.problem_has_exact_solution()`).
 
         The output for the time steps of an iteration explained (will only show up when running with
         logger level ``DEBUG``):
@@ -309,7 +309,7 @@ class Sdc(IIterativeTimeSolver):
 
                 Absolute error for the time step.
                 Is only displayed if the given problem provides a function for the
-                exact solution (see :py:meth:`.IProblem.has_exact()`).
+                exact solution (see :py:meth:`.problem_has_exact_solution()`).
 
         Parameters
         ----------
@@ -345,7 +345,7 @@ class Sdc(IIterativeTimeSolver):
             _iter += 1
 
             # step result table header
-            if self.problem.has_exact():
+            if problem_has_exact_solution(self.problem, self):
                 self._output(["node", "t_0", "t_1", "sol", "resid", "err"],
                              ["str", "str", "str", "str", "str", "str"],
                              padding=10, debug=True)
@@ -367,7 +367,7 @@ class Sdc(IIterativeTimeSolver):
                 self.__reductions["solution"][_iter - 1] = \
                     np.abs((self.__sol["previous"][-1] - self.__sol["current"][-1])
                            / self.__sol["previous"][-1] * 100.0)
-                if self.problem.has_exact():
+                if problem_has_exact_solution(self.problem, self):
                     self.__reductions["errors"][_iter - 1] = \
                         np.abs(self.__errors["previous"][-1] - self.__errors["current"][-1])
 
@@ -378,7 +378,7 @@ class Sdc(IIterativeTimeSolver):
                              ["int", None, "float"],
                              padding=4)
             else:
-                if self.problem.has_exact() and _iter > 0:
+                if problem_has_exact_solution(self.problem, self) and _iter > 0:
                     # we could compute the correct error of our current solution
                     self._output([_iter, self.__reductions["solution"][_iter - 1],
                                   _iter_timer.past(), self.__residuals["current"][-1],
@@ -392,7 +392,7 @@ class Sdc(IIterativeTimeSolver):
                                  padding=4)
 
             # save solution for this iteration and check termination criteria
-            if self.problem.has_exact():
+            if problem_has_exact_solution(self.problem, self):
                 if _iter == 1:
                     _sol.add_solution(points=self.__time_points["nodes"],
                                       values=self.__sol["current"].copy(),
@@ -423,7 +423,7 @@ class Sdc(IIterativeTimeSolver):
             self.__sol["previous"] = self.__sol["current"].copy()
             self.__residuals["previous"] = self.__residuals["current"].copy()
             self.__residuals["current"] = np.zeros(self.__residuals["current"].size)
-            if self.problem.has_exact():
+            if problem_has_exact_solution(self.problem, self):
                 self.__errors["previous"] = self.__errors["current"].copy()
                 self.__errors["current"] = np.zeros(self.__errors["current"].size)
         # end while:self._threshold_check.has_reached() is None
@@ -436,7 +436,7 @@ class Sdc(IIterativeTimeSolver):
             LOG.info(">   {:s}".format(self.threshold.has_reached(human=True)))
             LOG.info(">   Rel. Reduction: {:.3e}".format(self.__reductions["solution"][_iter - 1]))
             LOG.info(">   Final Residual: {:.3e}".format(self.__residuals["previous"][-1]))
-            if self.problem.has_exact():
+            if problem_has_exact_solution(self.problem, self):
                 LOG.info(">   Absolute Error: {:.3e}"
                          .format(self.__reductions["errors"][_iter - 1]))
         else:
@@ -446,7 +446,7 @@ class Sdc(IIterativeTimeSolver):
                      .format(self.__reductions["solution"][_iter - 1]))
             LOG.info(">         Final Residual: {:.3e}"
                      .format(self.__residuals["previous"][-1]))
-            if self.problem.has_exact():
+            if problem_has_exact_solution(self.problem, self):
                 LOG.info(">         Absolute Error: {:.3e}"
                          .format(self.__reductions["errors"][_iter - 1]))
             LOG.warn("SDC Failed: Maximum number iterations reached without convergence.")
@@ -535,20 +535,7 @@ class Sdc(IIterativeTimeSolver):
 
         # compute step
         if self.is_implicit:
-            _expl_term = self.__sol["current"][_i - 1] - \
-                _dt * self.problem.evaluate(_t1, self.__sol["previous"][_i]) + self.__deltas["I"] * integral
-            _func = lambda x_next: _expl_term + _dt * self.problem.evaluate(_t1, x_next) - x_next
-            _sol = self.problem.implicit_solve(np.array([self.__sol["current"][_i]], dtype=self.problem.numeric_type), _func)
-            self.__sol["current"][_i] = _sol if type(self.__sol["current"][_i]) == type(_sol) else _sol[0]
-
-        elif self.is_semi_implicit:
-            _expl_term = self.__sol["current"][_i - 1] + \
-                _dt * (self.problem.evaluate(_t0, self.__sol["current"][_i - 1], partial="expl") -
-                       self.problem.evaluate(_t0, self.__sol["previous"][_i - 1], partial="expl") -
-                       self.problem.evaluate(_t1, self.__sol["previous"][_i], partial="impl")) + \
-                self.__deltas["I"] * integral
-            _func = lambda x_next: _expl_term + _dt * self.problem.evaluate(_t1, x_next, partial="impl") - x_next
-            if self.problem.has_direct_implicit():
+            if problem_has_direct_implicit(self.problem, self):
                 _sol = self.problem.direct_implicit(phis_of_time=[self.__sol["previous"][_i - 1],
                                                                   self.__sol["previous"][_i],
                                                                   self.__sol["current"][_i - 1]],
@@ -556,7 +543,30 @@ class Sdc(IIterativeTimeSolver):
                                                     delta_step=self.__deltas["I"],
                                                     integral=integral)
             else:
-                _sol = self.problem.implicit_solve(np.array([self.__sol["current"][_i]], dtype=self.problem.numeric_type), _func)
+                _expl_term = self.__sol["current"][_i - 1] - \
+                    _dt * self.problem.evaluate(_t1, self.__sol["previous"][_i]) + self.__deltas["I"] * integral
+                _func = lambda x_next: _expl_term + _dt * self.problem.evaluate(_t1, x_next) - x_next
+                _sol = self.problem.implicit_solve(np.array([self.__sol["current"][_i]],
+                                                            dtype=self.problem.numeric_type), _func)
+            self.__sol["current"][_i] = _sol if type(self.__sol["current"][_i]) == type(_sol) else _sol[0]
+
+        elif self.is_semi_implicit:
+            if problem_has_direct_implicit(self.problem, self):
+                _sol = self.problem.direct_implicit(phis_of_time=[self.__sol["previous"][_i - 1],
+                                                                  self.__sol["previous"][_i],
+                                                                  self.__sol["current"][_i - 1]],
+                                                    delta_node=_dt,
+                                                    delta_step=self.__deltas["I"],
+                                                    integral=integral)
+            else:
+                _expl_term = self.__sol["current"][_i - 1] + \
+                    _dt * (self.problem.evaluate(_t0, self.__sol["current"][_i - 1], partial="expl") -
+                           self.problem.evaluate(_t0, self.__sol["previous"][_i - 1], partial="expl") -
+                           self.problem.evaluate(_t1, self.__sol["previous"][_i], partial="impl")) + \
+                    self.__deltas["I"] * integral
+                _func = lambda x_next: _expl_term + _dt * self.problem.evaluate(_t1, x_next, partial="impl") - x_next
+                _sol = self.problem.implicit_solve(np.array([self.__sol["current"][_i]],
+                                                            dtype=self.problem.numeric_type), _func)
             self.__sol["current"][_i] = _sol if type(self.__sol["current"][_i]) == type(_sol) else _sol[0]
 
         elif self.is_explicit:
@@ -595,7 +605,7 @@ class Sdc(IIterativeTimeSolver):
         #                  self.__deltas["I"], _residual_integral, self.__sol["current"][_i]))
 
         # calculate error
-        if self.problem.has_exact():
+        if problem_has_exact_solution(self.problem, self):
             self.__exact[_i] = self.problem.exact(_t0, self.__time_points["nodes"][_i])
             self.__errors["current"][_i] = np.abs(self.__sol["current"][_i] - self.__exact[_i])
         else:
@@ -604,7 +614,7 @@ class Sdc(IIterativeTimeSolver):
             pass
 
         # log
-        if self.problem.has_exact():
+        if problem_has_exact_solution(self.problem, self):
             self._output([_i, _t0, _t1, self.__sol["current"][_i], self.__residuals["current"][_i],
                           self.__errors["current"][_i]],
                          ["int", "float", "float", "float", "exp", "exp"],
@@ -625,7 +635,7 @@ class Sdc(IIterativeTimeSolver):
         LOG.info("> " + '-' * 78)
 
         # itartion result table header
-        if self.problem.has_exact():
+        if problem_has_exact_solution(self.problem, self):
             self._output(["iter", "rel red", "time", "resid", "err red"],
                          ["str", "str", "str", "str", "str"],
                          padding=4)

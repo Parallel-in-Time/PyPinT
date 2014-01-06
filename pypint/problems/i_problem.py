@@ -31,26 +31,17 @@ class IProblem(object):
         ``time_end`` : float
             End of the time interval to integrate over.
 
-        ``exact_function`` : function pointer | lambda
-            (optional)
-            If specified, this function describes the exact solution of the given problem.
-
         ``strings`` : dict
             (optional)
 
             ``rhs`` : string
                 (optional)
                 String representation of the right hand side function for logging output.
-
-            ``exact`` : string
-                (optional)
-                String representation of the exact solution for logging output.
     """
     def __init__(self, *args, **kwargs):
         self._function = kwargs["function"] if "function" in kwargs else None
         self._time_start = kwargs["time_start"] if "time_start" in kwargs else None
         self._time_end = kwargs["time_end"] if "time_end" in kwargs else None
-        self._exact_function = kwargs["exact_function"] if "exact_function" in kwargs else None
         self._numeric_type = np.float
         self._strings = {
             "rhs": None,
@@ -59,8 +50,8 @@ class IProblem(object):
         if "strings" in kwargs:
             if "rhs" in kwargs["strings"]:
                 self._strings["rhs"] = kwargs["strings"]["rhs"]
-            if "exact" in kwargs["strings"]:
-                self._strings["exact"] = kwargs["strings"]["exact"]
+            # if "exact" in kwargs["strings"]:
+            #     self._strings["exact"] = kwargs["strings"]["exact"]
 
     def evaluate(self, time, phi_of_time, partial=None):
         """
@@ -131,45 +122,6 @@ class IProblem(object):
             LOG.error("Implicit solver failed: {:s}".format(sol.message))
         return sol.x
 
-    def has_direct_implicit(self):
-        return self.direct_implicit() is not None
-
-    def direct_implicit(self, *args, **kwargs):
-        return None
-
-    def exact(self, time, phi_of_time):
-        """
-        Summary
-        -------
-        Evaluates given exact solution function at given time and with given time-dependent data.
-
-        Parameters
-        ----------
-        time : float
-            Time point :math:`t`
-
-        phi_of_time : ``numpy.ndarray``
-            Time-dependent data.
-
-        Returns
-        -------
-        exact solution : numpy.ndarray
-        """
-        return self.exact_function(time, phi_of_time)
-
-    def has_exact(self):
-        """
-        Summary
-        -------
-        Convenience accessor for exact solution.
-
-        Returns
-        -------
-         : boolean
-            ``True`` if exact solution was given, ``False`` otherwise
-        """
-        return self.exact_function is not None
-
     @property
     def function(self):
         """
@@ -238,29 +190,6 @@ class IProblem(object):
     @time_end.setter
     def time_end(self, time_end):
         self._time_end = time_end
-
-    @property
-    def exact_function(self):
-        """
-        Summary
-        -------
-        Accessor for exact solution.
-
-        Parameters
-        ----------
-        function : function pointer | lambda
-            Function of the exact solution of :math:`u'(t,x)=F(t,\\phi_t)`
-
-        Returns
-        -------
-        rhs function : function_pointer | lambda
-            Function of the exact solution.
-        """
-        return self._exact_function
-
-    @exact_function.setter
-    def exact_function(self, exact_function):
-        self._exact_function = exact_function
 
     @property
     def numeric_type(self):
