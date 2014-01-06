@@ -122,12 +122,6 @@ class IProblem(object):
             LOG.error("Implicit solver failed: {:s}".format(sol.message))
         return sol.x
 
-    def has_direct_implicit(self):
-        return self.direct_implicit() is not None
-
-    def direct_implicit(self, *args, **kwargs):
-        return None
-
     @property
     def function(self):
         """

@@ -13,7 +13,7 @@ from pypint.integrators.node_providers.gauss_lobatto_nodes \
     import GaussLobattoNodes
 from pypint.integrators.weight_function_providers.polynomial_weight_function \
     import PolynomialWeightFunction
-from pypint.problems import IInitialValueProblem, problem_has_exact_solution
+from pypint.problems import IInitialValueProblem, problem_has_exact_solution, problem_has_direct_implicit
 from pypint.solutions.iterative_solution import IterativeSolution
 from pypint.plugins.timers.timer_base import TimerBase
 from pypint.utilities.threshold_check import ThresholdCheck
@@ -535,20 +535,7 @@ class Sdc(IIterativeTimeSolver):
 
         # compute step
         if self.is_implicit:
-            _expl_term = self.__sol["current"][_i - 1] - \
-                _dt * self.problem.evaluate(_t1, self.__sol["previous"][_i]) + self.__deltas["I"] * integral
-            _func = lambda x_next: _expl_term + _dt * self.problem.evaluate(_t1, x_next) - x_next
-            _sol = self.problem.implicit_solve(np.array([self.__sol["current"][_i]], dtype=self.problem.numeric_type), _func)
-            self.__sol["current"][_i] = _sol if type(self.__sol["current"][_i]) == type(_sol) else _sol[0]
-
-        elif self.is_semi_implicit:
-            _expl_term = self.__sol["current"][_i - 1] + \
-                _dt * (self.problem.evaluate(_t0, self.__sol["current"][_i - 1], partial="expl") -
-                       self.problem.evaluate(_t0, self.__sol["previous"][_i - 1], partial="expl") -
-                       self.problem.evaluate(_t1, self.__sol["previous"][_i], partial="impl")) + \
-                self.__deltas["I"] * integral
-            _func = lambda x_next: _expl_term + _dt * self.problem.evaluate(_t1, x_next, partial="impl") - x_next
-            if self.problem.has_direct_implicit():
+            if problem_has_direct_implicit(self.problem, self):
                 _sol = self.problem.direct_implicit(phis_of_time=[self.__sol["previous"][_i - 1],
                                                                   self.__sol["previous"][_i],
                                                                   self.__sol["current"][_i - 1]],
@@ -556,7 +543,30 @@ class Sdc(IIterativeTimeSolver):
                                                     delta_step=self.__deltas["I"],
                                                     integral=integral)
             else:
-                _sol = self.problem.implicit_solve(np.array([self.__sol["current"][_i]], dtype=self.problem.numeric_type), _func)
+                _expl_term = self.__sol["current"][_i - 1] - \
+                    _dt * self.problem.evaluate(_t1, self.__sol["previous"][_i]) + self.__deltas["I"] * integral
+                _func = lambda x_next: _expl_term + _dt * self.problem.evaluate(_t1, x_next) - x_next
+                _sol = self.problem.implicit_solve(np.array([self.__sol["current"][_i]],
+                                                            dtype=self.problem.numeric_type), _func)
+            self.__sol["current"][_i] = _sol if type(self.__sol["current"][_i]) == type(_sol) else _sol[0]
+
+        elif self.is_semi_implicit:
+            if problem_has_direct_implicit(self.problem, self):
+                _sol = self.problem.direct_implicit(phis_of_time=[self.__sol["previous"][_i - 1],
+                                                                  self.__sol["previous"][_i],
+                                                                  self.__sol["current"][_i - 1]],
+                                                    delta_node=_dt,
+                                                    delta_step=self.__deltas["I"],
+                                                    integral=integral)
+            else:
+                _expl_term = self.__sol["current"][_i - 1] + \
+                    _dt * (self.problem.evaluate(_t0, self.__sol["current"][_i - 1], partial="expl") -
+                           self.problem.evaluate(_t0, self.__sol["previous"][_i - 1], partial="expl") -
+                           self.problem.evaluate(_t1, self.__sol["previous"][_i], partial="impl")) + \
+                    self.__deltas["I"] * integral
+                _func = lambda x_next: _expl_term + _dt * self.problem.evaluate(_t1, x_next, partial="impl") - x_next
+                _sol = self.problem.implicit_solve(np.array([self.__sol["current"][_i]],
+                                                            dtype=self.problem.numeric_type), _func)
             self.__sol["current"][_i] = _sol if type(self.__sol["current"][_i]) == type(_sol) else _sol[0]
 
         elif self.is_explicit:

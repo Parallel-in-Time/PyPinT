@@ -9,5 +9,10 @@ Problems for Iterative Time Solvers
 from .i_problem import IProblem
 from .i_initial_value_problem import IInitialValueProblem
 from .has_exact_solution_mixin import HasExactSolutionMixin, problem_has_exact_solution
+from .has_direct_implicit_mixin import HasDirectImplicitMixin, problem_has_direct_implicit
 
-__all__ = ['IProblem', 'IInitialValueProblem', 'HasExactSolutionMixin', 'problem_has_exact_solution']
+__all__ = [
+    'IProblem', 'IInitialValueProblem',
+    'HasExactSolutionMixin', 'HasDirectImplicitMixin',
+    'problem_has_exact_solution', 'problem_has_direct_implicit'
+]
