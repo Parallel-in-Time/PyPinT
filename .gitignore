@@ -49,3 +49,6 @@ cover/
 *.png
 *.svg
 
+/runs
+!/runs/README
+
