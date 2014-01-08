@@ -440,7 +440,7 @@ class Sdc(IIterativeTimeSolver):
                 LOG.info(">   Absolute Error: {:.3e}"
                          .format(self.__reductions["errors"][_iter - 1]))
         else:
-            warnings.warn("Explicit SDC: Did not converged!")
+            warnings.warn("Explicit SDC: Did not converged: {:s}".format(self.problem))
             LOG.info("> FAILED: After maximum of {:d} iteration(s).".format(_iter))
             LOG.info(">         Rel. Reduction: {:.3e}"
                      .format(self.__reductions["solution"][_iter - 1]))
