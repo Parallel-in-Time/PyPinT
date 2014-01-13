@@ -11,7 +11,7 @@ setup(
     version="0.0.1",
     author="Torbjörn Klatt, Dieter Moser",
     author_email="t.klatt@fz-juelich.de, d.moser@fz-juelich.de",
-    description=("A Python framework for Parallel-in-Time integration routines."),
+    description="A Python framework for Parallel-in-Time integration routines.",
     long_description=read('README.md'),
     license="MIT",
     url="http://fz-juelich.de/ias/jsc/pint",

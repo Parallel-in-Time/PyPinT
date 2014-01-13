@@ -196,7 +196,6 @@ class IProblem(object):
         return self._numeric_type
 
     def __str__(self):
-        _outstr = ""
         if self._strings["rhs"] is not None:
             _outstr = r"u'(t,\phi(t))={:s}".format(self._strings["rhs"])
         else:

@@ -5,7 +5,6 @@
 """
 
 from .i_analyzer import IAnalyzer
-import numpy as np
 from pypint.plugins.plotters.single_solution_plotter import SingleSolutionPlotter
 
 

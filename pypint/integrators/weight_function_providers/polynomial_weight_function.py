@@ -8,7 +8,6 @@ from .i_weight_function import IWeightFunction
 import numpy as np
 import numpy.polynomial.polynomial as pol
 from pypint.utilities import func_name, assert_is_instance, assert_condition
-from pypint import LOG
 
 
 class PolynomialWeightFunction(IWeightFunction):
@@ -99,7 +98,6 @@ class PolynomialWeightFunction(IWeightFunction):
         alpha = np.zeros(n_nodes)
 
         for j in range(n_nodes):
-            selection = []
             selection = list(range(j))
             selection.extend(list(range(j + 1, n_nodes)))
             poly = [1.0]

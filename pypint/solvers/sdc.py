@@ -499,9 +499,9 @@ class Sdc(IIterativeTimeSolver):
 
     def _time_step(self, t):
         # transform integration nodes to next interval
-        _dT = self.__deltas["t"][t]
-        _T0 = self.__time_points["steps"][t]
-        _T1 = self.__time_points["steps"][t + 1]
+        # _dT = self.__deltas["t"][t]
+        # _T0 = self.__time_points["steps"][t]
+        # _T1 = self.__time_points["steps"][t + 1]
         #LOG.debug("Time step {:d}: [{:2f}, {:.2f}] (dT={:2f}) with nodes: {:s}"
         #          .format(t + 1, _T0, _T1, _dT, self._integrator.nodes))
         for n in range(1, self.num_nodes):

@@ -6,7 +6,6 @@
 
 from copy import deepcopy
 import numpy as np
-from pypint import LOG
 
 
 class IWeightFunction(object):

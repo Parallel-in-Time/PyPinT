@@ -121,17 +121,17 @@ class ThresholdCheck(object):
                              "Given conditions can not be parsed: {:s}".format(conditions))
 
     def print_conditions(self):
-        str = ""
+        _outstr = ""
         first = True
         for cond in self._conditions:
             if not first:
-                str += ", "
+                _outstr += ", "
             if cond in ThresholdCheck._default_min_conditions:
-                str += "{:s}={:.2e}".format(cond, self._conditions[cond])
+                _outstr += "{:s}={:.2e}".format(cond, self._conditions[cond])
             elif cond in ThresholdCheck._default_max_conditions:
-                str += "{:s}={:d}".format(cond, self._conditions[cond])
+                _outstr += "{:s}={:d}".format(cond, self._conditions[cond])
             first = False
-        return str
+        return _outstr
 
     def __str__(self):
         return "ThresholdCheck(" + self.print() + ")"

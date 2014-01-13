@@ -6,7 +6,6 @@
 
 from pypint.solutions.iterative_solution import IterativeSolution
 from pypint.utilities.threshold_check import ThresholdCheck
-from pypint import LOG
 
 
 class IIterativeTimeSolver(object):
