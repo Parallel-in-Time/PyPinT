@@ -93,8 +93,6 @@ class Sdc(IIterativeTimeSolver):
     >>> # print the solution of the last iteration
     >>> print(my_solution.solution(-1))
     [  1.00000000e+00   5.00000000e-01  -1.11022302e-16]
-
-    .. todo:: Implement implicit SDC method for first order ODEs.
     """
     def __init__(self, **kwargs):
         super(Sdc, self).__init__(**kwargs)
@@ -543,8 +541,11 @@ class Sdc(IIterativeTimeSolver):
                                                     delta_step=self.__deltas["I"],
                                                     integral=integral)
             else:
-                _expl_term = self.__sol["current"][_i - 1] - \
-                    _dt * self.problem.evaluate(_t1, self.__sol["previous"][_i]) + self.__deltas["I"] * integral
+                # using step-wise formula
+                #   u_{m+1}^{k+1} - \Delta_\tau F(u_{m+1}^{k+1})
+                #     = u_m^{k+1} - \Delta_\tau F(u_m^k) + \Delta_t I_m^{m+1}(F(u^k))
+                _expl_term = self.__sol["current"][_i - 1] \
+                    - _dt * self.problem.evaluate(_t1, self.__sol["previous"][_i]) + self.__deltas["I"] * integral
                 _func = lambda x_next: _expl_term + _dt * self.problem.evaluate(_t1, x_next) - x_next
                 _sol = self.problem.implicit_solve(np.array([self.__sol["current"][_i]],
                                                             dtype=self.problem.numeric_type), _func)
@@ -559,27 +560,25 @@ class Sdc(IIterativeTimeSolver):
                                                     delta_step=self.__deltas["I"],
                                                     integral=integral)
             else:
-                _expl_term = self.__sol["current"][_i - 1] + \
-                    _dt * (self.problem.evaluate(_t0, self.__sol["current"][_i - 1], partial="expl") -
-                           self.problem.evaluate(_t0, self.__sol["previous"][_i - 1], partial="expl") -
-                           self.problem.evaluate(_t1, self.__sol["previous"][_i], partial="impl")) + \
-                    self.__deltas["I"] * integral
+                _expl_term = self.__sol["current"][_i - 1] \
+                    + _dt * (self.problem.evaluate(_t0, self.__sol["current"][_i - 1], partial="expl")
+                             - self.problem.evaluate(_t0, self.__sol["previous"][_i - 1], partial="expl")
+                             - self.problem.evaluate(_t1, self.__sol["previous"][_i], partial="impl")) \
+                    + self.__deltas["I"] * integral
                 _func = lambda x_next: _expl_term + _dt * self.problem.evaluate(_t1, x_next, partial="impl") - x_next
                 _sol = self.problem.implicit_solve(np.array([self.__sol["current"][_i]],
                                                             dtype=self.problem.numeric_type), _func)
             self.__sol["current"][_i] = _sol if type(self.__sol["current"][_i]) == type(_sol) else _sol[0]
 
         elif self.is_explicit:
+            # using step-wise formula
+            # Formula:
+            #   u_{m+1}^{k+1} = u_m^{k+1} + \Delta_\tau [ F(u_m^{k+1}) - F(u_m^k) ] + \Delta_t I_m^{m+1}(F(u^k))
             self.__sol["current"][_i] = \
-                self.__sol["current"][_i - 1] + \
-                _dt * (self.problem.evaluate(_t0, self.__sol["current"][_i - 1]) -
-                       self.problem.evaluate(_t0, self.__sol["previous"][_i - 1])) + \
-                self.__deltas["I"] * integral
-            #LOG.debug("          {:f} = {:f} + {:f} * ({:f} - {:f}) + {:f} * {:f}"
-            #          .format(self.__sol["current"][_i], self.__sol["current"][_i - 1], _dt,
-            #                  self.problem.evaluate(_t0, self.__sol["current"][_i - 1]),
-            #                  self.problem.evaluate(_t0, self.__sol["previous"][_i - 1]),
-            #                  self.__deltas["I"], integral))
+                self.__sol["current"][_i - 1] \
+                + _dt * (self.problem.evaluate(_t0, self.__sol["current"][_i - 1])
+                         - self.problem.evaluate(_t0, self.__sol["previous"][_i - 1])) \
+                + self.__deltas["I"] * integral
 
         else:
             # should not reach here
