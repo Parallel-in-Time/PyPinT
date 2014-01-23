@@ -4,8 +4,9 @@
 .. moduleauthor: Torbjörn Klatt <t.klatt@fz-juelich.de>
 """
 
-from pypint.solutions.iterative_solution import IterativeSolution
-from pypint.utilities.threshold_check import ThresholdCheck
+from ..solutions.iterative_solution import IterativeSolution
+from ..utilities.threshold_check import ThresholdCheck
+from ..utilities import assert_condition
 
 
 class IIterativeTimeSolver(object):
@@ -21,8 +22,61 @@ class IIterativeTimeSolver(object):
         -------
         Internal class holding solver iteration states such as intermediate results.
         """
-        def __init__(self):
-            pass
+
+        num_points = 0
+
+        def __init__(self, iteration=0):
+            self._iteration = iteration
+            self._solution = None
+            self._error = None
+            self._residual = None
+            self._reduction_of_solution = None
+            self._reduction_of_error = None
+
+        @property
+        def iteration(self):
+            return self._iteration
+        @iteration.setter
+        def iteration(self, iteration):
+            assert_condition(iteration > 0,
+                             ValueError, "Iteration count must be possitive: {:d}".format(iteration),
+                             self)
+            self._iteration = iteration
+
+        @property
+        def solution(self):
+            return self._solution
+        @solution.setter
+        def solution(self, solution):
+            self._solution = solution.copy()
+
+        @property
+        def error(self):
+            return self._error
+        @error.setter
+        def error(self, error):
+            self._error = error
+
+        @property
+        def residual(self):
+            return self._residual
+        @residual.setter
+        def residual(self, residual):
+            self._residual = residual
+
+        @property
+        def reduction_of_solution(self):
+            return self._reduction_of_solution
+        @reduction_of_solution.setter
+        def reduction_of_solution(self, reduction_of_solution):
+            self._reduction_of_solution = reduction_of_solution
+
+        @property
+        def reduction_of_error(self):
+            return self._reduction_of_error
+        @reduction_of_error.setter
+        def reduction_of_error(self, reduction_of_error):
+            self._reduction_of_error = reduction_of_error
 
     def __init__(self, *args, **kwargs):
         self._problem = None
