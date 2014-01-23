@@ -15,11 +15,21 @@ class IIterativeTimeSolver(object):
     Basic interface for iterative time solvers.
     """
 
+    class State(object):
+        """
+        Summary
+        -------
+        Internal class holding solver iteration states such as intermediate results.
+        """
+        def __init__(self):
+            pass
+
     def __init__(self, *args, **kwargs):
         self._problem = None
         self._integrator = None
         self._timer = None
         self._threshold_check = ThresholdCheck()
+        self._states = []
 
     def init(self, problem, integrator, **kwargs):
         """
@@ -73,6 +83,10 @@ class IIterativeTimeSolver(object):
             problem was initialized.
         """
         return self._problem
+
+    @property
+    def state(self):
+        return self._states[-1]
 
     @property
     def timer(self):
