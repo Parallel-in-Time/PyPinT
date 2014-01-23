@@ -84,7 +84,7 @@ class SdcCoreMixin(object):
                 - self.core_state.delta_tau \
                 * self.problem.evaluate(self.core_state.next_time_point,
                                         self.previous_state.solution[self.core_state.current_point_index]) \
-                + self.__deltas["I"] * kwargs['integral']
+                + self._deltas["I"] * kwargs['integral']
             _func = \
                 lambda x_next: \
                     _expl_term \
@@ -120,7 +120,7 @@ class SdcCoreMixin(object):
                    - self.problem.evaluate(self.core_state.next_time_point,
                                            self.previous_state.solution[self.core_state.current_point_index],
                                            partial="impl")) \
-                + self.__deltas["I"] * kwargs['integral']
+                + self._deltas["I"] * kwargs['integral']
             _func = \
                 lambda x_next: \
                     _expl_term \
