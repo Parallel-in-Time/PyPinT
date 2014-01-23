@@ -8,6 +8,7 @@ from .i_iterative_time_solver import IIterativeTimeSolver
 from copy import deepcopy
 import warnings as warnings
 import numpy as np
+from .cores.sdc_core_mixin import SdcCoreMixin
 from ..integrators.sdc_integrator import SdcIntegrator
 from ..integrators.node_providers.gauss_lobatto_nodes import GaussLobattoNodes
 from ..integrators.weight_function_providers.polynomial_weight_function import PolynomialWeightFunction
@@ -32,7 +33,7 @@ from .. import LOG
 # i                      | index of current point in continuous array of points
 
 
-class Sdc(IIterativeTimeSolver):
+class Sdc(IIterativeTimeSolver, SdcCoreMixin):
     """
     Summary
     -------
@@ -146,7 +147,7 @@ class Sdc(IIterativeTimeSolver):
             "steps": np.zeros(0),
             "nodes": np.zeros(0)
         }
-        self.__deltas = {
+        self._deltas = {
             "I": 0.0,
             "t": np.zeros(0),
             "n": np.zeros(0)
@@ -239,9 +240,9 @@ class Sdc(IIterativeTimeSolver):
         self.__exact = np.zeros(self.__num_points, dtype=self.problem.numeric_type)
 
         # compute time step and node distances
-        self.__deltas["I"] = self.problem.time_end - self.problem.time_start
-        _dt = self.__deltas["I"] / self.num_time_steps
-        self.__deltas["t"] = np.array([_dt] * self.num_time_steps)
+        self._deltas["I"] = self.problem.time_end - self.problem.time_start
+        _dt = self._deltas["I"] / self.num_time_steps
+        self._deltas["t"] = np.array([_dt] * self.num_time_steps)
         self.__time_points["steps"] = np.linspace(self.problem.time_start,
                                                   self.problem.time_end, self.num_time_steps + 1)
         # initialize and transform integrator for time step width
@@ -249,7 +250,7 @@ class Sdc(IIterativeTimeSolver):
                               interval=np.array([self.__time_points["steps"][0],
                                                  self.__time_points["steps"][1]]))
         self.__time_points["nodes"] = np.zeros(self.__num_points)
-        self.__deltas["n"] = np.zeros(self.num_time_steps * (self.num_nodes - 1) + 1)
+        self._deltas["n"] = np.zeros(self.num_time_steps * (self.num_nodes - 1) + 1)
         # copy the node provider so we do not alter the integrator's one
         _nodes = deepcopy(self._integrator.nodes_type)
         for _t in range(0, self.num_time_steps):
@@ -259,8 +260,10 @@ class Sdc(IIterativeTimeSolver):
             for _n in range(0, self.num_nodes - 1):
                 _i = _t * (self.num_nodes - 1) + _n
                 self.__time_points["nodes"][_i] = _nodes.nodes[_n]
-                self.__deltas["n"][_i + 1] = _nodes.nodes[_n + 1] - _nodes.nodes[_n]
+                self._deltas["n"][_i + 1] = _nodes.nodes[_n + 1] - _nodes.nodes[_n]
         self.__time_points["nodes"][-1] = _nodes.nodes[-1]
+
+        SdcCoreMixin.__init__(self)
 
     def run(self, solution_class=IterativeSolution):
         """
@@ -373,8 +376,8 @@ class Sdc(IIterativeTimeSolver):
 
             # iterate on time steps
             _iter_timer.start()
-            for t in range(0, self.num_time_steps):
-                self._time_step(t)
+            for self.core_state.time_step_index in range(0, self.num_time_steps):
+                self._time_step()
             # end for:t
             _iter_timer.stop()
 
@@ -504,115 +507,70 @@ class Sdc(IIterativeTimeSolver):
         """
         return self._integrator.nodes_type.num_nodes
 
-    def _time_step(self, t):
+    def _time_step(self):
         # transform integration nodes to next interval
         # _dT = self.__deltas["t"][t]
         # _T0 = self.__time_points["steps"][t]
         # _T1 = self.__time_points["steps"][t + 1]
         #LOG.debug("Time step {:d}: [{:2f}, {:.2f}] (dT={:2f}) with nodes: {:s}"
         #          .format(t + 1, _T0, _T1, _dT, self._integrator.nodes))
-        for n in range(1, self.num_nodes):
-            self._sdc_step(t, n)
+        for self.core_state.node_index in range(1, self.num_nodes):
+            self._sdc_step()
 
-    def _sdc_step(self, t, n):
-        _i = t * (self.num_nodes - 1) + n
-        _i0 = _i - n
-        _i1 = (t + 1) * (self.num_nodes - 1)
+    def _sdc_step(self):
+        self.core_state.calculate_current_point_index()
+        self.core_state.calculate_node_range()
 
         # get current steps' time data
-        _dt = self.__deltas["n"][n]
-        _t0 = self.__time_points["nodes"][_i - 1]
-        _t1 = self.__time_points["nodes"][_i]
+        self.core_state.delta_tau = self._deltas["n"][self.core_state.node_index]
+        self.core_state.current_time_point = self.__time_points["nodes"][self.core_state.previous_point_index]
+        self.core_state.next_time_point = self.__time_points["nodes"][self.core_state.current_point_index]
 
         # gather values for integration
-        _copy_mask = np.concatenate((np.array([True] * n),
-                                     np.array([False] * (self.num_nodes - n))))
-        _integrate_values = np.where(_copy_mask, self.current_state.solution[_i0:(_i1 + 1)],
-                                     self.previous_state.solution[_i0:(_i1 + 1)])
+        _copy_mask = np.concatenate((np.array([True] * self.core_state.node_index),
+                                     np.array([False] * (self.num_nodes - self.core_state.node_index))))
+        _integrate_values = \
+            np.where(_copy_mask,
+                     self.current_state.solution[self.core_state.first_node_index:(self.core_state.last_node_index + 1)],
+                     self.previous_state.solution[self.core_state.first_node_index:(self.core_state.last_node_index + 1)])
 
         # evaluate problem for integration values
         _integrate_values = \
-            np.array([self.problem.evaluate(self._integrator.nodes[n - 1], val)
+            np.array([self.problem.evaluate(self._integrator.nodes[self.core_state.node_index - 1], val)
                       for val in _integrate_values], dtype=self.problem.numeric_type)
 
         # integrate
-        integral = self._integrator.evaluate(_integrate_values, last_node_index=n)
+        _integral = self._integrator.evaluate(_integrate_values, last_node_index=self.core_state.node_index)
 
         # compute step
-        if self.is_implicit:
-            if problem_has_direct_implicit(self.problem, self):
-                _sol = self.problem.direct_implicit(phis_of_time=[self.previous_state.solution[_i - 1],
-                                                                  self.previous_state.solution[_i],
-                                                                  self.current_state.solution[_i - 1]],
-                                                    delta_node=_dt,
-                                                    delta_step=self.__deltas["I"],
-                                                    integral=integral)
-            else:
-                # using step-wise formula
-                #   u_{m+1}^{k+1} - \Delta_\tau F(u_{m+1}^{k+1})
-                #     = u_m^{k+1} - \Delta_\tau F(u_m^k) + \Delta_t I_m^{m+1}(F(u^k))
-                _expl_term = self.current_state.solution[_i - 1] \
-                    - _dt * self.problem.evaluate(_t1, self.previous_state.solution[_i]) + self.__deltas["I"] * integral
-                _func = lambda x_next: _expl_term + _dt * self.problem.evaluate(_t1, x_next) - x_next
-                _sol = self.problem.implicit_solve(np.array([self.current_state.solution[_i]],
-                                                            dtype=self.problem.numeric_type), _func)
-            self.current_state.solution_at(_i, _sol if type(self.current_state.solution[_i]) == type(_sol) else _sol[0])
-            del _sol
-
-        elif self.is_semi_implicit:
-            if problem_has_direct_implicit(self.problem, self):
-                _sol = self.problem.direct_implicit(phis_of_time=[self.previous_state.solution[_i - 1],
-                                                                  self.previous_state.solution[_i],
-                                                                  self.current_state.solution[_i - 1]],
-                                                    delta_node=_dt,
-                                                    delta_step=self.__deltas["I"],
-                                                    integral=integral)
-            else:
-                _expl_term = self.current_state.solution[_i - 1] \
-                    + _dt * (self.problem.evaluate(_t0, self.current_state.solution[_i - 1], partial="expl")
-                             - self.problem.evaluate(_t0, self.previous_state.solution[_i - 1], partial="expl")
-                             - self.problem.evaluate(_t1, self.previous_state.solution[_i], partial="impl")) \
-                    + self.__deltas["I"] * integral
-                _func = lambda x_next: _expl_term + _dt * self.problem.evaluate(_t1, x_next, partial="impl") - x_next
-                _sol = self.problem.implicit_solve(np.array([self.current_state.solution[_i]],
-                                                            dtype=self.problem.numeric_type), _func)
-            self.current_state.solution_at(_i, _sol if type(self.current_state.solution[_i]) == type(_sol) else _sol[0])
-            del _sol
-
-        elif self.is_explicit:
-            # using step-wise formula
-            # Formula:
-            #   u_{m+1}^{k+1} = u_m^{k+1} + \Delta_\tau [ F(u_m^{k+1}) - F(u_m^k) ] + \Delta_t I_m^{m+1}(F(u^k))
-            self.current_state.solution_at(_i,
-                                           (self.current_state.solution[_i - 1]
-                                            + _dt * (self.problem.evaluate(_t0, self.current_state.solution[_i - 1])
-                                                     - self.problem.evaluate(_t0, self.previous_state.solution[_i - 1]))
-                                            + self.__deltas["I"] * integral))
-
-        else:
-            # should not reach here
-            pass
+        self.execute_core(integral=_integral)
 
         # calculate residual
-        _integrate_values = np.where(_copy_mask,
-                                     self.current_state.solution[_i0:(_i1 + 1)],
-                                     self.previous_state.solution[_i0:(_i1 + 1)])
-        _integrate_values[n] = self._states[-1].solution[_i]
         _integrate_values = \
-            np.array([self.problem.evaluate(self._integrator.nodes[n - 1], val)
+            np.where(_copy_mask,
+                     self.current_state.solution[self.core_state.first_node_index:(self.core_state.last_node_index + 1)],
+                     self.previous_state.solution[self.core_state.first_node_index:(self.core_state.last_node_index + 1)])
+        _integrate_values[self.core_state.node_index] = self._states[-1].solution[self.core_state.current_point_index]
+        _integrate_values = \
+            np.array([self.problem.evaluate(self._integrator.nodes[self.core_state.node_index - 1], val)
                       for val in _integrate_values], dtype=self.problem.numeric_type)
         _residual_integral = 0
-        for i in range(1, n + 1):
+        for i in range(1, self.core_state.node_index + 1):
             _residual_integral += self._integrator.evaluate(_integrate_values, last_node_index=i)
 
-        self.current_state.residual_at(_i, np.abs(self.current_state.solution[_i0]
-                                                  + self.__deltas["I"] * _residual_integral
-                                                  - self.current_state.solution[_i]))
+        self.current_state.residual_at(self.core_state.current_point_index,
+                                       np.abs(self.current_state.solution[self.core_state.first_node_index]
+                                              + self._deltas["I"] * _residual_integral
+                                              - self.current_state.solution[self.core_state.current_point_index]))
 
         # calculate error
         if problem_has_exact_solution(self.problem, self):
-            self.__exact[_i] = self.problem.exact(_t0, self.__time_points["nodes"][_i])
-            self.current_state.error_at(_i, np.abs(self.current_state.solution[_i] - self.__exact[_i]))
+            self.__exact[self.core_state.current_point_index] = \
+                self.problem.exact(self.core_state.next_time_point,
+                                   self.__time_points["nodes"][self.core_state.current_point_index])
+            self.current_state.error_at(self.core_state.current_point_index,
+                                        np.abs(self.current_state.solution[self.core_state.current_point_index]
+                                               - self.__exact[self.core_state.current_point_index]))
         else:
             # we need the exact solution for that
             #  (unless we find an error approximation method)
@@ -620,12 +578,18 @@ class Sdc(IIterativeTimeSolver):
 
         # log
         if problem_has_exact_solution(self.problem, self):
-            self._output([_i, _t0, _t1, self.current_state.solution[_i], self.current_state.residual[_i],
-                          self.current_state.error[_i]],
+            self._output([self.core_state.node_index, self.core_state.next_time_point,
+                          self.core_state.current_time_point,
+                          self.current_state.solution[self.core_state.current_point_index],
+                          self.current_state.residual[self.core_state.current_point_index],
+                          self.current_state.error[self.core_state.current_point_index]],
                          ["int", "float", "float", "float", "exp", "exp"],
                          padding=10, debug=True)
         else:
-            self._output([_i, _t0, _t1, self.current_state.solution[_i], self.current_state.residual[_i]],
+            self._output([self.core_state.node_index, self.core_state.next_time_point,
+                          self.core_state.next_time_point,
+                          self.current_state.solution[self.core_state.current_point_index],
+                          self.current_state.residual[self.core_state.current_point_index]],
                          ["int", "float", "float", "float", "exp"],
                          padding=10, debug=True)
 
