@@ -574,15 +574,17 @@ class Sdc(IIterativeTimeSolver, SdcCoreMixin):
 
         # log
         if problem_has_exact_solution(self.problem, self):
-            self._output([self.core_state.node_index, self.core_state.next_time_point,
+            self._output([self.core_state.node_index,
                           self.core_state.current_time_point,
+                          self.core_state.next_time_point,
                           self.current_state.solution[self.core_state.current_point_index],
                           self.current_state.residual[self.core_state.current_point_index],
                           self.current_state.error[self.core_state.current_point_index]],
                          ["int", "float", "float", "float", "exp", "exp"],
                          padding=10, debug=True)
         else:
-            self._output([self.core_state.node_index, self.core_state.next_time_point,
+            self._output([self.core_state.node_index,
+                          self.core_state.current_time_point,
                           self.core_state.next_time_point,
                           self.current_state.solution[self.core_state.current_point_index],
                           self.current_state.residual[self.core_state.current_point_index]],
