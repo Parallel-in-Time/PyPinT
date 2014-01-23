@@ -101,8 +101,8 @@ class Sdc(IIterativeTimeSolver):
             self._solution = np.zeros(Sdc.State.num_points)
             self._error = np.zeros(Sdc.State.num_points)
             self._residual = np.zeros(Sdc.State.num_points)
-            self._reduction_of_solution = 0.0
-            self._reduction_of_error = 0.0
+            self._reduction_of_solution = np.inf
+            self._reduction_of_error = np.inf
 
         def solution_at(self, index, value=None):
             assert_condition(index < self.solution.size,
@@ -411,16 +411,16 @@ class Sdc(IIterativeTimeSolver):
             if problem_has_exact_solution(self.problem, self):
                 if _iter == 1:
                     _solution.add_solution(points=self.__time_points["nodes"],
-                                           values=self.current_state.solution,
+                                           values=self.current_state.solution.copy(),
                                            exact=self.__exact,
-                                           error=self.current_state.error,
-                                           residual=self.current_state.residual,
+                                           error=self.current_state.error.copy(),
+                                           residual=self.current_state.residual.copy(),
                                            iteration=1)
                 else:
                     _solution.add_solution(points=self.__time_points["nodes"],
-                                           values=self.current_state.solution,
-                                           error=self.current_state.error,
-                                           residual=self.current_state.residual,
+                                           values=self.current_state.solution.copy(),
+                                           error=self.current_state.error.copy(),
+                                           residual=self.current_state.residual.copy(),
                                            iteration=-1)
                 self.threshold.check(reduction=self.current_state.reduction_of_solution,
                                      residual=self.current_state.residual[-1],
@@ -455,7 +455,10 @@ class Sdc(IIterativeTimeSolver):
                 LOG.info(">         Absolute Error: {:.3e}".format(self.current_state.reduction_of_error))
             LOG.warn("SDC Failed: Maximum number iterations reached without convergence.")
 
-        _solution.reductions = self._states[-1].reduction_of_solution
+        _solution.reductions = {
+            "solution": self.current_state.reduction_of_solution,
+            "error": self.current_state.reduction_of_error
+        }
 
         self._print_footer()
 
