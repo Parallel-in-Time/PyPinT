@@ -73,10 +73,6 @@ class Sdc(IIterativeTimeSolver, SdcCoreMixin):
     .IIterativeTimeSolver :
         implemented interface
 
-    Notes
-    -----
-    Currently, only the explicit version is implemented.
-
     Examples
     --------
     >>> from pypint.solvers.sdc import Sdc
