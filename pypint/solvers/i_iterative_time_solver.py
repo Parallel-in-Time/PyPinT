@@ -139,8 +139,21 @@ class IIterativeTimeSolver(object):
         return self._problem
 
     @property
-    def state(self):
+    def states(self):
+        return self._states
+
+    @property
+    def initial_state(self):
+        return self._states[0]
+
+    @property
+    def current_state(self):
         return self._states[-1]
+
+    @property
+    def previous_state(self):
+        return self._states[-2]
+
 
     @property
     def timer(self):
