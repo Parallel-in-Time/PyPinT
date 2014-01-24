@@ -5,7 +5,7 @@
 """
 import numpy as np
 from scipy.optimize import root
-from pypint.utilities.tracing import assert_is_callable, assert_is_instance
+from pypint.utilities import assert_is_callable, assert_is_instance
 
 
 def find_root(fun, x0, method="hybr"):

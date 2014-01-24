@@ -1,7 +1,7 @@
 # coding=utf-8
 
 from ...problems import problem_has_direct_implicit
-from ...utilities.tracing import assert_is_key
+from ...utilities import assert_is_key
 import numpy as np
 
 
