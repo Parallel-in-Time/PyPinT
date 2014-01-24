@@ -25,7 +25,7 @@ class IInitialValueProblem(IProblem):
     """
     def __init__(self, *args, **kwargs):
         super(IInitialValueProblem, self).__init__(*args, **kwargs)
-        
+
         self._initial_value = None
         if "initial_value" in kwargs:
             self.initial_value = kwargs["initial_value"]
