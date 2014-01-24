@@ -2,8 +2,8 @@
 """
 .. moduleauthor:: Torbjörn Klatt <t.klatt@fz-juelich.de>
 """
-from pypint.problems.i_problem import IProblem
-from pypint.utilities import assert_is_instance
+from .i_problem import IProblem
+from ..utilities import assert_is_instance
 
 
 class HasDirectImplicitMixin(object):
@@ -17,10 +17,6 @@ class HasDirectImplicitMixin(object):
 
     def direct_implicit(self, *args, **kwargs):
         """
-        Summary
-        -------
-
-
         Raises
         ------
         NotImplementedError
