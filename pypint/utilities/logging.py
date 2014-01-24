@@ -8,7 +8,7 @@ Logging Framework for PyPinT
 import logging as log
 from sys import stdout
 
-_loggers = []
+loggers = []
 
 
 def logger():
@@ -18,10 +18,10 @@ def logger():
     Accessor for a standard logger
 
     """
-    global _loggers
+    global loggers
 
-    if len(_loggers) > 0:
-        return _loggers[0]
+    if len(loggers) > 0:
+        return loggers[0]
 
     else:
         _logger = log.getLogger("ConsoleLogger")
@@ -31,5 +31,5 @@ def logger():
                                    '%d.%m.%y %H:%M:%S %Z')
         _handler.setFormatter(_formatter)
         _logger.addHandler(_handler)
-        _loggers.append(_logger)
+        loggers.append(_logger)
         return logger()

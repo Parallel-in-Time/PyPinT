@@ -33,6 +33,8 @@ load-plugins=
 # can either give multiple identifier separated by comma (,) or put this option
 # multiple time (only on the command line, not in the configuration file where
 # it should appear only once).
+# E1101: no member (mostly triggered by numpy)
+# C0301: line too long
 disable=E1101
 
 
@@ -155,7 +157,7 @@ additional-builtins=
 [FORMAT]
 
 # Maximum number of characters on a single line.
-max-line-length=100
+max-line-length=120
 
 # Maximum number of lines in a module
 max-module-lines=1000

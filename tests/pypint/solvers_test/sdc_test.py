@@ -21,11 +21,16 @@ class SdcTest(NumpyAwareTestCase):
 
     def test_constant_minus_one_function(self):
         _constant = Constant(constant=-1.0, shift=1.0)
-        self._test_obj.init(problem=_constant)
-        _solution = self._test_obj.run()
-        self.assertNumpyArrayAlmostEqual(_solution.solution(-1), numpy.array([1.0, 0.5, 0.0]))
-        self.assertEqual(_solution.used_iterations, 1,
-                         "Explicit SDC should converge in 1 iteration.")
+        for _type in ['expl', 'impl', 'semi']:
+            _sdc = Sdc()
+            _sdc.init(problem=_constant, type=_type, num_nodes=3)
+            _solution = _sdc.run()
+            self.assertNumpyArrayAlmostEqual(_solution.solution(-1), numpy.array([1.0, 0.5, 0.0]))
+            self.assertEqual(_solution.used_iterations, 1,
+                             "Explicit SDC should converge in 1 iteration.")
+            self.assertNumpyArrayAlmostEqual(_solution.residual(iteration=-1),
+                                             numpy.zeros(_solution.residual(iteration=-1).size))
+            del _sdc
 
     def test_lambda_u(self):
         _lambda_u = LambdaU(lmbda=-1.0)
