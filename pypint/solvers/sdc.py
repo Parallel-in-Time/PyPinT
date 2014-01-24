@@ -408,7 +408,7 @@ class Sdc(IIterativeTimeSolver, SdcCoreMixin):
 
             # iterate on time steps
             _iter_timer.start()
-            for self.core_state.time_step_index in range(0, self.num_time_steps):
+            for self.core_state.time_step_ndx in range(0, self.num_time_steps):
                 self._time_step()
             # end for:t
             _iter_timer.stop()
@@ -546,7 +546,7 @@ class Sdc(IIterativeTimeSolver, SdcCoreMixin):
         # _T1 = self.__time_points["steps"][t + 1]
         #LOG.debug("Time step {:d}: [{:2f}, {:.2f}] (dT={:2f}) with nodes: {:s}"
         #          .format(t + 1, _T0, _T1, _dT, self._integrator.nodes))
-        for self.core_state.node_index in range(1, self.num_nodes):
+        for self.core_state.node_ndx in range(1, self.num_nodes):
             self._sdc_step()
 
     def _sdc_step(self):
@@ -554,25 +554,25 @@ class Sdc(IIterativeTimeSolver, SdcCoreMixin):
         self.core_state.calculate_node_range()
 
         # get current steps' time data
-        self.core_state.delta_tau = self._deltas["n"][self.core_state.node_index]
-        self.core_state.current_time_point = self.__time_points["nodes"][self.core_state.previous_point_index]
-        self.core_state.next_time_point = self.__time_points["nodes"][self.core_state.current_point_index]
+        self.core_state.delta_tau = self._deltas["n"][self.core_state.node_ndx]
+        self.core_state.curr_time_pnt = self.__time_points["nodes"][self.core_state.prev_pnt_ndx]
+        self.core_state.next_time_pnt = self.__time_points["nodes"][self.core_state.curr_pnt_ndx]
 
         # gather values for integration
-        _copy_mask = np.concatenate((np.array([True] * self.core_state.node_index),
-                                     np.array([False] * (self.num_nodes - self.core_state.node_index))))
+        _copy_mask = np.concatenate((np.array([True] * self.core_state.node_ndx),
+                                     np.array([False] * (self.num_nodes - self.core_state.node_ndx))))
         _integrate_values = \
             np.where(_copy_mask,
-                     self.current_state.solution[self.core_state.first_node_index:(self.core_state.last_node_index + 1)],
-                     self.previous_state.solution[self.core_state.first_node_index:(self.core_state.last_node_index + 1)])
+                     self.current_state.solution[self.core_state.first_node_ndx:(self.core_state.last_node_ndx + 1)],
+                     self.previous_state.solution[self.core_state.first_node_ndx:(self.core_state.last_node_ndx + 1)])
 
         # evaluate problem for integration values
         _integrate_values = \
-            np.array([self.problem.evaluate(self._integrator.nodes[self.core_state.node_index - 1], val)
+            np.array([self.problem.evaluate(self._integrator.nodes[self.core_state.node_ndx - 1], val)
                       for val in _integrate_values], dtype=self.problem.numeric_type)
 
         # integrate
-        _integral = self._integrator.evaluate(_integrate_values, last_node_index=self.core_state.node_index)
+        _integral = self._integrator.evaluate(_integrate_values, last_node_index=self.core_state.node_ndx)
 
         # compute step
         self.execute_core(integral=_integral)
@@ -580,29 +580,29 @@ class Sdc(IIterativeTimeSolver, SdcCoreMixin):
         # calculate residual
         _integrate_values = \
             np.where(_copy_mask,
-                     self.current_state.solution[self.core_state.first_node_index:(self.core_state.last_node_index + 1)],
-                     self.previous_state.solution[self.core_state.first_node_index:(self.core_state.last_node_index + 1)])
-        _integrate_values[self.core_state.node_index] = self._states[-1].solution[self.core_state.current_point_index]
+                     self.current_state.solution[self.core_state.first_node_ndx:(self.core_state.last_node_ndx + 1)],
+                     self.previous_state.solution[self.core_state.first_node_ndx:(self.core_state.last_node_ndx + 1)])
+        _integrate_values[self.core_state.node_ndx] = self._states[-1].solution[self.core_state.curr_pnt_ndx]
         _integrate_values = \
-            np.array([self.problem.evaluate(self._integrator.nodes[self.core_state.node_index - 1], val)
+            np.array([self.problem.evaluate(self._integrator.nodes[self.core_state.node_ndx - 1], val)
                       for val in _integrate_values], dtype=self.problem.numeric_type)
         _residual_integral = 0
-        for i in range(1, self.core_state.node_index + 1):
+        for i in range(1, self.core_state.node_ndx + 1):
             _residual_integral += self._integrator.evaluate(_integrate_values, last_node_index=i)
 
-        self.current_state.residual_at(self.core_state.current_point_index,
-                                       np.abs(self.current_state.solution[self.core_state.first_node_index]
+        self.current_state.residual_at(self.core_state.curr_pnt_ndx,
+                                       np.abs(self.current_state.solution[self.core_state.first_node_ndx]
                                               + self._deltas["I"] * _residual_integral
-                                              - self.current_state.solution[self.core_state.current_point_index]))
+                                              - self.current_state.solution[self.core_state.curr_pnt_ndx]))
 
         # calculate error
         if problem_has_exact_solution(self.problem, self):
-            self.__exact[self.core_state.current_point_index] = \
-                self.problem.exact(self.core_state.next_time_point,
-                                   self.__time_points["nodes"][self.core_state.current_point_index])
-            self.current_state.error_at(self.core_state.current_point_index,
-                                        np.abs(self.current_state.solution[self.core_state.current_point_index]
-                                               - self.__exact[self.core_state.current_point_index]))
+            self.__exact[self.core_state.curr_pnt_ndx] = \
+                self.problem.exact(self.core_state.next_time_pnt,
+                                   self.__time_points["nodes"][self.core_state.curr_pnt_ndx])
+            self.current_state.error_at(self.core_state.curr_pnt_ndx,
+                                        np.abs(self.current_state.solution[self.core_state.curr_pnt_ndx]
+                                               - self.__exact[self.core_state.curr_pnt_ndx]))
         else:
             # we need the exact solution for that
             #  (unless we find an error approximation method)
@@ -610,20 +610,20 @@ class Sdc(IIterativeTimeSolver, SdcCoreMixin):
 
         # log
         if problem_has_exact_solution(self.problem, self):
-            self._output([self.core_state.node_index,
-                          self.core_state.current_time_point,
-                          self.core_state.next_time_point,
-                          self.current_state.solution[self.core_state.current_point_index],
-                          self.current_state.residual[self.core_state.current_point_index],
-                          self.current_state.error[self.core_state.current_point_index]],
+            self._output([self.core_state.node_ndx,
+                          self.core_state.curr_time_pnt,
+                          self.core_state.next_time_pnt,
+                          self.current_state.solution[self.core_state.curr_pnt_ndx],
+                          self.current_state.residual[self.core_state.curr_pnt_ndx],
+                          self.current_state.error[self.core_state.curr_pnt_ndx]],
                          ["int", "float", "float", "float", "exp", "exp"],
                          padding=10, debug=True)
         else:
-            self._output([self.core_state.node_index,
-                          self.core_state.current_time_point,
-                          self.core_state.next_time_point,
-                          self.current_state.solution[self.core_state.current_point_index],
-                          self.current_state.residual[self.core_state.current_point_index]],
+            self._output([self.core_state.node_ndx,
+                          self.core_state.curr_time_pnt,
+                          self.core_state.next_time_pnt,
+                          self.current_state.solution[self.core_state.curr_pnt_ndx],
+                          self.current_state.residual[self.core_state.curr_pnt_ndx]],
                          ["int", "float", "float", "float", "exp"],
                          padding=10, debug=True)
 

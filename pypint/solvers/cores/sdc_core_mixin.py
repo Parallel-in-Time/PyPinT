@@ -39,39 +39,39 @@ class SdcCoreMixin(object):
             """
             Attributes
             ----------
-            time_step_index : int
+            time_step_ndx : int
                 This is :math:`t`
-            current_point_index : int
-            node_index : int
+            curr_pnt_ndx : int
+            node_ndx : int
                 This is :math:`m`
-            first_node_index : int
+            first_node_ndx : int
                 This is :math:`\\tau_0`
-            last_node_index : int
+            last_node_ndx : int
                 This is :math:`\\tau_M`
             delta_tau : float
                 This is :math:`\\Delta_tau`
-            current_time_point : float
-            next_time_point : float
+            curr_time_pnt : float
+            next_time_pnt : float
             """
-            self.time_step_index = 0       # t
-            self.current_point_index = 0   # _i
-            self.node_index = 0            # n
-            self.first_node_index = 0      # _i0
-            self.last_node_index = 0       # _i1
-            self.delta_tau = 0.0           # _dt
-            self.current_time_point = 0.0  # _t0
-            self.next_time_point = 0.0     # _t1
+            self.time_step_ndx = 0    # t
+            self.curr_pnt_ndx = 0     # _i
+            self.node_ndx = 0         # n
+            self.first_node_ndx = 0   # _i0
+            self.last_node_ndx = 0    # _i1
+            self.delta_tau = 0.0      # _dt
+            self.curr_time_pnt = 0.0  # _t0
+            self.next_time_pnt = 0.0  # _t1
 
         def calculate_current_point_index(self):
-            self.current_point_index = self.time_step_index * (SdcCoreMixin.CoreState._num_nodes - 1) + self.node_index
+            self.curr_pnt_ndx = self.time_step_ndx * (SdcCoreMixin.CoreState._num_nodes - 1) + self.node_ndx
 
         def calculate_node_range(self):
-            self.first_node_index = self.current_point_index - self.node_index
-            self.last_node_index = (self.time_step_index + 1) * (SdcCoreMixin.CoreState._num_nodes - 1)
+            self.first_node_ndx = self.curr_pnt_ndx - self.node_ndx
+            self.last_node_ndx = (self.time_step_ndx + 1) * (SdcCoreMixin.CoreState._num_nodes - 1)
 
         @property
-        def previous_point_index(self):
-            return self.current_point_index - 1
+        def prev_pnt_ndx(self):
+            return self.curr_pnt_ndx - 1
 
     def __init__(self):
         self.CoreState._num_nodes = self.num_nodes
@@ -119,7 +119,8 @@ class SdcCoreMixin(object):
         ----------------
         .. math::
 
-            u_{m+1}^{k+1} = u_m^{k+1} + \\Delta_\\tau \\left( F(t_m, u_m^{k+1}) - F(t_m, u_m^k) \\right) + \\Delta_t I_m^{m+1} \\left( F(\\vec{u}^k) \\right)
+            u_{m+1}^{k+1} = u_m^{k+1} + \\Delta_\\tau \\left( F(t_m, u_m^{k+1}) - F(t_m, u_m^k) \\right)
+                                      + \\Delta_t I_m^{m+1} \\left( F(\\vec{u}^k) \\right)
 
         Parameters
         ----------
@@ -131,13 +132,13 @@ class SdcCoreMixin(object):
         # Formula:
         #   u_{m+1}^{k+1} = u_m^{k+1} + \Delta_\tau [ F(u_m^{k+1}) - F(u_m^k) ] + \Delta_t I_m^{m+1}(F(u^k))
         self.current_state\
-            .solution_at(self.core_state.current_point_index,
-                         (self.current_state.solution[self.core_state.previous_point_index]
+            .solution_at(self.core_state.curr_pnt_ndx,
+                         (self.current_state.solution[self.core_state.prev_pnt_ndx]
                           + self.core_state.delta_tau
-                          * (self.problem.evaluate(self.core_state.current_time_point,
-                                                   self.current_state.solution[self.core_state.previous_point_index])
-                             - self.problem.evaluate(self.core_state.current_time_point,
-                                                     self.previous_state.solution[self.core_state.previous_point_index])
+                          * (self.problem.evaluate(self.core_state.curr_time_pnt,
+                                                   self.current_state.solution[self.core_state.prev_pnt_ndx])
+                             - self.problem.evaluate(self.core_state.curr_time_pnt,
+                                                     self.previous_state.solution[self.core_state.prev_pnt_ndx])
                              )
                           + self._deltas["I"] * kwargs['integral']))
 
@@ -151,7 +152,8 @@ class SdcCoreMixin(object):
         ----------------
         .. math::
 
-            u_{m+1}^{k+1} - \\Delta_\\tau F(t_{m+1}, u_{m+1}^{k+1}) = u_m^{k+1} + \\Delta_\\tau F(t_{m+1}, u_{m+1}^k) + \\Delta_t I_m^{m+1} \\left( F(\\vec{u}^k) \\right)
+            u_{m+1}^{k+1} - \\Delta_\\tau F(t_{m+1}, u_{m+1}^{k+1}) =
+                u_m^{k+1} + \\Delta_\\tau F(t_{m+1}, u_{m+1}^k) + \\Delta_t I_m^{m+1} \\left( F(\\vec{u}^k) \\right)
 
         Parameters
         ----------
@@ -162,9 +164,9 @@ class SdcCoreMixin(object):
         if problem_has_direct_implicit(self.problem, self):
             _sol = \
                 self.problem\
-                    .direct_implicit(phis_of_time=[self.previous_state.solution[self.core_state.previous_point_index],
-                                                   self.previous_state.solution[self.core_state.current_point_index],
-                                                   self.current_state.solution[self.core_state.previous_point_index]],
+                    .direct_implicit(phis_of_time=[self.previous_state.solution[self.core_state.prev_pnt_ndx],
+                                                   self.previous_state.solution[self.core_state.curr_pnt_ndx],
+                                                   self.current_state.solution[self.core_state.prev_pnt_ndx]],
                                      delta_node=self.core_state.delta_tau,
                                      delta_step=self._deltas["I"],
                                      integral=kwargs['integral'])
@@ -173,21 +175,21 @@ class SdcCoreMixin(object):
             #   u_{m+1}^{k+1} - \Delta_\tau F(u_{m+1}^{k+1})
             #     = u_m^{k+1} - \Delta_\tau F(u_m^k) + \Delta_t I_m^{m+1}(F(u^k))
             _expl_term = \
-                self.current_state.solution[self.core_state.previous_point_index] \
+                self.current_state.solution[self.core_state.prev_pnt_ndx] \
                 - self.core_state.delta_tau \
-                * self.problem.evaluate(self.core_state.next_time_point,
-                                        self.previous_state.solution[self.core_state.current_point_index]) \
+                * self.problem.evaluate(self.core_state.next_time_pnt,
+                                        self.previous_state.solution[self.core_state.curr_pnt_ndx]) \
                 + self._deltas["I"] * kwargs['integral']
             _func = \
                 lambda x_next: \
                     _expl_term \
-                    + self.core_state.delta_tau * self.problem.evaluate(self.core_state.next_time_point, x_next) \
+                    + self.core_state.delta_tau * self.problem.evaluate(self.core_state.next_time_pnt, x_next) \
                     - x_next
             _sol = \
-                self.problem.implicit_solve(np.array([self.current_state.solution[self.core_state.current_point_index]],
+                self.problem.implicit_solve(np.array([self.current_state.solution[self.core_state.curr_pnt_ndx]],
                                                      dtype=self.problem.numeric_type), _func)
-        self.current_state.solution_at(self.core_state.current_point_index,
-                                       _sol if type(self.current_state.solution[self.core_state.current_point_index]) == type(_sol) else _sol[0])
+        self.current_state.solution_at(self.core_state.curr_pnt_ndx,
+                                       _sol if type(self.current_state.solution[self.core_state.curr_pnt_ndx]) == type(_sol) else _sol[0])
 
     def semi_implicit_euler(self, **kwargs):
         """
@@ -199,7 +201,10 @@ class SdcCoreMixin(object):
         ----------------
         .. math::
 
-            u_{m+1}^{k+1} - \\Delta_\\tau F_I(t_{m+1}, u_{m+1}^{k+1}) = u_m^{k+1} + \\Delta_\\tau \\left( F_I(t_{m+1}, u_{m+1}^k) - F_E(t_m, u_m^{k+1}) + F_E(t_m, u_m^k) \\right) + \\Delta_t I_m^{m+1} \\left( F(\\vec{u}^k) \\right)
+            u_{m+1}^{k+1} - \\Delta_\\tau F_I(t_{m+1}, u_{m+1}^{k+1}) =
+                u_m^{k+1} + \\Delta_\\tau \\left( F_I(t_{m+1}, u_{m+1}^k)
+                                                  - F_E(t_m, u_m^{k+1}) + F_E(t_m, u_m^k) \\right)
+                          + \\Delta_t I_m^{m+1} \\left( F(\\vec{u}^k) \\right)
 
         Parameters
         ----------
@@ -214,37 +219,37 @@ class SdcCoreMixin(object):
         if problem_has_direct_implicit(self.problem, self):
             _sol = \
                 self.problem\
-                    .direct_implicit(phis_of_time=[self.previous_state.solution[self.core_state.previous_point_index],
-                                                   self.previous_state.solution[self.core_state.current_point_index],
-                                                   self.current_state.solution[self.core_state.previous_point_index]],
+                    .direct_implicit(phis_of_time=[self.previous_state.solution[self.core_state.prev_pnt_ndx],
+                                                   self.previous_state.solution[self.core_state.curr_pnt_ndx],
+                                                   self.current_state.solution[self.core_state.prev_pnt_ndx]],
                                      delta_node=self.core_state.delta_tau,
                                      delta_step=self._deltas["I"],
                                      integral=kwargs['integral'])
         else:
             _expl_term = \
-                self.current_state.solution[self.core_state.previous_point_index] \
+                self.current_state.solution[self.core_state.prev_pnt_ndx] \
                 + self.core_state.delta_tau \
-                * (self.problem.evaluate(self.core_state.current_time_point,
-                                         self.current_state.solution[self.core_state.previous_point_index],
+                * (self.problem.evaluate(self.core_state.curr_time_pnt,
+                                         self.current_state.solution[self.core_state.prev_pnt_ndx],
                                          partial="expl")
-                   - self.problem.evaluate(self.core_state.current_time_point,
-                                           self.previous_state.solution[self.core_state.previous_point_index],
+                   - self.problem.evaluate(self.core_state.curr_time_pnt,
+                                           self.previous_state.solution[self.core_state.prev_pnt_ndx],
                                            partial="expl")
-                   - self.problem.evaluate(self.core_state.next_time_point,
-                                           self.previous_state.solution[self.core_state.current_point_index],
+                   - self.problem.evaluate(self.core_state.next_time_pnt,
+                                           self.previous_state.solution[self.core_state.curr_pnt_ndx],
                                            partial="impl")) \
                 + self._deltas["I"] * kwargs['integral']
             _func = \
                 lambda x_next: \
                     _expl_term \
-                    + self.core_state.delta_tau * self.problem.evaluate(self.core_state.next_time_point,
+                    + self.core_state.delta_tau * self.problem.evaluate(self.core_state.next_time_pnt,
                                                                         x_next, partial="impl") \
                     - x_next
             _sol = \
-                self.problem.implicit_solve(np.array([self.current_state.solution[self.core_state.current_point_index]],
+                self.problem.implicit_solve(np.array([self.current_state.solution[self.core_state.curr_pnt_ndx]],
                                                      dtype=self.problem.numeric_type), _func)
-        self.current_state.solution_at(self.core_state.current_point_index,
-                                       _sol if type(self.current_state.solution[self.core_state.current_point_index]) == type(_sol) else _sol[0])
+        self.current_state.solution_at(self.core_state.curr_pnt_ndx,
+                                       _sol if type(self.current_state.solution[self.core_state.curr_pnt_ndx]) == type(_sol) else _sol[0])
 
     @property
     def core_state(self):
