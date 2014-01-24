@@ -6,7 +6,7 @@
 
 from ..plugins.implicit_solvers.find_root import find_root
 from .. import LOG
-from ..utilities.tracing import assert_is_callable, assert_is_instance, assert_is_in
+from ..utilities import assert_is_callable, assert_is_instance, assert_is_in
 import numpy as np
 
 
