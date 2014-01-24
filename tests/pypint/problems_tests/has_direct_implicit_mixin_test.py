@@ -12,13 +12,13 @@ class HasDirectImplicitMixinTest(unittest.TestCase):
             HasDirectImplicitMixin.__init__(self, *args, **kwargs)
 
     def setUp(self):
-        self.test_problem = HasDirectImplicitMixinTest.TestProblem()
+        self._default = HasDirectImplicitMixinTest.TestProblem()
 
     def test_provides_direct_implicit_method(self):
-        self.assertRaises(NotImplementedError, self.test_problem.direct_implicit)
+        self.assertRaises(NotImplementedError, self._default.direct_implicit)
 
     def test_problem_has_direct_implicit_introspection(self):
-        self.assertTrue(problem_has_direct_implicit(self.test_problem))
+        self.assertTrue(problem_has_direct_implicit(self._default))
         self.assertFalse(problem_has_direct_implicit(IProblem()))
 
 

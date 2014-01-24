@@ -13,28 +13,28 @@ class HasExactSolutionMixinTest(unittest.TestCase):
             HasExactSolutionMixin.__init__(self, *args, **kwargs)
 
     def setUp(self):
-        self.test_problem = HasExactSolutionMixinTest.TestProblem()
+        self._default = HasExactSolutionMixinTest.TestProblem()
 
     def test_provides_exact_method(self):
-        self.assertIsNone(self.test_problem.exact_function, "Initially no exact function is given.")
+        self.assertIsNone(self._default.exact_function, "Initially no exact function is given.")
         _func = lambda t, x: 1.0
-        self.test_problem.exact_function = _func
-        self.assertTrue(callable(self.test_problem.exact_function))
-        self.assertEqual(self.test_problem.exact(0.0, np.array([1.0])), 1.0)
+        self._default.exact_function = _func
+        self.assertTrue(callable(self._default.exact_function))
+        self.assertEqual(self._default.exact(0.0, np.array([1.0])), 1.0)
 
         _test_problem = HasExactSolutionMixinTest.TestProblem(exact_function=_func)
-        self.test_problem.exact_function = _func
-        self.assertTrue(callable(self.test_problem.exact_function))
-        self.assertEqual(self.test_problem.exact(0.0, np.array([1.0])), 1.0)
+        self._default.exact_function = _func
+        self.assertTrue(callable(self._default.exact_function))
+        self.assertEqual(self._default.exact(0.0, np.array([1.0])), 1.0)
 
     def test_validates_exact_method_input_arguments(self):
         _func = lambda t, x: 1.0
-        self.test_problem.exact_function = _func
-        self.assertRaises(ValueError, self.test_problem.exact, time="not a time", phi_of_time=np.array([1.0]))
-        self.assertRaises(ValueError, self.test_problem.exact, time=1.0, phi_of_time=1.0)
+        self._default.exact_function = _func
+        self.assertRaises(ValueError, self._default.exact, time="not a time", phi_of_time=np.array([1.0]))
+        self.assertRaises(ValueError, self._default.exact, time=1.0, phi_of_time=1.0)
 
     def test_problem_has_exact_solution_introspection(self):
-        self.assertTrue(problem_has_exact_solution(self.test_problem))
+        self.assertTrue(problem_has_exact_solution(self._default))
         self.assertFalse(problem_has_exact_solution(IProblem()))
 
 
