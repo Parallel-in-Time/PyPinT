@@ -12,7 +12,7 @@ from .cores.sdc_core_mixin import SdcCoreMixin
 from ..integrators.sdc_integrator import SdcIntegrator
 from ..integrators.node_providers.gauss_lobatto_nodes import GaussLobattoNodes
 from ..integrators.weight_function_providers.polynomial_weight_function import PolynomialWeightFunction
-from ..problems import IInitialValueProblem, problem_has_exact_solution, problem_has_direct_implicit
+from ..problems import IInitialValueProblem, problem_has_exact_solution
 from ..solutions.iterative_solution import IterativeSolution
 from ..plugins.timers.timer_base import TimerBase
 from ..utilities.threshold_check import ThresholdCheck
@@ -102,6 +102,18 @@ class Sdc(IIterativeTimeSolver, SdcCoreMixin):
             self._reduction_of_error = np.inf
 
         def solution_at(self, index, value=None):
+            """
+            Summary
+            -------
+            Accessor for the solution at node index `index`.
+
+            Parameters
+            ----------
+            index : int
+                Node index to set or get solution at.
+            value : :py:attr:`.Problem.numeric_type` or `None`
+                If non-None sets the solution value, else returns the solution value at given `index`.
+            """
             assert_condition(index < self.solution.size,
                              ValueError, "Index out of range: {:d} >= {:d}".format(index, self.solution.size),
                              self)
@@ -111,6 +123,18 @@ class Sdc(IIterativeTimeSolver, SdcCoreMixin):
                 self._solution[index] = value
 
         def error_at(self, index, value=None):
+            """
+            Summary
+            -------
+            Accessor for the error at node index `index`.
+
+            Parameters
+            ----------
+            index : int
+                Node index to set or get error at.
+            value : :py:attr:`.Problem.numeric_type` or `None`
+                If non-None sets the error value, else returns the error value at given `index`.
+            """
             assert_condition(index < self.error.size,
                              ValueError, "Index out of range: {:d} >= {:d}".format(index, self.error.size),
                              self)
@@ -120,6 +144,18 @@ class Sdc(IIterativeTimeSolver, SdcCoreMixin):
                 self._error[index] = value
 
         def residual_at(self, index, value=None):
+            """
+            Summary
+            -------
+            Accessor for the residual at node index `index`.
+
+            Parameters
+            ----------
+            index : int
+                Node index to set or get residual at.
+            value : :py:attr:`.Problem.numeric_type` or `None`
+                If non-None sets the residual value, else returns the residual value at given `index`.
+            """
             assert_condition(index < self.residual.size,
                              ValueError, "Index out of range: {:d} >= {:d}".format(index, self.residual.size),
                              self)
