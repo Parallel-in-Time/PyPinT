@@ -2,8 +2,9 @@
 """
 .. moduleauthor:: Torbjörn Klatt <t.klatt@fz-juelich.de>
 """
-from pypint.problems.i_problem import IProblem
-from pypint.utilities import assert_is_callable, assert_is_instance
+from .i_problem import IProblem
+from ..utilities import assert_is_callable, assert_is_instance
+import numpy as np
 
 
 class HasExactSolutionMixin(object):
@@ -48,6 +49,10 @@ class HasExactSolutionMixin(object):
             If ``time`` is not a ``float``.
         """
         assert_is_instance(time, float, "Time must be a float.", self)
+        assert_is_instance(phi_of_time, np.ndarray,
+                           "Data must be given as a numpy.ndarray: NOT {:s}".format(phi_of_time.__class__.__name__),
+                           self)
+        assert_is_callable(self._exact_function, "Exact function not given.", self)
         return self._exact_function(time, phi_of_time)
 
     @property
