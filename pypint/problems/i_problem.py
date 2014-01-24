@@ -4,10 +4,10 @@
 .. moduleauthor: Torbjörn Klatt <t.klatt@fz-juelich.de>
 """
 
+from ..plugins.implicit_solvers.find_root import find_root
+from .. import LOG
+from ..utilities.tracing import assert_is_callable, assert_is_instance, assert_is_in
 import numpy as np
-from pypint.plugins.implicit_solvers.find_root import find_root
-from pypint import LOG
-from pypint.utilities.tracing import assert_is_callable, assert_is_instance
 
 
 class IProblem(object):
@@ -18,31 +18,46 @@ class IProblem(object):
 
     Parameters
     ----------
-    kwargs : dict
-
-        ``function`` : function pointer | lambda
+    function : function pointer | lambda
             Function describing the right hand side of the problem equation.
             Two arguments are required, the first being the time point :math:`t` and the second
             the time-dependent value :math:`\\phi(t)`.
 
-        ``time_start`` : float
-            Start of the time interval to integrate over.
+    time_start : float
+        Start of the time interval to integrate over.
 
-        ``time_end`` : float
-            End of the time interval to integrate over.
+    time_end : float
+        End of the time interval to integrate over.
 
-        ``strings`` : dict
+    dim : int
+        Number of spacial dimensions.
+
+    strings : dict
+        (optional)
+
+        ``rhs`` : string
             (optional)
-
-            ``rhs`` : string
-                (optional)
-                String representation of the right hand side function for logging output.
+            String representation of the right hand side function for logging output.
     """
     def __init__(self, *args, **kwargs):
-        self._function = kwargs["function"] if "function" in kwargs else None
-        self._time_start = kwargs["time_start"] if "time_start" in kwargs else None
-        self._time_end = kwargs["time_end"] if "time_end" in kwargs else None
+        self._function = None
+        if "function" in kwargs:
+            self.function = kwargs["function"]
+
+        self._time_start = 0.0
+        if "time_start" in kwargs:
+            self.time_start = kwargs["time_start"]
+
+        self._time_end = 1.0
+        if "time_end" in kwargs:
+            self.time_end = kwargs["time_end"]
+
         self._numeric_type = np.float
+        if "numeric_type" in kwargs:
+            self.numeric_type = kwargs["numeric_type"]
+
+        self._dim = kwargs["dim"] if "dim" in kwargs else 1
+
         self._strings = {
             "rhs": None,
             "exact": None
@@ -50,8 +65,6 @@ class IProblem(object):
         if "strings" in kwargs:
             if "rhs" in kwargs["strings"]:
                 self._strings["rhs"] = kwargs["strings"]["rhs"]
-            # if "exact" in kwargs["strings"]:
-            #     self._strings["exact"] = kwargs["strings"]["exact"]
 
     def evaluate(self, time, phi_of_time, partial=None):
         """
@@ -82,7 +95,12 @@ class IProblem(object):
         ValueError
             if ``time`` or ``phi_of_time`` are not of correct type.
         """
-        assert_is_instance(time, float, "Time must be given as a floating point number.", self)
+        assert_is_instance(time, float,
+                           "Time must be given as a floating point number: NOT {:s}".format(time.__class__.__name__),
+                           self)
+        assert_is_instance(phi_of_time, np.ndarray,
+                           "Data must be given as a numpy.ndarray: NOT {:s}".format(phi_of_time.__class__.__name__),
+                           self)
 
     def implicit_solve(self, next_x, func, method="hybr"):
         """
@@ -113,13 +131,18 @@ class IProblem(object):
 
         .. _scipy.optimize.root: http://docs.scipy.org/doc/scipy/reference/generated/scipy.optimize.root.html#scipy.optimize.root
         """
-        assert_is_instance(next_x, np.ndarray, "Need a numpy.ndarray.", self)
+        assert_is_instance(next_x, np.ndarray,
+                           "Need a numpy.ndarray: NOT {:s}".format(next_x.__class__.__name__),
+                           self)
         assert_is_callable(func, "Need a callable function.", self)
         sol = find_root(fun=func, x0=next_x, method=method)
-        # LOG.debug("Root is: {:s}, {:s}".format(sol.x, sol.x.dtype))
         if not sol.success:
             LOG.debug("sol.x: " + str(sol.x))
             LOG.error("Implicit solver failed: {:s}".format(sol.message))
+        else:
+            assert_is_instance(sol.x, np.ndarray,
+                               "Solution must be a numpy.ndarray: NOT {:s}".format(sol.x.__class__.__name__),
+                               self)
         return sol.x
 
     @property
@@ -143,6 +166,7 @@ class IProblem(object):
 
     @function.setter
     def function(self, function):
+        assert_is_callable(function)
         self._function = function
 
     @property
@@ -194,6 +218,19 @@ class IProblem(object):
     @property
     def numeric_type(self):
         return self._numeric_type
+
+    @numeric_type.setter
+    def numeric_type(self, numeric_type):
+        numeric_type = np.dtype(numeric_type)
+        _valid_types = ['i', 'u', 'f', 'c']
+        assert_is_in(numeric_type.kind, _valid_types,
+                     "Numeric type must be one of {:s}: NOT {:s}".format(_valid_types, numeric_type.__class__.__name__),
+                     self)
+        self._numeric_type = numeric_type
+
+    @property
+    def dim(self):
+        return self._dim
 
     def __str__(self):
         if self._strings["rhs"] is not None:
