@@ -57,6 +57,11 @@ def assert_is_callable(obj, message=None, checking_obj=None):
         raise ValueError("{:s}.{:s}(): {:s}".format(checking_obj_name(checking_obj), inspect.stack()[2][3], message))
 
 
+def assert_is_in(element, list, message, checking_obj=None):
+    if element not in list:
+        raise ValueError("{:s}.{:s}(): {:s}".format(checking_obj_name(checking_obj), inspect.stack()[2][3], message))
+
+
 def assert_is_instance(obj, instances, message, checking_obj=None):
     if not isinstance(obj, instances):
         # make message optional and construct generic one by default
@@ -72,4 +77,4 @@ def checking_obj_name(obj=None):
     return obj.__class__.__name__ if obj is not None else "unknown"
 
 
-__all__ = ['assert_is_callable', 'assert_is_instance', 'assert_condition', 'func_name']
+__all__ = ['assert_is_callable', 'assert_is_instance', 'assert_is_in', 'assert_condition', 'func_name']
