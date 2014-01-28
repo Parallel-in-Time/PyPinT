@@ -1,11 +1,10 @@
 # coding=utf-8
 """
-
 .. moduleauthor:: Torbjörn Klatt <t.klatt@fz-juelich.de>
 """
 
-import numpy as np
-from pypint.utilities import assert_is_instance, assert_condition
+from .i_solution_data import ISolutionData
+from ..utilities import assert_condition
 
 
 class ISolution(object):
@@ -15,163 +14,47 @@ class ISolution(object):
     Generalized storage for solutions of solvers.
     """
 
-    class IterationData(object):
-        def __init__(self):
-            self._iteration = None
-            self._values = None
-            self._errors = None
-            self._residuals = None
-
-        def init(self, iteration, values, errors=None, residuals=None, numeric_type=np.float):
-            self._iteration = iteration
-            self._values = np.array(values, dtype=numeric_type)
-            self._errors = errors
-            self._residuals = residuals
-
-        @property
-        def iteration(self):
-            return self._iteration
-
-        @property
-        def values(self):
-            return self._values
-
-        @property
-        def errors(self):
-            return self._errors
-
-        @property
-        def residuals(self):
-            return self._residuals
-
-    def __init__(self, numeric_type=np.float):
-        self._numeric_type = numeric_type
-        self._points = np.zeros(0, dtype=np.float)
-        self._exact = np.zeros(0, dtype=self.numeric_type)
-        self._data = ISolution.IterationData()
-        self._used_iterations = None
-        self._reductions = None
-
-    def add_solution(self, points, values, *args, **kwargs):
+    def __init__(self, *args, **kwargs):
         """
-        Summary
-        -------
-        Adds a new solution of the specified iteration.
-
         Parameters
         ----------
-        points : numpy.ndarray
-            Time points of the values.
-
-        values : numpy.ndarray
-            Solution values.
-
-        error : numpy.ndarray
-            (optional)
-            Absolute error of the data.
-
-        residual : numpy.ndarray
-            (optional)
-            Residual of the data.
+        solution_data_type : :py:class:`class`
+            Solution data storage type.
+            Must be a subclass of :py:class:`.solutions.ISolutionData`.
+            Defaults to :py:class:`.solutions.ISolutionData`.
 
         Raises
         ------
-        ValueError
-            * if either ``points``, ``values``, ``error`` or ``residual`` is not a ``numpy.ndarray``
-            * if ``points`` and ``values`` are not of same size
+        ValueError :
+            If `solution_data_type` is not a subclass of :py:class:`.solutions.ISolutionData`.
         """
-        assert_is_instance(points, np.ndarray, "Points must be a numpy.ndarray.", self)
-        assert_is_instance(values, np.ndarray, "Values must be a numpy.ndarray.", self)
-        assert_condition(points.size != 0, ValueError, "Number of points must be positive.", self)
-        assert_condition(points.size == values.size, ValueError, "Points and values must have same size.", self)
-        if "error" in kwargs:
-            assert_is_instance(kwargs["error"], np.ndarray, "Error data must be a numpy.ndarray.", self)
-        if "residual" in kwargs:
-            assert_is_instance(kwargs["residual"], np.ndarray, "Residual data must be a numpy.ndarray.", self)
+        self._data_type = ISolutionData
+        if "solution_data_type" in kwargs:
+            assert_condition(issubclass(kwargs["solution_data_type"], ISolutionData),
+                             ValueError, "Solution data type must be an ISolutionData class: NOT {:s}"
+                                         .format(kwargs["solution_data_type"].__mro__),
+                             self)
+            self._data_type = kwargs["solution_data_type"]
+        self._data = None
+        self._used_iterations = 0
+        self._reduction = None
 
-        if self._points.size == 0:
-            self._points = points
-        if self._exact.size == 0 and "exact" in kwargs:
-            self._exact = kwargs["exact"]
-
-    def solution(self, *args, **kwargs):
+    def add_solution(self, *args, **kwargs):
         """
         Summary
         -------
-        Accessor for a specific solution.
+        Adds a new solution data storage object.
 
-        Extended Summary
-        ----------------
-        Should be overridden by derived classes if applicable.
+        Raises
+        ------
+        NotImplementedError :
+            If called directly or via :py:meth:`super`.
 
-        Parameters
-        ----------
-        kwargs : dict
-            Descriptors (named arguments) of the desired solution.
-
-        Returns
-        -------
-        implementation specific
+        Notes
+        -----
+        This method must be overridden in derived classes.
         """
-        return self._data.values
-
-    def exact(self, *args, **kwargs):
-        return self._exact
-
-    def error(self, *args, **kwargs):
-        """
-        Summary
-        -------
-        Accessor for a specific error.
-
-        Extended Summary
-        ----------------
-        Should be overridden by derived classes if applicable.
-
-        Parameters
-        ----------
-        kwargs : dict
-            Descriptors (named arguments) of the desired error.
-
-        Returns
-        -------
-        implementation specific
-        """
-        return self._data.errors
-
-    def residual(self, *args, **kwargs):
-        """
-        Summary
-        -------
-        Accessor for a specific residual.
-
-        Extended Summary
-        ----------------
-        Should be overridden by derived classes if applicable.
-
-        Parameters
-        ----------
-        kwargs : dict
-            Descriptors (named arguments) of the desired residual.
-
-        Returns
-        -------
-        implementation specific
-        """
-        return self._data.residuals
-
-    @property
-    def points(self):
-        """
-        Summary
-        -------
-        Accessor for all points.
-
-        Returns
-        -------
-        raw points data : numpy.ndarray
-        """
-        return self._points
+        raise NotImplementedError("Must be implemented and overridden by subclasses.")
 
     @property
     def used_iterations(self):
@@ -182,45 +65,28 @@ class ISolution(object):
 
         Parameters
         ----------
-        used_levels : integer
-            Number of used levels to be set.
+        used_iterations : :py:class:`int`
+            number of used iterations
+
+        Raises
+        ------
+        ValueError :
+            If `used_iterations` is not a non-zero positive integer value.
 
         Returns
         -------
-        used levels : integer
-            Number of used levels.
+        used_iterations : :py:class:`int`
+            number of used iterations
         """
         return self._used_iterations
 
     @used_iterations.setter
     def used_iterations(self, used_iterations):
-        self._used_iterations = int(used_iterations)
-
-    @property
-    def reductions(self):
-        """
-        Summary
-        -------
-        Accessor for the reductions of the solver.
-
-        Parameters
-        ----------
-        reduction : dict
-            Reduction to be set.
-
-        Returns
-        -------
-        reduction : float
-        """
-        return self._reductions
-
-    @reductions.setter
-    def reductions(self, reductions):
-        self._reductions = reductions
-
-    @property
-    def numeric_type(self):
-        return self._numeric_type
+        assert_condition(used_iterations > 0,
+                         ValueError, "Number of used iterations must be non-zero positive: NOT {:d}"
+                                     .format(used_iterations),
+                         self)
+        self._used_iterations = used_iterations
 
     def __str__(self):
         return self.__class__.__name__ + ": {:s}".format(self._data)
