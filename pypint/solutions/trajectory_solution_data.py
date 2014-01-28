@@ -137,4 +137,5 @@ class TrajectorySolutionData(ISolutionData):
             for step_index in range(0, self._data.size):
                 self._residuals[step_index] = self._data[step_index].residual
 
+
 __all__ = ['TrajectorySolutionData']

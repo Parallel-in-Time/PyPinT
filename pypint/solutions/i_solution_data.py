@@ -46,4 +46,5 @@ class ISolutionData(object):
         """
         return self._numeric_type
 
+
 __all__ = ['ISolutionData']

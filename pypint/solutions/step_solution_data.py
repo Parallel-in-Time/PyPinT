@@ -144,4 +144,5 @@ class StepSolutionData(ISolutionData):
         """
         return self._residual
 
+
 __all__ = ['StepSolutionData']

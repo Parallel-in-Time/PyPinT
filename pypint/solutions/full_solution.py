@@ -173,4 +173,5 @@ class FullSolution(ISolution):
                                  ValueError, "Time points of one or more stored solution data objects do not match.",
                                  self)
 
+
 __all__ = ['FullSolution']
