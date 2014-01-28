@@ -83,6 +83,24 @@ class TrajectorySolutionData(ISolutionData):
         """
         return self._time_points
 
+    @property
+    def errors(self):
+        """
+        Summary
+        -------
+        Read-only accessor for the errors of stored solution data.
+        """
+        return self._errors
+
+    @property
+    def residuals(self):
+        """
+        Summary
+        -------
+        Read-only accessor for the residuals of stored solution data.
+        """
+        return self._residuals
+
     def _parse_time_points(self):
         """
         Extended Summary
@@ -90,9 +108,10 @@ class TrajectorySolutionData(ISolutionData):
         Extracts stored time points from the :py:class:`.solutions.StepSolutionData` objects in
         :py:attr:`.solutions.TrajectorySolutionData.values`.
         """
-        self._time_points = np.zeros(self._data.size, dtype=np.float)
-        for step_index in range(0, self._data.size):
-            self._time_points[step_index] = self._data[step_index].time_point
+        if self._data is not None:
+            self._time_points = np.zeros(self._data.size, dtype=np.float)
+            for step_index in range(0, self._data.size):
+                self._time_points[step_index] = self._data[step_index].time_point
 
     def _parse_errors(self):
         """
@@ -101,9 +120,10 @@ class TrajectorySolutionData(ISolutionData):
         Extracts stored errors from the :py:class:`.solutions.StepSolutionData` objects in
         :py:attr:`.solutions.TrajectorySolutionData.values`.
         """
-        self._errors = np.zeros(self._data.size, dtype=np.ndarray)
-        for step_index in range(0, self._data.size):
-            self._errors[step_index] = self._data[step_index].error.copy()
+        if self._data is not None:
+            self._errors = np.zeros(self._data.size, dtype=np.ndarray)
+            for step_index in range(0, self._data.size):
+                self._errors[step_index] = self._data[step_index].error.copy()
 
     def _parse_residuals(self):
         """
@@ -112,6 +132,7 @@ class TrajectorySolutionData(ISolutionData):
         Extracts stored residuals from the :py:class:`.solutions.StepSolutionData` objects in
         :py:attr:`.solutions.TrajectorySolutionData.values`.
         """
-        self._residuals = np.zeros(self._data.size, dtype=np.ndarray)
-        for step_index in range(0, self._data.size):
-            self._residuals[step_index] = self._data[step_index].residual
+        if self._data is not None:
+            self._residuals = np.zeros(self._data.size, dtype=np.ndarray)
+            for step_index in range(0, self._data.size):
+                self._residuals[step_index] = self._data[step_index].residual
