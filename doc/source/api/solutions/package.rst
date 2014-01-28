@@ -5,7 +5,9 @@ Solutions (:mod:`solutions`)
 
 .. toctree::
 
+    i_solution_data
+    step_solution_data
+    trajectory_solution_data
     i_solution
-    i_multi_level_solution
-    simple_solution
-    iterative_solution
+    final_solution
+    full_solution
