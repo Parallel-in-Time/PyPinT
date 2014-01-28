@@ -40,7 +40,7 @@ class FinalSolution(ISolution):
         --------
         .solutions.StepSolutionData : for available and valid parameters.
         """
-        if self._data is not None:
+        if self._data:
             warnings.warn("There is already a solution data object stored. Overriding it.")
         self._data = self._data_type(*args, **kwargs)
 
@@ -51,7 +51,7 @@ class FinalSolution(ISolution):
         -------
         Proxies :py:attr:`.solutions.StepSolutionData.value`
         """
-        return self._data.value
+        return self._data.value if self._data else None
 
     @property
     def time_point(self):
@@ -60,7 +60,7 @@ class FinalSolution(ISolution):
         -------
         Proxies :py:attr:`.solutions.StepSolutionData.time_point`
         """
-        return self._data.time_point
+        return self._data.time_point if self._data else None
 
     @property
     def error(self):
@@ -69,7 +69,7 @@ class FinalSolution(ISolution):
         -------
         Proxies :py:attr:`.solutions.StepSolutionData.error`
         """
-        return self._data.error
+        return self._data.error if self._data else None
 
     @property
     def residual(self):
@@ -78,4 +78,7 @@ class FinalSolution(ISolution):
         -------
         Proxies :py:attr:`.solutions.StepSolutionData.residual`
         """
-        return self._data.residual
+        return self._data.residual if self._data else None
+
+
+__all__ = ['FinalSolution']

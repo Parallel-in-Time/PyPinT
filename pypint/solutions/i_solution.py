@@ -90,3 +90,6 @@ class ISolution(object):
 
     def __str__(self):
         return self.__class__.__name__ + ": {:s}".format(self._data)
+
+
+__all__ = ['ISolution']

@@ -8,6 +8,7 @@ from .i_solution import ISolution
 from .trajectory_solution_data import TrajectorySolutionData
 from ..utilities import assert_is_instance, assert_condition
 import numpy as np
+import warnings
 
 
 class FullSolution(ISolution):
@@ -62,14 +63,14 @@ class FullSolution(ISolution):
             * if `iteration` is not an integer
             * if `iteration` is not a valid index for the current size of stored solution data objects
         """
-        if "iteration" not in kwargs:
+        if "iteration" in kwargs:
             assert_is_instance(kwargs["iteration"], int,
                                "Iteration index must be an integer: NOT {:s}"
                                .format(kwargs["iteration"].__class__.__name__),
                                self)
             assert_condition(kwargs["iteration"] in range(-1, self._data.size),
                              ("Iteration index must be with the size of the solution data array: {:d} not in [0, {:d}]"
-                              .format(kwargs["index"], self._data.size)),
+                              .format(kwargs["iteration"], self._data.size)),
                              self)
             iteration = kwargs["iteration"]
             # remove the `iteration` key from the keyword arguments so it does not get passed onto the solution data
@@ -78,16 +79,18 @@ class FullSolution(ISolution):
         else:
             iteration = -1
 
+        _old_data = self._data
         if iteration == -1:
-            np.append(self._data, self._data_type(*args, **kwargs))
+            self._data = np.append(self._data, self._data_type(*args, **kwargs))
         else:
-            np.insert(self._data, iteration, self._data_type(*args, **kwargs))
+            self._data = np.insert(self._data, iteration, self._data_type(*args, **kwargs))
 
         try:
             self._check_consistency()
         except ValueError:
             # consistency check failed, thus removing recently added solution data storage
-            np.delete(self._data, iteration)
+            warnings.warn("Consistency Check failed. Not adding this solution.")
+            self._data = _old_data.copy()
         finally:
             # everything ok
             pass
@@ -105,8 +108,25 @@ class FullSolution(ISolution):
         iteration : :py:class:`int`
             0-based index of the iteration.
             `-1` means last iteration.
+
+        Returns
+        -------
+        solution : :py:class:`.solutions.ISolutionData`
+            or :py:class:`None` if no solutions are stored.
+
+        Raises
+        ------
+        ValueError :
+            if given `iteration` index is not in the valid range
         """
-        assert_condition(iteration in range(-1, self._data.size))
+        if self._data.size > 0:
+            assert_condition(iteration in range(-1, self._data.size),
+                             ValueError, "Iteration index not within valid range: {:d} not in [-1, {:d}"
+                                         .format(iteration, self._data.size),
+                             self)
+            return self._data[iteration]
+        else:
+            return None
 
     @property
     def solutions(self):
@@ -133,10 +153,7 @@ class FullSolution(ISolution):
         time_points : :py:class:`numpy.ndarray`, :py:class:`None`
             :py:class:`None` is returned if no solutions have yet been stored
         """
-        if self._data.size > 0:
-            return self._data[0].time_points
-        else:
-            return None
+        return self._data[0].time_points if self._data.size > 0 else None
 
     def _check_consistency(self):
         """
@@ -151,7 +168,9 @@ class FullSolution(ISolution):
         """
         if self._data.size > 0:
             _time_points = self._data[0].time_points
-            for solution in self._data:
-                assert_condition(np.array_equal(_time_points, solution.time_points),
-                                 "Time points of one or more stored solution data objects do not match.",
+            for iteration in range(1, self._data.size):
+                assert_condition(np.array_equal(_time_points, self._data[iteration].time_points),
+                                 ValueError, "Time points of one or more stored solution data objects do not match.",
                                  self)
+
+__all__ = ['FullSolution']

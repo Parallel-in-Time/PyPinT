@@ -45,3 +45,5 @@ class ISolutionData(object):
         numeric_type : :py:class:`numpy.dtype`
         """
         return self._numeric_type
+
+__all__ = ['ISolutionData']

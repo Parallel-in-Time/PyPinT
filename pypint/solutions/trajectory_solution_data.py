@@ -123,7 +123,7 @@ class TrajectorySolutionData(ISolutionData):
         if self._data is not None:
             self._errors = np.zeros(self._data.size, dtype=np.ndarray)
             for step_index in range(0, self._data.size):
-                self._errors[step_index] = self._data[step_index].error.copy()
+                self._errors[step_index] = self._data[step_index].error
 
     def _parse_residuals(self):
         """
@@ -136,3 +136,5 @@ class TrajectorySolutionData(ISolutionData):
             self._residuals = np.zeros(self._data.size, dtype=np.ndarray)
             for step_index in range(0, self._data.size):
                 self._residuals[step_index] = self._data[step_index].residual
+
+__all__ = ['TrajectorySolutionData']

@@ -143,3 +143,5 @@ class StepSolutionData(ISolutionData):
             if no residual is given
         """
         return self._residual
+
+__all__ = ['StepSolutionData']
