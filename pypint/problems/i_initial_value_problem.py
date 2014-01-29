@@ -17,11 +17,8 @@ class IInitialValueProblem(IProblem):
 
     Parameters
     ----------
-    In addition to the ones of :py:class:`.IProblem` the following options are supported:
-
-    initial_value : float | ``numpy.ndarray``
-        Initial value of :math:`u(t_0,\\phi(t_0))` with :math:`t_0` being the time interval
-        start.
+    initial_value : :py:class:`numpy.ndarray`
+        Initial value of :math:`u(t_0,\\phi(t_0))` with :math:`t_0` being the time interval start.
     """
     def __init__(self, *args, **kwargs):
         super(IInitialValueProblem, self).__init__(*args, **kwargs)
@@ -39,13 +36,19 @@ class IInitialValueProblem(IProblem):
 
         Parameters
         ----------
-        initial value : float | numpy.ndarray
+        initial value : :py:class:`numpy.ndarray`
             Initial value of the solution.
 
         Returns
         -------
-        initial value : float | numpy.ndarray
+        initial value : :py:class:`numpy.ndarray`
             Initial value of the solution.
+
+        Raises
+        ------
+        ValueError :
+            * if ``initial_value`` is not a :py:class:`numpy.ndarray`
+            * if ``initial_value``'s size is not equal the number of spacial :py:attr:`.dim`
         """
         return self._initial_value
 
@@ -64,3 +67,6 @@ class IInitialValueProblem(IProblem):
         _out = super(IInitialValueProblem, self).__str__()
         _out += r", u({:.2f})={:s}".format(self.time_start, self.initial_value)
         return _out
+
+
+__all__ = ['IInitialValueProblem']
