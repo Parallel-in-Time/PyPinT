@@ -1,12 +1,11 @@
 # coding=utf-8
 """
-
 .. moduleauthor:: Torbjörn Klatt <t.klatt@fz-juelich.de>
 """
-
-from .i_solution import ISolution
-from .step_solution_data import StepSolutionData
 import warnings
+
+from pypint.solutions.i_solution import ISolution
+from pypint.solutions.data_storage.step_solution_data import StepSolutionData
 
 
 class FinalSolution(ISolution):
@@ -14,11 +13,16 @@ class FinalSolution(ISolution):
     Summary
     -------
     Storage for the final solution of a solver.
+
+    Extended Summary
+    ----------------
+    The storage data type is defined as :py:class:`.StepSolutionData`.
     """
 
     def __init__(self, *args, **kwargs):
+        super(FinalSolution, self).__init__(*args, **kwargs)
         # As this solution only stores the very last step, `StepSolutionData` is the solution data type.
-        super(FinalSolution, self).__init__(*args, solution_data_type=StepSolutionData, **kwargs)
+        self._data_type = StepSolutionData
 
     def add_solution(self, *args, **kwargs):
         """
@@ -28,17 +32,18 @@ class FinalSolution(ISolution):
 
         Extended Summary
         ----------------
-        This method is constructing a new :py:class:`.solutions.StepSolutionData` object from the given list of
+        This method is constructing a new :py:class:`.StepSolutionData` object from the given list of
         arguments.
 
         Raises
         ------
         UserWarning :
-            If there is already a :py:class:`.solutions.StepSolutionData` object stored.
+            If there is already a :py:class:`.StepSolutionData` object stored.
 
         See Also
         --------
-        .solutions.StepSolutionData : for available and valid parameters.
+        .StepSolutionData :
+            for available and valid parameters.
         """
         if self._data:
             warnings.warn("There is already a solution data object stored. Overriding it.")
@@ -49,7 +54,7 @@ class FinalSolution(ISolution):
         """
         Summary
         -------
-        Proxies :py:attr:`.solutions.StepSolutionData.value`
+        Proxies :py:attr:`.StepSolutionData.value`
         """
         return self._data.value if self._data else None
 
@@ -58,7 +63,7 @@ class FinalSolution(ISolution):
         """
         Summary
         -------
-        Proxies :py:attr:`.solutions.StepSolutionData.time_point`
+        Proxies :py:attr:`.StepSolutionData.time_point`
         """
         return self._data.time_point if self._data else None
 
@@ -67,7 +72,7 @@ class FinalSolution(ISolution):
         """
         Summary
         -------
-        Proxies :py:attr:`.solutions.StepSolutionData.error`
+        Proxies :py:attr:`.StepSolutionData.error`
         """
         return self._data.error if self._data else None
 
@@ -76,7 +81,7 @@ class FinalSolution(ISolution):
         """
         Summary
         -------
-        Proxies :py:attr:`.solutions.StepSolutionData.residual`
+        Proxies :py:attr:`.StepSolutionData.residual`
         """
         return self._data.residual if self._data else None
 

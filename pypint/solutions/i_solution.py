@@ -2,9 +2,7 @@
 """
 .. moduleauthor:: Torbjörn Klatt <t.klatt@fz-juelich.de>
 """
-
-from .i_solution_data import ISolutionData
-from ..utilities import assert_condition
+from pypint.utilities import assert_condition
 
 
 class ISolution(object):
@@ -15,26 +13,7 @@ class ISolution(object):
     """
 
     def __init__(self, *args, **kwargs):
-        """
-        Parameters
-        ----------
-        solution_data_type : :py:class:`class`
-            Solution data storage type.
-            Must be a subclass of :py:class:`.solutions.ISolutionData`.
-            Defaults to :py:class:`.solutions.ISolutionData`.
-
-        Raises
-        ------
-        ValueError :
-            If `solution_data_type` is not a subclass of :py:class:`.solutions.ISolutionData`.
-        """
-        self._data_type = ISolutionData
-        if "solution_data_type" in kwargs:
-            assert_condition(issubclass(kwargs["solution_data_type"], ISolutionData),
-                             ValueError, "Solution data type must be an ISolutionData class: NOT {:s}"
-                                         .format(kwargs["solution_data_type"].__mro__),
-                             self)
-            self._data_type = kwargs["solution_data_type"]
+        self._data_type = None
         self._data = None
         self._used_iterations = 0
         self._reduction = None
@@ -87,6 +66,20 @@ class ISolution(object):
                                      .format(used_iterations),
                          self)
         self._used_iterations = used_iterations
+
+    @property
+    def data_storage_type(self):
+        """
+        Summary
+        -------
+        Read-only accessor for the data storage type.
+
+        Returns
+        -------
+        data_storage_type : :py:class:`.TrajectorySolutionData` or :py:class:`.StepSolutionData`
+            or a derived class thereof
+        """
+        return self._data_type
 
     def __str__(self):
         return self.__class__.__name__ + ": {:s}".format(self._data)
