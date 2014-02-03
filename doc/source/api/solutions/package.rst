@@ -2,12 +2,12 @@ Solutions (:mod:`solutions`)
 ============================
 
 .. automodule:: pypint.solutions
+    :no-members:
+    :no-inherited-members:
 
 .. toctree::
 
-    i_solution_data
-    step_solution_data
-    trajectory_solution_data
+    data_storage/package
     i_solution
     final_solution
     full_solution
