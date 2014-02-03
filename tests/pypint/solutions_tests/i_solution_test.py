@@ -1,18 +1,12 @@
 # coding=utf-8
-from pypint.solutions.i_solution import ISolution
-from pypint.solutions.i_solution_data import ISolutionData
-from pypint.solutions.step_solution_data import StepSolutionData
 import unittest
+
+from pypint.solutions.i_solution import ISolution
 
 
 class ISolutionTest(unittest.TestCase):
     def setUp(self):
         self._default = ISolution()
-
-    def test_can_specialize_data_storage_type(self):
-        _test = ISolution(solution_data_type=ISolutionData)
-        _test = ISolution(solution_data_type=StepSolutionData)
-        self.assertRaises(ValueError, ISolution, solution_data_type=ISolution)
 
     def test_provides_used_iterations(self):
         self.assertEqual(self._default.used_iterations, 0)
@@ -24,6 +18,9 @@ class ISolutionTest(unittest.TestCase):
 
     def test_defines_add_solution_interface(self):
         self.assertRaises(NotImplementedError, self._default.add_solution)
+
+    def test_provides_data_storage_type(self):
+        self.assertIsNone(self._default.data_storage_type)
 
     def test_has_to_string_method(self):
         self.assertRegex(self._default.__str__(), "ISolution")

@@ -1,10 +1,12 @@
 # coding=utf-8
-from pypint.solutions.full_solution import FullSolution
-from pypint.solutions.step_solution_data import StepSolutionData
-from pypint.solutions.trajectory_solution_data import TrajectorySolutionData
-from tests import NumpyAwareTestCase
-import numpy
 import warnings
+
+import numpy
+
+from pypint.solutions.data_storage.step_solution_data import StepSolutionData
+from pypint.solutions.data_storage.trajectory_solution_data import TrajectorySolutionData
+from pypint.solutions.full_solution import FullSolution
+from tests import NumpyAwareTestCase
 
 
 class FullSolutionTest(NumpyAwareTestCase):
@@ -16,24 +18,32 @@ class FullSolutionTest(NumpyAwareTestCase):
         self._step2 = StepSolutionData(value=self._value2, time_point=1.5)
         self._step3 = StepSolutionData(value=self._value1, time_point=1.5)
         self._step4 = StepSolutionData(value=self._value1, time_point=2.0)
+        self._traj1 = TrajectorySolutionData()
+        self._traj1.add_solution_data(value=self._value1, time_point=1.0)
+        self._traj1.add_solution_data(value=self._value2, time_point=1.5)
+        self._traj2 = TrajectorySolutionData()
+        self._traj2.add_solution_data(value=self._value1, time_point=1.0)
+        self._traj2.add_solution_data(value=self._value1, time_point=1.5)
+        self._traj3 = TrajectorySolutionData()
+        self._traj3.add_solution_data(value=self._value1, time_point=1.0)
+        self._traj3.add_solution_data(value=self._value1, time_point=1.5)
+        self._traj3.add_solution_data(value=self._value2, time_point=2.0)
 
     def test_adds_solutions_to_data_storage(self):
-        _first_iteration = numpy.array([self._step1, self._step2])
-        _second_iteration = numpy.array([self._step1, self._step3])
-        self._default.add_solution(values=_second_iteration)
-        self.assertEqual(self._default.solutions.size, 1)
-        self._default.add_solution(iteration=0, values=_first_iteration)
-        self.assertEqual(self._default.solutions.size, 2)
+        self._default.add_solution(self._traj1)
+        self.assertEqual(len(self._default.solutions), 1)
+        self._default.add_solution(self._traj2, iteration=0)
+        self.assertEqual(len(self._default.solutions), 2)
         self.assertNumpyArrayEqual(self._default.time_points, numpy.array([1.0, 1.5]))
 
         self.assertIsInstance(self._default.solution(0), TrajectorySolutionData)
 
     def test_checks_consistency_of_time_points_on_add(self):
-        self._default.add_solution(values=numpy.array([self._step1, self._step3]))
-        self._default.add_solution(iteration=0, values=numpy.array([self._step1, self._step2]))
+        self._default.add_solution(self._traj1)
+        self._default.add_solution(self._traj2, iteration=0)
         with warnings.catch_warnings(record=True) as w:
             warnings.filterwarnings("always")
-            self._default.add_solution(values=numpy.array([self._step1, self._step2, self._step4]))
+            self._default.add_solution(self._traj3)
             self.assertEqual(len(w), 1)
             self.assertTrue(issubclass(w[-1].category, UserWarning))
 
@@ -42,7 +52,7 @@ class FullSolutionTest(NumpyAwareTestCase):
                           "In case no solutions are stored, 'None' should always be returned.")
 
     def test_provides_array_of_all_solution_data_storages(self):
-        self.assertNumpyArrayEqual(self._default.solutions, numpy.array([]))
+        self.assertEqual(self._default.solutions, [])
 
     def test_provides_time_points(self):
         self.assertIsNone(self._default.time_points)
