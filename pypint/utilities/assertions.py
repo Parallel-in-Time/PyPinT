@@ -9,22 +9,23 @@ Collection of assertions for validation.
 
 from .tracing import checking_obj_name
 import inspect
+from collections import Callable
 
 
 def assert_condition(condition, exception_type, message, checking_obj=None):
     if not condition:
-        raise exception_type("{:s}.{:s}(): {:s}".format(checking_obj_name(checking_obj), inspect.stack()[2][3], message))
+        raise exception_type("{:s}.{:s}(): {:s}".format(checking_obj_name(checking_obj), inspect.stack()[1][3], message))
 
 
 def assert_is_callable(obj, message=None, checking_obj=None):
-    if not callable(obj):
+    if not isinstance(obj, Callable):
         if message is None:
             message = "Required a callable, received a '{:s}'.".format(type(obj))
         raise ValueError("{:s}.{:s}(): {:s}".format(checking_obj_name(checking_obj), inspect.stack()[2][3], message))
 
 
-def assert_is_in(element, list, message, checking_obj=None):
-    if element not in list:
+def assert_is_in(element, test_list, message, checking_obj=None):
+    if element not in test_list:
         raise ValueError("{:s}.{:s}(): {:s}".format(checking_obj_name(checking_obj), inspect.stack()[2][3], message))
 
 
