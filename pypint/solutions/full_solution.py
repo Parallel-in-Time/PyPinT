@@ -19,8 +19,8 @@ class FullSolution(ISolution):
 
     Extended Summary
     ----------------
-    A new solution of a specific iteration can be added via :py:func:`.add_solution` and queried via
-    :py:func:`.solution`.
+    A new solution of a specific iteration can be added via :py:meth:`.add_solution` and queried via
+    :py:meth:`.solution`.
 
     Examples
     --------
@@ -42,11 +42,10 @@ class FullSolution(ISolution):
             Defaults to :py:class:`.TrajectorySolutionData`.
         """
         super(FullSolution, self).__init__(*args, **kwargs)
+        self._data = []
         # As this solution stores all values of all nodes of one iteration, `TrajectorySolutionData` is the solution
         # data type.
-        if 'solution_data_type' not in kwargs:
-            kwargs['solution_data_type'] = TrajectorySolutionData
-        self._data = np.zeros(0, dtype=np.object)
+        self._data_type = kwargs['solution_data_type'] if 'solution_data_type' in kwargs else TrajectorySolutionData
 
     def add_solution(self, *args, **kwargs):
         """
@@ -57,7 +56,7 @@ class FullSolution(ISolution):
         Extended Summary
         ----------------
         After each call an internal consistency check is carried out, which might raise further exceptions.
-        The number of used iterations (see :py:attr:`.ISolution.used_iterations`) is auto-incremented on success.
+        The number of used iterations (see :py:attr:`.used_iterations`) is auto-incremented on success.
 
         Parameters
         ----------
@@ -103,11 +102,11 @@ class FullSolution(ISolution):
                            .format(self._data_type, args[0].__class__.__name__),
                            self)
 
-        _old_data = self._data  # backup for potential rollback
+        _old_data = self._data.copy()  # backup for potential rollback
         if _iteration == -1:
-            self._data = np.append(self._data, args[0])
+            self._data.append(args[0])
         else:
-            self._data = np.insert(self._data, _iteration, args[0])
+            self._data.insert(_iteration, args[0])
 
         try:
             self._check_consistency()
@@ -131,22 +130,22 @@ class FullSolution(ISolution):
         ----------
         iteration : :py:class:`int`
             0-based index of the iteration.
-            `-1` means last iteration.
+            ``-1`` means last iteration.
 
         Returns
         -------
-        solution : :py:class:`.ISolutionData`
+        solution : instance of :py:attr:`.data_storage_type`
             or :py:class:`None` if no solutions are stored.
 
         Raises
         ------
         ValueError :
-            if given `iteration` index is not in the valid range
+            if given ``iteration`` index is not in the valid range
         """
-        if self._data.size > 0:
-            assert_condition(iteration in range(-1, self._data.size),
+        if len(self._data) > 0:
+            assert_condition(iteration in range(-1, len(self._data)),
                              ValueError, "Iteration index not within valid range: {:d} not in [-1, {:d}"
-                                         .format(iteration, self._data.size),
+                                         .format(iteration, len(self._data)),
                              self)
             return self._data[iteration]
         else:
@@ -161,7 +160,7 @@ class FullSolution(ISolution):
 
         Returns
         -------
-        values : :py:class:`numpy.ndarray` of :py:class:`.TrajectorySolutionData` objects
+        values : :py:class:`list` of :py:class:`.TrajectorySolutionData` objects
         """
         return self._data
 
@@ -177,7 +176,7 @@ class FullSolution(ISolution):
         time_points : :py:class:`numpy.ndarray` or :py:class:`None`
             :py:class:`None` is returned if no solutions have yet been stored
         """
-        return self._data[0].time_points if self._data.size > 0 else None
+        return self._data[0].time_points if len(self._data) > 0 else None
 
     def _check_consistency(self):
         """
@@ -190,9 +189,9 @@ class FullSolution(ISolution):
         ValueError :
             * if the time points of at least two solution data storage objects differ
         """
-        if self._data.size > 0:
+        if len(self._data) > 0:
             _time_points = self._data[0].time_points
-            for iteration in range(1, self._data.size):
+            for iteration in range(1, len(self._data)):
                 assert_condition(np.array_equal(_time_points, self._data[iteration].time_points),
                                  ValueError, "Time points of one or more stored solution data objects do not match.",
                                  self)
