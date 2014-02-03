@@ -68,7 +68,7 @@ class StepSolutionData(object):
         Thus, specifying :py:attr:`.ISolutionData.dim` and :py:attr:`.ISolutionData.numeric_type`
         is not recommended (in fact they are ignored).
         """
-        self._value = None
+        self._data = None
         self._time_point = None
         self._error = None
         self._residual = None
@@ -79,8 +79,6 @@ class StepSolutionData(object):
 
         if 'value' in kwargs:
             self.value = kwargs['value']
-            self._dim = self._data.size
-            self._numeric_type = self._data.dtype
 
         if 'time_point' in kwargs:
             self.time_point = kwargs['time_point']
@@ -102,7 +100,7 @@ class StepSolutionData(object):
         ValueError :
             If it has already been locked.
         """
-        assert_condition(not self.finalized, ValueError, "This solution data storage is already finalized.", self)
+        assert_condition(not self.finalized, AttributeError, "This solution data storage is already finalized.", self)
         self._finalized = True
 
     @property
@@ -143,10 +141,12 @@ class StepSolutionData(object):
 
     @value.setter
     def value(self, value):
-        assert_condition(not self.finalized, ValueError, "Cannot change this solution data storage any more.", self)
+        assert_condition(not self.finalized, AttributeError, "Cannot change this solution data storage any more.", self)
         assert_is_instance(value, np.ndarray,
                            "Values must be a numpy.ndarray: NOT {:s}".format(value.__class__.__name__),
                            self)
+        self._dim = value.size
+        self._numeric_type = value.dtype
         self._data = value.copy()
 
     @property
@@ -174,7 +174,7 @@ class StepSolutionData(object):
 
     @time_point.setter
     def time_point(self, time_point):
-        assert_condition(not self.finalized, ValueError, "Cannot change this solution data storage any more.", self)
+        assert_condition(not self.finalized, AttributeError, "Cannot change this solution data storage any more.", self)
         assert_is_instance(time_point, float,
                            "Time point must be a float: NOT {:s}".format(time_point.__class__.__name__),
                            self)
@@ -206,7 +206,7 @@ class StepSolutionData(object):
 
     @error.setter
     def error(self, error):
-        assert_condition(not self.finalized, ValueError, "Cannot change this solution data storage any more.", self)
+        assert_condition(not self.finalized, AttributeError, "Cannot change this solution data storage any more.", self)
         assert_is_instance(error, (np.ndarray, Error),
                            "Error must be a numpy.ndarray or Error type: NOT {:s}"
                            .format(error.__class__.__name__),
@@ -239,7 +239,7 @@ class StepSolutionData(object):
 
     @residual.setter
     def residual(self, residual):
-        assert_condition(not self.finalized, ValueError, "Cannot change this solution data storage any more.", self)
+        assert_condition(not self.finalized, AttributeError, "Cannot change this solution data storage any more.", self)
         assert_is_instance(residual, (np.ndarray, Residual),
                            "Residual must be a numpy.ndarray or Rsidual type: NOT {:s}"
                            .format(residual.__class__.__name__),
@@ -330,9 +330,6 @@ class StepSolutionData(object):
                            "Can not compare StepSolutionData with {}".format(other.__class__.__name__),
                            self)
         return not self.__eq__(other)
-
-    def __str__(self):
-        pass
 
     # StepSolutionData is mutable
     __hash__ = None

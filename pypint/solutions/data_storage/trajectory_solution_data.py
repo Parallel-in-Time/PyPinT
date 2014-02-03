@@ -20,6 +20,25 @@ class TrajectorySolutionData(object):
     ----------------
     Basically, this is nothing more than an array of :py:class:`.StepSolutionData` objects and a couple of
     utility functions for easy data access and consistency checks.
+
+    This class provides a selected subset of Python's mutable sequence datatype methods:
+
+    :``__len__``:
+        Returns the number of :py:class:`.StepSolutionData` objects stored in this instance.
+
+    :``__gettiem__``:
+        Takes the 0-based index of the :py:class:`.StepSolutionData` object to query.
+
+    :``__setitem__``:
+        Takes a :py:class:`float` representing the time point and a :py:class:`numpy.ndarray` as the rvalue.
+        Same as ``.add_solution_data(value=<rvalue>, time_point=<time_point>)``.
+
+    :``__iter__``:
+        Gives an iterator over the stored :py:class:`.StepSolutionData` objects (proxies
+        :py:meth:`numpy.ndarray.__iter__`).
+
+    :``__contains__``:
+        Finds the given :py:class:`.StepSolutionData` object in this sequence.
     """
 
     def __init__(self):
@@ -208,9 +227,6 @@ class TrajectorySolutionData(object):
 
     def __getitem__(self, item):
         return self._data[item]
-
-    def __delitem__(self, key):
-        del self._data[key]
 
     def __setitem__(self, key, value):
         self.add_solution_data(value=value, time_point=key)
