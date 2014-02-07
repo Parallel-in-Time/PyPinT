@@ -4,7 +4,6 @@
 """
 from .i_problem import IProblem
 from ..utilities import assert_is_callable, assert_is_instance
-import numpy as np
 
 
 class HasExactSolutionMixin(object):
@@ -25,7 +24,7 @@ class HasExactSolutionMixin(object):
         if "exact_function" in kwargs:
             self.exact_function = kwargs["exact_function"]
 
-    def exact(self, time, phi_of_time):
+    def exact(self, time):
         """
         Summary
         -------
@@ -35,9 +34,6 @@ class HasExactSolutionMixin(object):
         ----------
         time : :py:class:`float`
             Time point :math:`t`
-
-        phi_of_time : :py:class:`numpy.ndarray`
-            Time-dependent data.
 
         Returns
         -------
@@ -51,11 +47,8 @@ class HasExactSolutionMixin(object):
             * if not exact function is given
         """
         assert_is_instance(time, float, "Time must be a float.", self)
-        assert_is_instance(phi_of_time, np.ndarray,
-                           "Data must be given as a numpy.ndarray: NOT {:s}".format(phi_of_time.__class__.__name__),
-                           self)
         assert_is_callable(self._exact_function, "Exact function not given.", self)
-        return self._exact_function(time, phi_of_time)
+        return self._exact_function(time)
 
     @property
     def exact_function(self):
