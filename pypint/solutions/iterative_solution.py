@@ -3,15 +3,17 @@
 .. moduleauthor:: Torbjörn Klatt <t.klatt@fz-juelich.de>
 """
 import warnings
+import copy
 
 import numpy as np
 
 from pypint.solutions.i_solution import ISolution
+from pypint.solutions.data_storage.step_solution_data import StepSolutionData
 from pypint.solutions.data_storage.trajectory_solution_data import TrajectorySolutionData
 from pypint.utilities import assert_is_instance, assert_condition
 
 
-class FullSolution(ISolution):
+class IterativeSolution(ISolution):
     """
     Summary
     -------
@@ -29,9 +31,9 @@ class FullSolution(ISolution):
     However, this can be changed on initialization to only store the solution of the last time point over the course of
     iterations:
 
-    >>> from pypint.solutions.full_solution import FullSolution
+    >>> from pypint.solutions.iterative_solution import IterativeSolution
     >>> from pypint.solutions.data_storage.step_solution_data import StepSolutionData
-    >>> my_reduced_full_solution = FullSolution(solution_data_type=StepSolutionData)
+    >>> my_reduced_full_solution = IterativeSolution(solution_data_type=StepSolutionData)
     """
 
     def __init__(self, *args, **kwargs):
@@ -41,11 +43,13 @@ class FullSolution(ISolution):
         solution_data_type : :py:class:`.TrajectorySolutionData` or :py:class:`.StepSolutionData`
             Defaults to :py:class:`.TrajectorySolutionData`.
         """
-        super(FullSolution, self).__init__(*args, **kwargs)
+        super(IterativeSolution, self).__init__(*args, **kwargs)
         self._data = []
         # As this solution stores all values of all nodes of one iteration, `TrajectorySolutionData` is the solution
         # data type.
         self._data_type = kwargs['solution_data_type'] if 'solution_data_type' in kwargs else TrajectorySolutionData
+        self._error_reduction = {}
+        self._solution_reduction = {}
 
     def add_solution(self, *args, **kwargs):
         """
@@ -151,6 +155,106 @@ class FullSolution(ISolution):
         else:
             return None
 
+    def error(self, iteration):
+        """
+        Summary
+        -------
+        Accessor for the errors of a specific iteration.
+
+        Parameters
+        ----------
+        iteration : :py:class:`int`
+            0-based index of the iteration.
+            ``-1`` means last iteration.
+
+        Returns
+        -------
+        error : instance of :py:attr:`.Error`
+            or :py:class:`None` if no solutions are stored.
+
+        Raises
+        ------
+        ValueError :
+            if given ``iteration`` index is not in the valid range
+        """
+        if len(self._data) > 0:
+            assert_condition(iteration in range(-1, len(self._data)),
+                             ValueError, "Iteration index not within valid range: {:d} not in [-1, {:d}"
+                                         .format(iteration, len(self._data)),
+                             self)
+            if self._data_type == StepSolutionData:
+                return np.array(self._data[iteration].error, dtype=np.object)
+            else:
+                return self._data[iteration].errors
+        else:
+            return None
+
+    def residual(self, iteration):
+        """
+        Summary
+        -------
+        Accessor for the residuals of a specific iteration.
+
+        Parameters
+        ----------
+        iteration : :py:class:`int`
+            0-based index of the iteration.
+            ``-1`` means last iteration.
+
+        Returns
+        -------
+        residual : instance of :py:attr:`.Residual`
+            or :py:class:`None` if no solutions are stored.
+
+        Raises
+        ------
+        ValueError :
+            if given ``iteration`` index is not in the valid range
+        """
+        if len(self._data) > 0:
+            assert_condition(iteration in range(-1, len(self._data)),
+                             ValueError, "Iteration index not within valid range: {:d} not in [-1, {:d}"
+                                         .format(iteration, len(self._data)),
+                             self)
+            if self._data_type == StepSolutionData:
+                return np.array(self._data[iteration].residual, dtype=np.object)
+            else:
+                return self._data[iteration].residuals
+        else:
+            return None
+
+    def error_reduction(self, iteration):
+        if iteration in self._error_reduction:
+            return self._error_reduction[iteration]
+        else:
+            return None
+
+    def solution_reduction(self, iteration):
+        if iteration in self._solution_reduction:
+            return self._solution_reduction[iteration]
+        else:
+            return None
+
+    def set_error_reduction(self, iteration, reduction):
+        assert_condition(isinstance(iteration, int) and iteration > 0,
+                         ValueError, "Iteration must be a non-zero positive integer: NOT {}".format(iteration),
+                         self)
+        assert_is_instance(reduction, (float, np.ndarray),
+                           "Reduction of error must be given as a float or numpy.ndarray: NOT {}"
+                           .format(reduction.__class__.__name__),
+                           self)
+        self._error_reduction[iteration] = copy.copy(reduction)
+
+    def set_solution_reduction(self, iteration, reduction):
+        assert_condition(isinstance(iteration, int) and iteration > 0,
+                         ValueError, "Iteration must be a non-zero positive integer: NOT {}".format(iteration),
+                         self)
+        assert_is_instance(reduction, (float, np.ndarray),
+                           "Reduction of solution must be given as a float or numpy.ndarray: NOT {}"
+                           .format(reduction.__class__.__name__),
+                           self)
+        self._solution_reduction[iteration] = copy.copy(reduction)
+
     @property
     def solutions(self):
         """
@@ -160,7 +264,7 @@ class FullSolution(ISolution):
 
         Returns
         -------
-        values : :py:class:`list` of :py:class:`.TrajectorySolutionData` objects
+        values : :py:class:`list` of :py:class:`.TrajectorySolutionData` or :py:class:`.StepSolutionData` objects
         """
         return self._data
 
@@ -176,7 +280,13 @@ class FullSolution(ISolution):
         time_points : :py:class:`numpy.ndarray` or :py:class:`None`
             :py:class:`None` is returned if no solutions have yet been stored
         """
-        return self._data[0].time_points if len(self._data) > 0 else None
+        if len(self._data) > 0:
+            if self._data_type == TrajectorySolutionData:
+                return self._data[0].time_points
+            else:
+                return np.array([step.time_point for step in self._data], dtype=np.float)
+        else:
+            return None
 
     def _check_consistency(self):
         """
@@ -197,4 +307,4 @@ class FullSolution(ISolution):
                                  self)
 
 
-__all__ = ['FullSolution']
+__all__ = ['IterativeSolution']

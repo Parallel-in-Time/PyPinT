@@ -124,7 +124,7 @@ class TrajectorySolutionData(object):
         -------
         error : :py:class:`numpy.ndarray` of :py:class:`float`
         """
-        return np.array([step.time_point for step in self.data])
+        return np.array([step.time_point for step in self.data], dtype=np.float)
 
     @property
     def values(self):
@@ -137,7 +137,7 @@ class TrajectorySolutionData(object):
         -------
         error : :py:class:`numpy.ndarray` of :py:class:`.numeric_type`
         """
-        return np.array([step.value for step in self.data])
+        return np.array([step.value for step in self.data], dtype=np.object)
 
     @property
     def errors(self):
@@ -150,7 +150,7 @@ class TrajectorySolutionData(object):
         -------
         error : :py:class:`numpy.ndarray` of :py:class:`.Error`
         """
-        return np.array([step.error for step in self.data])
+        return np.array([step.error for step in self.data], dtype=np.object)
 
     @property
     def residuals(self):
@@ -163,7 +163,7 @@ class TrajectorySolutionData(object):
         -------
         error : :py:class:`numpy.ndarray` of :py:class:`.Residual`
         """
-        return np.array([step.residual for step in self.data])
+        return np.array([step.residual for step in self.data], dtype=np.object)
 
     @property
     def numeric_type(self):

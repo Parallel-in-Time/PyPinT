@@ -2,6 +2,8 @@
 """
 .. moduleauthor:: Torbjörn Klatt <t.klatt@fz-juelich.de>
 """
+from copy import deepcopy
+
 import numpy as np
 
 from pypint.solvers.diagnosis import Error, Residual
@@ -137,17 +139,17 @@ class StepSolutionData(object):
             :on setting:
                 If this storage data instance has been finalized.
         """
-        return self._data
+        return self._data.value
 
     @value.setter
     def value(self, value):
         assert_condition(not self.finalized, AttributeError, "Cannot change this solution data storage any more.", self)
         assert_is_instance(value, np.ndarray,
-                           "Values must be a numpy.ndarray: NOT {:s}".format(value.__class__.__name__),
+                           "Values must be a NumericData: NOT {}".format(value.__class__.__name__),
                            self)
         self._dim = value.size
         self._numeric_type = value.dtype
-        self._data = value.copy()
+        self._data = value
 
     @property
     def time_point(self):
@@ -271,6 +273,18 @@ class StepSolutionData(object):
         numeric_type : :py:class:`numpy.dtype`
         """
         return self._numeric_type
+
+    def __copy__(self):
+        copy = self.__class__.__new__(self.__class__)
+        copy.__dict__.update(self.__dict__)
+        return copy
+
+    def __deepcopy__(self, memo):
+        copy = self.__class__.__new__(self.__class__)
+        memo[id(self)] = copy
+        for item, value in self.__dict__.items():
+            setattr(copy, item, deepcopy(value, memo))
+        return copy
 
     def __eq__(self, other):
         assert_is_instance(other, StepSolutionData,
