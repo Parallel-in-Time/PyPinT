@@ -4,7 +4,7 @@
 .. moduleauthor: Torbjörn Klatt <t.klatt@fz-juelich.de>
 """
 
-from .i_iterative_time_solver import IIterativeTimeSolver
+from pypint.solvers.i_iterative_time_solver import IIterativeTimeSolver
 
 
 class IMultiLevelSolver(IIterativeTimeSolver):
