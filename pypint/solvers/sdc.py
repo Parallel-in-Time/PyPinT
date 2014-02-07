@@ -1,23 +1,23 @@
 # coding=utf-8
 """
-
 .. moduleauthor:: Torbjörn Klatt <t.klatt@fz-juelich.de>
 """
-
-from .i_iterative_time_solver import IIterativeTimeSolver
 from copy import deepcopy
 import warnings as warnings
+
 import numpy as np
-from .cores.sdc_core_mixin import SdcCoreMixin
-from ..integrators.sdc_integrator import SdcIntegrator
-from ..integrators.node_providers.gauss_lobatto_nodes import GaussLobattoNodes
-from ..integrators.weight_function_providers.polynomial_weight_function import PolynomialWeightFunction
-from ..problems import IInitialValueProblem, problem_has_exact_solution
-from ..solutions.iterative_solution import IterativeSolution
-from ..plugins.timers.timer_base import TimerBase
-from ..utilities.threshold_check import ThresholdCheck
-from ..utilities import assert_is_instance, assert_condition, func_name
-from .. import LOG
+
+from pypint.solvers.i_iterative_time_solver import IIterativeTimeSolver
+from pypint.integrators.sdc_integrator import SdcIntegrator
+from pypint.integrators.node_providers.gauss_lobatto_nodes import GaussLobattoNodes
+from pypint.integrators.weight_function_providers.polynomial_weight_function import PolynomialWeightFunction
+from pypint.problems import IInitialValueProblem, problem_has_exact_solution
+from pypint.solvers.states.sdc_solver_state import SdcSolverState
+from pypint.solvers.diagnosis.norms import supremum_norm
+from pypint.plugins.timers.timer_base import TimerBase
+from pypint.utilities.threshold_check import ThresholdCheck
+from pypint.utilities import assert_is_instance, assert_condition, func_name
+from pypint import LOG
 
 # General Notes on Implementation
 # ===============================
@@ -33,7 +33,7 @@ from .. import LOG
 # i                      | index of current point in continuous array of points
 
 
-class Sdc(IIterativeTimeSolver, SdcCoreMixin):
+class Sdc(IIterativeTimeSolver):
     """
     Summary
     -------
@@ -89,101 +89,22 @@ class Sdc(IIterativeTimeSolver, SdcCoreMixin):
     >>> print(my_solution.solution(-1))
     [  1.00000000e+00   5.00000000e-01  -1.11022302e-16]
     """
-
-    class State(IIterativeTimeSolver.State):
-        num_points = 0
-
-        def __init__(self, iteration=0):
-            super(Sdc.State, self).__init__(iteration)
-            self._solution = np.zeros(Sdc.State.num_points)
-            self._error = np.zeros(Sdc.State.num_points)
-            self._residual = np.zeros(Sdc.State.num_points)
-            self._reduction_of_solution = np.inf
-            self._reduction_of_error = np.inf
-
-        def solution_at(self, index, value=None):
-            """
-            Summary
-            -------
-            Accessor for the solution at node index `index`.
-
-            Parameters
-            ----------
-            index : int
-                Node index to set or get solution at.
-            value : :py:attr:`.Problem.numeric_type` or `None`
-                If non-None sets the solution value, else returns the solution value at given `index`.
-            """
-            assert_condition(index < self.solution.size,
-                             ValueError, "Index out of range: {:d} >= {:d}".format(index, self.solution.size),
-                             self)
-            if value is None:
-                return self._solution[index]
-            else:
-                self._solution[index] = value
-
-        def error_at(self, index, value=None):
-            """
-            Summary
-            -------
-            Accessor for the error at node index `index`.
-
-            Parameters
-            ----------
-            index : int
-                Node index to set or get error at.
-            value : :py:attr:`.Problem.numeric_type` or `None`
-                If non-None sets the error value, else returns the error value at given `index`.
-            """
-            assert_condition(index < self.error.size,
-                             ValueError, "Index out of range: {:d} >= {:d}".format(index, self.error.size),
-                             self)
-            if value is None:
-                return self._error[index]
-            else:
-                self._error[index] = value
-
-        def residual_at(self, index, value=None):
-            """
-            Summary
-            -------
-            Accessor for the residual at node index `index`.
-
-            Parameters
-            ----------
-            index : int
-                Node index to set or get residual at.
-            value : :py:attr:`.Problem.numeric_type` or `None`
-                If non-None sets the residual value, else returns the residual value at given `index`.
-            """
-            assert_condition(index < self.residual.size,
-                             ValueError, "Index out of range: {:d} >= {:d}".format(index, self.residual.size),
-                             self)
-            if value is None:
-                return self._residual[index]
-            else:
-                self._residual[index] = value
-
     def __init__(self, **kwargs):
         super(Sdc, self).__init__(**kwargs)
-        self.timer = TimerBase()
         self._num_time_steps = 1
-        self._type = "expl"
-        self._type_str = "Explicit"
-        self.__num_nodes = 3
-        self._threshold = ThresholdCheck(min_threshold=1e-7, max_threshold=10,
-                                         conditions=("residual", "iterations"))
-        self.__num_points = 0
+        self.threshold = ThresholdCheck(min_threshold=1e-7, max_threshold=10,
+                                              conditions=("residual", "iterations"))
         self.__exact = np.zeros(0)
+        self._state = None
         self.__time_points = {
-            "steps": np.zeros(0),
-            "nodes": np.zeros(0)
+            'steps': np.zeros(0),
+            'nodes': np.zeros(0)
         }
         self._deltas = {
-            "I": 0.0,
-            "t": np.zeros(0),
-            "n": np.zeros(0)
+            't': 0.0,
+            'n': np.zeros(0)
         }
+        self.timer = TimerBase()
 
     def init(self, problem, integrator=SdcIntegrator(), **kwargs):
         """
@@ -193,10 +114,7 @@ class Sdc(IIterativeTimeSolver, SdcCoreMixin):
 
         Parameters
         ----------
-        In addition to the options available via :py:meth:`.IIterativeTimeSolver.init()`
-        the following specific options are available:
-
-        num_time_steps : integer
+        num_time_steps : :py:class:`int`
             Number of time steps to be used within the time interval of the problem.
 
         nodes_type : :py:class:`.INodes`
@@ -205,14 +123,14 @@ class Sdc(IIterativeTimeSolver, SdcCoreMixin):
         weights_type : :py:class:`.IWeightFunction`
             Integration weights function to be used.
 
-        type : str
+        type : :py:class:`str`
             Specifying the type of the SDC steps being implicit (``impl``), explicit (``expl``) or semi-implicit
             (``semi``).
             Default is ``expl``.
 
         Raises
         ------
-        ValueError
+        ValueError :
             If given problem is not an :py:class:`.IInitialValueProblem`.
 
         See Also
@@ -226,78 +144,61 @@ class Sdc(IIterativeTimeSolver, SdcCoreMixin):
 
         super(Sdc, self).init(problem, integrator, **kwargs)
 
-        if "type" in kwargs and isinstance(kwargs["type"], str) and\
-                (kwargs["type"] == "impl" or kwargs["type"] == "expl" or kwargs["type"] == "semi"):
-            self._type = kwargs["type"]
+        if 'num_time_steps' in kwargs:
+            self._num_time_steps = kwargs['num_time_steps']
 
-        if self.is_implicit:
-            self._type_str = "Implicit"
-        elif self.is_explicit:
-            self._type_str = "Explicit"
-        else:
-            self._type_str = "Semi-Implicit"
-
-        if "num_time_steps" in kwargs:
-            self._num_time_steps = kwargs["num_time_steps"]
-
-        if "num_nodes" in kwargs:
-            self.__num_nodes = kwargs["num_nodes"]
-        elif "nodes_type" in kwargs and kwargs["nodes_type"].num_nodes is not None:
-            self.__num_nodes = kwargs["nodes_type"].num_nodes
+        if 'num_nodes' in kwargs:
+            _num_nodes = kwargs['num_nodes']
+        elif 'nodes_type' in kwargs and kwargs['nodes_type'].num_nodes is not None:
+            _num_nodes = kwargs['nodes_type'].num_nodes
         elif integrator.nodes_type.num_nodes is not None:
-            self.__num_nodes = integrator.nodes_type.num_nodes
+            _num_nodes = integrator.nodes_type.num_nodes
         else:
             raise ValueError(func_name(self) +
                              "Number of nodes per time step not given.")
 
-        if "nodes_type" not in kwargs:
-            kwargs["nodes_type"] = GaussLobattoNodes()
+        if 'nodes_type' not in kwargs:
+            kwargs['nodes_type'] = GaussLobattoNodes()
 
-        if "weights_type" not in kwargs:
-            kwargs["weights_type"] = PolynomialWeightFunction()
+        if 'weights_type' not in kwargs:
+            kwargs['weights_type'] = PolynomialWeightFunction()
 
-        # initialize helper variables
-        self.__num_points = self.num_time_steps * (self.__num_nodes - 1) + 1
-        Sdc.State.num_points = self.__num_points
+        # initialize solver state
+        self._state = SdcSolverState(num_nodes=_num_nodes, num_time_steps=self.num_time_steps)
 
-        # set the initial state
-        self.states.append(Sdc.State())
-        self.initial_state.solution = np.array([self.problem.initial_value] * self.__num_points,
-                                               dtype=self.problem.numeric_type)
-        self.initial_state.error = None
-        self.initial_state.residual = None
-        self.initial_state.reduction_of_solution = None
-        self.initial_state.reduction_of_error = None
+        # TODO: do we need this?
+        _num_points = self.num_time_steps * (_num_nodes - 1) + 1
 
-        self.__exact = np.zeros(self.__num_points, dtype=self.problem.numeric_type)
+        self.__exact = np.zeros(_num_points, dtype=self.problem.numeric_type)
 
         # compute time step and node distances
-        self._deltas["I"] = self.problem.time_end - self.problem.time_start
-        _dt = self._deltas["I"] / self.num_time_steps
-        self._deltas["t"] = np.array([_dt] * self.num_time_steps)
-        self.__time_points["steps"] = np.linspace(self.problem.time_start,
+        self.state.delta_interval = self.problem.time_end - self.problem.time_start
+        self._deltas['t'] = self.state.delta_interval / self.num_time_steps  # width of a single time step (equidistant)
+        #  start time points of time steps
+        self.__time_points['steps'] = np.linspace(self.problem.time_start,
                                                   self.problem.time_end, self.num_time_steps + 1)
+
         # initialize and transform integrator for time step width
-        self._integrator.init(kwargs["nodes_type"], self.__num_nodes, kwargs["weights_type"],
-                              interval=np.array([self.__time_points["steps"][0],
-                                                 self.__time_points["steps"][1]]))
-        self.__time_points["nodes"] = np.zeros(self.__num_points)
-        self._deltas["n"] = np.zeros(self.num_time_steps * (self.num_nodes - 1) + 1)
+        self._integrator.init(kwargs['nodes_type'], _num_nodes, kwargs['weights_type'],
+                              interval=np.array([self.__time_points['steps'][0], self.__time_points['steps'][1]],
+                                                dtype=np.float))
+        del _num_nodes  # number of nodes is now always queried from integrator
+        self.__time_points['nodes'] = np.zeros(_num_points, dtype=np.float)
+        self._deltas['n'] = np.zeros(self.num_time_steps * (self.num_nodes - 1) + 1)
+
         # copy the node provider so we do not alter the integrator's one
         _nodes = deepcopy(self._integrator.nodes_type)
         for _t in range(0, self.num_time_steps):
             # transform Nodes (copy) onto new time step for retrieving actual integration nodes
             _nodes.interval = \
-                np.array([self.__time_points["steps"][_t], self.__time_points["steps"][_t + 1]])
+                np.array([self.__time_points['steps'][_t], self.__time_points['steps'][_t + 1]])
             for _n in range(0, self.num_nodes - 1):
                 _i = _t * (self.num_nodes - 1) + _n
-                self.__time_points["nodes"][_i] = _nodes.nodes[_n]
-                self._deltas["n"][_i + 1] = _nodes.nodes[_n + 1] - _nodes.nodes[_n]
-        self.__time_points["nodes"][-1] = _nodes.nodes[-1]
+                self.__time_points['nodes'][_i] = _nodes.nodes[_n]
+                self._deltas['n'][_i + 1] = _nodes.nodes[_n + 1] - _nodes.nodes[_n]
+        self.__time_points['nodes'][-1] = _nodes.nodes[-1]
 
-        SdcCoreMixin.__init__(self)
-
-    def run(self, solution_class=IterativeSolution):
+    def run(self, core):
         """
         Summary
         -------
@@ -309,25 +210,20 @@ class Sdc(IIterativeTimeSolver, SdcCoreMixin):
 
         The output for the iterations explained:
 
-            **iter**
-
+            :**iter**:
                 The iteration number.
 
-            **rel red**
-
+            :**rel red**:
                 The relative reduction of the solution from one iteration to the previous.
                 Is only displayed from the second iteration onwards.
 
-            **time**
-
+            :**time**:
                 Seconds taken for the iteration.
 
-            **resid**
-
+            :**resid**:
                 Residual of the last time step of the iteration.
 
-            **err red**
-
+            :**err red**:
                 Reduction of the absolute error from the first iteration to the current.
                 Is only displayed from the second iteration onwards and only if the given problem
                 provides a function of the exact solution (see :py:meth:`.problem_has_exact_solution()`).
@@ -335,49 +231,35 @@ class Sdc(IIterativeTimeSolver, SdcCoreMixin):
         The output for the time steps of an iteration explained (will only show up when running with
         logger level ``DEBUG``):
 
-            **step**
-
+            :**step**:
                 Number of the time step.
 
-            **t_0**
-
+            :**t_0**:
                 Start of the time step interval.
 
-            **t_1**
-
+            :**t_1**:
                 End of the time step interval.
 
-            **sol**
-
-                Computed solution for the time step.
-
-            **resid**
-
+            :**resid**:
                 Residual of the time step.
 
-            **err**
-
-                Absolute error for the time step.
+            :**err**:
+                Inifnity norm of error for the time step.
                 Is only displayed if the given problem provides a function for the
                 exact solution (see :py:meth:`.problem_has_exact_solution()`).
 
         Parameters
         ----------
-        solution_class : class
-            Class of the resulting solution.
 
-        Returns
-        -------
-        solution : ISolution
-            Solution object with solutions of each iteration.
+        Raises
+        ------
 
         See Also
         --------
         .IIterativeTimeSolver.run
             overridden method
         """
-        # init solution object
-        _solution = solution_class(numeric_type=self.problem.numeric_type)
+        super(Sdc, self).run(core)
 
         # start logging output
         self._print_header()
@@ -393,123 +275,88 @@ class Sdc(IIterativeTimeSolver, SdcCoreMixin):
         _iter = 0
         while self.threshold.has_reached() is None:
             _iter += 1
-            self.states.append(Sdc.State(iteration=_iter))
-            self.current_state.solution = self.previous_state.solution.copy()
+            # initialize a new integration state
+            self.state.new()
+            # set the initial value
+            self.state.current_step.solution.value = self.problem.initial_value
+            self.state.current_step.solution.time_point = self.problem.time_start
 
             # step result table header
             if problem_has_exact_solution(self.problem, self):
-                self._output(["node", "t_0", "t_1", "sol", "resid", "err"],
-                             ["str", "str", "str", "str", "str", "str"],
+                self._output(['node', 't_0', 't_1', 'resid', 'err'],
+                             ['str', 'str', 'str', 'str', 'str'],
                              padding=10, debug=True)
             else:
-                self._output(["node", "t_0", "t_1", "sol", "resid"],
-                             ["str", "str", "str", "str", "str"],
+                self._output(['node', 't_0', 't_1', 'resid'],
+                             ['str', 'str', 'str', 'str'],
                              padding=10, debug=True)
 
             # iterate on time steps
             _iter_timer.start()
-            for self.core_state.time_step_ndx in range(0, self.num_time_steps):
+            for _current_time_step in self.state.current_iteration:
+                # run this time step
                 self._time_step()
-            # end for:t
+                self.state.current_iteration.element_done()
             _iter_timer.stop()
-
-            # compute reduction
-            if _iter > 1:
-                # TODO: fix "overflow encountered in cdouble_scalars" and "invalid value encountered in cdouble_scalars"
-                self.current_state.reduction_of_solution = \
-                    np.abs((self.current_state.solution[-1] - self.current_state.solution[-1])
-                           / self.previous_state.solution[-1] * 100.0)
-                if problem_has_exact_solution(self.problem, self):
-                    self.current_state.reduction_of_error = \
-                        np.abs(self.current_state.error[-1] - self.current_state.error[-1])
 
             # log this iteration's summary
             if _iter == 1:
                 # on first iteration we do not have comparison values
                 self._output([_iter, None, _iter_timer.past()],
-                             ["int", None, "float"],
+                             ['int', None, 'float'],
                              padding=4)
             else:
                 if problem_has_exact_solution(self.problem, self) and _iter > 0:
                     # we could compute the correct error of our current solution
-                    self._output([_iter, self.current_state.reduction_of_solution, _iter_timer.past(),
-                                  self.current_state.residual[-1], self.current_state.reduction_of_error],
-                                 ["int", "exp", "float", "exp", "exp"],
+                    self._output([_iter, self.state.solution.solution_reduction[self.state.current_iteration_index],
+                                  _iter_timer.past(), self.state.current_step.solution.residual,
+                                  self.state.solution.error_reduction[self.state.current_iteration_index]],
+                                 ['int', 'exp', 'float', 'exp', 'exp'],
                                  padding=4)
                 else:
-                    self._output([_iter, self.current_state.reduction_of_solution, _iter_timer.past(),
-                                  self.current_state.residual],
-                                 ["int", "exp", "float", "exp"],
+                    self._output([_iter, self.state.solution.solution_reduction[self.state.current_iteration_index],
+                                  _iter_timer.past(), self.state.current_step.solution.residual],
+                                 ['int', 'exp', 'float', 'exp'],
                                  padding=4)
 
-            # save solution for this iteration and check termination criteria
-            if problem_has_exact_solution(self.problem, self):
-                if _iter == 1:
-                    _solution.add_solution(points=self.__time_points["nodes"],
-                                           values=self.current_state.solution.copy(),
-                                           exact=self.__exact,
-                                           error=self.current_state.error.copy(),
-                                           residual=self.current_state.residual.copy(),
-                                           iteration=1)
-                else:
-                    _solution.add_solution(points=self.__time_points["nodes"],
-                                           values=self.current_state.solution.copy(),
-                                           error=self.current_state.error.copy(),
-                                           residual=self.current_state.residual.copy(),
-                                           iteration=-1)
-                self.threshold.check(reduction=self.current_state.reduction_of_solution,
-                                     residual=self.current_state.residual[-1],
-                                     error=self.current_state.reduction_of_error,
-                                     iterations=_iter)
-            else:
-                _solution.add_solution(points=self.__time_points["nodes"],
-                                       values=self.current_state.solution,
-                                       residual=self.current_state.residual,
-                                       iteration=-1)
-                self.threshold.check(reduction=self.current_state.reduction_of_solution,
-                                     residual=self.current_state.residual[-1],
-                                     iterations=_iter)
+            # check termination criteria
+            self.threshold.check(self.state)
+
+            # finalize this iteration (i.e. TrajectorySolutionData.finalize())
+            self.state.current_iteration.done()
+
+            # continue with next iteration if we are not yet finished
+            if not self.threshold.has_reached():
+                self.state.element_done()
         # end while:self._threshold_check.has_reached() is None
         self.timer.stop()
 
-        _solution.used_iterations = _iter
+        # finalize the IterativeSolution
+        self.state.done()
 
         if _iter <= self.threshold.max_iterations:
             LOG.info("> Converged after {:d} iteration(s).".format(_iter))
             LOG.info(">   {:s}".format(self.threshold.has_reached(human=True)))
-            LOG.info(">   Rel. Reduction: {:.3e}".format(self.current_state.reduction_of_solution))
-            LOG.info(">   Final Residual: {:.3e}".format(self.current_state.residual[-1]))
+            LOG.info(">   Solution Reduction: {:.3e}"
+                     .format(self.state.solution.solution_reduction[self.state.current_iteration_index]))
+            LOG.info(">   Final Residual: {:.3e}".format(supremum_norm(self.state[-1][-1][-1].solution.residual)))
             if problem_has_exact_solution(self.problem, self):
-                LOG.info(">   Absolute Error: {:.3e}".format(self.current_state.reduction_of_error))
+                LOG.info(">   Error Reduction: {:.3e}"
+                         .format(self.state.solution.error_reduction[self.state.current_iteration_index]))
         else:
             warnings.warn("Explicit SDC: Did not converged: {:s}".format(self.problem))
             LOG.info("> FAILED: After maximum of {:d} iteration(s).".format(_iter))
-            LOG.info(">         Rel. Reduction: {:.3e}".format(self.current_state.reduction_of_solution))
-            LOG.info(">         Final Residual: {:.3e}".format(self.current_state.residual[-1]))
+            LOG.info(">   Solution Reduction: {:.3e}"
+                     .format(self.state.solution.solution_reduction[self.state.current_iteration_index]))
+            LOG.info(">         Final Residual: {:.3e}".format(supremum_norm(self.state[-1][-1][-1].solution.residual)))
             if problem_has_exact_solution(self.problem, self):
-                LOG.info(">         Absolute Error: {:.3e}".format(self.current_state.reduction_of_error))
+                LOG.info(">   Error Reduction: {:.3e}"
+                         .format(self.state.solution.error_reduction[self.state.current_iteration_index]))
             LOG.warn("SDC Failed: Maximum number iterations reached without convergence.")
-
-        _solution.reductions = {
-            "solution": self.current_state.reduction_of_solution,
-            "error": self.current_state.reduction_of_error
-        }
 
         self._print_footer()
 
-        return _solution
-
-    @property
-    def is_implicit(self):
-        return self._type == "impl"
-
-    @property
-    def is_explicit(self):
-        return self._type == "expl"
-
-    @property
-    def is_semi_implicit(self):
-        return self._type == "semi"
+        return self.state.solution
 
     @property
     def num_time_steps(self):
@@ -540,96 +387,130 @@ class Sdc(IIterativeTimeSolver, SdcCoreMixin):
         return self._integrator.nodes_type.num_nodes
 
     def _time_step(self):
-        # transform integration nodes to next interval
-        # _dT = self.__deltas["t"][t]
-        # _T0 = self.__time_points["steps"][t]
-        # _T1 = self.__time_points["steps"][t + 1]
-        #LOG.debug("Time step {:d}: [{:2f}, {:.2f}] (dT={:2f}) with nodes: {:s}"
-        #          .format(t + 1, _T0, _T1, _dT, self._integrator.nodes))
-        for self.core_state.node_ndx in range(1, self.num_nodes):
-            self._sdc_step()
+        # copy the solution of the previous time step's last node to the first node of this time step
+        #  (they should be the same in most cases!)
+        if self.state.current_time_step_index != 0:
+            if self.state.current_iteration_index > 0:
+                self.state.current_time_step[0].solution.value = \
+                    self.state.current_iteration.previous_time_step[-1].solution.value.copy()
+                self.state.current_time_step[0].solution.time_point = \
+                    self.state.current_iteration.previous_time_step[-1].solution.time_point
+
+        for _current_step in self.state.current_time_step:
+            if self.state.current_step_index == 0:
+                # always skip the first step of a time step.
+                #  it is either the very initial one or the final step of the previous time step
+                pass
+            else:
+                self._sdc_step()
+
+            # finished a step; continuing with the next one
+            self.state.current_time_step.element_done()
+
+        # finalizing the current time step (i.e. TrajectorySolutionData.finalize)
+        self.state.current_time_step.done()
 
     def _sdc_step(self):
-        self.core_state.calculate_current_point_index()
-        self.core_state.calculate_node_range()
+        _current_time_step_index = self.state.current_time_step_index
+        _current_step_index = self.state.current_step_index
+        _current_point_global_index = _current_time_step_index * (self.num_nodes - 1) + _current_step_index
+# self.core_state.calculate_node_range()
 
         # get current steps' time data
-        self.core_state.delta_tau = self._deltas["n"][self.core_state.node_ndx]
-        self.core_state.curr_time_pnt = self.__time_points["nodes"][self.core_state.prev_pnt_ndx]
-        self.core_state.next_time_pnt = self.__time_points["nodes"][self.core_state.curr_pnt_ndx]
+        self.state.current_step.delta_tau = self._deltas['n'][_current_step_index]
+        self.state.current_step.solution.time_point = self.__time_points['nodes'][_current_point_global_index]
+# self.core_state.curr_time_pnt = self.__time_points['nodes'][self.core_state.prev_pnt_ndx]
+# self.core_state.next_time_pnt = self.__time_points['nodes'][self.core_state.curr_pnt_ndx]
 
-        # gather values for integration
-        _copy_mask = np.concatenate((np.array([True] * self.core_state.node_ndx),
-                                     np.array([False] * (self.num_nodes - self.core_state.node_ndx))))
-        _integrate_values = \
-            np.where(_copy_mask,
-                     self.current_state.solution[self.core_state.first_node_ndx:(self.core_state.last_node_ndx + 1)],
-                     self.previous_state.solution[self.core_state.first_node_ndx:(self.core_state.last_node_ndx + 1)])
+        # copy solution of previous iteration to this one
+        self.state.current_step.solution.value = \
+            self.state.previous_iteration[_current_time_step_index][_current_step_index].solution.value.copy()
 
-        # evaluate problem for integration values
+        # gather values for integration and evaluate problem at given points
         _integrate_values = \
-            np.array([self.problem.evaluate(self._integrator.nodes[self.core_state.node_ndx - 1], val)
-                      for val in _integrate_values], dtype=self.problem.numeric_type)
+            np.array(
+                [
+                    self.problem.evaluate(self.state.current_time_step[0].solution.time_point,
+                                          self.state.current_time_step[0].solution.value.copy())
+                ], dtype=self.problem.numeric_type
+            )
+        for _index in range(1, _current_step_index):
+            _integrate_values = \
+                np.append(_integrate_values,
+                          np.array(
+                              [
+                                  self.problem.evaluate(self.state.current_time_step[_index].solution.time_point,
+                                                        self.state.current_time_step[_index].solution.value.copy())
+                              ], dtype=self.problem.numeric_type
+                          ), axis=0)
+        for _index in range(0, (self.num_nodes - _current_step_index)):
+            _integrate_values = \
+                np.append(_integrate_values,
+                          np.array(
+                              [
+                                  self.problem.evaluate(self.state.previous_time_step[_index].solution.time_point,
+                                                        self.state.previous_time_step[_index].solution.value.copy())
+                              ], dtype=self.problem.numeric_type
+                          ), axis=0)
+        assert_condition(_integrate_values.size == len(self.state.current_time_step),
+                         ValueError, "Number of integration values not correct: {:d} != {:d}"
+                                     .format(_integrate_values.size, len(self.state.current_time_step)),
+                         self)
 
         # integrate
-        _integral = self._integrator.evaluate(_integrate_values, last_node_index=self.core_state.node_ndx)
+        self.state.current_step.integral = self._integrator.evaluate(_integrate_values,
+                                                                     last_node_index=_current_step_index)
 
         # compute step
-        self.execute_core(integral=_integral)
+        self._core.run(self.state)
 
         # calculate residual
-        _integrate_values = \
-            np.where(_copy_mask,
-                     self.current_state.solution[self.core_state.first_node_ndx:(self.core_state.last_node_ndx + 1)],
-                     self.previous_state.solution[self.core_state.first_node_ndx:(self.core_state.last_node_ndx + 1)])
-        _integrate_values[self.core_state.node_ndx] = self._states[-1].solution[self.core_state.curr_pnt_ndx]
-        _integrate_values = \
-            np.array([self.problem.evaluate(self._integrator.nodes[self.core_state.node_ndx - 1], val)
-                      for val in _integrate_values], dtype=self.problem.numeric_type)
-        _residual_integral = 0
-        for i in range(1, self.core_state.node_ndx + 1):
-            _residual_integral += self._integrator.evaluate(_integrate_values, last_node_index=i)
+        _original_integral = self.state.current_step.integral.copy()  # just a backup
+        _integrate_values[_current_step_index] = \
+            np.array(
+                [
+                    self.problem.evaluate(self.state.current_step.solution.time_point,
+                                          self.state.current_step.solution.value.copy())
+                ], dtype=self.problem.numeric_type
+            )
 
-        self.current_state.residual_at(self.core_state.curr_pnt_ndx,
-                                       np.abs(self.current_state.solution[self.core_state.first_node_ndx]
-                                              + self._deltas["I"] * _residual_integral
-                                              - self.current_state.solution[self.core_state.curr_pnt_ndx]))
+        _residual_integral = 0
+        for i in range(1, _current_step_index + 1):
+            _residual_integral += self._integrator.evaluate(_integrate_values, last_node_index=i)
+        del _integrate_values
+        self.state.current_step.integral = _residual_integral.copy()
+        del _residual_integral
+
+        self._core.compute_residual(self.state)
+        self.state.current_step.integral = _original_integral.copy()
+        del _original_integral
 
         # calculate error
-        if problem_has_exact_solution(self.problem, self):
-            self.__exact[self.core_state.curr_pnt_ndx] = \
-                self.problem.exact(self.core_state.next_time_pnt,
-                                   self.__time_points["nodes"][self.core_state.curr_pnt_ndx])
-            self.current_state.error_at(self.core_state.curr_pnt_ndx,
-                                        np.abs(self.current_state.solution[self.core_state.curr_pnt_ndx]
-                                               - self.__exact[self.core_state.curr_pnt_ndx]))
-        else:
-            # we need the exact solution for that
-            #  (unless we find an error approximation method)
-            pass
+        self._core.compute_error(self.state, problem=self.problem)
 
         # log
         if problem_has_exact_solution(self.problem, self):
-            self._output([self.core_state.node_ndx,
-                          self.core_state.curr_time_pnt,
-                          self.core_state.next_time_pnt,
-                          self.current_state.solution[self.core_state.curr_pnt_ndx],
-                          self.current_state.residual[self.core_state.curr_pnt_ndx],
-                          self.current_state.error[self.core_state.curr_pnt_ndx]],
-                         ["int", "float", "float", "float", "exp", "exp"],
+            self._output([self.state.current_step_index,
+                          self.state.current_time_step.previous_step.time_point,
+                          self.state.current_step.time_point,
+                          supremum_norm(self.state.current_step.solution.residual),
+                          supremum_norm(self.state.current_step.solution.error)],
+                         ['int', 'float', 'float', 'exp', 'exp'],
                          padding=10, debug=True)
         else:
-            self._output([self.core_state.node_ndx,
-                          self.core_state.curr_time_pnt,
-                          self.core_state.next_time_pnt,
-                          self.current_state.solution[self.core_state.curr_pnt_ndx],
-                          self.current_state.residual[self.core_state.curr_pnt_ndx]],
-                         ["int", "float", "float", "float", "exp"],
+            self._output([self.state.current_step_index,
+                          self.state.current_time_step.previous_step.time_point,
+                          self.state.current_step.time_point,
+                          supremum_norm(self.state.current_step.solution.residual)],
+                         ['int', 'float', 'float', 'exp'],
                          padding=10, debug=True)
+
+        # finalize this current step (i.e. StepSolutionData.finalize())
+        self.state.current_step.done()
 
     def _print_header(self):
         LOG.info("> " + '#' * 78)
-        LOG.info("{:#<80}".format("> START: {:s} SDC ".format(self._type_str)))
+        LOG.info("{:#<80}".format("> START: {:s} SDC ".format(self._core.name)))
         LOG.info(">   Interval:               [{:.3f}, {:.3f}]".format(self.problem.time_start, self.problem.time_end))
         LOG.info(">   Time Steps:             {:d}".format(self.num_time_steps))
         LOG.info(">   Integration Nodes:      {:d}".format(self.num_nodes))
@@ -639,16 +520,16 @@ class Sdc(IIterativeTimeSolver, SdcCoreMixin):
 
         # itartion result table header
         if problem_has_exact_solution(self.problem, self):
-            self._output(["iter", "rel red", "time", "resid", "err red"],
-                         ["str", "str", "str", "str", "str"],
+            self._output(['iter', 'rel red', 'time', 'resid', 'err red'],
+                         ['str', 'str', 'str', 'str', 'str'],
                          padding=4)
         else:
-            self._output(["iter", "rel red", "time", "resid"],
-                         ["str", "str", "str", "str"],
+            self._output(['iter', 'rel red', 'time', 'resid'],
+                         ['str', 'str', 'str', 'str'],
                          padding=4)
 
     def _print_footer(self):
-        LOG.info("{:#<80}".format("> FINISHED: {:s} SDC ({:.3f} sec) ".format(self._type_str, self.timer.past())))
+        LOG.info("{:#<80}".format("> FINISHED: {:s} SDC ({:.3f} sec) ".format(self._core.name, self.timer.past())))
         LOG.info("> " + '#' * 78)
 
     def _output(self, values, types, padding=0, debug=False):
@@ -658,13 +539,13 @@ class Sdc(IIterativeTimeSolver, SdcCoreMixin):
             if values[i] is None:
                 _outstr += ' ' * 10
             else:
-                if types[i] == "float":
+                if types[i] == 'float':
                     _outstr += "{: 10.3f}".format(values[i])
-                elif types[i] == "int":
+                elif types[i] == 'int':
                     _outstr += "{: 10d}".format(values[i])
-                elif types[i] == "exp":
+                elif types[i] == 'exp':
                     _outstr += "{: 10.2e}".format(values[i])
-                elif types[i] == "str":
+                elif types[i] == 'str':
                     _outstr += "{: >10s}".format(values[i])
                 else:
                     raise ValueError(func_name(self) +
@@ -675,3 +556,6 @@ class Sdc(IIterativeTimeSolver, SdcCoreMixin):
             LOG.debug("!> {:s}".format(_outstr))
         else:
             LOG.info("> {:s}".format(_outstr))
+
+
+__all__ = ['Sdc']
