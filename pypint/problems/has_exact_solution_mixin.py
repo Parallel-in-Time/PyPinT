@@ -2,8 +2,8 @@
 """
 .. moduleauthor:: Torbjörn Klatt <t.klatt@fz-juelich.de>
 """
-from .i_problem import IProblem
-from ..utilities import assert_is_callable, assert_is_instance
+from pypint.problems.i_problem import IProblem
+from pypint.utilities import assert_is_callable, assert_is_instance
 
 
 class HasExactSolutionMixin(object):

@@ -1,9 +1,8 @@
 # coding=utf-8
+import unittest
 
 from pypint.problems.i_problem import IProblem
 from pypint.problems.has_exact_solution_mixin import HasExactSolutionMixin, problem_has_exact_solution
-import numpy as np
-import unittest
 
 
 class HasExactSolutionMixinTest(unittest.TestCase):
@@ -14,24 +13,22 @@ class HasExactSolutionMixinTest(unittest.TestCase):
 
     def setUp(self):
         self._default = HasExactSolutionMixinTest.TestProblem()
+        self._func = lambda t: 1.0
 
     def test_provides_exact_method(self):
         self.assertIsNone(self._default.exact_function, "Initially no exact function is given.")
-        _func = lambda t, x: 1.0
-        self._default.exact_function = _func
+        self._default.exact_function = self._func
         self.assertTrue(callable(self._default.exact_function))
-        self.assertEqual(self._default.exact(0.0, np.array([1.0])), 1.0)
+        self.assertEqual(self._default.exact(0.0), 1.0)
 
-        _test_problem = HasExactSolutionMixinTest.TestProblem(exact_function=_func)
-        self._default.exact_function = _func
+        _test_problem = HasExactSolutionMixinTest.TestProblem(exact_function=self._func)
+        self._default.exact_function = self._func
         self.assertTrue(callable(self._default.exact_function))
-        self.assertEqual(self._default.exact(0.0, np.array([1.0])), 1.0)
+        self.assertEqual(self._default.exact(0.0), 1.0)
 
     def test_validates_exact_method_input_arguments(self):
-        _func = lambda t, x: 1.0
-        self._default.exact_function = _func
-        self.assertRaises(ValueError, self._default.exact, time="not a time", phi_of_time=np.array([1.0]))
-        self.assertRaises(ValueError, self._default.exact, time=1.0, phi_of_time=1.0)
+        self._default.exact_function = self._func
+        self.assertRaises(ValueError, self._default.exact, time="not a time")
 
     def test_problem_has_exact_solution_introspection(self):
         self.assertTrue(problem_has_exact_solution(self._default))
