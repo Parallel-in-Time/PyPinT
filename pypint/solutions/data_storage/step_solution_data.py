@@ -139,7 +139,7 @@ class StepSolutionData(object):
             :on setting:
                 If this storage data instance has been finalized.
         """
-        return self._data.value
+        return self._data
 
     @value.setter
     def value(self, value):
