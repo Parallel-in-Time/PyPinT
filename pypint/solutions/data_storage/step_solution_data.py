@@ -274,6 +274,10 @@ class StepSolutionData(object):
         """
         return self._numeric_type
 
+    def __str__(self):
+        return "StepSolutionData(value={}, time_point={}, finalized={})"\
+                .format(self.value, self.time_point, self.finalized)
+
     def __copy__(self):
         copy = self.__class__.__new__(self.__class__)
         copy.__dict__.update(self.__dict__)
