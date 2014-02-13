@@ -19,6 +19,7 @@ class ISolution(object):
         self._data = None
         self._used_iterations = 0
         self._reduction = None
+        self._finalized = False
 
     def add_solution(self, *args, **kwargs):
         """
@@ -36,6 +37,12 @@ class ISolution(object):
         This method must be overridden in derived classes.
         """
         raise NotImplementedError("Must be implemented and overridden by subclasses.")
+
+    def finalize(self):
+        assert_condition(not self.finalized,
+                         ValueError, "Solution cannot be changed any more.",
+                         self)
+        self._finalized = True
 
     @property
     def used_iterations(self):
@@ -63,6 +70,9 @@ class ISolution(object):
 
     @used_iterations.setter
     def used_iterations(self, used_iterations):
+        assert_condition(not self.finalized,
+                         ValueError, "Solution cannot be changed any more.",
+                         self)
         assert_condition(used_iterations > 0,
                          ValueError, "Number of used iterations must be non-zero positive: NOT {:d}"
                                      .format(used_iterations),
@@ -82,6 +92,10 @@ class ISolution(object):
             or a derived class thereof
         """
         return self._data_type
+
+    @property
+    def finalized(self):
+        return self._finalized
 
     def __copy__(self):
         copy = self.__class__.__new__(self.__class__)
