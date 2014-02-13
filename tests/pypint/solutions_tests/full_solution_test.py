@@ -5,13 +5,13 @@ import numpy
 
 from pypint.solutions.data_storage.step_solution_data import StepSolutionData
 from pypint.solutions.data_storage.trajectory_solution_data import TrajectorySolutionData
-from pypint.solutions.full_solution import FullSolution
+from pypint.solutions.iterative_solution import IterativeSolution
 from tests import NumpyAwareTestCase
 
 
 class FullSolutionTest(NumpyAwareTestCase):
     def setUp(self):
-        self._default = FullSolution()
+        self._default = IterativeSolution()
         self._value1 = numpy.array([1.0, 2.0, 3.0])
         self._value2 = numpy.array([4.0, 5.0, 6.0])
         self._step1 = StepSolutionData(value=self._value1, time_point=1.0)
