@@ -4,7 +4,7 @@
 """
 from copy import deepcopy
 
-import warnings
+import numpy as np
 
 from pypint.solutions.data_storage import StepSolutionData, TrajectorySolutionData
 from pypint.solutions import IterativeSolution
@@ -12,7 +12,7 @@ from pypint.utilities import assert_is_key, assert_condition
 
 
 class IStepState(object):
-    def __init__(self):
+    def __init__(self, **kwargs):
         self._solution = StepSolutionData()
         self._delta_tau = 0.0
 
@@ -48,58 +48,84 @@ class IStepState(object):
                          self)
         self._delta_tau = delta_tau
 
+    def __str__(self):
+        return "{}(solution={})".format(self.__class__.__name__, self.solution)
+
 
 class IStateIterator(object):
     def __init__(self, **kwargs):
         assert_is_key(kwargs, 'solution_class', "Solution type must be given.")
         assert_is_key(kwargs, 'element_type', "Element type must be given.")
         self._solution = kwargs['solution_class']()
+        del kwargs['solution_class']
         self._element_type = kwargs['element_type']
+        del kwargs['element_type']
         self._states = []
         self._current_index = 0
+        self._finalized = False
 
-    def new(self, **kwargs):
-        self._states.append(self._element_type(**kwargs))
+        if 'num_states' in kwargs:
+            _num_states = kwargs['num_states']
+            assert_condition(isinstance(_num_states, int) and _num_states > 0,
+                             ValueError, "Number of states must be a non-zero positive integer: NOT {}"
+                                         .format(_num_states),
+                             self)
+            self._states = [self._element_type(**kwargs) for i in range(0, _num_states)]
 
-    def done(self):
-        pass
-
-    def element_done(self, index=None):
-        if index is None:
-            index = self.current
-        self._current_index += 1
-
-    @property
-    def current(self):
-        return self[self.current_index]
-
-    @property
-    def current_index(self):
-        return self._current_index
-
-    @property
-    def previous(self):
-        return self[self.previous_index]
+    def finalize(self):
+        assert_condition(not self.finalized,
+                         RuntimeError, "This {} is already done.".format(self.__class__.__name__),
+                         self)
+        for _state in self:
+            self.solution.add_solution_data(deepcopy(_state.solution))
+        self.solution.finalize()
+        self._current_index = 0
+        self._finalized = True
 
     @property
-    def previous_index(self):
-        if self.current_index > 0:
-            return self.current_index - 1
-        else:
-            warnings.warn("No previous state available.")
-            return None
-
-    @property
-    def next_state(self):
-        if len(self) > self.current_index + 1:
-            return self[self.current_index + 1]
-        else:
-            warnings.warn("No next state available.")
-            return None
+    def finalized(self):
+        if self._finalized:
+            # if this throws, something is really broken
+            assert_condition(self.solution.finalized,
+                             RuntimeError, "State is finalized but not its solution object.",
+                             self)
+        return self._finalized
 
     @property
     def solution(self):
         return self._solution
+
+    @property
+    def current(self):
+        return self[self.current_index] if self.current_index is not None else None
+
+    @property
+    def current_index(self):
+        return self._current_index if len(self) > self._current_index else None
+
+    @property
+    def previous(self):
+        return self[self.previous_index] if self.previous_index is not None else None
+
+    @property
+    def previous_index(self):
+        return self.current_index - 1 if self.current_index is not None and self.current_index  > 0 else None
+
+    @property
+    def first(self):
+        return self[self.first_index] if self.first_index is not None else None
+
+    @property
+    def first_index(self):
+        return 0 if len(self) > 0 else None
+
+    @property
+    def last(self):
+        return self[self.last_index] if self.last_index is not None else None
+
+    @property
+    def last_index(self):
+        return len(self) - 1 if len(self) > 0 else None
 
     def __len__(self):
         return len(self._states)
@@ -111,10 +137,28 @@ class IStateIterator(object):
         return self._states[item]
 
     def __str__(self):
-        return "{:s}({:s})".format(self.__class__.__name__, self._element_type.__name__)
+        _states = [state.__str__() for state in self._states]
+        return "{}({}, solution={}, _states={})".format(self.__class__.__name__, self._element_type.__name__,
+                                                        self.solution.__str__(), _states.__str__())
 
 
-class ITimeStepState(IStateIterator):
+class IStaticStateIterator(IStateIterator):
+    def proceed(self):
+        if self.next_index is not None:
+            self._current_index += 1
+        else:
+            raise StopIteration("No further states available.")
+
+    @property
+    def next(self):
+        return self[self.next_index] if self.next_index is not None else None
+
+    @property
+    def next_index(self):
+        return self.current_index + 1 if self.current_index is not None and len(self) > self.current_index + 1 else None
+
+
+class ITimeStepState(IStaticStateIterator):
     """
     Summary
     -------
@@ -125,25 +169,11 @@ class ITimeStepState(IStateIterator):
             kwargs['solution_class'] = TrajectorySolutionData
         if 'element_type' not in kwargs:
             kwargs['element_type'] = IStepState
+        assert_is_key(kwargs, 'num_states', "Number of states must be given.")
         super(ITimeStepState, self).__init__(**kwargs)
-        del kwargs['solution_class']
-        del kwargs['element_type']
-
-        if 'num_nodes' in kwargs:
-            _num_nodes = kwargs['num_nodes']
-            # del kwargs['num_nodes']
-            self._states = [self._element_type()] * _num_nodes
 
         self._delta_time_step = 0.0
-
-    def new(self, **kwargs):
-        warnings.warn("ITimeStepState.new() should not be used. NoOp.")
-
-    def done(self):
-        super(ITimeStepState, self).done()
-        for _step in self:
-            self.solution.add_solution(deepcopy(_step.solution))
-        self.solution.finalize()
+        self._initial = IStepState()
 
     @property
     def delta_time_step(self):
@@ -157,8 +187,28 @@ class ITimeStepState(IStateIterator):
         self._delta_time_step = delta_time_step
 
     @property
+    def initial(self):
+        return self._initial
+
+    @initial.setter
+    def initial(self, initial):
+        self._initial = initial
+
+    @property
+    def time_points(self):
+        return np.array([step.time_point for step in self], dtype=float)
+
+    @property
+    def current_time_point(self):
+        return self.current_step.time_point if self.current_step else None
+
+    @property
+    def previous_time_point(self):
+        return self.previous_step.time_point if self.previous else None
+
+    @property
     def next_time_point(self):
-        return self.next_state.time_point
+        return self.next.time_point if self.next else None
 
     @property
     def current_step(self):
@@ -170,18 +220,30 @@ class ITimeStepState(IStateIterator):
 
     @property
     def previous_step(self):
-        return self.previous
+        return self.previous if self.previous is not None else self.initial
 
     @property
     def previous_step_index(self):
         return self.previous_index
 
     @property
-    def time_points(self):
-        return self._solution.time_points
+    def next_step(self):
+        return self.next
+
+    @property
+    def next_step_index(self):
+        return self.next_index
+
+    @property
+    def last_step(self):
+        return self.last
+
+    @property
+    def last_step_index(self):
+        return self.last_index
 
 
-class IIterationState(IStateIterator):
+class IIterationState(IStaticStateIterator):
     """
     Summary
     -------
@@ -196,26 +258,29 @@ class IIterationState(IStateIterator):
         del kwargs['solution_class']
         del kwargs['element_type']
 
-        if 'num_time_steps' in kwargs:
-            _num_time_steps = kwargs['num_time_steps']
-            del kwargs['num_time_steps']
-            self._states = [self._element_type(**kwargs)] * _num_time_steps
+        assert_is_key(kwargs, 'num_time_steps', "Number of time steps must be given.")
+        _num_time_steps = kwargs['num_time_steps']
+        del kwargs['num_time_steps']
+        self._states = [self._element_type(**kwargs) for i in range(0, _num_time_steps)]
 
-    def new(self, **kwargs):
-        warnings.warn("ITimeStepState.new() should not be used. NoOp.")
+        self._delta_interval = 0.0
+        self._initial_state = self.first_time_step.initial
 
-    def done(self):
-        super(IIterationState, self).done()
-        warnings.simplefilter("ignore", UserWarning)
+    def finalize(self):
+        assert_condition(not self.finalized,
+                         RuntimeError, "This {} is already done.".format(self.__class__.__name__),
+                         self)
         for _time_step in self:
             for _step in _time_step:
-                try:
-                    self.solution.add_solution(deepcopy(_step.solution))
-                except ValueError:
-                    # this step is already there
-                    pass
-        warnings.resetwarnings()
+                self.solution.add_solution_data(deepcopy(_step.solution))
         self.solution.finalize()
+        self._current_index = 0
+        self._finalized = True
+
+    def proceed(self):
+        super(IIterationState, self).proceed()  # -> current_index += 1
+        # link initial step of this time step to the previous' last step
+        self.current_time_step.initial = self.previous_time_step.last_step
 
     @property
     def current_time_step(self):
@@ -226,10 +291,6 @@ class IIterationState(IStateIterator):
         return self.current_index
 
     @property
-    def current_step_index(self):
-        return self.current_time_step.current_step_index
-
-    @property
     def previous_time_step(self):
         return self.previous
 
@@ -238,17 +299,57 @@ class IIterationState(IStateIterator):
         return self.previous_index
 
     @property
-    def previous_step_index(self):
-        return self.current_time_step.previous_step_index
+    def next_time_step(self):
+        return self.next
+
+    @property
+    def next_time_step_index(self):
+        return self.next_index
+
+    @property
+    def first_time_step(self):
+        return self.first
+
+    @property
+    def first_time_step_index(self):
+        return self.first_index
+
+    @property
+    def last_time_step(self):
+        return self.last
+
+    @property
+    def last_time_step_index(self):
+        return self.last_index
+
+    @property
+    def current_step(self):
+        return self.current_time_step.current_step
+
+    @property
+    def current_step_index(self):
+        return self.current_time_step.current_step_index
+
+    @property
+    def previous_step(self):
+        return self.current_time_step.previous_step \
+            if self.current_time_step.previous_step else self.previous_time_step.last
+
+    @property
+    def next_step(self):
+        return self.current_time_step.next_step if self.current_time_step.next_step else self.next_time_step.first
+
+    @property
+    def first_step(self):
+        return self.first_time_step.first if self.first_time_step else None
 
     @property
     def final_step(self):
-        # last time_step and last step thereof
-        return self[-1][-1]
+        return self.last_time_step.last if self.last_time_step else None
 
     @property
     def time_points(self):
-        return self._solution.time_points
+        return np.array([_step.time_point for _step in [_time for _time in self]], dtype=float)
 
 
 class ISolverState(IStateIterator):
@@ -261,22 +362,28 @@ class ISolverState(IStateIterator):
         if 'solution_class' not in kwargs:
             kwargs['solution_class'] = IterativeSolution
         if 'element_type' not in kwargs:
-            kwargs['element_type'] = ITimeStepState
+            kwargs['element_type'] = IIterationState
         super(ISolverState, self).__init__(**kwargs)
 
         self._num_nodes = kwargs['num_nodes'] if 'num_nodes' in kwargs else 0
         self._num_time_steps = kwargs['num_time_steps'] if 'num_time_steps' in kwargs else 0
         self._delta_interval = 0.0
+        self._initial = IStepState()
 
-    def new(self, **kwargs):
-        self._states.append(self._element_type(num_nodes=self._num_nodes,
-                                               num_time_steps=self._num_time_steps, **kwargs))
+    def proceed(self):
+        self._add_iteration()
+        self._current_index = len(self) - 1
+        self.current_iteration.initial = self.initial
 
-    def done(self):
-        super(ISolverState, self).done()
-        for _iteration in self:
-            self.solution.add_solution(deepcopy(_iteration.solution))
+    def finalize(self):
+        assert_condition(not self.finalized,
+                         RuntimeError, "This {} is already done.".format(self.__class__.__name__),
+                         self)
+        for _iter in self:
+            self.solution.add_solution(_iter.solution)
         self.solution.finalize()
+        self._current_index = 0
+        self._finalized = True
 
     @property
     def num_nodes(self):
@@ -298,28 +405,20 @@ class ISolverState(IStateIterator):
         self._delta_interval = delta_interval
 
     @property
+    def initial(self):
+        return self._initial
+
+    @initial.setter
+    def initial(self, initial):
+        self._initial = initial
+
+    @property
     def current_iteration(self):
         return self.current
 
     @property
     def current_iteration_index(self):
         return self.current_index
-
-    @property
-    def current_time_step(self):
-        return self.current_iteration.current_time_step
-
-    @property
-    def current_time_step_index(self):
-        return self.current_iteration.current_time_step_index
-
-    @property
-    def current_step(self):
-        return self.current_iteration.current_time_step.current_step
-
-    @property
-    def current_step_index(self):
-        return self.current_iteration.current_step_index
 
     @property
     def previous_iteration(self):
@@ -330,16 +429,64 @@ class ISolverState(IStateIterator):
         return self.previous_index
 
     @property
-    def previous_time_step_index(self):
-        return self.current_iteration.previous_time_step_index
+    def first_iteration(self):
+        return self.first
 
     @property
-    def previous_step_index(self):
-        return self.current_iteration.previous_step_index
+    def is_first_iteration(self):
+        return len(self) == 1
 
     @property
-    def previous_step_index(self):
-        return self.current_iteration.previous_step_index
+    def last_iteration(self):
+        return self.last
+
+    @property
+    def last_iteration_index(self):
+        return self.last_index
+
+    @property
+    def current_time_step(self):
+        return self.current_iteration.current_time_step if self.current_iteration else None
+
+    @property
+    def current_time_step_index(self):
+        return self.current_iteration.current_time_step_index if self.current_iteration else None
+
+    @property
+    def previous_time_step(self):
+        return self.current_iteration.previous_time_step if self.current_iteration else None
+
+    @property
+    def next_time_step(self):
+        return self.current_iteration.next_time_step if self.current_iteration else None
+
+    @property
+    def current_step(self):
+        return self.current_iteration.current_time_step.current_step \
+            if (self.current_iteration and self.current_iteration.current_time_step) else None
+
+    @property
+    def current_step_index(self):
+        return self.current_iteration.current_step_index if self.current_iteration else None
+
+    @property
+    def previous_step(self):
+        return self.current_iteration.current_time_step.previous_step \
+            if (self.current_iteration and self.current_iteration.current_time_step
+                and self.current_iteration.current_time_step.previous_step) \
+            else self.initial
+
+    @property
+    def next_step(self):
+        return self.current_iteration.next_step if self.current_iteration else None
+
+    def _add_iteration(self):
+        assert_condition(self.num_time_steps > 0 and self.num_nodes > 0,
+                         ValueError, "Number of time steps and nodes per time step must be larger 0: NOT {}, {}"
+                                     .format(self.num_time_steps, self.num_nodes),
+                         self)
+        self._states.append(self._element_type(num_states=self.num_nodes,
+                                               num_time_steps=self.num_time_steps))
 
 
-__all__ = ['IStepState', 'IStateIterator', 'ITimeStepState', 'IIterationState', 'ISolverState']
+__all__ = ['IStepState', 'IStateIterator', 'IStaticStateIterator', 'ITimeStepState', 'IIterationState', 'ISolverState']
