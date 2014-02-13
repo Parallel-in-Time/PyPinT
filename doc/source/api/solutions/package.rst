@@ -10,4 +10,4 @@ Solutions (:mod:`solutions`)
     data_storage/package
     i_solution
     final_solution
-    full_solution
+    iterative_solution
