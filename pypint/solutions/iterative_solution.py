@@ -106,7 +106,7 @@ class IterativeSolution(ISolution):
                            .format(self._data_type, args[0].__class__.__name__),
                            self)
 
-        _old_data = self._data.copy()  # backup for potential rollback
+        _old_data = copy.copy(self._data)  # backup for potential rollback
         if _iteration == -1:
             self._data.append(args[0])
         else:
@@ -117,7 +117,7 @@ class IterativeSolution(ISolution):
         except ValueError:
             # consistency check failed, thus removing recently added solution data storage
             warnings.warn("Consistency Check failed. Not adding this solution.")
-            self._data = _old_data.copy()  # rollback
+            self._data = copy.copy(_old_data)  # rollback
         finally:
             # everything ok
             pass

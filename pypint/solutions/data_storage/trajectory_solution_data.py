@@ -47,6 +47,7 @@ class TrajectorySolutionData(object):
         self._time_points = np.zeros(0, dtype=np.float)
         self._numeric_type = None
         self._dim = None
+        self._finalized = False
 
     def add_solution_data(self, *args, **kwargs):
         """
@@ -78,9 +79,13 @@ class TrajectorySolutionData(object):
             * if construction of :py:class:`.StepSolutionData` fails
             * if internal consistency check fails (see :py:meth:`._check_consistency`)
         """
+        assert_condition(not self.finalized, AttributeError, "Cannot change this solution data storage any more.", self)
         _old_data = self._data  # backup for potential rollback
 
         if len(args) == 1 and isinstance(args[0], StepSolutionData):
+            assert_condition(args[0].time_point is not None,
+                             ValueError, "Time point must not be None.",
+                             self)
             self._data = np.append(self._data, np.array([args[0]], dtype=np.object))
         else:
             self._data = np.append(self._data, np.array([StepSolutionData(*args, **kwargs)], dtype=np.object))
@@ -99,6 +104,37 @@ class TrajectorySolutionData(object):
         if self._data.size == 1:
             self._dim = self._data[-1].dim
             self._numeric_type = self._data[-1].numeric_type
+
+    def finalize(self):
+        """
+        Summary
+        -------
+        Locks this storage data instance.
+
+        Raises
+        ------
+        ValueError :
+            If it has already been locked.
+        """
+        assert_condition(not self.finalized, AttributeError, "This solution data storage is already finalized.", self)
+        self._finalized = True
+
+    @property
+    def finalized(self):
+        """
+        Summary
+        -------
+        Accessor for the lock state.
+
+        Returns
+        -------
+        finilized : :py:class:`bool`
+            :``True``:
+                if it has been finalized before
+            :``False``:
+                otherwise
+        """
+        return self._finalized
 
     @property
     def data(self):
@@ -242,6 +278,9 @@ class TrajectorySolutionData(object):
             if elem == item:
                 return True
         return False
+
+    def __str__(self):
+        return "TrajectorySolutionData(data={}, time_points={})".format(self.data, self.time_points)
 
 
 __all__ = ['TrajectorySolutionData']
