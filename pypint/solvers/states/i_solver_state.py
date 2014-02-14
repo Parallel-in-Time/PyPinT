@@ -144,6 +144,9 @@ class IStateIterator(object):
 
 class IStaticStateIterator(IStateIterator):
     def proceed(self):
+        assert_condition(not self.finalized,
+                         RuntimeError, "This {} is already done.".format(self.__class__.__name__),
+                         self)
         if self.next_index is not None:
             self._current_index += 1
         else:
@@ -374,6 +377,7 @@ class ISolverState(IStateIterator):
         self._add_iteration()
         self._current_index = len(self) - 1
         self.current_iteration.initial = self.initial
+        self.current_time_step.initial = self.current_iteration.initial
 
     def finalize(self):
         assert_condition(not self.finalized,
@@ -475,6 +479,13 @@ class ISolverState(IStateIterator):
             if (self.current_iteration and self.current_iteration.current_time_step
                 and self.current_iteration.current_time_step.previous_step) \
             else self.initial
+
+    @property
+    def previous_step_index(self):
+        return self.current_iteration.current_time_step.previous_step_index \
+            if (self.current_iteration and self.current_iteration.current_time_step
+                and self.current_iteration.current_time_step.previous_step) \
+            else None
 
     @property
     def next_step(self):

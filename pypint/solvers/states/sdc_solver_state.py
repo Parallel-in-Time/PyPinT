@@ -1,12 +1,12 @@
 # coding=utf-8
-from pypint.solvers.states.i_solver_state import *
+from pypint.solvers.states.i_solver_state import IStepState, ITimeStepState, IIterationState, ISolverState
 from pypint.solutions.iterative_solution import IterativeSolution
 from pypint.solutions.data_storage import TrajectorySolutionData
 
 
 class SdcStepState(IStepState):
-    def __init__(self):
-        super(SdcStepState, self).__init__()
+    def __init__(self, **kwargs):
+        super(SdcStepState, self).__init__(**kwargs)
         self._integral = 0.0
 
     @property
@@ -36,6 +36,7 @@ class SdcSolverState(ISolverState):
         kwargs['solution_class'] = IterativeSolution
         kwargs['element_type'] = SdcIterationState
         super(SdcSolverState, self).__init__(**kwargs)
+        self._initial_state = SdcStepState()
 
 
 __all__ = ['SdcStepState', 'SdcTimeStepState', 'SdcIterationState', 'SdcSolverState']
