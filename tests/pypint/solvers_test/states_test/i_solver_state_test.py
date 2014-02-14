@@ -147,6 +147,7 @@ class IStaticStateIteratorTest(TestCase):
 class ITimeStepStateTest(TestCase):
     def setUp(self):
         self._default = ITimeStepState(num_states=3)
+        self.assertIs(len(self._default), 3)
 
     def test_has_same_features_as_state_iterator(self):
         self.setUp()
@@ -344,12 +345,10 @@ class ISolverStateTest(TestCase):
         self.assertFalse(self._default.finalized)
         self._default.finalize()
         self.assertTrue(self._default.finalized)
-        print(self._default.solution)
 
         self.setUp()
         self._default.proceed()
         self._default.finalize()
-        print(self._default.solution)
 
     def test_has_proxies_for_time_step_and_step(self):
         self._default.proceed()
