@@ -34,7 +34,7 @@ class ThresholdCheck(object):
         self._check_reduction(state)
         self._check_minimum("residual", state.current_iteration.final_step.solution.residual)
         self._check_minimum("error", state.current_iteration.final_step.solution.error)
-        self._check_maximum("iterations", state.solution.used_iterations)
+        self._check_maximum("iterations", state.current_iteration_index + 1)
 
     def has_reached(self, human=False):
         if human:
@@ -93,6 +93,7 @@ class ThresholdCheck(object):
         """
         if not state.previous_iteration:
             # there is no previous iteration to compare with
+            LOG.debug("Skipping computation of reduction: No previous iteration available.")
             return
 
         if state.current_iteration.final_step.solution.error:
@@ -100,13 +101,13 @@ class ThresholdCheck(object):
             _previous_error = supremum_norm(state.previous_iteration.final_step.solution.error)
             _current_error = supremum_norm(state.current_iteration.final_step.solution.error)
             state.solution.set_error_reduction(state.current_iteration_index,
-                                               abs(_previous_error / _current_error) * 0.01)
+                                               abs((_previous_error - _current_error) / _previous_error * 100))
 
         # computing reduction of solution
         _previous_solution = supremum_norm(state.previous_iteration.final_step.solution.value)
         _current_solution = supremum_norm(state.current_iteration.final_step.solution.value)
         state.solution.set_solution_reduction(state.current_iteration_index,
-                                              abs(_previous_solution / _current_solution) * 0.01)
+                                              abs((_previous_solution - _current_solution) / _current_solution * 100))
 
     def _check_reduction(self, state):
         self.compute_reduction(state)
@@ -139,7 +140,7 @@ class ThresholdCheck(object):
                               .format(name, _value, self._conditions[name]))
                     self._reason = name
             elif operator == "max":
-                if _value > self._conditions[name]:
+                if _value >= self._conditions[name]:
                     LOG.debug("Maximum of {:s} exceeded: {:d} > {:d}"
                               .format(name, _value, self._conditions[name]))
                     self._reason = name
