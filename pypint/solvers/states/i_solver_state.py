@@ -9,6 +9,7 @@ import numpy as np
 from pypint.solutions.data_storage import StepSolutionData, TrajectorySolutionData
 from pypint.solutions import IterativeSolution
 from pypint.utilities import assert_is_key, assert_condition
+from pypint import LOG
 
 
 class IStepState(object):
@@ -109,7 +110,7 @@ class IStateIterator(object):
 
     @property
     def previous_index(self):
-        return self.current_index - 1 if self.current_index is not None and self.current_index  > 0 else None
+        return self.current_index - 1 if self.current_index is not None and self.current_index > 0 else None
 
     @property
     def first(self):
@@ -158,7 +159,9 @@ class IStaticStateIterator(IStateIterator):
 
     @property
     def next_index(self):
-        return self.current_index + 1 if self.current_index is not None and len(self) > self.current_index + 1 else None
+        # LOG.debug("{}: curr={}, len={}".format(self.__class__.__name__, self.current_index, len(self)))
+        return self.current_index + 1 \
+            if self.current_index is not None and len(self) > self.current_index + 1 else None
 
 
 class ITimeStepState(IStaticStateIterator):
@@ -203,15 +206,15 @@ class ITimeStepState(IStaticStateIterator):
 
     @property
     def current_time_point(self):
-        return self.current_step.time_point if self.current_step else None
+        return self.current_step.time_point if self.current_step is not None else None
 
     @property
     def previous_time_point(self):
-        return self.previous_step.time_point if self.previous else None
+        return self.previous_step.time_point if self.previous is not None else None
 
     @property
     def next_time_point(self):
-        return self.next.time_point if self.next else None
+        return self.next.time_point if self.next is not None else None
 
     @property
     def current_step(self):
@@ -223,7 +226,7 @@ class ITimeStepState(IStaticStateIterator):
 
     @property
     def previous_step(self):
-        return self.previous if self.previous is not None else self.initial
+        return self.previous if self.previous_index is not None else self.initial
 
     @property
     def previous_step_index(self):
@@ -267,7 +270,7 @@ class IIterationState(IStaticStateIterator):
         self._states = [self._element_type(**kwargs) for i in range(0, _num_time_steps)]
 
         self._delta_interval = 0.0
-        self._initial_state = self.first_time_step.initial
+        self._initial = None
 
     def finalize(self):
         assert_condition(not self.finalized,
@@ -284,6 +287,14 @@ class IIterationState(IStaticStateIterator):
         super(IIterationState, self).proceed()  # -> current_index += 1
         # link initial step of this time step to the previous' last step
         self.current_time_step.initial = self.previous_time_step.last_step
+
+    @property
+    def initial(self):
+        return self._initial
+
+    @initial.setter
+    def initial(self, initial):
+        self._initial = initial
 
     @property
     def current_time_step(self):
@@ -336,19 +347,20 @@ class IIterationState(IStaticStateIterator):
     @property
     def previous_step(self):
         return self.current_time_step.previous_step \
-            if self.current_time_step.previous_step else self.previous_time_step.last
+            if self.current_time_step.previous_step is not None else self.first_time_step.initial
 
     @property
     def next_step(self):
-        return self.current_time_step.next_step if self.current_time_step.next_step else self.next_time_step.first
+        return self.current_time_step.next_step \
+            if self.current_time_step.next_step is not None else self.next_time_step.first
 
     @property
     def first_step(self):
-        return self.first_time_step.first if self.first_time_step else None
+        return self.first_time_step.first if self.first_time_step is not None else None
 
     @property
     def final_step(self):
-        return self.last_time_step.last if self.last_time_step else None
+        return self.last_time_step.last if self.last_time_step is not None else None
 
     @property
     def time_points(self):
@@ -377,7 +389,7 @@ class ISolverState(IStateIterator):
         self._add_iteration()
         self._current_index = len(self) - 1
         self.current_iteration.initial = self.initial
-        self.current_time_step.initial = self.current_iteration.initial
+        self.current_iteration.first_time_step.initial = self.current_iteration.initial
 
     def finalize(self):
         assert_condition(not self.finalized,
@@ -450,46 +462,51 @@ class ISolverState(IStateIterator):
 
     @property
     def current_time_step(self):
-        return self.current_iteration.current_time_step if self.current_iteration else None
+        return self.current_iteration.current_time_step \
+            if self.current_iteration is not None else None
 
     @property
     def current_time_step_index(self):
-        return self.current_iteration.current_time_step_index if self.current_iteration else None
+        return self.current_iteration.current_time_step_index \
+            if self.current_iteration is not None else None
 
     @property
     def previous_time_step(self):
-        return self.current_iteration.previous_time_step if self.current_iteration else None
+        return self.current_iteration.previous_time_step \
+            if self.current_iteration is not None else None
 
     @property
     def next_time_step(self):
-        return self.current_iteration.next_time_step if self.current_iteration else None
+        return self.current_iteration.next_time_step \
+            if self.current_iteration is not None else None
 
     @property
     def current_step(self):
         return self.current_iteration.current_time_step.current_step \
-            if (self.current_iteration and self.current_iteration.current_time_step) else None
+            if (self.current_iteration is not None and self.current_iteration.current_time_step is not None) else None
 
     @property
     def current_step_index(self):
-        return self.current_iteration.current_step_index if self.current_iteration else None
+        return self.current_iteration.current_step_index \
+            if self.current_iteration is not None else None
 
     @property
     def previous_step(self):
         return self.current_iteration.current_time_step.previous_step \
-            if (self.current_iteration and self.current_iteration.current_time_step
-                and self.current_iteration.current_time_step.previous_step) \
+            if (self.current_iteration is not None and self.current_iteration.current_time_step is not None
+                and self.current_iteration.current_time_step.previous_step is not None) \
             else self.initial
 
     @property
     def previous_step_index(self):
         return self.current_iteration.current_time_step.previous_step_index \
-            if (self.current_iteration and self.current_iteration.current_time_step
-                and self.current_iteration.current_time_step.previous_step) \
+            if (self.current_iteration is not None and self.current_iteration.current_time_step is not None
+                and self.current_iteration.current_time_step.previous_step is not None) \
             else None
 
     @property
     def next_step(self):
-        return self.current_iteration.next_step if self.current_iteration else None
+        return self.current_iteration.next_step if self.current_iteration is not None else None
 
     def _add_iteration(self):
         assert_condition(self.num_time_steps > 0 and self.num_nodes > 0,
