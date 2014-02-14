@@ -27,8 +27,11 @@ def supremum_norm(vec):
     -------
     sup-norm : :py:class:`numpy.ndarray`
     """
+    if isinstance(vec, float):
+        return vec
+
     assert_is_instance(vec, (np.ndarray, IDiagnosisValue),
-                       "The infinity requires a numpy.ndarray or IDiagnosisValue: NOT {}"
+                       "The infinity norm requires a numpy.ndarray or IDiagnosisValue: NOT {}"
                        .format(vec.__class__.__name__))
     return \
         np.linalg.norm(vec, np.inf) if isinstance(vec, np.ndarray) else np.linalg.norm(vec.value, np.inf)
@@ -52,6 +55,9 @@ def two_norm(vec):
     -------
     two-norm : :py:class:`numpy.ndarray`
     """
+    if isinstance(vec, float):
+        return vec
+
     assert_is_instance(vec, (np.ndarray, IDiagnosisValue),
                        "The infinity requires a numpy.ndarray or IDiagnosisValue: NOT {}"
                        .format(vec.__class__.__name__))
