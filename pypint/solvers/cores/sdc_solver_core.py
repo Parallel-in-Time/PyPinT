@@ -37,12 +37,14 @@ class SdcSolverCore(ISolverCore):
         super(SdcSolverCore, self).run(state, **kwargs)
 
     def compute_residual(self, state, **kwargs):
+        # LOG.debug("computing residual")
         super(SdcSolverCore, self).compute_residual(state, **kwargs)
         state.current_step.solution.residual = Residual(
-            abs(state.current_time_step[0].solution.value
+            abs(state.current_time_step.initial.solution.value
                 + state.delta_interval * state.current_step.integral
                 - state.current_step.solution.value)
         )
+        # LOG.debug("Residual: {}".format(state.current_step.solution.residual.value))
 
     def compute_error(self, state, **kwargs):
         super(SdcSolverCore, self).compute_error(state, **kwargs)
@@ -52,7 +54,7 @@ class SdcSolverCore(ISolverCore):
                       self)
         _problem = kwargs['problem']
 
-        if problem_has_exact_solution(self.problem, self):
+        if problem_has_exact_solution(_problem, self):
             state.current_step.solution.error = Error(
                 abs(state.current_step.solution.value - _problem.exact(state.current_step.time_point))
             )
@@ -60,6 +62,18 @@ class SdcSolverCore(ISolverCore):
             # we need the exact solution for that
             #  (unless we find an error approximation method)
             pass
+
+    def _previous_iteration_previous_step(self, state):
+        if state.previous_iteration_index and state.previous_step_index:
+            return state.previous_iteration[state.current_time_step_index][state.previous_step_index]
+        else:
+            return state.initial
+
+    def _previous_iteration_current_step(self, state):
+        if state.previous_iteration_index:
+            return state.previous_iteration[state.current_time_step_index][state.current_step_index]
+        else:
+            return state.initial
 
 
 __all__ = ['SdcSolverCore']

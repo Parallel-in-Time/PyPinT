@@ -42,12 +42,10 @@ class ImplicitSdcCore(SdcSolverCore):
                       self)
         _problem = kwargs['problem']
 
-        _previous_iteration_current_step = \
-            state.previous_iteration[state.current_time_step_index][state.current_step_index]
+        _previous_iteration_current_step = self._previous_iteration_current_step(state)
 
         if problem_has_direct_implicit(_problem, self):
-            _previous_iteration_previous_step = \
-                state.previous_iteration[state.current_time_step_index][state.previous_step_index]
+            _previous_iteration_previous_step = self._previous_iteration_previous_step(state)
 
             _sol = _problem.direct_implicit(phis_of_time=[_previous_iteration_previous_step.solution.value,
                                                           _previous_iteration_current_step.solution.value,
@@ -62,12 +60,12 @@ class ImplicitSdcCore(SdcSolverCore):
             _expl_term = \
                 state.current_time_step.previous_step.solution.value \
                 - state.current_step.delta_tau \
-                * _problem.evaluate(state.current_time_step.next_time_point,
+                * _problem.evaluate(state.current_step.time_point,
                                     _previous_iteration_current_step.solution.value) \
                 + state.delta_interval * state.current_step.integral
             _func = lambda x_next: \
                 _expl_term \
-                + state.current_step.delta_tau * _problem.evaluate(state.current_time_step.next_time_point, x_next) \
+                + state.current_step.delta_tau * _problem.evaluate(state.current_step.time_point, x_next) \
                 - x_next
             _sol = _problem.implicit_solve(state.current_step.solution.value, _func)
 

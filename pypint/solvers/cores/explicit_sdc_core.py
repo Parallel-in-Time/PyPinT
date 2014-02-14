@@ -41,18 +41,16 @@ class ExplicitSdcCore(SdcSolverCore):
                       self)
         _problem = kwargs['problem']
 
+        _previous_step_solution = state.previous_step.solution
+        _previous_iteration_step_solution = self._previous_iteration_previous_step(state).solution
+
         # using step-wise formula
         # Formula:
         #   u_{m+1}^{k+1} = u_m^{k+1} + \Delta_\tau [ F(u_m^{k+1}) - F(u_m^k) ] + \Delta_t I_m^{m+1}(F(u^k))
-        _previous_step_index = state.previous_step_index
-        _current_time_step_index = state.current_time_step_index
-        state.current_step.solution = \
-            (state.current_time_step.previous_step.solution
-             + state.current_step.delta_tau
-             * (_problem.evaluate(state.current_step.time_point,
-                                  state.current_time_step.previous_step.solution)
-                - _problem.evaluate(state.current_step.time_point,
-                                    state.previous_iteration[_current_time_step_index][_previous_step_index].solution))
+        state.current_step.solution.value = \
+            (_previous_step_solution.value + state.current_step.delta_tau
+             * (_problem.evaluate(state.current_step.time_point, _previous_step_solution.value)
+                - _problem.evaluate(state.current_step.time_point, _previous_iteration_step_solution.value))
              + state.delta_interval * state.current_step.integral)
 
 
