@@ -301,7 +301,7 @@ class Sdc(IIterativeTimeSolver):
             for _current_time_step in self.state.current_iteration:
                 # run this time step
                 self._time_step()
-                if self.state.current_time_step_index != self.state.current_iteration.last_index:
+                if self.state.current_time_step_index < len(self.state.current_iteration) - 1:
                     self.state.current_iteration.proceed()
             _iter_timer.stop()
 
@@ -391,9 +391,10 @@ class Sdc(IIterativeTimeSolver):
         return self._integrator.nodes_type.num_nodes
 
     def _time_step(self):
+        self.state.current_time_step.delta_time_step = self._deltas['t']
         for _current_step in self.state.current_time_step:
             self._sdc_step()
-            if self.state.current_step_index != self.state.current_time_step.last_index:
+            if self.state.current_step_index < len(self.state.current_time_step) - 1:
                 self.state.current_time_step.proceed()
 
         # finalizing the current time step (i.e. TrajectorySolutionData.finalize)

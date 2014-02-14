@@ -107,7 +107,7 @@ class ThresholdCheck(object):
         _previous_solution = supremum_norm(state.previous_iteration.final_step.solution.value)
         _current_solution = supremum_norm(state.current_iteration.final_step.solution.value)
         state.solution.set_solution_reduction(state.current_iteration_index,
-                                              abs((_previous_solution - _current_solution) / _current_solution * 100))
+                                              abs((_previous_solution - _current_solution) / _previous_solution * 100))
 
     def _check_reduction(self, state):
         self.compute_reduction(state)
@@ -141,7 +141,7 @@ class ThresholdCheck(object):
                     self._reason = name
             elif operator == "max":
                 if _value >= self._conditions[name]:
-                    LOG.debug("Maximum of {:s} exceeded: {:d} > {:d}"
+                    LOG.debug("Maximum of {:s} exceeded: {:d} >= {:d}"
                               .format(name, _value, self._conditions[name]))
                     self._reason = name
             else:
