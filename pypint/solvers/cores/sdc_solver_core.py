@@ -40,13 +40,16 @@ class SdcSolverCore(ISolverCore):
     def compute_residual(self, state, **kwargs):
         # LOG.debug("computing residual")
         super(SdcSolverCore, self).compute_residual(state, **kwargs)
-        LOG.debug("Residual: {} + {} * {} - {}".format(state.current_time_step.initial.solution.value,state.current_time_step.delta_time_step,state.current_step.integral,state.current_step.solution.value))
         state.current_step.solution.residual = Residual(
             abs(state.current_time_step.initial.solution.value
-                + state.current_time_step.delta_time_step * state.current_step.integral
+                + state.delta_interval * kwargs['integral']
                 - state.current_step.solution.value)
         )
-        LOG.debug("Residual: {}".format(state.current_step.solution.residual.value))
+        # LOG.debug("Residual: {: .4f} = | {: .4f} + {: .4f} * {: .4f} - {: .4f} |"
+        #           .format(state.current_step.solution.residual.value[0],
+        #                   state.current_time_step.initial.solution.value[0],
+        #                   state.delta_interval, kwargs['integral'][0],
+        #                   state.current_step.solution.value[0]))
 
     def compute_error(self, state, **kwargs):
         super(SdcSolverCore, self).compute_error(state, **kwargs)
