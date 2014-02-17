@@ -1,5 +1,6 @@
 # coding=utf-8
 """
+
 .. moduleauthor:: Torbjörn Klatt <t.klatt@fz-juelich.de>
 """
 from copy import deepcopy
@@ -10,13 +11,8 @@ from pypint.utilities import assert_is_instance, assert_condition
 
 
 class IDiagnosisValue(object):
-    """
-    Summary
-    -------
-    Storage and handler of diagnosis values of iterative time solvers.
+    """Storage and handler of diagnosis values of iterative time solvers.
 
-    Extended Summary
-    ----------------
     :Comparability:
         It can be equality-compared (i.e. operators ``==`` and ``!=`` are implemented).
         The other comparison operators such as ``<``, ``<=``, ``>`` and ``>=`` are not implemented as these do not make
@@ -34,6 +30,7 @@ class IDiagnosisValue(object):
 
     def __init__(self, value):
         """
+
         Parameters
         ----------
         value : :py:class:`numpy.ndarray`
@@ -51,10 +48,7 @@ class IDiagnosisValue(object):
 
     @property
     def value(self):
-        """
-        Summary
-        -------
-        Read-only accessor for the value.
+        """Read-only accessor for the value.
 
         Returns
         -------
@@ -64,13 +58,8 @@ class IDiagnosisValue(object):
 
     @property
     def numeric_type(self):
-        """
-        Summary
-        -------
-        Read-only accessor for the numerical type of the value.
+        """Read-only accessor for the numerical type of the value.
 
-        Extended Summary
-        ----------------
         The type is derived from the given values.
 
         Returns

@@ -3,25 +3,21 @@
 
 .. moduleauthor:: Torbjörn Klatt <t.klatt@fz-juelich.de>
 """
-
-from .i_plotter import IPlotter
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib import is_interactive
+
+from pypint.plugins.plotters.i_plotter import IPlotter
 from pypint.utilities import assert_condition
 from pypint import LOG
 
 
 class ReductionResidualPlotter(IPlotter):
-    """
-    Summary
-    -------
-    Plotts residual and reduction of multiple solutions of an iterative time solver.
+    """Plotts residual and reduction of multiple solutions of an iterative time solver.
 
     See Also
     --------
-    .IPlotter
-        overridden class
+    .IPlotter : overridden class
     """
 
     _colors = np.array(['b', 'g', 'r', 'c', 'm', 'y', 'k'])
@@ -36,17 +32,14 @@ class ReductionResidualPlotter(IPlotter):
         self.__residual_limits = [0.0, 0.0]
 
     def plot(self, *args, **kwargs):
-        """
-        Summary
-        -------
-        Plots the solution and optional also the error for each iteration.
+        """Plots the solution and optional also the error for each iteration.
 
         Parameters
         ----------
-        solver : IIterativeTimeSolver
+        solver : :py:class:`.IIterativeTimeSolver`
             The solver instance used to calculate the solution.
 
-        solution : ISolution
+        solution : :py:class:`.ISolution`
             The solution.
         """
         super(ReductionResidualPlotter, self).plot(args, **kwargs)

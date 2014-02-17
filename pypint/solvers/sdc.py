@@ -1,5 +1,6 @@
 # coding=utf-8
 """
+
 .. moduleauthor:: Torbjörn Klatt <t.klatt@fz-juelich.de>
 """
 from copy import deepcopy
@@ -35,13 +36,8 @@ from pypint import LOG
 
 
 class Sdc(IIterativeTimeSolver):
-    """
-    Summary
-    -------
-    *Spectral Deferred Corrections* method for solving first order ODEs.
+    """*Spectral Deferred Corrections* method for solving first order ODEs.
 
-    Extended Summary
-    ----------------
     The *Spectral Deferred Corrections* (SDC) method is described in [Minion2003]_ (Equation 2.7)
 
     Default Values:
@@ -109,10 +105,7 @@ class Sdc(IIterativeTimeSolver):
         self.timer = TimerBase()
 
     def init(self, problem, integrator=SdcIntegrator(), **kwargs):
-        """
-        Summary
-        -------
-        Initializes SDC solver with given problem and integrator.
+        """Initializes SDC solver with given problem and integrator.
 
         Parameters
         ----------
@@ -125,11 +118,6 @@ class Sdc(IIterativeTimeSolver):
         weights_type : :py:class:`.IWeightFunction`
             Integration weights function to be used.
 
-        type : :py:class:`str`
-            Specifying the type of the SDC steps being implicit (``impl``), explicit (``expl``) or semi-implicit
-            (``semi``).
-            Default is ``expl``.
-
         Raises
         ------
         ValueError :
@@ -137,8 +125,7 @@ class Sdc(IIterativeTimeSolver):
 
         See Also
         --------
-        .IIterativeTimeSolver.init
-            overridden method
+        .IIterativeTimeSolver.init : overridden method
         """
         assert_is_instance(problem, IInitialValueProblem,
                            "SDC requires an initial value problem: {:s}".format(problem.__class__.__name__),
@@ -201,13 +188,8 @@ class Sdc(IIterativeTimeSolver):
         self._deltas['n'] = _deltas_n[1:].copy()
 
     def run(self, core):
-        """
-        Summary
-        -------
-        Applies SDC solver to the initialized problem setup.
+        """Applies SDC solver to the initialized problem setup.
 
-        Extended Summary
-        ----------------
         Solves the given problem with the explicit SDC algorithm.
 
         The output for the iterations explained:
@@ -250,16 +232,9 @@ class Sdc(IIterativeTimeSolver):
                 Is only displayed if the given problem provides a function for the
                 exact solution (see :py:meth:`.problem_has_exact_solution()`).
 
-        Parameters
-        ----------
-
-        Raises
-        ------
-
         See Also
         --------
-        .IIterativeTimeSolver.run
-            overridden method
+        .IIterativeTimeSolver.run : overridden method
         """
         super(Sdc, self).run(core)
 
@@ -358,28 +333,22 @@ class Sdc(IIterativeTimeSolver):
 
     @property
     def num_time_steps(self):
-        """
-        Summary
-        -------
-        Accessor for the number of time steps within the interval.
+        """Accessor for the number of time steps within the interval.
 
         Returns
         -------
-        number time steps : integer
+        number time steps : :py:class:`int`
             Number of time steps within the problem-given time interval.
         """
         return self._num_time_steps
 
     @property
     def num_nodes(self):
-        """
-        Summary
-        -------
-        Accessor for the number of integration nodes per time step.
+        """Accessor for the number of integration nodes per time step.
 
         Returns
         -------
-        number of nodes : integer
+        number of nodes : :py:class:`int`
             Number of integration nodes used within one time step.
         """
         return self._integrator.nodes_type.num_nodes

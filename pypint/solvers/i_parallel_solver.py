@@ -6,8 +6,7 @@
 
 
 class IParallelSolver(object):
-    """
-    basic interface for parallel solvers
+    """basic interface for parallel solvers
     """
 
     def __init__(self):

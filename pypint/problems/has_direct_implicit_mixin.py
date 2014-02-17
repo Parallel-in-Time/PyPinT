@@ -1,16 +1,14 @@
 # coding=utf-8
 """
+
 .. moduleauthor:: Torbjörn Klatt <t.klatt@fz-juelich.de>
 """
-from .i_problem import IProblem
-from ..utilities import assert_is_instance
+from pypint.problems.i_problem import IProblem
+from pypint.utilities import assert_is_instance
 
 
 class HasDirectImplicitMixin(object):
-    """
-    Summary
-    -------
-    Provides direct implicit formulation of the problem.
+    """Provides direct implicit formulation of the problem.
     """
     def __init__(self, *args, **kwargs):
         pass
@@ -26,10 +24,7 @@ class HasDirectImplicitMixin(object):
 
 
 def problem_has_direct_implicit(problem, checking_obj=None):
-    """
-    Summary
-    -------
-    Convenience checker for existence of a direct implicit formulation of a problem.
+    """Convenience checker for existence of a direct implicit formulation of a problem.
 
     Parameters
     ----------
@@ -37,7 +32,7 @@ def problem_has_direct_implicit(problem, checking_obj=None):
         The problem to check for a direct implicit formulation.
 
     checking_obj : :py:class:`object`
-        (optional)
+        *(optional)*
         The object calling this function for a meaningful error message.
         For debugging purposes only.
 

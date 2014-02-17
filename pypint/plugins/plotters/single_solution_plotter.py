@@ -15,15 +15,11 @@ from pypint import LOG
 
 
 class SingleSolutionPlotter(IPlotter):
-    """
-    Summary
-    -------
-    Plotter for a single solution of an iterative time solver.
+    """Plotter for a single solution of an iterative time solver.
 
     See Also
     --------
-    .IPlotter
-        overridden class
+    .IPlotter : overridden class
     """
     def __init__(self, *args, **kwargs):
         super(SingleSolutionPlotter, self).__init__(args, **kwargs)
@@ -33,25 +29,22 @@ class SingleSolutionPlotter(IPlotter):
         self._errplot = False
 
     def plot(self, *args, **kwargs):
-        """
-        Summary
-        -------
-        Plots the solution and optional also the error for each iteration.
+        """Plots the solution and optional also the error for each iteration.
 
         Parameters
         ----------
-        solver : IIterativeTimeSolver
+        solver : :py:class:`.IIterativeTimeSolver`
             The solver instance used to calculate the solution.
 
-        solution : ISolution
+        solution : :py:class:`.ISolution`
             The solution.
 
-        errplot : boolean
-            (optional)
+        errplot : :py:class:`bool`
+            *(optional)*
             If given and ``True`` also plots the errors for each iteration found in the solution.
 
-        residualplot : boolean
-            (optional)
+        residualplot : :py:class:`bool`
+            *(optional)*
             If given and ``True`` also plots the residual for each iteration found in the solution.
         """
         super(SingleSolutionPlotter, self).plot(args, **kwargs)

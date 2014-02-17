@@ -1,5 +1,6 @@
 # coding=utf-8
 """
+
 .. moduleauthor:: Torbjörn Klatt <t.klatt@fz-juelich.de>
 """
 import numpy as np
@@ -84,11 +85,10 @@ class ThresholdCheck(object):
         return _outstr
 
     def compute_reduction(self, state):
-        """
-        Summary
-        -------
-        Computes the reduction of the error and solution with respect to the supremum nomr of the given state's current
-        iteration (see :py:attr:`.ISolverState.current_iteration` and :py:class:`.IIterationState`).
+        """Computes the reduction of the error and solution
+
+        With respect to the supremum nomr of the given state's current iteration (see
+        :py:attr:`.ISolverState.current_iteration` and :py:class:`.IIterationState`).
         In case no previous iteration is available, it immediatly returns.
         """
         if not state.previous_iteration:

@@ -1,5 +1,6 @@
 # coding=utf-8
 """
+
 .. moduleauthor:: Torbjörn Klatt <t.kaltt@fz-juelich.de>
 """
 from copy import deepcopy
@@ -9,7 +10,6 @@ import numpy as np
 from pypint.solutions.data_storage import StepSolutionData, TrajectorySolutionData
 from pypint.solutions import IterativeSolution
 from pypint.utilities import assert_is_key, assert_condition
-from pypint import LOG
 
 
 class IStepState(object):
@@ -31,10 +31,7 @@ class IStepState(object):
 
     @property
     def time_point(self):
-        """
-        Summary
-        -------
-        Proxy for :py:attr:`.StepSolutionData.time_point`.
+        """Proxy for :py:attr:`.StepSolutionData.time_point`.
         """
         return self._solution.time_point
 
@@ -165,10 +162,7 @@ class IStaticStateIterator(IStateIterator):
 
 
 class ITimeStepState(IStaticStateIterator):
-    """
-    Summary
-    -------
-    Stores integration step states of a single time step.
+    """Stores integration step states of a single time step.
     """
     def __init__(self, **kwargs):
         if 'solution_class' not in kwargs:
@@ -250,10 +244,7 @@ class ITimeStepState(IStaticStateIterator):
 
 
 class IIterationState(IStaticStateIterator):
-    """
-    Summary
-    -------
-    Stores time step states of a single iteration.
+    """Stores time step states of a single iteration.
     """
     def __init__(self, **kwargs):
         if 'solution_class' not in kwargs:
@@ -368,10 +359,7 @@ class IIterationState(IStaticStateIterator):
 
 
 class ISolverState(IStateIterator):
-    """
-    Summary
-    -------
-    Stores iteration states.
+    """Stores iteration states.
     """
     def __init__(self, **kwargs):
         if 'solution_class' not in kwargs:

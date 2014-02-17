@@ -1,4 +1,8 @@
 # coding=utf-8
+"""
+
+.. moduleauthor:: Torbjörn Klatt <t.klatt@fz-juelich.de>
+"""
 from pypint.solvers.states.i_solver_state import IStepState, ITimeStepState, IIterationState, ISolverState
 from pypint.solutions.iterative_solution import IterativeSolution
 from pypint.solutions.data_storage import TrajectorySolutionData

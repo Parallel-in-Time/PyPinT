@@ -3,20 +3,15 @@
 
 .. moduleauthor:: Torbjörn Klatt <t.klatt@fz-juelich.de>
 """
-
-from .i_analyzer import IAnalyzer
 import numpy as np
+
+from pypint.plugins.analyzers.i_analyzer import IAnalyzer
 from pypint.plugins.plotters.reduction_residual_plotter import ReductionResidualPlotter
 
 
 class MultiSolutionAnalyzer(IAnalyzer):
-    """
-    Summary
-    -------
-    Analyzer for multiple solution instance.
+    """Analyzer for multiple solution instance.
 
-    Extended Summary
-    ----------------
     For now, it only plots the final solution and the error of each iteration.
     """
     def __init__(self, *args, **kwargs):
@@ -37,10 +32,10 @@ class MultiSolutionAnalyzer(IAnalyzer):
         """
         Parameters
         ----------
-        solver : IIterativeTimeSolver
+        solver : :py:class:`.IIterativeTimeSolver`
             Solver instance used to calculate the solution to analyze.
 
-        solution : ISolution
+        solution : :py:class:`.ISolution`
             Solution returned by the solver.
         """
         super(MultiSolutionAnalyzer, self).add_data(args, kwargs)

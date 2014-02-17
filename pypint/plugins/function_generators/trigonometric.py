@@ -8,10 +8,7 @@ import numpy as np
 
 
 class TrigonometricFG(object):
-    """
-    Summary
-    -------
-    Takes up to multiple ``numpy.ndarray`` and constructs trigonometric polynomials.
+    """Takes up to multiple :py:class:`numpy.ndarray` and constructs trigonometric polynomials.
 
     Examples
     --------

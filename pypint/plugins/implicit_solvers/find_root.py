@@ -5,17 +5,13 @@
 """
 import numpy as np
 from scipy.optimize import root
+
 from pypint.utilities import assert_is_callable, assert_is_instance
 
 
 def find_root(fun, x0, method="hybr"):
-    """
-    Summary
-    -------
-    Wrapper around SciPy's generic root finding algorithm to support complex numbers.
+    """Wrapper around SciPy's generic root finding algorithm to support complex numbers.
 
-    Extended Summary
-    ----------------
     SciPy's generic root finding algorithm (``scipy.optimize.root``) is not able to deal with functions returning
     and/or accepting arrays with complex numbers.
 
@@ -24,13 +20,13 @@ def find_root(fun, x0, method="hybr"):
 
     Parameters
     ----------
-    fun : callable
+    fun : :py:class:`callable`
         Complex function to find the root of
 
-    x0 : numpy.ndarray
+    x0 : :py:class:`numpy.ndarray`
         Initial guess.
 
-    method : str
+    method : :py:class:`str`
         Root finding method to be used.
         See ``scipy.optimize.root`` for details.
 
@@ -40,10 +36,10 @@ def find_root(fun, x0, method="hybr"):
 
     Examples
     --------
-    from pypint.plugins.implicit_solvers import find_root
-    import numpy
-    fun = lambda x: (-1.0 + 1.0j) * x
-    sol = find_root(fun, numpy.array([0.0]))
+    >>> from pypint.plugins.implicit_solvers.find_root import find_root
+    >>> import numpy
+    >>> fun = lambda x: (-1.0 + 1.0j) * x
+    >>> sol = find_root(fun, numpy.array([0.0]))
     """
     assert_is_instance(x0, np.ndarray, "Initial start value must be a numpy.ndarray.")
     assert_is_callable(fun, "Function to find root of must be callable.")

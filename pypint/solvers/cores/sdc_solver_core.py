@@ -6,17 +6,11 @@ from pypint.solvers.cores.i_solver_core import ISolverCore
 from pypint.problems.has_exact_solution_mixin import problem_has_exact_solution
 from pypint.solvers.diagnosis import Error, Residual
 from pypint.utilities import assert_is_key
-from pypint import LOG
 
 
 class SdcSolverCore(ISolverCore):
-    """
-    Summary
-    -------
-    Provides the Step-Method-Core for :py:class:`.Sdc` solver.
+    """Provides the Step-Method-Core for :py:class:`.Sdc` solver.
 
-    Extended Summary
-    ----------------
     This is to be used as a Mixin for the :py:class:`.Sdc` solver to provide the core step-methods such as the explicit,
     implicit and semi-implicit Euler.
 

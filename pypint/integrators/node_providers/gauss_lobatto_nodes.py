@@ -3,24 +3,15 @@
 
 .. moduleauthor:: Torbjörn Klatt <t.klatt@fz-juelich.de>
 """
-
-from .i_nodes import INodes
 import numpy as np
 import numpy.polynomial.legendre as leg
+
+from pypint.integrators.node_providers.i_nodes import INodes
 from pypint.utilities import assert_condition
 
 
 class GaussLobattoNodes(INodes):
-    """
-    Summary
-    -------
-    Provider for Gauss-Lobatto integration nodes with variable count.
-
-    Extended Summary
-    ----------------
-
-    Examples
-    --------
+    """Provider for Gauss-Lobatto integration nodes with variable count.
     """
 
     std_interval = np.array([-1.0, 1.0])
@@ -30,20 +21,16 @@ class GaussLobattoNodes(INodes):
         self._interval = GaussLobattoNodes.std_interval
 
     def init(self, n_nodes, interval=None):
-        """
-        Summary
-        -------
-        Initializes and computes Gauss-Lobatto nodes.
+        """Initializes and computes Gauss-Lobatto nodes.
 
         Parameters
         ----------
-        n_nodes : integer
+        n_nodes : :py:class:`int`
             The number of desired Gauss-Lobatto nodes
 
         See Also
         --------
-        .INodes.init
-            overridden method
+        .INodes.init : overridden method
         """
         super(GaussLobattoNodes, self).init(n_nodes, interval)
         self.num_nodes = n_nodes
@@ -54,10 +41,7 @@ class GaussLobattoNodes(INodes):
 
     @property
     def num_nodes(self):
-        """
-        Summary
-        -------
-        Accessor of number of Gauss-Lobatto nodes.
+        """Accessor of number of Gauss-Lobatto nodes.
 
         Raises
         ------
@@ -66,8 +50,7 @@ class GaussLobattoNodes(INodes):
 
         See Also
         --------
-        .INodes.num_nodes
-            overridden method
+        .INodes.num_nodes : overridden method
         """
         return super(self.__class__, self.__class__).num_nodes.fget(self)
 
@@ -78,15 +61,10 @@ class GaussLobattoNodes(INodes):
         self._num_nodes = n_nodes
 
     def _compute_nodes(self):
-        """
-        Summary
-        -------
-        Computes Gauss-Lobatto integration nodes.
+        """Computes Gauss-Lobatto integration nodes.
 
-        Extended Summary
-        ----------------
-        Calculates the Gauss-Lobatto integration nodes via a root calculation
-        of derivatives of the legendre polynomials.
+        Calculates the Gauss-Lobatto integration nodes via a root calculation of derivatives of the legendre
+        polynomials.
         Note that the precision of float 64 is not guarantied.
         """
         roots = leg.legroots(leg.legder(np.array([0] * (self.num_nodes - 1) +

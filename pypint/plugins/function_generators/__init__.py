@@ -1,6 +1,5 @@
 # coding=utf-8
-"""
-Function generators
+"""Function generators
 
 .. moduleauthor:: Dieter Moser <d.moser@fz-juelich.de>
 """

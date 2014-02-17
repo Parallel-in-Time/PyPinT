@@ -3,28 +3,21 @@
 
 .. moduleauthor: Torbjörn Klatt <t.klatt@fz-juelich.de>
 """
-
 from copy import deepcopy
+
 import numpy as np
+
 from pypint.utilities import assert_is_instance, assert_condition
 
 
 class INodes(object):
-    """
-    Summary
-    -------
-    Provider for integration nodes.
+    """Provider for integration nodes.
 
-    Extended Summary
-    ----------------
     This is an abstract interface for providers of integration nodes.
     """
 
     std_interval = np.array([0.0, 0.0])
-    """
-    Summary
-    -------
-    Standard interval for this integration nodes.
+    """Standard interval for this integration nodes.
     """
 
     def __init__(self):
@@ -33,60 +26,49 @@ class INodes(object):
         self._interval = None
 
     def init(self, n_nodes, interval=None):
-        """
-        Summary
-        -------
-        Initializes the vector of integration nodes of size `n_nodes`.
+        """Initializes the vector of integration nodes of size `n_nodes`.
 
         Parameters
         ----------
-        n_nodes : integer
+        n_nodes : :py:class:`int`
             The number of desired integration nodes.
-        interval : numpy.ndarray(size=2)|None
+
+        interval : :py:class:`numpy.ndarray` of size 2 or :py:class:`None`
             Interval of desired integration nodes.
-            If unset (i.e. ``None``), default nodes interval is implementation
-            dependent.
+            If unset (i.e. :py:class:`None`), default nodes interval is implementation dependent.
 
         Notes
         -----
-        The implementation and behaviour must and will be defined by
-        specializations of this interface.
+        The implementation and behaviour must and will be defined by specializations of this interface.
 
         See Also
         --------
-        .interval
-            Accessor for the interval.
+        .interval : Accessor for the interval.
         """
         pass
 
     def transform(self, interval):
-        """
-        Summary
-        -------
-        Transforms computed integration nodes to fit a new given interval.
+        """Transforms computed integration nodes to fit a new given interval.
 
-        Extended Summary
-        ----------------
-        Based on the old interval the computed integration nodes are transformed fitting the newly
-        given interval using standard linear interval scaling.
-        In case no interval was previously given, the standard interval of the used nodes method,
-        e.g. :math:`[-1, 1]` for Gauss-Lobatto, is used.
+        Based on the old interval the computed integration nodes are transformed fitting the newly given interval using
+        standard linear interval scaling.
+        In case no interval was previously given, the standard interval of the used nodes method, e.g. :math:`[-1, 1]`
+        for Gauss-Lobatto, is used.
 
         Parameters
         ----------
-        interval : numpy.ndarray(size=2)
+        interval : :py:class:`numpy.ndarray` of size 2
             New interval to transform nodes onto.
 
         Raises
         ------
         ValueError
-            If the standard interval is not suited for transformation, i.e. it
-            is not a ``numpy.ndarray`` of size 2 and not positive.
+            If the standard interval is not suited for transformation, i.e. it is not a :py:class:`numpy.ndarray` of
+            size 2 and not positive.
 
         Notes
         -----
-        It may be this transformation is numerically inconvenient because of
-        the loss of significance.
+        It may be this transformation is numerically inconvenient because of the loss of significance.
         """
         assert_is_instance(interval, np.ndarray, "Interval must be a numpy.ndarray.", self)
         assert_condition(interval.size == 2,
@@ -101,10 +83,7 @@ class INodes(object):
 
     @property
     def interval(self):
-        """
-        Summary
-        -------
-        Accessor for the interval of the integration nodes.
+        """Accessor for the interval of the integration nodes.
 
         Parameters
         ----------
@@ -113,12 +92,13 @@ class INodes(object):
 
         Raises
         ------
-        ValueError
-            If ``interval`` is not an ``numpy.ndarray`` and not of size 2.
+        ValueError :
+            If ``interval`` is not an :py:class:`numpy.ndarray` and not of size 2.
 
         Returns
         -------
-        node interval : numpy.ndarray(size=2)
+        node_interval : :py:class:`numpy.ndarray` of size 2
+            Interval of the nodes.
 
         Notes
         -----
@@ -132,28 +112,22 @@ class INodes(object):
 
     @property
     def nodes(self):
-        """
-        Summary
-        -------
-        Accessor for the vector of integration nodes.
+        """Accessor for the vector of integration nodes.
 
         Returns
         -------
-        nodes : numpy.ndarray
+        nodes : :py:class:`numpy.ndarray`
             Vector of nodes.
         """
         return self._nodes
 
     @property
     def num_nodes(self):
-        """
-        Summary
-        -------
-        Accessor for the number of desired integration nodes.
+        """Accessor for the number of desired integration nodes.
 
         Returns
         -------
-        number of nodes : integer
+        number of nodes : :py:class:`int`
             The number of desired and/or computed integration nodes.
 
         Notes

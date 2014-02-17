@@ -16,12 +16,11 @@ class MultiLevelProvider(object):
         """
         Parameters
         ----------
-        num_levels : integer
+        num_levels : :py:class:`int`
             Number of initial levels.
 
         default_transitioner : :py:class:`.ILevelTransitionProvider`
-            Default level transitioner to be used for all level transitions
-            unless a specific one is specified.
+            Default level transitioner to be used for all level transitions unless a specific one is specified.
         """
         self._level_transitioners = {}
         self._default_transitioner = default_transitioner
@@ -32,14 +31,11 @@ class MultiLevelProvider(object):
                 self.add_coarse_level(default_integrator)
 
     def integrator(self, level):
-        """
-        Summary
-        -------
-        Accessor for the integrator for the specified level.
+        """Accessor for the integrator for the specified level.
 
         Parameters
         ----------
-        level : integer
+        level : :py:class:`int`
             Level to retrieve integrator for.
 
         Returns
@@ -50,76 +46,72 @@ class MultiLevelProvider(object):
         return self._level_integrators[level]
 
     def prolongate(self, coarse_data, coarse_level, fine_level=None):
-        """
-        Summary
-        -------
-        Prolongates given data from coarser to finer level.
+        """Prolongates given data from coarser to finer level.
 
         Parameters
         ----------
-        coarse_data : numpy.ndarray
+        coarse_data : :py:class:`numpy.ndarray`
             Coarse data to prolongate.
-        coarse_level : integer
+
+        coarse_level : :py:class:`int`
             Level of the given data to prolongate from.
-        fine_level : integer (optional)
-            Fine level to prolongate onto. In case it is ``None`` the next
-            finer level is taken.
+
+        fine_level : :py:class:`int`
+            *(optional)*
+            Fine level to prolongate onto.
+            In case it is :py:class:`None` the next finer level is taken.
 
         Returns
         -------
-        prolongated data : numpy.ndarray
+        prolongated data : :py:class:`numpy.ndarray`
             The prolongated data.
 
         See Also
         --------
-        .ILevelTransitionProvider.prolongate
-            For details on prolongation.
+        .ILevelTransitionProvider.prolongate : for details on prolongation
         """
         return self._level_transition(coarse_level=coarse_level,
                                       fine_level=fine_level)\
                    .prolongate(coarse_data)
 
     def restringate(self, fine_data, fine_level, coarse_level=None):
-        """
-        Summary
-        -------
-        Restringates given data from finer to coarser level.
+        """Restringates given data from finer to coarser level.
 
         Parameters
         ----------
-        fine_data : numpy.ndarray
+        fine_data : :py:class:`numpy.ndarray`
             Fine data to restringate.
-        fine_level : integer
+
+        fine_level : :py:class:`int`
             Level of the given data to restringate from.
-        coarse_level : integer (optional)
-            Coarse level to restringate onto. In case it is ``None`` the next
-            coarser level is taken.
+
+        coarse_level : :py:class:`int`
+            *(optional)*
+            Coarse level to restringate onto.
+            In case it is :py:class:`None` the next coarser level is taken.
 
         Returns
         -------
-        restringated data : numpy.ndarray
+        restringated data : :py:class:`numpy.ndarray`
             The restringated data.
 
         See Also
         --------
-        .ILevelTransitionProvider.restringate
-            For details on restringation.
+        .ILevelTransitionProvider.restringate : for details on restringation
         """
         return self._level_transition(coarse_level=coarse_level,
                                       fine_level=fine_level)\
                    .restringate(fine_data)
 
     def add_coarse_level(self, integrator, top_level=-1):
-        """
-        Summary
-        -------
-        Adds a coarser level including an integrator and transitioner.
+        """Adds a coarser level including an integrator and transitioner.
 
         Parameters
         ----------
         integrator : :py:class:`.IntegratorBase`
             Integrator for the new level.
-        top_level : integer
+
+        top_level : :py:class:`int`
             Next finer level of the new level.
             ``0`` is the finest level, ``-1`` the currently coarsest.
 
@@ -135,19 +127,17 @@ class MultiLevelProvider(object):
         self._level_integrators.insert(top_level, integrator)
 
     def add_level_transition(self, transitioner, coarse_level, fine_level):
-        """
-        Summary
-        -------
-        Adds specialized level transitioner for specified levels.
+        """Adds specialized level transitioner for specified levels.
 
         Parameters
         ----------
         transitioner : :py:class:`.ILevelTransitionProvider`
-            Special level transitioner for specified prolongation and
-            restringation between given coarse and fine level.
-        coarse_level : integer
+            Special level transitioner for specified prolongation and restringation between given coarse and fine level.
+
+        coarse_level : :py:class:`int`
             Coarse level of the transitioner.
-        fine_level : integer
+
+        fine_level : :py:class:`int`
             Fine level of the transitioner.
 
         Raises
@@ -167,47 +157,38 @@ class MultiLevelProvider(object):
 
     @property
     def num_levels(self):
-        """
-        Summary
-        -------
-        Accessor for the number of levels.
+        """Accessor for the number of levels.
 
         Returns
         -------
-        num_levels : integer
+        num_levels : :py:class:`int`
             Number of levels of this Multi-Level Provider.
         """
         return self._num_levels
 
     def _level_transition(self, coarse_level=None, fine_level=None):
-        """
-        Summary
-        -------
-        Extracts level transition provider for given coarse and fine levels.
+        """Extracts level transition provider for given coarse and fine levels.
 
         Parameters
         ----------
-        coarse_level : integer
+        coarse_level : :py:class:`int`
             Coarse level of the level transitioner.
-        fine_level : integer
+
+        fine_level : :py:class:`int`
             Fine level of the level transitioner.
 
         Returns
         -------
         level_transitioner : :py:class:`.ILevelTransitionProvider`
-            Level transition provider to restringate and prolongate between
-            the given coarse and fine level.
-            In case no specialized transitioner is found, the default one is
-            returned.
+            Level transition provider to restringate and prolongate between the given coarse and fine level.
+            In case no specialized transitioner is found, the default one is returned.
 
         Raises
         ------
         ValueError
-            * if ``coarse_level`` and ``fine_level`` are ``None``
-            * if ``fine_level`` is ``None`` and ``coarse_level`` is the finest
-              one
-            * if ``coarse_level`` is ``None`` and ``fine_level`` is the
-              coarsest one
+            * if ``coarse_level`` and ``fine_level`` are :py:class:`None`
+            * if ``fine_level`` is :py:class:`None` and ``coarse_level`` is the finest one
+            * if ``coarse_level`` is :py:class:`None` and ``fine_level`` is the coarsest one
         """
         assert_condition(coarse_level is not None or fine_level is not None,
                         ValueError, "Either coarse or fine level index must be given", self)

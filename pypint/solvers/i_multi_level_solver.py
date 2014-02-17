@@ -8,10 +8,7 @@ from pypint.solvers.i_iterative_time_solver import IIterativeTimeSolver
 
 
 class IMultiLevelSolver(IIterativeTimeSolver):
-    """
-    Summary
-    -------
-    Basic interface for iterative multi-time-level solvers
+    """Basic interface for iterative multi-time-level solvers
     """
 
     def __init__(self):
@@ -24,8 +21,7 @@ class IMultiLevelSolver(IIterativeTimeSolver):
         self._top_level = -1
         self._multi_level_provider = None
 
-    def init(self, problem, base_solver, base_level, top_level,
-             multi_level_provider):
+    def init(self, problem, base_solver, base_level, top_level, multi_level_provider):
         super(self.__class__, self).init(problem)
         self._base_solver = base_solver
         self._base_level = base_level

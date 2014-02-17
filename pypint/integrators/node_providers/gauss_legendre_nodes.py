@@ -3,24 +3,15 @@
 
 .. moduleauthor:: Torbjörn Klatt <t.klatt@fz-juelich.de>
 """
-
-from .i_nodes import INodes
 import numpy as np
 from scipy import linalg
+
+from pypint.integrators.node_providers.i_nodes import INodes
 from pypint.utilities import assert_condition
 
 
 class GaussLegendreNodes(INodes):
-    """
-    Summary
-    -------
-    Provider for Gauss-Legendre integration nodes with variable count.
-
-    Extended Summary
-    ----------------
-
-    Examples
-    --------
+    """Provider for Gauss-Legendre integration nodes with variable count.
     """
 
     std_interval = np.array([-1.0, 1.0])
@@ -30,20 +21,16 @@ class GaussLegendreNodes(INodes):
         self._interval = GaussLegendreNodes.std_interval
 
     def init(self, n_nodes, interval=None):
-        """
-        Summary
-        -------
-        Initializes and computes Gauss-Legendre nodes.
+        """Initializes and computes Gauss-Legendre nodes.
 
         Parameters
         ----------
-        n_nodes : integer
+        n_nodes : :py:class:`int`
             The number of desired Gauss-Legendre nodes
 
         See Also
         --------
-        .INodes.init
-            overridden method
+        .INodes.init : overridden method
         """
         super(GaussLegendreNodes, self).init(n_nodes, interval)
         self.num_nodes = n_nodes
@@ -54,10 +41,7 @@ class GaussLegendreNodes(INodes):
 
     @property
     def num_nodes(self):
-        """
-        Summary
-        -------
-        Accessor of number of Gauss-Legendre nodes.
+        """Accessor of number of Gauss-Legendre nodes.
 
         Raises
         ------
@@ -66,8 +50,7 @@ class GaussLegendreNodes(INodes):
 
         See Also
         --------
-        .INodes.num_nodes
-            overridden method
+        .INodes.num_nodes : overridden method
         """
         return super(self.__class__, self.__class__).num_nodes.fget(self)
 
@@ -80,14 +63,8 @@ class GaussLegendreNodes(INodes):
         self._num_nodes = n_nodes
 
     def _compute_nodes(self):
-        """
-        Summary
-        -------
-        Computats nodes for the Gauss-Legendre quadrature of order :math:`n>1`
-        on :math:`[-1,+1]`.
+        """Computats nodes for the Gauss-Legendre quadrature of order :math:`n>1` on :math:`[-1,+1]`.
 
-        Extended Summary
-        ----------------
         (ported from MATLAB code, reference see below, original commend from
         MATLAB code:)
 

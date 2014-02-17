@@ -3,19 +3,13 @@
 
 .. moduleauthor:: Torbjörn Klatt <t.klatt@fz-juelich.de>
 """
-
-from .i_analyzer import IAnalyzer
+from pypint.plugins.analyzers.i_analyzer import IAnalyzer
 from pypint.plugins.plotters.single_solution_plotter import SingleSolutionPlotter
 
 
 class SingleSolutionAnalyzer(IAnalyzer):
-    """
-    Summary
-    -------
-    Analyzer for a single solution instance.
+    """Analyzer for a single solution instance.
 
-    Extended Summary
-    ----------------
     For now, it only plots the final solution and the error of each iteration.
     """
     def __init__(self, *args, **kwargs):
@@ -37,10 +31,10 @@ class SingleSolutionAnalyzer(IAnalyzer):
         """
         Parameters
         ----------
-        solver : IIterativeTimeSolver
+        solver : :py:class:`.IIterativeTimeSolver`
             Solver instance used to calculate the solution to analyze.
 
-        solution : ISolution
+        solution : :py:class:`.ISolution`
             Solution returned by the solver.
         """
         super(SingleSolutionAnalyzer, self).add_data(args, kwargs)

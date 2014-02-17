@@ -1,22 +1,16 @@
 # coding=utf-8
 """
+
 .. moduleauthor:: Torbjörn Klatt <t.klatt@fz-juelich.de>
 """
-import warnings
-
 import numpy as np
 
 from pypint.solvers.diagnosis.i_diagnosis_value import IDiagnosisValue
 
 
 def supremum_norm(vec):
-    """
-    Summary
-    -------
-    Computes uniform (or infinity) norm of given vector or :py:class:`.IDiagnosisValue`.
+    """Computes uniform (or infinity) norm of given vector or :py:class:`.IDiagnosisValue`.
 
-    Extended Summary
-    ----------------
     Uses numpy's norm function internally.
 
     Parameters
@@ -34,18 +28,12 @@ def supremum_norm(vec):
     elif isinstance(vec, IDiagnosisValue):
         return np.linalg.norm(vec.value, np.inf)
     else:
-        # warnings.warn("Unknown numeric type ('{}'). Cannot compute norm.".format(vec.__class__.__name__))
         return np.nan
 
 
 def two_norm(vec):
-    """
-    Summary
-    -------
-    Computes two-norm of given vector or :py:class:`.IDiagnosisValue`.
+    """Computes two-norm of given vector or :py:class:`.IDiagnosisValue`.
 
-    Extended Summary
-    ----------------
     Uses numpy's norm function internally.
 
     Parameters
@@ -63,7 +51,6 @@ def two_norm(vec):
     elif isinstance(vec, IDiagnosisValue):
         return np.linalg.norm(vec.value)
     else:
-        # warnings.warn("Unknown numeric type ('{}'). Cannot compute norm.".format(vec.__class__.__name__))
         return np.nan
 
 
