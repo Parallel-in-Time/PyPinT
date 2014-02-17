@@ -1,12 +1,16 @@
 # coding=utf-8
 """
-
 .. moduleauthor:: Torbjörn Klatt <t.klatt@fz-juelich.de>
 """
+import warnings
+import copy
 
-from .i_solution import ISolution
 import numpy as np
-from pypint.utilities import assert_condition
+
+from pypint.solutions.i_solution import ISolution
+from pypint.solutions.data_storage.step_solution_data import StepSolutionData
+from pypint.solutions.data_storage.trajectory_solution_data import TrajectorySolutionData
+from pypint.utilities import assert_is_instance, assert_condition
 
 
 class IterativeSolution(ISolution):
@@ -17,221 +21,290 @@ class IterativeSolution(ISolution):
 
     Extended Summary
     ----------------
-    A new solution of a specific iteration can be added via
-    :py:func:`.add_solution` and queried via :py:func:`.solution`.
+    A new solution of a specific iteration can be added via :py:meth:`.add_solution` and queried via
+    :py:meth:`.solution`.
+
+    Examples
+    --------
+    By default, the internal solution data storage type is :py:class:`.TrajectorySolutionData` allowing for
+    storage of the whole trajectory of the solution over the course of several iterations.
+    However, this can be changed on initialization to only store the solution of the last time point over the course of
+    iterations:
+
+    >>> from pypint.solutions.iterative_solution import IterativeSolution
+    >>> from pypint.solutions.data_storage.step_solution_data import StepSolutionData
+    >>> my_reduced_full_solution = IterativeSolution(solution_data_type=StepSolutionData)
     """
 
-    def __init__(self, numeric_type=np.float):
-        super(IterativeSolution, self).__init__(numeric_type)
-        # add one element to enable 1-based indices
-        self._points = np.zeros(0, dtype=np.float)
+    def __init__(self, *args, **kwargs):
+        """
+        Parameters
+        ----------
+        solution_data_type : :py:class:`.TrajectorySolutionData` or :py:class:`.StepSolutionData`
+            Defaults to :py:class:`.TrajectorySolutionData`.
+        """
+        super(IterativeSolution, self).__init__(*args, **kwargs)
         self._data = []
-        self._used_iterations = 0
+        # As this solution stores all values of all nodes of one iteration, `TrajectorySolutionData` is the solution
+        # data type.
+        self._data_type = kwargs['solution_data_type'] if 'solution_data_type' in kwargs else TrajectorySolutionData
+        self._error_reduction = {}
+        self._solution_reduction = {}
 
-    def add_solution(self, points, values, *args, **kwargs):
+    def add_solution(self, *args, **kwargs):
         """
         Summary
         -------
-        Adds a new solution of the specified iteration.
+        Adds a new solution data storage object.
 
         Extended Summary
         ----------------
-        A copy of the given data is stored as a ``numpy.float64`` array at the given iteration
-        index.
+        After each call an internal consistency check is carried out, which might raise further exceptions.
+        The number of used iterations (see :py:attr:`.used_iterations`) is auto-incremented on success.
 
         Parameters
         ----------
-        data : numpy.ndarray
-             solution data
+        data : :py:class:`.TrajectorySolutionData` or :py:class:`.StepSolutionData`
+            *(must not be named)*
+            Exactly one unnamed argument must be given.
 
-        ``iteration`` : integer
-            Index of the iteration of this solution (1-based).
-            ``-1`` auto-appends the solution.
+        iteration : :py:class:`int`
+            *(optional)*
+            1-based index of the iteration.
+            Defaults to `-1` meaning append after last stored iteration.
 
         Raises
         ------
-        ValueError
-            * if ``iteration`` is not given
-            * if there are more than ``iteration`` solutions already stored
-
-        See Also
-        --------
-        .ISolution.add_solution
-            overridden method; see for further named arguments
+        ValueError :
+            * if ``iteration`` is not an integer
+            * if ``iteration`` is not a valid index for the current size of stored solution data objects
+            * if not exactly one solution data object is given
         """
-        super(IterativeSolution, self).add_solution(points, values, *args, **kwargs)
-
-        assert_condition(np.all(self._points == points), ValueError, "Given points are not equal stored ones.", self)
-
-        # get iteration index (1-based)
-        iteration = int(kwargs["iteration"]) if "iteration" in kwargs else -1
-
-        # given iteration index of -1 means appending as last
-        if iteration == -1:
-            iteration = len(self._data) + 1  # (+1 because of 1-based index)
-
-        # convert iteration index to be 0-based
-        iteration -= 1
-
-        # NOTE: from here on, iteration is 0-based
-
-        # will we insert or append (incl. possible skipping)?
-        _append = (iteration >= len(self._data))
-
-        # we do not allow to override existing solutions (non-None elements)
-        if not _append:
-            assert_condition(self._data[iteration] is None,
-                            ValueError, "Data for iteration {:d} is already present. Not overriding."
-                                        .format(iteration + 1), self)
-
-        # if not simple append, fill in skipped iterations
-        while _append and len(self._data) < iteration:
-            self._data.append(None)
-
-        _append = (iteration == len(self._data))
-
-        # prepare values
-        _values = values.astype(dtype=self.numeric_type)
-        _errors = kwargs["error"].astype(np.float) if "error" in kwargs else None
-        _residuals = kwargs["residual"].astype(np.float) if "residual" in kwargs else None
-
-        # prepare data object
-        if _append:
-            self._data.append(ISolution.IterationData())
+        if 'iteration' in kwargs:
+            assert_is_instance(kwargs['iteration'], int,
+                               "Iteration index must be an integer: NOT {:s}"
+                               .format(kwargs['iteration'].__class__.__name__),
+                               self)
+            _iteration = kwargs['iteration'] - 1
+            if _iteration > 0:
+                assert_condition(_iteration in range(-1, self._data.size),
+                                 ValueError,
+                                 ("Iteration index must be within the size of the solution data array:" +
+                                  "{:d} not in [0, {:d}]".format(_iteration, self._data.size)),
+                                 self)
+            # remove the `iteration` key from the keyword arguments so it does not get passed onto the solution data
+            # storage creation
+            del kwargs['iteration']
         else:
-            self._data[iteration] = ISolution.IterationData()
+            _iteration = -1
 
-        # fill data object with values
-        self._data[iteration].init(iteration=iteration, values=_values, errors=_errors, residuals=_residuals,
-                                   numeric_type=self.numeric_type)
+        assert_condition(len(args) == 1 or 'data' in kwargs,
+                         ValueError, "Exactly one solution data object or 'data' must be given.",
+                         self)
+        assert_is_instance(args[0], self._data_type,
+                           "Given solution data storage must be a {}: NOT {}"
+                           .format(self._data_type, args[0].__class__.__name__),
+                           self)
+
+        _old_data = copy.copy(self._data)  # backup for potential rollback
+        if _iteration == -1:
+            self._data.append(args[0])
+        else:
+            self._data.insert(_iteration, args[0])
+
+        try:
+            self._check_consistency()
+        except ValueError:
+            # consistency check failed, thus removing recently added solution data storage
+            warnings.warn("Consistency Check failed. Not adding this solution.")
+            self._data = copy.copy(_old_data)  # rollback
+        finally:
+            # everything ok
+            pass
+
         self._used_iterations += 1
 
-    def solution(self, *args, **kwargs):
+    def solution(self, iteration):
         """
         Summary
         -------
-        Queries the solution vector of the given iteration.
+        Accessor for the solution of a specific iteration.
 
         Parameters
         ----------
-        iteration : integer
-            Index of the desired solution vector (1-based).
-            Defaults to -1.
-            Index ``1`` is the first solution, ``-1`` the last and final solution vector.
+        iteration : :py:class:`int`
+            0-based index of the iteration.
+            ``-1`` means last iteration.
 
         Returns
         -------
-        solution vector : numpy.ndarray
-            Solution of the given iteration.
+        solution : instance of :py:attr:`.data_storage_type`
+            or :py:class:`None` if no solutions are stored.
 
         Raises
         ------
-        ValueError
-            If ``iteration`` is not available.
-
-        See Also
-        --------
-        .ISolution.solution
-            overridden method
+        ValueError :
+            if given ``iteration`` index is not in the valid range
         """
-        iteration = kwargs["iteration"] if "iteration" in kwargs else -1
-        if iteration == -1:
-            iteration = len(self._data)
+        if len(self._data) > 0:
+            assert_condition(iteration in range(-1, len(self._data)),
+                             ValueError, "Iteration index not within valid range: {:d} not in [-1, {:d}"
+                                         .format(iteration, len(self._data)),
+                             self)
+            return self._data[iteration]
+        else:
+            return None
 
-        assert_condition(iteration <= len(self._data),
-                        ValueError, "Desired iteration is not available: {:d}".format(iteration), self)
-
-        return self._data[iteration - 1].values if isinstance(self._data[iteration - 1], ISolution.IterationData) \
-            else None
-
-    def error(self, *args, **kwargs):
+    def error(self, iteration):
         """
+        Summary
+        -------
+        Accessor for the errors of a specific iteration.
+
         Parameters
         ----------
-        iteration : integer
-            Index of the iteration of the desired error (1-based).
-            Defaults to -1.
-            Index ``1`` is the first error, ``-1`` the last and final error vector.
+        iteration : :py:class:`int`
+            0-based index of the iteration.
+            ``-1`` means last iteration.
 
         Returns
         -------
-        error vector : numpy.ndarray
-            Error of the given iteration.
+        error : instance of :py:attr:`.Error`
+            or :py:class:`None` if no solutions are stored.
 
         Raises
         ------
-        ValueError
-            If ``iteration`` is not available.
-
-        See Also
-        --------
-        .ISolution.error
-            overridden method
+        ValueError :
+            if given ``iteration`` index is not in the valid range
         """
-        iteration = kwargs["iteration"] if "iteration" in kwargs else -1
-        if iteration == -1:
-            iteration = len(self._data)
+        if len(self._data) > 0:
+            assert_condition(iteration in range(-1, len(self._data)),
+                             ValueError, "Iteration index not within valid range: {:d} not in [-1, {:d}"
+                                         .format(iteration, len(self._data)),
+                             self)
+            if self._data_type == StepSolutionData:
+                return np.array(self._data[iteration].error, dtype=np.object)
+            else:
+                return self._data[iteration].errors
+        else:
+            return None
 
-        assert_condition(iteration <= len(self._data),
-                        ValueError, "Desired iteration is not available: {:d}".format(iteration), self)
-
-        return self._data[iteration - 1].errors if isinstance(self._data[iteration - 1], ISolution.IterationData) \
-            else None
-
-    def residual(self, *args, **kwargs):
+    def residual(self, iteration):
         """
+        Summary
+        -------
+        Accessor for the residuals of a specific iteration.
+
         Parameters
         ----------
-        iteration : integer
-            Index of the iteration of the desired residual (1-based).
-            Defaults to -1.
-            Index ``1`` is the first residual, ``-1`` the last and final residual vector.
+        iteration : :py:class:`int`
+            0-based index of the iteration.
+            ``-1`` means last iteration.
 
         Returns
         -------
-        residual vector : numpy.ndarray
-            Residual of the given iteration.
+        residual : instance of :py:attr:`.Residual`
+            or :py:class:`None` if no solutions are stored.
 
         Raises
         ------
-        ValueError
-            If ``iteration`` is not available.
-
-        See Also
-        --------
-        .ISolution.residual
-            overridden method
+        ValueError :
+            if given ``iteration`` index is not in the valid range
         """
-        iteration = kwargs["iteration"] if "iteration" in kwargs else -1
-        if iteration == -1:
-            iteration = len(self._data)
+        if len(self._data) > 0:
+            assert_condition(iteration in range(-1, len(self._data)),
+                             ValueError, "Iteration index not within valid range: {:d} not in [-1, {:d}"
+                                         .format(iteration, len(self._data)),
+                             self)
+            if self._data_type == StepSolutionData:
+                return np.array(self._data[iteration].residual, dtype=np.object)
+            else:
+                return self._data[iteration].residuals
+        else:
+            return None
 
-        assert_condition(iteration <= len(self._data),
-                        ValueError, "Desired iteration is not available: {:d}".format(iteration), self)
+    def error_reduction(self, iteration):
+        if iteration in self._error_reduction:
+            return self._error_reduction[iteration]
+        else:
+            return None
 
-        return self._data[iteration - 1].residuals if isinstance(self._data[iteration - 1], ISolution.IterationData) \
-            else None
+    def solution_reduction(self, iteration):
+        if iteration in self._solution_reduction:
+            return self._solution_reduction[iteration]
+        else:
+            return None
+
+    def set_error_reduction(self, iteration, reduction):
+        assert_condition(isinstance(iteration, int) and iteration > 0,
+                         ValueError, "Iteration must be a non-zero positive integer: NOT {}".format(iteration),
+                         self)
+        assert_is_instance(reduction, (float, np.ndarray),
+                           "Reduction of error must be given as a float or numpy.ndarray: NOT {}"
+                           .format(reduction.__class__.__name__),
+                           self)
+        self._error_reduction[iteration] = copy.copy(reduction)
+
+    def set_solution_reduction(self, iteration, reduction):
+        assert_condition(isinstance(iteration, int) and iteration > 0,
+                         ValueError, "Iteration must be a non-zero positive integer: NOT {}".format(iteration),
+                         self)
+        assert_is_instance(reduction, (float, np.ndarray),
+                           "Reduction of solution must be given as a float or numpy.ndarray: NOT {}"
+                           .format(reduction.__class__.__name__),
+                           self)
+        self._solution_reduction[iteration] = copy.copy(reduction)
 
     @property
-    def values(self):
+    def solutions(self):
         """
+        Summary
+        -------
+        Read-only accessor for the stored list of solution data storages.
+
         Returns
         -------
-        Raw solution data with 0-based index.
+        values : :py:class:`list` of :py:class:`.TrajectorySolutionData` or :py:class:`.StepSolutionData` objects
         """
-        return [i.values if isinstance(i, ISolution.IterationData) else None for i in self._data]
+        return self._data
 
     @property
-    def errors(self):
-        return [i.errors if isinstance(i, ISolution.IterationData) else None for i in self._data]
+    def time_points(self):
+        """
+        Summary
+        -------
+        Proxies :py:attr:`.TrajectorySolutionData.time_points`.
 
-    @property
-    def residuals(self):
-        return [i.residuals if isinstance(i, ISolution.IterationData) else None for i in self._data]
+        Returns
+        -------
+        time_points : :py:class:`numpy.ndarray` or :py:class:`None`
+            :py:class:`None` is returned if no solutions have yet been stored
+        """
+        if len(self._data) > 0:
+            if self._data_type == TrajectorySolutionData:
+                return self._data[0].time_points
+            else:
+                return np.array([step.time_point for step in self._data], dtype=np.float)
+        else:
+            return None
 
-    def __str__(self):
-        out = "Iterative Solution with {:d} iterations and reduction of {:.2e}:"\
-              .format(self.used_iterations, self.reductions["solution"][-1])
-        for i in range(1, self.used_iterations):
-            out += "\n  Iteration {:d}: {:s}".format(i + 1, self.solution(iteration=i))
-        return out
+    def _check_consistency(self):
+        """
+        Summary
+        -------
+        Check consistency of stored solution data objects.
+
+        Raises
+        ------
+        ValueError :
+            * if the time points of at least two solution data storage objects differ
+        """
+        if len(self._data) > 0:
+            _time_points = self._data[0].time_points
+            for iteration in range(1, len(self._data)):
+                assert_condition(np.array_equal(_time_points, self._data[iteration].time_points),
+                                 ValueError, "Time points of one or more stored solution data objects do not match.",
+                                 self)
+
+
+__all__ = ['IterativeSolution']

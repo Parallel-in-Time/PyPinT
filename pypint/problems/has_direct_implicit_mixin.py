@@ -2,8 +2,8 @@
 """
 .. moduleauthor:: Torbjörn Klatt <t.klatt@fz-juelich.de>
 """
-from pypint.problems.i_problem import IProblem
-from pypint.utilities import assert_is_instance
+from .i_problem import IProblem
+from ..utilities import assert_is_instance
 
 
 class HasDirectImplicitMixin(object):
@@ -17,13 +17,9 @@ class HasDirectImplicitMixin(object):
 
     def direct_implicit(self, *args, **kwargs):
         """
-        Summary
-        -------
-
-
         Raises
         ------
-        NotImplementedError
+        NotImplementedError :
             If the problem using this Mixin actually does not override this method.
         """
         raise NotImplementedError("If this mixin is used, the problem must implement this function.")
@@ -40,19 +36,19 @@ def problem_has_direct_implicit(problem, checking_obj=None):
     problem : :py:class:`.IProblem`
         The problem to check for a direct implicit formulation.
 
-    checking_obj : object
+    checking_obj : :py:class:`object`
         (optional)
         The object calling this function for a meaningful error message.
         For debugging purposes only.
 
     Returns
     -------
-     : boolean
-        ``True`` if exact solution was given, ``False`` otherwise
+     : :py:class:`bool`
+        :py:class:`True` if exact solution was given, :py:class:`False` otherwise
 
     Raises
     ------
-    ValueError
+    ValueError :
         If the given problem is not an instance of :py:class:`.IProblem`.
     """
     assert_is_instance(problem, IProblem, "It needs to be a problem to have an exact solution.", checking_obj)

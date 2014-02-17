@@ -16,7 +16,7 @@ class HasExactSolutionMixin(object):
         """
         Parameters
         ----------
-        exact_function : callable
+        exact_function : :py:class:`callable`
             (optional)
             If given initializes the problem with the exact solution function.
         """
@@ -24,7 +24,7 @@ class HasExactSolutionMixin(object):
         if "exact_function" in kwargs:
             self.exact_function = kwargs["exact_function"]
 
-    def exact(self, time, phi_of_time):
+    def exact(self, time):
         """
         Summary
         -------
@@ -32,23 +32,23 @@ class HasExactSolutionMixin(object):
 
         Parameters
         ----------
-        time : float
+        time : :py:class:`float`
             Time point :math:`t`
-
-        phi_of_time : ``numpy.ndarray``
-            Time-dependent data.
 
         Returns
         -------
-        exact solution : ``numpy.ndarray``
+        exact solution : :py:class:`numpy.ndarray`
 
         Raises
         ------
-        ValueError
-            If ``time`` is not a ``float``.
+        ValueError :
+            * if ``time`` is not a :py:class:`float`
+            * if ``phi_of_time`` is not a :py:class:`numpy.ndarray`
+            * if not exact function is given
         """
         assert_is_instance(time, float, "Time must be a float.", self)
-        return self._exact_function(time, phi_of_time)
+        assert_is_callable(self._exact_function, "Exact function not given.", self)
+        return self._exact_function(time)
 
     @property
     def exact_function(self):
@@ -59,7 +59,7 @@ class HasExactSolutionMixin(object):
 
         Raises
         ------
-        ValueError
+        ValueError :
             On setting, if the new exact solution function is not callable.
         """
         return self._exact_function
@@ -88,12 +88,12 @@ def problem_has_exact_solution(problem, checking_obj=None):
 
     Returns
     -------
-     : boolean
-        ``True`` if exact solution was given, ``False`` otherwise
+     : :py:class:`bool`
+        :py:class:`True` if exact solution was given, :py:class:`False` otherwise
 
     Raises
     ------
-    ValueError
+    ValueError :
         If the given problem is not an instance of :py:class:`.IProblem`.
     """
     assert_is_instance(problem, IProblem, "It needs to be a problem to have an exact solution.", checking_obj)

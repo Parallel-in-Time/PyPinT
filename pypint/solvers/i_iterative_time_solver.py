@@ -1,12 +1,11 @@
 # coding=utf-8
 """
-
 .. moduleauthor: Torbjörn Klatt <t.klatt@fz-juelich.de>
 """
-
-from ..solutions.iterative_solution import IterativeSolution
-from ..utilities.threshold_check import ThresholdCheck
-from ..utilities import assert_condition
+from pypint.solvers.states.i_solver_state import ISolverState
+from pypint.solvers.cores.i_solver_core import ISolverCore
+from pypint.utilities.threshold_check import ThresholdCheck
+from pypint.utilities import assert_condition
 
 
 class IIterativeTimeSolver(object):
@@ -16,74 +15,13 @@ class IIterativeTimeSolver(object):
     Basic interface for iterative time solvers.
     """
 
-    class State(object):
-        """
-        Summary
-        -------
-        Internal class holding solver iteration states such as intermediate results.
-        """
-
-        num_points = 0
-
-        def __init__(self, iteration=0):
-            self._iteration = iteration
-            self._solution = None
-            self._error = None
-            self._residual = None
-            self._reduction_of_solution = None
-            self._reduction_of_error = None
-
-        @property
-        def iteration(self):
-            return self._iteration
-        @iteration.setter
-        def iteration(self, iteration):
-            assert_condition(iteration > 0,
-                             ValueError, "Iteration count must be possitive: {:d}".format(iteration),
-                             self)
-            self._iteration = iteration
-
-        @property
-        def solution(self):
-            return self._solution
-        @solution.setter
-        def solution(self, solution):
-            self._solution = solution.copy()
-
-        @property
-        def error(self):
-            return self._error
-        @error.setter
-        def error(self, error):
-            self._error = error
-
-        @property
-        def residual(self):
-            return self._residual
-        @residual.setter
-        def residual(self, residual):
-            self._residual = residual
-
-        @property
-        def reduction_of_solution(self):
-            return self._reduction_of_solution
-        @reduction_of_solution.setter
-        def reduction_of_solution(self, reduction_of_solution):
-            self._reduction_of_solution = reduction_of_solution
-
-        @property
-        def reduction_of_error(self):
-            return self._reduction_of_error
-        @reduction_of_error.setter
-        def reduction_of_error(self, reduction_of_error):
-            self._reduction_of_error = reduction_of_error
-
     def __init__(self, *args, **kwargs):
         self._problem = None
         self._integrator = None
+        self._core = ISolverCore()
         self._timer = None
         self._threshold_check = ThresholdCheck()
-        self._states = []
+        self._state = ISolverState()
 
     def init(self, problem, integrator, **kwargs):
         """
@@ -110,18 +48,28 @@ class IIterativeTimeSolver(object):
         if "threshold" in kwargs and isinstance(kwargs["threshold"], ThresholdCheck):
             self.threshold = kwargs["threshold"]
 
-    def run(self, solution_class=IterativeSolution):
+    def run(self, core):
         """
         Summary
         -------
         Applies this solver.
+
+        Parameters
+        ----------
+        solution_type : :py:class:`tuple` of two :py:class:`class`
+            Tuple of two classes specifying the solution type and underlying solution storage data type.
+            The first item must be a class derived off :py:class:`.ISolution` and the second a class derived
+            off :py:class:`.ISolutionData`.
 
         Returns
         -------
         solution : :py:class:`.ISolution`
             The solution of the problem.
         """
-        return IterativeSolution()
+        assert_condition(issubclass(core, ISolverCore),
+                         ValueError, "The given solver core class must be valid: NOT {:s}".format(core.__name__),
+                         self)
+        self._core = core()
 
     @property
     def problem(self):
@@ -139,21 +87,8 @@ class IIterativeTimeSolver(object):
         return self._problem
 
     @property
-    def states(self):
-        return self._states
-
-    @property
-    def initial_state(self):
-        return self._states[0]
-
-    @property
-    def current_state(self):
-        return self._states[-1]
-
-    @property
-    def previous_state(self):
-        return self._states[-2]
-
+    def state(self):
+        return self._state
 
     @property
     def timer(self):
@@ -185,11 +120,11 @@ class IIterativeTimeSolver(object):
         threshold : :py:class:`.ThresholdCheck`
             Stored and used threshold.
         """
-        return self._threshold
+        return self._threshold_check
 
     @threshold.setter
     def threshold(self, threshold):
-        self._threshold = threshold
+        self._threshold_check = threshold
 
     @property
     def integrator(self):
@@ -200,3 +135,6 @@ class IIterativeTimeSolver(object):
 
     def _print_footer(self):
         pass
+
+
+__all__ = ['IIterativeTimeSolver']
