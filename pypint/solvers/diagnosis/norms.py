@@ -2,11 +2,11 @@
 """
 .. moduleauthor:: Torbjörn Klatt <t.klatt@fz-juelich.de>
 """
+import warnings
 
 import numpy as np
 
 from pypint.solvers.diagnosis.i_diagnosis_value import IDiagnosisValue
-from pypint.utilities import assert_is_instance
 
 
 def supremum_norm(vec):
@@ -29,12 +29,13 @@ def supremum_norm(vec):
     """
     if isinstance(vec, float):
         return vec
-
-    assert_is_instance(vec, (np.ndarray, IDiagnosisValue),
-                       "The infinity norm requires a numpy.ndarray or IDiagnosisValue: NOT {}"
-                       .format(vec.__class__.__name__))
-    return \
-        np.linalg.norm(vec, np.inf) if isinstance(vec, np.ndarray) else np.linalg.norm(vec.value, np.inf)
+    elif isinstance(vec, np.ndarray):
+        return np.linalg.norm(vec, np.inf)
+    elif isinstance(vec, IDiagnosisValue):
+        return np.linalg.norm(vec.value, np.inf)
+    else:
+        # warnings.warn("Unknown numeric type ('{}'). Cannot compute norm.".format(vec.__class__.__name__))
+        return np.nan
 
 
 def two_norm(vec):
@@ -57,12 +58,13 @@ def two_norm(vec):
     """
     if isinstance(vec, float):
         return vec
-
-    assert_is_instance(vec, (np.ndarray, IDiagnosisValue),
-                       "The infinity requires a numpy.ndarray or IDiagnosisValue: NOT {}"
-                       .format(vec.__class__.__name__))
-    return \
-        np.linalg.norm(vec) if isinstance(vec, np.ndarray) else np.linalg.norm(vec.value)
+    elif isinstance(vec, np.ndarray):
+        return np.linalg.norm(vec)
+    elif isinstance(vec, IDiagnosisValue):
+        return np.linalg.norm(vec.value)
+    else:
+        # warnings.warn("Unknown numeric type ('{}'). Cannot compute norm.".format(vec.__class__.__name__))
+        return np.nan
 
 
 __all__ = ['supremum_norm', 'two_norm']
