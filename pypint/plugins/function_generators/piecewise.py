@@ -3,16 +3,12 @@
 
 .. moduleauthor:: Dieter Moser <d.moser@fz-juelich.de>
 """
-
 import numpy as np
 
 
 class PiecewiseFG(object):
-    """
-    Summary
-    -------
-    Takes a ``numpy.ndarray`` and function list to generate a piecewise
-    function only for :math:`R \\rightarrow R` functions, #function = #points + 1.
+    """Takes a :py:class:`numpy.ndarray` and function list to generate a piecewise function only for
+    :math:`R \\rightarrow R` functions, #function = #points + 1.
 
     Examples
     --------

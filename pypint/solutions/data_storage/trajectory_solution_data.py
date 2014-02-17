@@ -1,5 +1,6 @@
 # coding=utf-8
 """
+
 .. moduleauthor:: Torbjörn Klatt <t.klatt@fz-juelich.de>
 """
 import warnings
@@ -11,13 +12,8 @@ from pypint.utilities import assert_condition
 
 
 class TrajectorySolutionData(object):
-    """
-    Summary
-    -------
-    Storage for a transient trajectory of solutions.
+    """Storage for a transient trajectory of solutions.
 
-    Extended Summary
-    ----------------
     Basically, this is nothing more than an array of :py:class:`.StepSolutionData` objects and a couple of
     utility functions for easy data access and consistency checks.
 
@@ -50,10 +46,7 @@ class TrajectorySolutionData(object):
         self._finalized = False
 
     def add_solution_data(self, *args, **kwargs):
-        """
-        Summary
-        -------
-        Appends solution of a new time point to the trajectory.
+        """Appends solution of a new time point to the trajectory.
 
         Parameters
         ----------
@@ -76,6 +69,7 @@ class TrajectorySolutionData(object):
         Raises
         ------
         ValueError :
+
             * if construction of :py:class:`.StepSolutionData` fails
             * if internal consistency check fails (see :py:meth:`._check_consistency`)
         """
@@ -106,10 +100,7 @@ class TrajectorySolutionData(object):
             self._numeric_type = self._data[-1].numeric_type
 
     def finalize(self):
-        """
-        Summary
-        -------
-        Locks this storage data instance.
+        """Locks this storage data instance.
 
         Raises
         ------
@@ -121,14 +112,12 @@ class TrajectorySolutionData(object):
 
     @property
     def finalized(self):
-        """
-        Summary
-        -------
-        Accessor for the lock state.
+        """Accessor for the lock state.
 
         Returns
         -------
         finilized : :py:class:`bool`
+
             :``True``:
                 if it has been finalized before
             :``False``:
@@ -138,10 +127,7 @@ class TrajectorySolutionData(object):
 
     @property
     def data(self):
-        """
-        Summary
-        -------
-        Read-only accessor for the stored solution objects.
+        """Read-only accessor for the stored solution objects.
 
         Returns
         -------
@@ -151,10 +137,7 @@ class TrajectorySolutionData(object):
 
     @property
     def time_points(self):
-        """
-        Summary
-        -------
-        Accessor for the time points of stored solution data.
+        """Accessor for the time points of stored solution data.
 
         Returns
         -------
@@ -164,10 +147,7 @@ class TrajectorySolutionData(object):
 
     @property
     def values(self):
-        """
-        Summary
-        -------
-        Accessor for the solution values of stored solution data.
+        """Accessor for the solution values of stored solution data.
 
         Returns
         -------
@@ -177,10 +157,7 @@ class TrajectorySolutionData(object):
 
     @property
     def errors(self):
-        """
-        Summary
-        -------
-        Accessor for the errors of stored solution data.
+        """Accessor for the errors of stored solution data.
 
         Returns
         -------
@@ -190,10 +167,7 @@ class TrajectorySolutionData(object):
 
     @property
     def residuals(self):
-        """
-        Summary
-        -------
-        Accessor for the residuals of stored solution data.
+        """Accessor for the residuals of stored solution data.
 
         Returns
         -------
@@ -203,31 +177,23 @@ class TrajectorySolutionData(object):
 
     @property
     def numeric_type(self):
-        """
-        Summary
-        -------
-        Read-only accessor for the numeric type of the solution data values.
+        """Read-only accessor for the numeric type of the solution data values.
         """
         return self._numeric_type
 
     @property
     def dim(self):
-        """
-        Summary
-        -------
-        Read-only accessor for the spacial dimension of the solution data values.
+        """Read-only accessor for the spacial dimension of the solution data values.
         """
         return self._dim
 
     def _check_consistency(self):
-        """
-        Summary
-        -------
-        Checks for consistency of spacial dimension and numeric type of stored steps.
+        """Checks for consistency of spacial dimension and numeric type of stored steps.
 
         Raises
         ------
         ValueError :
+
             * if the numeric type of at least one step does not match :py:attr:`.numeric_type`
             * if the spacial dimension of at least one step does not match :py:attr:`.dim`
         """

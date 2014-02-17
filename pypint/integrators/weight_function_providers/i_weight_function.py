@@ -3,70 +3,49 @@
 
 .. moduleauthor: Torbjörn Klatt <t.klatt@fz-juelich.de>
 """
-
 from copy import deepcopy
+
 import numpy as np
 
 
 class IWeightFunction(object):
-    """
-    Summary
-    -------
-    Provider for integration weights functions.
+    """Provider for integration weights functions.
 
-    Extended Summary
-    ----------------
-    This is an abstract interface for providers of integration weights
-    functions.
+    This is an abstract interface for providers of integration weights functions.
     """
     def __init__(self):
         self._weights = None
 
     def init(self, *args, **kwargs):
-        """
-        Summary
-        -------
-        Sets and defines the weights function.
-
-        Parameters
-        ----------
-        args, kwargs
-            Implementation defined type to specify the weight function's
-            parameters.
+        """Sets and defines the weights function.
 
         Notes
         -----
-        The implementation and behaviour must and will be defined by
-        specializations of this interface.
+        The implementation and behaviour must and will be defined by specializations of this interface.
         Implementations are allowed to add further named arguments.
         """
         pass
 
     def evaluate(self, nodes, interval=None):
-        """
-        Summary
-        -------
-        Computes weights for given nodes based on set weight function.
-
-        Extended Summary
-        ----------------
+        """Computes weights for given nodes based on set weight function.
 
         Parameters
         ----------
-        nodes : numpy.ndarray
+        nodes : :py:class:`numpy.ndarray`
             Array of nodes to compute weights for.
-        interval : numpy.ndarray
+
+        interval : :py:class:`numpy.ndarray` or :py:class:`None`
             Array with the interval boundaries.
-            If ``None`` the boundaries of the given nodes are used.
+            If :py:class:`None` the boundaries of the given nodes are used.
+
         Returns
         -------
-        computed weights : numpy.ndarray
+        computed weights : :py:class:`numpy.ndarray`
             Vector of computed weights.
 
         Notes
         -----
-        The implementation and behaviour must and will be defined by
-        specializations of this interface.
+        The implementation and behaviour must and will be defined by specializations of this interface.
         """
         if interval is None:
             self._interval = np.array([nodes[0], nodes[-1]])
@@ -75,14 +54,11 @@ class IWeightFunction(object):
 
     @property
     def weights(self):
-        """
-        Summary
-        -------
-        Accessor for cached computed weights.
+        """Accessor for cached computed weights.
 
         Returns
         -------
-        computed weights : numpy.ndarray
+        computed weights : :py:class:`numpy.ndarray`
             Cached computed weights.
         """
         return self._weights

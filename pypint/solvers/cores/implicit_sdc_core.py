@@ -1,5 +1,6 @@
 # coding=utf-8
 """
+
 .. moduleauthor:: Torbjörn Klatt <t.kaltt@fz-juelich.de>
 """
 from pypint.solvers.cores.sdc_solver_core import SdcSolverCore
@@ -15,13 +16,8 @@ class ImplicitSdcCore(SdcSolverCore):
         super(ImplicitSdcCore, self).__init__()
 
     def run(self, state, **kwargs):
-        """
-        Summary
-        -------
-        Implicit Euler step method.
+        """Implicit Euler step method.
 
-        Extended Summary
-        ----------------
         .. math::
 
             u_{m+1}^{k+1} - \\Delta_\\tau F(t_{m+1}, u_{m+1}^{k+1}) =

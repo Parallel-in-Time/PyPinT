@@ -1,27 +1,26 @@
 # coding=utf-8
 """
+
 .. moduleauthor: Torbjörn Klatt <t.klatt@fz-juelich.de>
 """
-
-from ..plugins.implicit_solvers.find_root import find_root
-from .. import LOG
-from ..utilities import assert_is_callable, assert_is_instance, assert_is_in
-import numpy as np
 import warnings
+
+import numpy as np
+
+from pypint.plugins.implicit_solvers.find_root import find_root
+from pypint import LOG
+from pypint.utilities import assert_is_callable, assert_is_instance, assert_is_in
 
 
 class IProblem(object):
-    """
-    Summary
-    -------
-    Basic interface for all problems of type :math:`u'(t,\\phi(t))=F(t,\\phi(t))`
+    """Basic interface for all problems of type :math:`u'(t,\\phi(t))=F(t,\\phi(t))`
     """
 
     def __init__(self, *args, **kwargs):
         """
         Parameters
         ----------
-        function : function pointer or :py:class:`lambda`
+        function : :py:class:`callable`
             Function describing the right hand side of the problem equation.
             Two arguments are required, the first being the time point :math:`t` and the second the time-dependent
             value :math:`\\phi(t)`.
@@ -36,10 +35,10 @@ class IProblem(object):
             Number of spacial dimensions.
 
         strings : :py:class:`dict`
-            (optional)
+            *(optional)*
 
             :``rhs``: :py:class:`str`
-                (optional)
+                *(optional)*
                 String representation of the right hand side function for logging output.
         """
         self._function = None
@@ -69,10 +68,7 @@ class IProblem(object):
                 self._strings["rhs"] = kwargs["strings"]["rhs"]
 
     def evaluate(self, time, phi_of_time, partial=None):
-        """
-        Summary
-        -------
-        Evaluates given right hand side at given time and with given time-dependent value.
+        """Evaluates given right hand side at given time and with given time-dependent value.
 
         Parameters
         ----------
@@ -106,13 +102,8 @@ class IProblem(object):
         return np.zeros(self.dim, dtype=self.numeric_type)
 
     def implicit_solve(self, next_x, func, method="hybr"):
-        """
-        Summary
-        -------
-        A solver for implicit equations.
+        """A solver for implicit equations.
 
-        Extended Summary
-        ----------------
         Finds the implicitly defined :math:`x_{i+1}` for the given right hand side function :math:`f(x_{i+1})`, such
         that :math:`x_{i+1}=f(x_{i+1})`.
 
@@ -162,19 +153,16 @@ class IProblem(object):
 
     @property
     def function(self):
-        """
-        Summary
-        -------
-        Accessor for the right hand side function.
+        """Accessor for the right hand side function.
 
         Parameters
         ----------
-        function : function pointer or :py:class:`lambda`
+        function : :py:class:`callable`
             Function of the right hand side of :math:`u'(t,x)=F(t,\\phi_t)`
 
         Returns
         -------
-        rhs function : function_pointer or :py:class:`lambda`
+        rhs function : :py:class:`callable`
             Function of the right hand side.
         """
         return self._function
@@ -186,10 +174,7 @@ class IProblem(object):
 
     @property
     def time_start(self):
-        """
-        Summary
-        -------
-        Accessor for the time interval's start.
+        """Accessor for the time interval's start.
 
         Parameters
         ----------
@@ -209,10 +194,7 @@ class IProblem(object):
 
     @property
     def time_end(self):
-        """
-        Summary
-        -------
-        Accessor for the time interval's end.
+        """Accessor for the time interval's end.
 
         Parameters
         ----------
@@ -232,10 +214,7 @@ class IProblem(object):
 
     @property
     def numeric_type(self):
-        """
-        Summary
-        -------
-        Accessor for the numerical type of the problem values.
+        """Accessor for the numerical type of the problem values.
 
         Parameters
         ----------
@@ -264,10 +243,7 @@ class IProblem(object):
 
     @property
     def dim(self):
-        """
-        Summary
-        -------
-        Read-only accessor for the spacial dimension of the problem
+        """Read-only accessor for the spacial dimension of the problem
 
         Returns
         -------

@@ -1,15 +1,12 @@
 # coding=utf-8
-"""
-Summary
--------
-Collection of assertions for validation.
+"""Collection of assertions for validation.
 
 .. moduleauthor:: Torbjörn Klatt <t.klatt@fz-juelich.de>
 """
-
-from .tracing import checking_obj_name
 import inspect
 from collections import Callable
+
+from pypint.utilities.tracing import checking_obj_name
 
 
 def assert_condition(condition, exception_type, message, checking_obj=None):

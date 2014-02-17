@@ -1,5 +1,6 @@
 # coding=utf-8
 """
+
 .. moduleauthor:: Torbjörn Klatt <t.klatt@fz-juelich.de>
 """
 from copy import deepcopy
@@ -8,10 +9,7 @@ from pypint.utilities import assert_condition
 
 
 class ISolution(object):
-    """
-    Summary
-    -------
-    Generalized storage for solutions of solvers.
+    """Generalized storage for solutions of solvers.
     """
 
     def __init__(self, *args, **kwargs):
@@ -22,10 +20,7 @@ class ISolution(object):
         self._finalized = False
 
     def add_solution(self, *args, **kwargs):
-        """
-        Summary
-        -------
-        Adds a new solution data storage object.
+        """Adds a new solution data storage object.
 
         Raises
         ------
@@ -46,10 +41,7 @@ class ISolution(object):
 
     @property
     def used_iterations(self):
-        """
-        Summary
-        -------
-        Accessor for the number of iterations.
+        """Accessor for the number of iterations.
 
         Parameters
         ----------
@@ -81,10 +73,7 @@ class ISolution(object):
 
     @property
     def data_storage_type(self):
-        """
-        Summary
-        -------
-        Read-only accessor for the data storage type.
+        """Read-only accessor for the data storage type.
 
         Returns
         -------

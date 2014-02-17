@@ -3,21 +3,18 @@
 
 .. moduleauthor:: Torbjörn Klatt <t.klatt@fz-juelich.de>
 """
-
 import matplotlib.pyplot as plt
+
 from pypint import LOG
 
 
 class IPlotter(object):
-    """
-    Summary
-    -------
-    Basic interface for plotters.
+    """Basic interface for plotters.
 
     Parameters
     ----------
-    file_name : string
-        (optional)
+    file_name : :py:class:`str`
+        *(optional)*
         File name to store the plot to.
     """
     def __init__(self, *args, **kwargs):
@@ -32,9 +29,6 @@ class IPlotter(object):
             plt.ion()
 
     def plot(self, *args, **kwargs):
-        """
-        Summary
-        -------
-        Executing the plotter implementation.
+        """Executing the plotter implementation.
         """
         pass

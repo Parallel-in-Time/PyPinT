@@ -1,10 +1,8 @@
 # coding=utf-8
-"""
-Logging Framework for PyPinT
+"""Logging Framework for PyPinT
 
 .. moduleauthor:: Torbjörn Klatt <t.klatt@fz-juelich.de>
 """
-
 import logging as log
 from sys import stdout
 
@@ -12,10 +10,7 @@ loggers = []
 
 
 def logger():
-    """
-    Summary
-    -------
-    Accessor for a standard logger
+    """Accessor for a standard logger
 
     """
     global loggers

@@ -1,5 +1,6 @@
 # coding=utf-8
 """
+
 .. moduleauthor:: Torbjörn Klatt <t.klatt@fz-juelich.de>
 """
 import warnings
@@ -9,13 +10,8 @@ from pypint.solutions.data_storage.step_solution_data import StepSolutionData
 
 
 class FinalSolution(ISolution):
-    """
-    Summary
-    -------
-    Storage for the final solution of a solver.
+    """Storage for the final solution of a solver.
 
-    Extended Summary
-    ----------------
     The storage data type is defined as :py:class:`.StepSolutionData`.
     """
 
@@ -25,13 +21,8 @@ class FinalSolution(ISolution):
         self._data_type = StepSolutionData
 
     def add_solution(self, *args, **kwargs):
-        """
-        Summary
-        -------
-        Sets and resets the stored solution data storage.
+        """Sets and resets the stored solution data storage.
 
-        Extended Summary
-        ----------------
         This method is constructing a new :py:class:`.StepSolutionData` object from the given list of
         arguments.
 
@@ -51,37 +42,25 @@ class FinalSolution(ISolution):
 
     @property
     def value(self):
-        """
-        Summary
-        -------
-        Proxies :py:attr:`.StepSolutionData.value`
+        """Proxies :py:attr:`.StepSolutionData.value`
         """
         return self._data.value if self._data else None
 
     @property
     def time_point(self):
-        """
-        Summary
-        -------
-        Proxies :py:attr:`.StepSolutionData.time_point`
+        """Proxies :py:attr:`.StepSolutionData.time_point`
         """
         return self._data.time_point if self._data else None
 
     @property
     def error(self):
-        """
-        Summary
-        -------
-        Proxies :py:attr:`.StepSolutionData.error`
+        """Proxies :py:attr:`.StepSolutionData.error`
         """
         return self._data.error if self._data else None
 
     @property
     def residual(self):
-        """
-        Summary
-        -------
-        Proxies :py:attr:`.StepSolutionData.residual`
+        """Proxies :py:attr:`.StepSolutionData.residual`
         """
         return self._data.residual if self._data else None
 

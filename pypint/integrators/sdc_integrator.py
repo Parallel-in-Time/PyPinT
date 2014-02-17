@@ -1,19 +1,21 @@
 # coding=utf-8
+"""
 
-from .integrator_base import IntegratorBase
+.. moduleauthor:: Torbjörn Klatt <t.klatt@fz-juelich.de>
+"""
 from copy import deepcopy
+
 import numpy as np
-from .node_providers.gauss_lobatto_nodes import GaussLobattoNodes
-from .weight_function_providers.polynomial_weight_function import PolynomialWeightFunction
+
+from pypint.integrators.integrator_base import IntegratorBase
+from pypint.integrators.node_providers.gauss_lobatto_nodes import GaussLobattoNodes
+from pypint.integrators.weight_function_providers.polynomial_weight_function import PolynomialWeightFunction
 from pypint.utilities import assert_is_instance, assert_condition
 from pypint import LOG
 
 
 class SdcIntegrator(IntegratorBase):
-    """
-    Summary
-    -------
-    Integral part of the SDC algorithm.
+    """Integral part of the SDC algorithm.
     """
     def __init__(self):
         super(self.__class__, self).__init__()
@@ -26,19 +28,15 @@ class SdcIntegrator(IntegratorBase):
 
     def evaluate(self, data, **kwargs):
         """
-        Extended Summary
-        ----------------
+
         Computes the integral until the given node from the previous one.
 
-        For integration nodes :math:`\\tau_i`, :math:`i=0,\\dots,n` specifying :math:`\\tau_3` as
-        ``last_node_index`` results in the integral :math:`\\int_{\\tau_2}^{\\tau_3}`.
+        For integration nodes :math:`\\tau_i`, :math:`i=0,\\dots,n` specifying :math:`\\tau_3` as ``last_node_index``
+        results in the integral :math:`\\int_{\\tau_2}^{\\tau_3}`.
 
         Parameters
         ----------
-        In addition to the options provided by :py:meth:`.IntegratorBase.evaluate` the following
-        additional options are possible:
-
-        last_node_index : integer
+        last_node_index : :py:class:`int`
             (required)
             Index of the last node to integrate.
 
@@ -49,8 +47,7 @@ class SdcIntegrator(IntegratorBase):
 
         See Also
         --------
-        .IntegratorBase.evaluate
-            overridden method
+        .IntegratorBase.evaluate : overridden method
         """
         assert_condition("last_node_index" in kwargs, ValueError, "Last node index must be given.", self)
         _index = kwargs["last_node_index"]

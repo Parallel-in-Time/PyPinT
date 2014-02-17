@@ -3,17 +3,14 @@
 
 .. moduleauthor: Torbjörn Klatt <t.klatt@fz-juelich.de>
 """
-
-from .i_problem import IProblem
-from ..utilities import assert_condition, assert_is_instance
 import numpy as np
+
+from pypint.problems.i_problem import IProblem
+from pypint.utilities import assert_condition, assert_is_instance
 
 
 class IInitialValueProblem(IProblem):
-    """
-    Summary
-    -------
-    Basic interface for initial value problems.
+    """Basic interface for initial value problems.
 
     Parameters
     ----------
@@ -29,10 +26,7 @@ class IInitialValueProblem(IProblem):
 
     @property
     def initial_value(self):
-        """
-        Summary
-        -------
-        Accessor for the initial value.
+        """Accessor for the initial value.
 
         Parameters
         ----------

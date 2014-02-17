@@ -1,5 +1,6 @@
 # coding=utf-8
 """
+
 .. moduleauthor:: Torbjörn Klatt <t.klatt@fz-juelich.de>
 """
 from copy import deepcopy
@@ -11,13 +12,8 @@ from pypint.utilities import assert_is_instance, assert_condition
 
 
 class StepSolutionData(object):
-    """
-    Summary
-    -------
-    Storage for the solution of a single time point.
+    """Storage for the solution of a single time point.
 
-    Extended Summary
-    ----------------
     :Finalization:
         The attributes (:py:attr:`.value`, :py:attr:`.time_point`, :py:attr:`.error` and :py:attr:`.residual` can only
         be modified before calling :py:meth:`.finalize`.
@@ -57,18 +53,20 @@ class StepSolutionData(object):
         Raises
         ------
         ValueError :
+
             * if ``value`` is not a :py:class:`numpy.ndarray`
             * if ``time_point`` is not a :py:class:`float`
             * if either :py:attr:`.error` or :py:attr:`.residual` raises
 
         UserWarning :
+
             * if no ``value`` or ``time_point`` is given
 
         Notes
         -----
         The spacial dimension and the numerical type are derived from the given solution values.
-        Thus, specifying :py:attr:`.ISolutionData.dim` and :py:attr:`.ISolutionData.numeric_type`
-        is not recommended (in fact they are ignored).
+        Thus, specifying :py:attr:`.ISolutionData.dim` and :py:attr:`.ISolutionData.numeric_type` is not recommended
+        (in fact they are ignored).
         """
         self._data = None
         self._time_point = None
@@ -92,10 +90,7 @@ class StepSolutionData(object):
             self.residual = kwargs['residual']
 
     def finalize(self):
-        """
-        Summary
-        -------
-        Locks this storage data instance.
+        """Locks this storage data instance.
 
         Raises
         ------
@@ -107,14 +102,12 @@ class StepSolutionData(object):
 
     @property
     def finalized(self):
-        """
-        Summary
-        -------
-        Accessor for the lock state.
+        """Accessor for the lock state.
 
         Returns
         -------
         finilized : :py:class:`bool`
+
             :``True``:
                 if it has been finalized before
             :``False``:
@@ -124,10 +117,7 @@ class StepSolutionData(object):
 
     @property
     def value(self):
-        """
-        Summary
-        -------
-        Accessor for the solution value.
+        """Accessor for the solution value.
 
         Returns
         -------
@@ -136,6 +126,7 @@ class StepSolutionData(object):
         Raises
         ------
         ValueError :
+
             :on setting:
                 If this storage data instance has been finalized.
         """
@@ -153,10 +144,7 @@ class StepSolutionData(object):
 
     @property
     def time_point(self):
-        """
-        Summary
-        -------
-        Accessor for the associated time point.
+        """Accessor for the associated time point.
 
         Parameters
         ----------
@@ -169,6 +157,7 @@ class StepSolutionData(object):
         Raises
         ------
         ValueError :
+
             :on setting:
                 If this storage data instance has been finalized.
         """
@@ -184,10 +173,7 @@ class StepSolutionData(object):
 
     @property
     def error(self):
-        """
-        Summary
-        -------
-        Accessor for the error.
+        """Accessor for the error.
 
         Parameters
         ----------
@@ -201,6 +187,7 @@ class StepSolutionData(object):
         Raises
         ------
         ValueError :
+
             :on setting:
                 If this storage data instance has been finalized.
         """
@@ -217,10 +204,7 @@ class StepSolutionData(object):
 
     @property
     def residual(self):
-        """
-        Summary
-        -------
-        Accessor for the residual.
+        """Accessor for the residual.
 
         Parameters
         ----------
@@ -234,6 +218,7 @@ class StepSolutionData(object):
         Raises
         ------
         ValueError :
+
             :on setting:
                 If this storage data instance has been finalized.
         """
@@ -250,10 +235,7 @@ class StepSolutionData(object):
 
     @property
     def dim(self):
-        """
-        Summary
-        -------
-        Read-only accessor for the spacial dimension.
+        """Read-only accessor for the spacial dimension.
 
         Returns
         -------
@@ -263,10 +245,7 @@ class StepSolutionData(object):
 
     @property
     def numeric_type(self):
-        """
-        Summary
-        -------
-        Read-only accessor for the numerical type.
+        """Read-only accessor for the numerical type.
 
         Returns
         -------

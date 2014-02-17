@@ -1,5 +1,6 @@
 # coding=utf-8
 """
+
 .. moduleauthor: Torbjörn Klatt <t.klatt@fz-juelich.de>
 """
 from pypint.solvers.states.i_solver_state import ISolverState
@@ -9,10 +10,7 @@ from pypint.utilities import assert_condition
 
 
 class IIterativeTimeSolver(object):
-    """
-    Summary
-    -------
-    Basic interface for iterative time solvers.
+    """Basic interface for iterative time solvers.
     """
 
     def __init__(self, *args, **kwargs):
@@ -24,10 +22,7 @@ class IIterativeTimeSolver(object):
         self._state = ISolverState()
 
     def init(self, problem, integrator, **kwargs):
-        """
-        Summary
-        -------
-        Initializes the solver with a given problem and options.
+        """Initializes the solver with a given problem and options.
 
         Parameters
         ----------
@@ -37,11 +32,9 @@ class IIterativeTimeSolver(object):
         integrator : :py:class:`.IntegratorBase`
             Integrator to be used by this solver.
 
-        kwargs : further named arguments
-            Supported names:
-
-            ``threshold`` : :py:class:`.ThresholdCheck`
-                see :py:attr:`.threshold`
+        threshold : :py:class:`.ThresholdCheck`
+            *(optional)*
+            see :py:attr:`.threshold`
         """
         self._problem = problem
         self._integrator = integrator
@@ -49,10 +42,7 @@ class IIterativeTimeSolver(object):
             self.threshold = kwargs["threshold"]
 
     def run(self, core):
-        """
-        Summary
-        -------
-        Applies this solver.
+        """Applies this solver.
 
         Parameters
         ----------
@@ -73,16 +63,12 @@ class IIterativeTimeSolver(object):
 
     @property
     def problem(self):
-        """
-        Summary
-        -------
-        Accessor for the stored problem.
+        """Accessor for the stored problem.
 
         Returns
         -------
-        stored problem : :py:class:`.IProblem` or ``None``
-            Stored problem after call to :py:meth:`.init` or ``None`` if no
-            problem was initialized.
+        stored problem : :py:class:`.IProblem` or :py:class:`None`
+            Stored problem after call to :py:meth:`.init` or :py:class:`None` if no problem was initialized.
         """
         return self._problem
 
@@ -100,15 +86,9 @@ class IIterativeTimeSolver(object):
 
     @property
     def threshold(self):
-        """
-        Summary
-        -------
-        Accessor for threshold check of this solver.
+        """Accessor for threshold check of this solver.
 
-        Extended Summary
-        ----------------
-        Depending on the solver's algorithm the threshold is used in multiple ways to check for
-        termination conditions.
+        Depending on the solver's algorithm the threshold is used in multiple ways to check for termination conditions.
 
         Parameters
         ----------

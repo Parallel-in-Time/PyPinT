@@ -20,7 +20,6 @@ import sphinx_bootstrap_theme
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 #sys.path.insert(0, os.path.abspath('.'))
-sys.path.insert(0, os.path.abspath('../sphinxext'))
 sys.path.insert(0, os.path.abspath('../..'))
 
 # -- General configuration -----------------------------------------------------
@@ -35,7 +34,7 @@ extensions = ['sphinx.ext.todo',
               'sphinx.ext.mathjax',
               'sphinx.ext.viewcode',
               'sphinx.ext.autosummary',
-              'numpydoc']
+              'sphinx.ext.napoleon']
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
@@ -51,7 +50,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'PyPinT'
-copyright = u'2013, PinT Research Group, Jülich Supercomputing Centre'
+copyright = u'2013-2014, PinT Research Group, Jülich Supercomputing Centre'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -107,15 +106,23 @@ autodoc_default_flags = [
     "members",
     "private-members",
     "undoc-members",
-    "inherited-members",
+    # "inherited-members",  # reactivate to show inherited members for all derived classes
     "show-inheritance"
 ]
 
 
-# -- Options for numpydoc ------------------------------------------------------
+# -- Options for Napoleon ------------------------------------------------------
 
-# this gets rid of countless warnings about unreferenced toctree elements
-numpydoc_show_class_members = False
+napoleon_google_docstring = False
+napoleon_numpy_docstring = True
+napoleon_include_private_with_doc = False
+napoleon_include_special_with_doc = False
+napoleon_use_admonition_for_examples = True
+napoleon_use_admonition_for_notes = True
+napoleon_use_admonition_for_references = True
+napoleon_use_ivar = True
+napoleon_use_param = True
+napoleon_use_rtype = True
 
 
 # -- Options for ToDo Lists ----------------------------------------------------
@@ -172,7 +179,7 @@ html_theme_options = {
 
     # HTML navbar class (Default: "navbar") to attach to <div> element.
     # For black navbar, do "navbar navbar-inverse"
-    'navbar_class': "navbar navbar-inverse",
+    'navbar_class': "navbar navbar-default",
 
     # Fix navigation bar to top of page?
     # Values: "true" (default) or "false"
@@ -180,17 +187,17 @@ html_theme_options = {
 
     # Location of link to source.
     # Options are "nav" (default), "footer" or anything else to exclude.
-    'source_link_position': "nav",
+    'source_link_position': "footer",
 
     # Bootswatch (http://bootswatch.com/) theme.
     #
     # Options are nothing with "" (default) or the name of a valid theme
     # such as "amelia" or "cosmo".
-    'bootswatch_theme': "spacelab",
+    'bootswatch_theme': "",
 
     # Choose Bootstrap version.
     # Values: "3" (default) or "2" (in quotes)
-    'bootstrap_version': "3",
+    'bootstrap_version': "2",
 }
 
 # Add any paths that contain custom themes here, relative to this directory.
@@ -223,7 +230,7 @@ html_static_path = ['_static']
 
 # If true, SmartyPants will be used to convert quotes and dashes to
 # typographically correct entities.
-#html_use_smartypants = True
+html_use_smartypants = True
 
 # Custom sidebar templates, maps document names to template names.
 html_sidebars = {'sidebar': ['localtoc.html']}
@@ -233,22 +240,22 @@ html_sidebars = {'sidebar': ['localtoc.html']}
 #html_additional_pages = {}
 
 # If false, no module index is generated.
-#html_domain_indices = True
+html_domain_indices = True
 
 # If false, no index is generated.
-#html_use_index = True
+html_use_index = True
 
 # If true, the index is split into individual pages for each letter.
-#html_split_index = False
+html_split_index = False
 
 # If true, links to the reST sources are added to the pages.
 html_show_sourcelink = False
 
 # If true, "Created using Sphinx" is shown in the HTML footer. Default is True.
-html_show_sphinx = True
+# html_show_sphinx = True
 
 # If true, "(C) Copyright ..." is shown in the HTML footer. Default is True.
-html_show_copyright = True
+# html_show_copyright = True
 
 # If true, an OpenSearch description file will be output, and all pages will
 # contain a <link> tag referring to it.  The value of this option must be the
@@ -278,8 +285,8 @@ latex_elements = {
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title, author, documentclass [howto/manual]).
 latex_documents = [
-  ('index', 'PyPinT.tex', u'PyPinT Documentation',
-   u'PinT Research Group', 'manual'),
+    ('index', 'PyPinT.tex', u'PyPinT Documentation',
+     u'PinT Research Group', 'manual'),
 ]
 
 # The name of an image file (relative to this directory) to place at the top of
@@ -322,9 +329,9 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-  ('index', 'PyPinT', u'PyPinT Documentation',
-   u'PinT Research Group', 'PyPinT', 'One line description of project.',
-   'Miscellaneous'),
+    ('index', 'PyPinT', u'PyPinT Documentation',
+     u'PinT Research Group', 'PyPinT', 'One line description of project.',
+     'Miscellaneous'),
 ]
 
 # Documents to append as an appendix to all manuals.

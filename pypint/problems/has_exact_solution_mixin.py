@@ -1,5 +1,6 @@
 # coding=utf-8
 """
+
 .. moduleauthor:: Torbjörn Klatt <t.klatt@fz-juelich.de>
 """
 from pypint.problems.i_problem import IProblem
@@ -7,17 +8,14 @@ from pypint.utilities import assert_is_callable, assert_is_instance
 
 
 class HasExactSolutionMixin(object):
-    """
-    Summary
-    -------
-    Provides exact analytical solution function for a problem.
+    """Provides exact analytical solution function for a problem.
     """
     def __init__(self, *args, **kwargs):
         """
         Parameters
         ----------
         exact_function : :py:class:`callable`
-            (optional)
+            *(optional)
             If given initializes the problem with the exact solution function.
         """
         self._exact_function = None
@@ -25,10 +23,7 @@ class HasExactSolutionMixin(object):
             self.exact_function = kwargs["exact_function"]
 
     def exact(self, time):
-        """
-        Summary
-        -------
-        Evaluates given exact solution function at given time and with given time-dependent data.
+        """Evaluates given exact solution function at given time and with given time-dependent data.
 
         Parameters
         ----------
@@ -42,6 +37,7 @@ class HasExactSolutionMixin(object):
         Raises
         ------
         ValueError :
+
             * if ``time`` is not a :py:class:`float`
             * if ``phi_of_time`` is not a :py:class:`numpy.ndarray`
             * if not exact function is given
@@ -52,10 +48,7 @@ class HasExactSolutionMixin(object):
 
     @property
     def exact_function(self):
-        """
-        Summary
-        -------
-        Accessor for the exact solution function.
+        """Accessor for the exact solution function.
 
         Raises
         ------
@@ -71,10 +64,7 @@ class HasExactSolutionMixin(object):
 
 
 def problem_has_exact_solution(problem, checking_obj=None):
-    """
-    Summary
-    -------
-    Convenience accessor for exact solution.
+    """Convenience accessor for exact solution.
 
     Parameters
     ----------
@@ -82,13 +72,13 @@ def problem_has_exact_solution(problem, checking_obj=None):
         The problem to check for an exact solution function.
 
     checking_obj : object
-        (optional)
+        *(optional)*
         The object calling this function for a meaningful error message.
         For debugging purposes only.
 
     Returns
     -------
-     : :py:class:`bool`
+    :py:class:`bool`
         :py:class:`True` if exact solution was given, :py:class:`False` otherwise
 
     Raises

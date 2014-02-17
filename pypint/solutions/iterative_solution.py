@@ -1,5 +1,6 @@
 # coding=utf-8
 """
+
 .. moduleauthor:: Torbjörn Klatt <t.klatt@fz-juelich.de>
 """
 import warnings
@@ -14,13 +15,8 @@ from pypint.utilities import assert_is_instance, assert_condition
 
 
 class IterativeSolution(ISolution):
-    """
-    Summary
-    -------
-    Storage for the solutions of an iterative solver.
+    """Storage for the solutions of an iterative solver.
 
-    Extended Summary
-    ----------------
     A new solution of a specific iteration can be added via :py:meth:`.add_solution` and queried via
     :py:meth:`.solution`.
 
@@ -38,6 +34,7 @@ class IterativeSolution(ISolution):
 
     def __init__(self, *args, **kwargs):
         """
+
         Parameters
         ----------
         solution_data_type : :py:class:`.TrajectorySolutionData` or :py:class:`.StepSolutionData`
@@ -52,13 +49,8 @@ class IterativeSolution(ISolution):
         self._solution_reduction = {}
 
     def add_solution(self, *args, **kwargs):
-        """
-        Summary
-        -------
-        Adds a new solution data storage object.
+        """Adds a new solution data storage object.
 
-        Extended Summary
-        ----------------
         After each call an internal consistency check is carried out, which might raise further exceptions.
         The number of used iterations (see :py:attr:`.used_iterations`) is auto-incremented on success.
 
@@ -76,6 +68,7 @@ class IterativeSolution(ISolution):
         Raises
         ------
         ValueError :
+
             * if ``iteration`` is not an integer
             * if ``iteration`` is not a valid index for the current size of stored solution data objects
             * if not exactly one solution data object is given
@@ -125,10 +118,7 @@ class IterativeSolution(ISolution):
         self._used_iterations += 1
 
     def solution(self, iteration):
-        """
-        Summary
-        -------
-        Accessor for the solution of a specific iteration.
+        """Accessor for the solution of a specific iteration.
 
         Parameters
         ----------
@@ -144,7 +134,7 @@ class IterativeSolution(ISolution):
         Raises
         ------
         ValueError :
-            if given ``iteration`` index is not in the valid range
+            If given ``iteration`` index is not in the valid range.
         """
         if len(self._data) > 0:
             assert_condition(iteration in range(-1, len(self._data)),
@@ -156,10 +146,7 @@ class IterativeSolution(ISolution):
             return None
 
     def error(self, iteration):
-        """
-        Summary
-        -------
-        Accessor for the errors of a specific iteration.
+        """Accessor for the errors of a specific iteration.
 
         Parameters
         ----------
@@ -175,7 +162,7 @@ class IterativeSolution(ISolution):
         Raises
         ------
         ValueError :
-            if given ``iteration`` index is not in the valid range
+            If given ``iteration`` index is not in the valid range.
         """
         if len(self._data) > 0:
             assert_condition(iteration in range(-1, len(self._data)),
@@ -190,10 +177,7 @@ class IterativeSolution(ISolution):
             return None
 
     def residual(self, iteration):
-        """
-        Summary
-        -------
-        Accessor for the residuals of a specific iteration.
+        """Accessor for the residuals of a specific iteration.
 
         Parameters
         ----------
@@ -209,7 +193,7 @@ class IterativeSolution(ISolution):
         Raises
         ------
         ValueError :
-            if given ``iteration`` index is not in the valid range
+            If given ``iteration`` index is not in the valid range.
         """
         if len(self._data) > 0:
             assert_condition(iteration in range(-1, len(self._data)),
@@ -257,10 +241,7 @@ class IterativeSolution(ISolution):
 
     @property
     def solutions(self):
-        """
-        Summary
-        -------
-        Read-only accessor for the stored list of solution data storages.
+        """Read-only accessor for the stored list of solution data storages.
 
         Returns
         -------
@@ -270,10 +251,7 @@ class IterativeSolution(ISolution):
 
     @property
     def time_points(self):
-        """
-        Summary
-        -------
-        Proxies :py:attr:`.TrajectorySolutionData.time_points`.
+        """Proxies :py:attr:`.TrajectorySolutionData.time_points`.
 
         Returns
         -------
@@ -289,15 +267,12 @@ class IterativeSolution(ISolution):
             return None
 
     def _check_consistency(self):
-        """
-        Summary
-        -------
-        Check consistency of stored solution data objects.
+        """Check consistency of stored solution data objects.
 
         Raises
         ------
         ValueError :
-            * if the time points of at least two solution data storage objects differ
+            If the time points of at least two solution data storage objects differ.
         """
         if len(self._data) > 0:
             _time_points = self._data[0].time_points
