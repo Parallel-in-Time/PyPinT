@@ -404,8 +404,7 @@ class Sdc(IIterativeTimeSolver):
             np.array(
                 [self.problem.evaluate(self.state.current_time_step.initial.solution.time_point,
                                        self.state.current_time_step.initial.solution.value.copy())
-                ], dtype=self.problem.numeric_type
-            )
+                 ], dtype=self.problem.numeric_type)
 
         if _current_step_index > 0:
             #  values from this iteration (already calculated)
@@ -448,11 +447,9 @@ class Sdc(IIterativeTimeSolver):
         # calculate residual
         _integrate_values[_current_step_index] = \
             np.array(
-                [
-                    self.problem.evaluate(self.state.current_step.solution.time_point,
-                                          self.state.current_step.solution.value.copy())
-                ], dtype=self.problem.numeric_type
-            )
+                [self.problem.evaluate(self.state.current_step.solution.time_point,
+                                       self.state.current_step.solution.value.copy())
+                 ], dtype=self.problem.numeric_type)
 
         _residual_integral = np.zeros(self.problem.dim)
         for i in range(0, _current_step_index + 1):

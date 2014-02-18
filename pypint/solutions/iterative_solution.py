@@ -80,10 +80,10 @@ class IterativeSolution(ISolution):
                                self)
             _iteration = kwargs['iteration'] - 1
             if _iteration > 0:
-                assert_condition(_iteration in range(-1, self._data.size),
+                assert_condition(_iteration in range(-1, len(self._data)),
                                  ValueError,
                                  ("Iteration index must be within the size of the solution data array:" +
-                                  "{:d} not in [0, {:d}]".format(_iteration, self._data.size)),
+                                  "{:d} not in [0, {:d}]".format(_iteration, len(self._data))),
                                  self)
             # remove the `iteration` key from the keyword arguments so it does not get passed onto the solution data
             # storage creation

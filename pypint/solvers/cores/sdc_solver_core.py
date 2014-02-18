@@ -25,6 +25,8 @@ class SdcSolverCore(ISolverCore):
     :py:meth:`.SdcCoreMixin.__init__` is called by :py:meth:`.Sdc.init`.
     """
 
+    name = 'SDC Solver Core'
+
     def __init__(self):
         super(SdcSolverCore, self).__init__()
 

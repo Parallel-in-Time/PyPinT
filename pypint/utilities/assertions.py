@@ -11,7 +11,8 @@ from pypint.utilities.tracing import checking_obj_name
 
 def assert_condition(condition, exception_type, message, checking_obj=None):
     if not condition:
-        raise exception_type("{:s}.{:s}(): {:s}".format(checking_obj_name(checking_obj), inspect.stack()[1][3], message))
+        raise exception_type("{:s}.{:s}(): {:s}"
+                             .format(checking_obj_name(checking_obj), inspect.stack()[1][3], message))
 
 
 def assert_is_callable(obj, message=None, checking_obj=None):
@@ -38,9 +39,9 @@ def assert_is_key(dictionary, key, message, checking_obj=None):
 
 
 __all__ = [
-      'assert_condition'
-    , 'assert_is_in'
-    , 'assert_is_instance'
-    , 'assert_is_callable'
-    , 'assert_is_key'
+    'assert_condition',
+    'assert_is_in',
+    'assert_is_instance',
+    'assert_is_callable',
+    'assert_is_key'
 ]

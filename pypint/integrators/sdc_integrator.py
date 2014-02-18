@@ -52,9 +52,9 @@ class SdcIntegrator(IntegratorBase):
         assert_condition("last_node_index" in kwargs, ValueError, "Last node index must be given.", self)
         _index = kwargs["last_node_index"]
         assert_condition(_index != 0 and _index <= self._smat.shape[0],
-                        ValueError, "Last node index {:d} too small or too large. Must be within [{:d},{:d})"
-                                    .format(_index, 1, self._smat.shape[0]),
-                        self)
+                         ValueError, "Last node index {:d} too small or too large. Must be within [{:d},{:d})"
+                                     .format(_index, 1, self._smat.shape[0]),
+                         self)
         super(SdcIntegrator, self).evaluate(data, time_start=self.nodes[0],
                                             time_end=self.nodes[_index])
         #LOG.debug("Integrating with S-Mat row {:d} ({:s}) on interval {:s}."

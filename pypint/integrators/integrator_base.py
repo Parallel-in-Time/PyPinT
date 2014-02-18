@@ -60,9 +60,9 @@ class IntegratorBase(object):
                            "Given nodes type is not a valid type: {:s}".format(type(nodes_type)), self)
         if isinstance(weights_function, dict):
             assert_condition("class" in weights_function or isinstance(weights_function["class"], IWeightFunction),
-                            ValueError, "Given weight function is not a valid type: {:s}"
-                                        .format(type(weights_function)),
-                            self)
+                             ValueError, "Given weight function is not a valid type: {:s}"
+                                         .format(type(weights_function)),
+                             self)
             self._weights_function = weights_function["class"]
             # copy() is necessary as dictionaries are passed by reference
             _weight_function_options = weights_function.copy()
@@ -106,11 +106,11 @@ class IntegratorBase(object):
         """
         assert_is_instance(data, np.ndarray, "Data to integrate must be an numpy.ndarray.", self)
         assert_condition("time_start" in kwargs or "time_end" in kwargs,
-                        ValueError, "Either start or end of time interval need to be given.", self)
+                         ValueError, "Either start or end of time interval need to be given.", self)
         assert_condition(kwargs["time_start"] < kwargs["time_end"],
-                        ValueError, "Time interval need to be non-zero positive: [{:f}, {:f}]"
-                                    .format(kwargs["time_start"], kwargs["time_end"]),
-                        self)
+                         ValueError, "Time interval need to be non-zero positive: [{:f}, {:f}]"
+                                     .format(kwargs["time_start"], kwargs["time_end"]),
+                         self)
 
     def transform_interval(self, interval):
         if interval is not None:
