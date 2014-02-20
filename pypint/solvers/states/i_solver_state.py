@@ -85,11 +85,6 @@ class IStateIterator(object):
     >>> my_states = IStateIterator(solution_class=TrajectorySolutionData, element_type=IStepState, num_states=3)
     >>> len(my_states)
     3
-    >>> for step in my_states:
-    >>>     print(step.time_point)
-    None
-    None
-    None
 
     Notes
     -----

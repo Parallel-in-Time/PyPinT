@@ -36,10 +36,10 @@ def find_root(fun, x0, method="hybr"):
 
     Examples
     --------
-    >>> from pypint.plugins.implicit_solvers.find_root import find_root
-    >>> import numpy
-    >>> fun = lambda x: (-1.0 + 1.0j) * x
-    >>> sol = find_root(fun, numpy.array([0.0]))
+        from pypint.plugins.implicit_solvers.find_root import find_root
+        import numpy
+        fun = lambda x: (-1.0 + 1.0j) * x
+        sol = find_root(fun, numpy.array([0.0]))
     """
     assert_is_instance(x0, np.ndarray, "Initial start value must be a numpy.ndarray.")
     assert_is_callable(fun, "Function to find root of must be callable.")

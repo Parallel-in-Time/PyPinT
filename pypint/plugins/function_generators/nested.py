@@ -6,7 +6,7 @@
 
 
 class NestedFG(object):
-    """Generates nested functions from a function list :math:`f_n(f_{n-1}(...f_0(x)...))`.
+    """Generates nested functions from a function list :math:`f_n(f_{n-1}(...f_0(x)...))`
 
     Examples
     --------

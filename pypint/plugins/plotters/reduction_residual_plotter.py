@@ -17,7 +17,7 @@ class ReductionResidualPlotter(IPlotter):
 
     See Also
     --------
-    .IPlotter : overridden class
+    :py:class:`.IPlotter` : overridden class
     """
 
     _colors = np.array(['b', 'g', 'r', 'c', 'm', 'y', 'k'])

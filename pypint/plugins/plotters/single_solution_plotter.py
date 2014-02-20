@@ -19,7 +19,7 @@ class SingleSolutionPlotter(IPlotter):
 
     See Also
     --------
-    .IPlotter : overridden class
+    :py:class:`.IPlotter` : overridden class
     """
     def __init__(self, *args, **kwargs):
         super(SingleSolutionPlotter, self).__init__(args, **kwargs)

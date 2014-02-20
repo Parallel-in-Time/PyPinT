@@ -7,7 +7,7 @@ import numpy as np
 
 
 class PolynomialFG(object):
-    """Takes up to multiple :py:class:`numpy.ndarray` and constructs (rational) polynomials.
+    """Takes up to multiple :py:class:`numpy.ndarray` and constructs (rational) polynomials
 
     Examples
     --------

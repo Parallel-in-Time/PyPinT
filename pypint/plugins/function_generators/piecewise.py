@@ -7,8 +7,9 @@ import numpy as np
 
 
 class PiecewiseFG(object):
-    """Takes a :py:class:`numpy.ndarray` and function list to generate a piecewise function only for
-    :math:`R \\rightarrow R` functions, #function = #points + 1.
+    """Takes a :py:class:`numpy.ndarray` and function list to generate a piecewise function
+
+    Only for :math:`R \\rightarrow R` functions, #function = #points + 1.
 
     Examples
     --------
