@@ -249,7 +249,9 @@ html_sidebars = {
     'search': [],
     'genindex': [],
     'py-modindex': [],
-    '**': ['localtoc.html']
+    '*': ['localtoc.html'],
+    'api/package': ['localtoc.html'],
+    'api/**': []
 }
 
 # Additional templates that should be rendered to pages, maps page names to
