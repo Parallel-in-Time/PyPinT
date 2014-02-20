@@ -29,12 +29,15 @@ sys.path.insert(0, os.path.abspath('../..'))
 
 # Add any Sphinx extension module names h')), as strings. They can be extensions
 # coming with Sphinx (named 'sphinx.ext.*') or your custom ones.
-extensions = ['sphinx.ext.todo',
-              'sphinx.ext.coverage',
-              'sphinx.ext.mathjax',
-              'sphinx.ext.viewcode',
-              'sphinx.ext.autosummary',
-              'sphinx.ext.napoleon']
+extensions = [
+    'sphinx.ext.todo',
+    'sphinx.ext.mathjax',
+    'sphinx.ext.viewcode',
+    'sphinx.ext.autosummary',
+    'sphinx.ext.napoleon',
+    'sphinx.ext.graphviz',
+    'sphinx.ext.inheritance_diagram'
+]
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
@@ -98,14 +101,15 @@ pygments_style = 'sphinx'
 
 # -- Options for autodoc Extension ---------------------------------------------
 
-autoclass_content = "both"
+autoclass_content = "class"
 
-autodoc_member_order = "bysource"
+autodoc_member_order = "groupwise"
 
 autodoc_default_flags = [
     "members",
     "private-members",
-    "undoc-members",
+    "special-members",
+    "no-undoc-members",
     # "inherited-members",  # reactivate to show inherited members for all derived classes
     "show-inheritance"
 ]
@@ -130,11 +134,18 @@ napoleon_use_rtype = True
 todo_include_todos = True
 
 
+# -- Options for Graphviz ------------------------------------------------------
+
+graphviz_output_format = 'svg'
+
+
 # -- Options for HTML output ---------------------------------------------------
 
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
 html_theme = 'bootstrap'
+
+html_translator_class = 'sphinx_bootstrap_theme.BootstrapTranslator'
 
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
@@ -193,11 +204,11 @@ html_theme_options = {
     #
     # Options are nothing with "" (default) or the name of a valid theme
     # such as "amelia" or "cosmo".
-    'bootswatch_theme': "",
+    'bootswatch_theme': "spacelab",
 
     # Choose Bootstrap version.
     # Values: "3" (default) or "2" (in quotes)
-    'bootstrap_version': "2",
+    'bootstrap_version': "3",
 }
 
 # Add any paths that contain custom themes here, relative to this directory.
@@ -233,7 +244,13 @@ html_static_path = ['_static']
 html_use_smartypants = True
 
 # Custom sidebar templates, maps document names to template names.
-html_sidebars = {'sidebar': ['localtoc.html']}
+html_sidebars = {
+    'index': [],
+    'search': [],
+    'genindex': [],
+    'py-modindex': [],
+    '**': ['localtoc.html']
+}
 
 # Additional templates that should be rendered to pages, maps page names to
 # template names.
@@ -249,13 +266,13 @@ html_use_index = True
 html_split_index = False
 
 # If true, links to the reST sources are added to the pages.
-html_show_sourcelink = False
+html_show_sourcelink = True
 
 # If true, "Created using Sphinx" is shown in the HTML footer. Default is True.
-# html_show_sphinx = True
+html_show_sphinx = True
 
 # If true, "(C) Copyright ..." is shown in the HTML footer. Default is True.
-# html_show_copyright = True
+html_show_copyright = True
 
 # If true, an OpenSearch description file will be output, and all pages will
 # contain a <link> tag referring to it.  The value of this option must be the
