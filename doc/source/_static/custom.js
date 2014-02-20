@@ -1,5 +1,5 @@
 $(document).ready(function () {
-  $('#pypint.section > h1:not(.jumbotron > h1)').remove();
+  $('#pypint-version.section > h1:not(.jumbotron > h1)').remove();
 
   $('.jumbotron + .row p:nth-child(1)').addClass('lead');
   $('h1 + p').addClass('lead');
