@@ -27,7 +27,7 @@ class SemiImplicitSdcCore(SdcSolverCore):
 
         Parameters
         ----------
-        solver state : :py:class:`.SdcSolverState`
+        solver_state : :py:class:`.SdcSolverState`
 
         Notes
         -----

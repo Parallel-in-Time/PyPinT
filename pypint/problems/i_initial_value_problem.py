@@ -40,7 +40,8 @@ class IInitialValueProblem(IProblem):
 
         Raises
         ------
-        ValueError :
+        ValueError
+
             * if ``initial_value`` is not a :py:class:`numpy.ndarray`
             * if ``initial_value``'s size is not equal the number of spacial :py:attr:`.dim`
         """

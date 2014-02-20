@@ -24,7 +24,7 @@ class ExplicitSdcCore(SdcSolverCore):
 
         Parameters
         ----------
-        solver state : :py:class:`.SdcSolverState`
+        solver_state : :py:class:`.SdcSolverState`
         """
         super(ExplicitSdcCore, self).run(state, **kwargs)
 

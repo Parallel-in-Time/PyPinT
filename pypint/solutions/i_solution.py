@@ -51,7 +51,7 @@ class ISolution(object):
         Raises
         ------
         ValueError :
-            If `used_iterations` is not a non-zero positive integer value.
+            If ``used_iterations`` is not a non-zero positive integer value.
 
         Returns
         -------

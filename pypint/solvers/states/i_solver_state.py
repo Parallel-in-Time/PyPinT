@@ -13,16 +13,23 @@ from pypint.utilities import assert_is_key, assert_condition
 
 
 class IStepState(object):
+    """State of a single integration step
+
+    A integration step is a single point in time.
+    """
     def __init__(self, **kwargs):
         self._solution = StepSolutionData()
         self._delta_tau = 0.0
 
     def done(self):
+        """Finalize this state and its included solution
+        """
         self.solution.finalize()
 
     @property
     def solution(self):
-        """
+        """Proxy to the included solution of the state
+
         Returns
         -------
         solution : :py:class:`.StepSolutionData`
@@ -31,12 +38,29 @@ class IStepState(object):
 
     @property
     def time_point(self):
-        """Proxy for :py:attr:`.StepSolutionData.time_point`.
+        """Proxy for :py:attr:`.StepSolutionData.time_point`
         """
         return self._solution.time_point
 
     @property
     def delta_tau(self):
+        """Accessor for the width of the integration step
+
+        Usually the distance to the previous integration node.
+
+        Parameters
+        ----------
+        delta_tau : :py:class:`float`
+
+        Returns
+        -------
+        delta_tau : :py:class:`float`
+
+        Raises
+        ------
+        ValueError
+            if ``delta_tau`` is not non-zero positive
+        """
         return self._delta_tau
 
     @delta_tau.setter
@@ -51,7 +75,43 @@ class IStepState(object):
 
 
 class IStateIterator(object):
+    """Interface for a sequence of states
+
+    :py:class:`.IStateIterator` models a sequence of states allowing for easy iteration over all containing states.
+
+    Examples
+    --------
+    >>> from pypint.solutions.data_storage import TrajectorySolutionData
+    >>> my_states = IStateIterator(solution_class=TrajectorySolutionData, element_type=IStepState, num_states=3)
+    >>> len(my_states)
+    3
+    >>> for step in my_states:
+    >>>     print(step.time_point)
+    None
+    None
+    None
+
+    Notes
+    -----
+    Please keep in mind, that only derived classes can alter the currently accesable state.
+    Such a class is :py:class:`.IStaticStateIterator`.
+    """
     def __init__(self, **kwargs):
+        """
+        Parameters
+        ----------
+        solution_class : :py:class:`.ISolution`, :py:class:`.StepSolutionData` or :py:class:`.TrajectorySolutionData`
+
+        element_type : :py:class:`.IStepState` or :py:class:`.IStateItertor`
+
+        num_states : :py:class:`int`
+            *(optional)*
+
+        Raises
+        ------
+        ValueError
+            if ``num_states`` is not a non-zero positive integer
+        """
         assert_is_key(kwargs, 'solution_class', "Solution type must be given.")
         assert_is_key(kwargs, 'element_type', "Element type must be given.")
         self._solution = kwargs['solution_class']()
@@ -71,6 +131,16 @@ class IStateIterator(object):
             self._states = [self._element_type(**kwargs) for i in range(0, _num_states)]
 
     def finalize(self):
+        """Finalize this sequence of states
+
+        This copies the solution data from all containing states to its own solution object and finalizes it.
+        As well, the :py:attr:`.current_index` is reset to zero.
+
+        Raises
+        ------
+        RuntimeError
+            if this state has already been finalized
+        """
         assert_condition(not self.finalized,
                          RuntimeError, "This {} is already done.".format(self.__class__.__name__),
                          self)
@@ -82,6 +152,14 @@ class IStateIterator(object):
 
     @property
     def finalized(self):
+        """Read-only accessor to determine the finalized state of this state sequence
+
+        Raises
+        ------
+        RuntimeError
+            if this object is finalized but its containing solution object is not
+            (though, this should never happen)
+        """
         if self._finalized:
             # if this throws, something is really broken
             assert_condition(self.solution.finalized,
@@ -91,38 +169,86 @@ class IStateIterator(object):
 
     @property
     def solution(self):
+        """Accessor for the containing solution object
+        """
         return self._solution
 
     @property
     def current(self):
+        """Accessor to the current state of this sequence
+        """
         return self[self.current_index] if self.current_index is not None else None
 
     @property
     def current_index(self):
+        """Index of the current state of this sequence
+        """
         return self._current_index if len(self) > self._current_index else None
 
     @property
     def previous(self):
+        """Accessor to the previous state of this sequence
+
+        Returns
+        -------
+        previous : :py:class:`.IStepState`, :py:class:`.IStateIterator` or :py:class:`None`
+            :py:class:`None` if :py:attr:`.previous_index` returns :py:class:`None`
+        """
         return self[self.previous_index] if self.previous_index is not None else None
 
     @property
     def previous_index(self):
+        """Index of the previous state of this sequence
+
+        Returns
+        -------
+        previous_index : :py:class:`int` or :py:class:`None`
+            :py:class:`None` if no previous state is available, i.e. if :py:attr:`.current_index` is 0
+        """
         return self.current_index - 1 if self.current_index is not None and self.current_index > 0 else None
 
     @property
     def first(self):
+        """Accessor to the first state of this sequence
+
+        Returns
+        -------
+        first : :py:class:`None`
+            if :py:attr:`.first_index` returns :py:class:`None`
+        """
         return self[self.first_index] if self.first_index is not None else None
 
     @property
     def first_index(self):
+        """Index of the first state of this seuqence
+
+        Returns
+        -------
+        first_index : ``0`` or :py:class:`None`
+            :py:class:`None` is returned, if there are no states in this sequence
+        """
         return 0 if len(self) > 0 else None
 
     @property
     def last(self):
+        """Accessor for the last state in this sequence
+
+        Returns
+        -------
+        last : :py:class:`.IStepState`, :py:class:`.IStateIterator` or :py:class:`None`
+            :py:class:`None` if :py:attr:`.last_index` is :py:class:`None`
+        """
         return self[self.last_index] if self.last_index is not None else None
 
     @property
     def last_index(self):
+        """Index of the last state in this sequence
+
+        Returns
+        -------
+        last_index : :py:class:`int` or :py:class:`None`
+            :py:class:`None` if there are no states in this sequence
+        """
         return len(self) - 1 if len(self) > 0 else None
 
     def __len__(self):
@@ -141,7 +267,16 @@ class IStateIterator(object):
 
 
 class IStaticStateIterator(IStateIterator):
+    """Specialized sequence of states with fixed number of states
+    """
     def proceed(self):
+        """Proceed :py:attr:`.current` to the next state in the sequence
+
+        Raises
+        ------
+        RuntimeError
+            if this sequence has already been finalized via :py:meth:`.finalize`
+        """
         assert_condition(not self.finalized,
                          RuntimeError, "This {} is already done.".format(self.__class__.__name__),
                          self)
@@ -152,11 +287,24 @@ class IStaticStateIterator(IStateIterator):
 
     @property
     def next(self):
+        """Accessor for the next state in this sequence
+
+        Returns
+        -------
+        next : :py:class:`.IStepState`, :py:class:`.IStateIterator` or :py:class:`None`
+            :py:class:`None` if :py:attr:`.next_index` is :py:class:`None`
+        """
         return self[self.next_index] if self.next_index is not None else None
 
     @property
     def next_index(self):
-        # LOG.debug("{}: curr={}, len={}".format(self.__class__.__name__, self.current_index, len(self)))
+        """Index of the next state in this sequence
+
+        Returns
+        -------
+        next_index : :py:class:`int` or :py:class:`None`
+            :py:class:`None` if :py:attr:`.current` is already the last state in this sequence
+        """
         return self.current_index + 1 \
             if self.current_index is not None and len(self) > self.current_index + 1 else None
 

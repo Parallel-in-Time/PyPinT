@@ -14,12 +14,12 @@ from pypint.utilities import assert_is_instance, assert_condition
 class StepSolutionData(object):
     """Storage for the solution of a single time point.
 
-    :Finalization:
+    Finalization
         The attributes (:py:attr:`.value`, :py:attr:`.time_point`, :py:attr:`.error` and :py:attr:`.residual` can only
         be modified before calling :py:meth:`.finalize`.
         It is not intended and possible to *definalize* a once finalized :py:class:`StepSolutionData` instance.
 
-    :Comparability:
+    Comparability
         It can be compared with respect to all numerical comparison operators.
         For all operators to evaluate to :py:class:`True` it is necessary that :py:attr:`.dim` and
         :py:attr:`.numeric_type` are the same.
@@ -28,7 +28,7 @@ class StepSolutionData(object):
         The other comparison operators do not take :py:attr:`.value`, :py:attr:`.error` and :py:attr:`.residual` into
         account and induce an order only with respect to :py:attr:`.time_point`.
 
-    :Hashable:
+    Hashable
         It is not hashable due to its wrapping around :py:class:`numpy.ndarray`.
     """
 
@@ -59,8 +59,7 @@ class StepSolutionData(object):
             * if either :py:attr:`.error` or :py:attr:`.residual` raises
 
         UserWarning :
-
-            * if no ``value`` or ``time_point`` is given
+            if no ``value`` or ``time_point`` is given
 
         Notes
         -----
@@ -108,9 +107,9 @@ class StepSolutionData(object):
         -------
         finilized : :py:class:`bool`
 
-            :``True``:
+            :py:class:`True`
                 if it has been finalized before
-            :``False``:
+            :py:class:`False`
                 otherwise
         """
         return self._finalized
@@ -126,9 +125,8 @@ class StepSolutionData(object):
         Raises
         ------
         ValueError :
-
-            :on setting:
-                If this storage data instance has been finalized.
+            If this storage data instance has been finalized.
+            *(only setter)*
         """
         return self._data
 
@@ -157,9 +155,8 @@ class StepSolutionData(object):
         Raises
         ------
         ValueError :
-
-            :on setting:
-                If this storage data instance has been finalized.
+            If this storage data instance has been finalized.
+            *(only setter)*
         """
         return self._time_point
 
@@ -187,9 +184,8 @@ class StepSolutionData(object):
         Raises
         ------
         ValueError :
-
-            :on setting:
-                If this storage data instance has been finalized.
+            If this storage data instance has been finalized.
+            *(only setter)*
         """
         return self._error
 
@@ -218,9 +214,8 @@ class StepSolutionData(object):
         Raises
         ------
         ValueError :
-
-            :on setting:
-                If this storage data instance has been finalized.
+            If this storage data instance has been finalized.
+            *(only setter)*
         """
         return self._residual
 

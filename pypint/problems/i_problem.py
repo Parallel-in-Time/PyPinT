@@ -34,12 +34,9 @@ class IProblem(object):
         dim : :py:class:`int`
             Number of spacial dimensions.
 
-        strings : :py:class:`dict`
+        rhs: :py:class:`str`
             *(optional)*
-
-            :``rhs``: :py:class:`str`
-                *(optional)*
-                String representation of the right hand side function for logging output.
+            String representation of the right hand side function for logging output.
         """
         self._function = None
         if "function" in kwargs:
@@ -117,6 +114,7 @@ class IProblem(object):
             The right hand side function depending on the implicitly defined new value.
 
         method : :py:class:`str`
+            *(optional, default=``hybr``)*
             Method fo the root finding algorithm. See `scipy.optimize.root
             <http://docs.scipy.org/doc/scipy/reference/generated/scipy.optimize.root.html#scipy.optimize.root>` for
             details.
@@ -129,6 +127,7 @@ class IProblem(object):
         Raises
         ------
         ValueError :
+
             * if ``next_x`` is not a :py:class:`numpy.ndarray`
             * if ``fun`` is not :py:class:`callable`
             * if computed solution is not a `:py:class:`numpy.ndarray`
@@ -162,7 +161,7 @@ class IProblem(object):
 
         Returns
         -------
-        rhs function : :py:class:`callable`
+        rhs_function : :py:class:`callable`
             Function of the right hand side.
         """
         return self._function
@@ -178,12 +177,12 @@ class IProblem(object):
 
         Parameters
         ----------
-        interval start : :py:class:`float`
+        interval_start : :py:class:`float`
             Start point of the time interval.
 
         Returns
         -------
-        interval start : :py:class:`float`
+        interval_start : :py:class:`float`
             Start point of the time interval.
         """
         return self._time_start
@@ -198,12 +197,12 @@ class IProblem(object):
 
         Parameters
         ----------
-        interval end : :py:class:`float`
+        interval_end : :py:class:`float`
             End point of the time interval.
 
         Returns
         -------
-        interval end : :py:class:`float`
+        interval_end : :py:class:`float`
             End point of the time interval.
         """
         return self._time_end
@@ -247,7 +246,7 @@ class IProblem(object):
 
         Returns
         -------
-        spacial dimension : :py:class:`int`
+        spacial_dimension : :py:class:`int`
         """
         return self._dim
 

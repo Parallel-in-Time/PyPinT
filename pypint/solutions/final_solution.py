@@ -33,7 +33,7 @@ class FinalSolution(ISolution):
 
         See Also
         --------
-        .StepSolutionData :
+        :py:class:`.StepSolutionData`
             for available and valid parameters.
         """
         if self._data:

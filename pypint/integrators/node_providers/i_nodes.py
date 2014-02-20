@@ -33,7 +33,7 @@ class INodes(object):
         n_nodes : :py:class:`int`
             The number of desired integration nodes.
 
-        interval : :py:class:`numpy.ndarray` of size 2 or :py:class:`None`
+        interval : :py:class:`numpy.ndarray(size=2)` or :py:class:`None`
             Interval of desired integration nodes.
             If unset (i.e. :py:class:`None`), default nodes interval is implementation dependent.
 
@@ -43,7 +43,7 @@ class INodes(object):
 
         See Also
         --------
-        .interval : Accessor for the interval.
+        :py:attr:`.interval` : Accessor for the interval.
         """
         pass
 
@@ -57,7 +57,7 @@ class INodes(object):
 
         Parameters
         ----------
-        interval : :py:class:`numpy.ndarray` of size 2
+        interval : :py:class:`numpy.ndarray(size=2)`
             New interval to transform nodes onto.
 
         Raises
@@ -87,7 +87,7 @@ class INodes(object):
 
         Parameters
         ----------
-        interval : numpy.ndarray(size=2)
+        interval : :py:class:`numpy.ndarray(size=2)`
             Desired interval of integration nodes.
 
         Raises
@@ -97,7 +97,7 @@ class INodes(object):
 
         Returns
         -------
-        node_interval : :py:class:`numpy.ndarray` of size 2
+        node_interval : :py:class:`numpy.ndarray(size=2)`
             Interval of the nodes.
 
         Notes

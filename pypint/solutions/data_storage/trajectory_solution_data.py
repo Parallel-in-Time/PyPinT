@@ -19,21 +19,21 @@ class TrajectorySolutionData(object):
 
     This class provides a selected subset of Python's mutable sequence datatype methods:
 
-    :``__len__``:
+    :py:meth:`.__len__`
         Returns the number of :py:class:`.StepSolutionData` objects stored in this instance.
 
-    :``__gettiem__``:
+    :py:meth:`.__gettiem__`
         Takes the 0-based index of the :py:class:`.StepSolutionData` object to query.
 
-    :``__setitem__``:
+    :py:meth:`.__setitem__`
         Takes a :py:class:`float` representing the time point and a :py:class:`numpy.ndarray` as the rvalue.
         Same as ``.add_solution_data(value=<rvalue>, time_point=<time_point>)``.
 
-    :``__iter__``:
+    :py:meth:`.__iter__`
         Gives an iterator over the stored :py:class:`.StepSolutionData` objects (proxies
         :py:meth:`numpy.ndarray.__iter__`).
 
-    :``__contains__``:
+    :py:meth:`.__contains__`
         Finds the given :py:class:`.StepSolutionData` object in this sequence.
     """
 
@@ -68,7 +68,7 @@ class TrajectorySolutionData(object):
 
         Raises
         ------
-        ValueError :
+        ValueError
 
             * if construction of :py:class:`.StepSolutionData` fails
             * if internal consistency check fails (see :py:meth:`._check_consistency`)
@@ -118,9 +118,9 @@ class TrajectorySolutionData(object):
         -------
         finilized : :py:class:`bool`
 
-            :``True``:
+            :py:class:`True`
                 if it has been finalized before
-            :``False``:
+            :py:class:`False`
                 otherwise
         """
         return self._finalized
@@ -220,7 +220,7 @@ class TrajectorySolutionData(object):
         """
         See Also
         --------
-        .add_solution_data : with one unnamed parameter
+        :py:meth:`.add_solution_data` : with one unnamed parameter
         """
         self.add_solution_data(p_object)
 

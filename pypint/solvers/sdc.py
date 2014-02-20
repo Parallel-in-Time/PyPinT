@@ -67,7 +67,7 @@ class Sdc(IIterativeTimeSolver):
 
     See Also
     --------
-    .IIterativeTimeSolver :
+    :py:class:`.IIterativeTimeSolver` :
         implemented interface
 
     Examples
@@ -125,7 +125,7 @@ class Sdc(IIterativeTimeSolver):
 
         See Also
         --------
-        .IIterativeTimeSolver.init : overridden method
+        :py:meth:`.IIterativeTimeSolver.init` : overridden method
         """
         assert_is_instance(problem, IInitialValueProblem,
                            "SDC requires an initial value problem: {:s}".format(problem.__class__.__name__),
@@ -194,20 +194,20 @@ class Sdc(IIterativeTimeSolver):
 
         The output for the iterations explained:
 
-            :**iter**:
+            **iter**
                 The iteration number.
 
-            :**rel red**:
+            **rel red**
                 The relative reduction of the solution from one iteration to the previous.
                 Is only displayed from the second iteration onwards.
 
-            :**time**:
+            **time**
                 Seconds taken for the iteration.
 
-            :**resid**:
+            **resid**
                 Residual of the last time step of the iteration.
 
-            :**err red**:
+            **err red**
                 Reduction of the absolute error from the first iteration to the current.
                 Is only displayed from the second iteration onwards and only if the given problem
                 provides a function of the exact solution (see :py:meth:`.problem_has_exact_solution()`).
@@ -215,26 +215,26 @@ class Sdc(IIterativeTimeSolver):
         The output for the time steps of an iteration explained (will only show up when running with
         logger level ``DEBUG``):
 
-            :**step**:
+            **step**
                 Number of the time step.
 
-            :**t_0**:
+            **t_0**
                 Start of the time step interval.
 
-            :**t_1**:
+            **t_1**
                 End of the time step interval.
 
-            :**resid**:
+            **resid**
                 Residual of the time step.
 
-            :**err**:
+            **err**
                 Inifnity norm of error for the time step.
                 Is only displayed if the given problem provides a function for the
                 exact solution (see :py:meth:`.problem_has_exact_solution()`).
 
         See Also
         --------
-        .IIterativeTimeSolver.run : overridden method
+        :py:meth:`.IIterativeTimeSolver.run` : overridden method
         """
         super(Sdc, self).run(core)
 
@@ -337,7 +337,7 @@ class Sdc(IIterativeTimeSolver):
 
         Returns
         -------
-        number time steps : :py:class:`int`
+        number_time_steps : :py:class:`int`
             Number of time steps within the problem-given time interval.
         """
         return self._num_time_steps
@@ -348,7 +348,7 @@ class Sdc(IIterativeTimeSolver):
 
         Returns
         -------
-        number of nodes : :py:class:`int`
+        number_of_nodes : :py:class:`int`
             Number of integration nodes used within one time step.
         """
         return self._integrator.nodes_type.num_nodes
