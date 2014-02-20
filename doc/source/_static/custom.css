@@ -1,6 +1,11 @@
-blockquote p {
+blockquote {
   font-size: 1em;
 }
+
 td.label {
   padding-top: 0px !important;
+}
+
+.jumbotron p {
+  text-align: justify;
 }

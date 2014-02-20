@@ -3,3 +3,20 @@
 
 {# Custom CSS overrides #}
 {% set bootswatch_css_custom = ['_static/custom.css'] %}
+
+{% set script_files = script_files + [
+        '_static/custom.js'
+    ]
+%}
+
+{%- macro bsidebar() %}
+  {%- if render_sidebar %}
+  <div class="{{ bs_span_prefix }}3 hidden-xs hidden-sm">
+    <div id="sidebar" class="bs-sidenav" role="navigation">
+      {%- for sidebartemplate in sidebars %}
+        {%- include sidebartemplate %}
+      {%- endfor %}
+    </div>
+  </div>
+  {%- endif %}
+{%- endmacro %}
