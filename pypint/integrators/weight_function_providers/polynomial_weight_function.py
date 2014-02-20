@@ -74,7 +74,7 @@ class PolynomialWeightFunction(IWeightFunction):
 
         See Also
         --------
-        .IWeightFunction.evaluate : overridden method
+        :py:meth:`.IWeightFunction.evaluate` : overridden method
         """
         super(PolynomialWeightFunction, self).evaluate(nodes, interval)
 

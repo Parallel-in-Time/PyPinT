@@ -123,7 +123,7 @@ class IntegratorBase(object):
 
         See Also
         --------
-        .INodes.nodes
+        :py:attr:`.INodes.nodes`
         """
         return self._nodes.nodes
 
@@ -133,7 +133,7 @@ class IntegratorBase(object):
 
         See Also
         --------
-        .IWeightFunction.weights
+        :py:attr:`.IWeightFunction.weights`
         """
         return self._weights_function.weights
 

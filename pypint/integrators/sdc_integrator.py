@@ -47,7 +47,7 @@ class SdcIntegrator(IntegratorBase):
 
         See Also
         --------
-        .IntegratorBase.evaluate : overridden method
+        :py:meth:`.IntegratorBase.evaluate` : overridden method
         """
         assert_condition("last_node_index" in kwargs, ValueError, "Last node index must be given.", self)
         _index = kwargs["last_node_index"]

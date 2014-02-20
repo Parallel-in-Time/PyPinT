@@ -15,6 +15,8 @@ class GaussLegendreNodes(INodes):
     """
 
     std_interval = np.array([-1.0, 1.0])
+    """Standard integration interval
+    """
 
     def __init__(self):
         super(GaussLegendreNodes, self).__init__()
@@ -30,7 +32,7 @@ class GaussLegendreNodes(INodes):
 
         See Also
         --------
-        .INodes.init : overridden method
+        :py:meth:`.INodes.init` : overridden method
         """
         super(GaussLegendreNodes, self).init(n_nodes, interval)
         self.num_nodes = n_nodes
@@ -46,11 +48,11 @@ class GaussLegendreNodes(INodes):
         Raises
         ------
         ValueError
-            If ``n_nodes`` is smaller than 2 *(only Setter)*.
+            if ``n_nodes`` is smaller than 2 *(only Setter)*.
 
         See Also
         --------
-        .INodes.num_nodes : overridden method
+        :py:attr:`.INodes.num_nodes` : overridden method
         """
         return super(self.__class__, self.__class__).num_nodes.fget(self)
 
@@ -65,25 +67,20 @@ class GaussLegendreNodes(INodes):
     def _compute_nodes(self):
         """Computats nodes for the Gauss-Legendre quadrature of order :math:`n>1` on :math:`[-1,+1]`.
 
-        (ported from MATLAB code, reference see below, original commend from
-        MATLAB code:)
+        (ported from MATLAB code, reference see below, original commend from MATLAB code:)
 
-          Unlike many publicly available functions, this function is valid for
-          :math:`n>=46`.
-          This is due to the fact that it does not rely on MATLAB's build-in
-          'root' routines to determine the roots of the Legendre polynomial, but
-          finds the roots by looking for the eigenvalues of an alternative
-          version of the companion matrix of the n'th degree Legendre
-          polynomial.
-          The companion matrix is constructed as a symmetrical matrix,
-          guaranteeing that all the eigenvalues (roots) will be real.
-          On the contrary, MATLAB's 'roots' function uses a general form for the
-          companion matrix, which becomes unstable at higher orders :math:`n`,
-          leading to complex roots.
+        .. epigraph::
 
-        (Credit, where credit due)
-        original MATLAB function by: Geert Van Damme <geert@vandamme-iliano.be>
-        (February 21, 2010)
+            Unlike many publicly available functions, this function is valid for :math:`n>=46`.
+            This is due to the fact that it does not rely on MATLAB's build-in 'root' routines to determine the roots
+            of the Legendre polynomial, but finds the roots by looking for the eigenvalues of an alternative version of
+            the companion matrix of the n'th degree Legendre polynomial.
+            The companion matrix is constructed as a symmetrical matrix, guaranteeing that all the eigenvalues (roots)
+            will be real.
+            On the contrary, MATLAB's 'roots' function uses a general form for the companion matrix, which becomes
+            unstable at higher orders :math:`n`, leading to complex roots.
+
+            -- original MATLAB function by: Geert Van Damme <geert@vandamme-iliano.be> (February 21, 2010)
         """
         # Building the companion matrix comp_mat
         # comp_mat is such that det(nodes*I-comp_mat)=P_n(nodes), with P_n the

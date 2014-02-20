@@ -78,7 +78,7 @@ def problem_has_exact_solution(problem, checking_obj=None):
 
     Returns
     -------
-    :py:class:`bool`
+    has_exact_solution : :py:class:`bool`
         :py:class:`True` if exact solution was given, :py:class:`False` otherwise
 
     Raises

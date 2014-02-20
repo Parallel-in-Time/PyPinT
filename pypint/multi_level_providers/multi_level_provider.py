@@ -68,7 +68,7 @@ class MultiLevelProvider(object):
 
         See Also
         --------
-        .ILevelTransitionProvider.prolongate : for details on prolongation
+        :py:meth:`.ILevelTransitionProvider.prolongate` : for details on prolongation
         """
         return self._level_transition(coarse_level=coarse_level, fine_level=fine_level).prolongate(coarse_data)
 
@@ -95,7 +95,7 @@ class MultiLevelProvider(object):
 
         See Also
         --------
-        .ILevelTransitionProvider.restringate : for details on restringation
+        :py:meth:`.ILevelTransitionProvider.restringate` : for details on restringation
         """
         return self._level_transition(coarse_level=coarse_level, fine_level=fine_level).restringate(fine_data)
 
@@ -182,6 +182,7 @@ class MultiLevelProvider(object):
         Raises
         ------
         ValueError
+
             * if ``coarse_level`` and ``fine_level`` are :py:class:`None`
             * if ``fine_level`` is :py:class:`None` and ``coarse_level`` is the finest one
             * if ``coarse_level`` is :py:class:`None` and ``fine_level`` is the coarsest one

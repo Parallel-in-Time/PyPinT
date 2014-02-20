@@ -28,7 +28,7 @@ class FullWeighting(ILevelTransitionProvider):
 
     See Also
     --------
-    .Injection : Same prolongation operator.
+    :py:class:`.Injection` : Same prolongation operator.
     """
     def __init__(self, num_fine_points, num_coarse_points=-1):
         assert_condition(num_fine_points % 2 != 0,

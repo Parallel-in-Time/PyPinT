@@ -21,7 +21,7 @@ LOG = logger()
 
 See Also
 --------
-.utilities.logging.Logging.logger : aliased accessor function
+:py:meth:`.utilities.logging.Logging.logger` : aliased accessor function
 """
 
 __all__ = ["LOG"]

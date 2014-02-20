@@ -18,7 +18,7 @@ def func_name(obj=None):
 
     Returns
     -------
-    formatted function name : :py:class:`str`
+    formatted_function_name : :py:class:`str`
         Formatted function name of calling function.
 
     Examples

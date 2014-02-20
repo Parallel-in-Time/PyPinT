@@ -42,6 +42,7 @@ class ILevelTransitionProvider(object):
         Raises
         ------
         ValueError
+
             * if ``coarse_data`` is not a :py:class:`numpy.ndarray`
             * if ``coarse_data`` has more or less entries than :py:attr:`.num_coarse_points`
         """
@@ -68,6 +69,7 @@ class ILevelTransitionProvider(object):
         Raises
         ------
         ValueError
+
             * if ``fine_data`` is not a `:py:class:`numpy.ndarray`
             * if ``fine_data`` has more or less entries than :py:attr:`.num_fine_points`
         """

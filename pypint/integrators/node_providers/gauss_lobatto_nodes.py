@@ -30,7 +30,7 @@ class GaussLobattoNodes(INodes):
 
         See Also
         --------
-        .INodes.init : overridden method
+        :py:meth:`.INodes.init` : overridden method
         """
         super(GaussLobattoNodes, self).init(n_nodes, interval)
         self.num_nodes = n_nodes
@@ -50,7 +50,7 @@ class GaussLobattoNodes(INodes):
 
         See Also
         --------
-        .INodes.num_nodes : overridden method
+        :py:attr:`.INodes.num_nodes` : overridden method
         """
         return super(self.__class__, self.__class__).num_nodes.fget(self)
 

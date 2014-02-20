@@ -38,7 +38,7 @@ def problem_has_direct_implicit(problem, checking_obj=None):
 
     Returns
     -------
-     : :py:class:`bool`
+    has_direct_impl : :py:class:`bool`
         :py:class:`True` if exact solution was given, :py:class:`False` otherwise
 
     Raises

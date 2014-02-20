@@ -13,14 +13,14 @@ from pypint.utilities import assert_is_instance, assert_condition
 class IDiagnosisValue(object):
     """Storage and handler of diagnosis values of iterative time solvers.
 
-    :Comparability:
+    Comparability
         It can be equality-compared (i.e. operators ``==`` and ``!=`` are implemented).
         The other comparison operators such as ``<``, ``<=``, ``>`` and ``>=`` are not implemented as these do not make
         any sense for this type of container.
 
         Two instances are the same, if they have the same :py:attr:`.numeric_type` and their :py:attr:`.value` are the
         same with respect to :py:meth:`numpy.array_equal`.
-    :Hashable:
+    Hashable
         It is not hashable due to its wrapping around :py:class:`numpy.ndarray`.
 
     .. todo::
