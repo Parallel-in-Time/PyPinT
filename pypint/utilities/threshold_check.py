@@ -32,14 +32,17 @@ class ThresholdCheck(object):
         self._reason = None
 
     def check(self, state):
+        self._reason = []
         self._check_reduction(state)
         self._check_minimum("residual", state.current_iteration.final_step.solution.residual)
         self._check_minimum("error", state.current_iteration.final_step.solution.error)
         self._check_maximum("iterations", state.current_iteration_index + 1)
+        if len(self._reason) == 0:
+            self._reason = None
 
     def has_reached(self, human=False):
         if human:
-            return "Threshold condition met: {:s}".format(self._reason)
+            return "Threshold condition(s) met: {:s}".format(self._reason)
         else:
             return self._reason
 
@@ -138,12 +141,12 @@ class ThresholdCheck(object):
                 if _value <= self._conditions[name]:
                     LOG.debug("Minimum of {:s} reached: {:.2e} <= {:.2e}"
                               .format(name, _value, self._conditions[name]))
-                    self._reason = name
+                    self._reason.append(name)
             elif operator == "max":
                 if _value >= self._conditions[name]:
                     LOG.debug("Maximum of {:s} exceeded: {:d} >= {:d}"
                               .format(name, _value, self._conditions[name]))
-                    self._reason = name
+                    self._reason.append(name)
             else:
                 raise ValueError("Given operator '{:s}' is invalid.".format(operator))
         else:
