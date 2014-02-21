@@ -10,6 +10,9 @@ from pypint.utilities import assert_is_instance, assert_is_key
 
 
 class ImplicitSdcCore(SdcSolverCore):
+    """Implicit SDC Core
+    """
+
     name = "Implicit SDC"
 
     def __init__(self):
@@ -47,8 +50,8 @@ class ImplicitSdcCore(SdcSolverCore):
                                                           _previous_iteration_current_step.solution.value,
                                                           state.current_time_step.previous_step.solution.value],
                                             delta_node=state.current_step.delta_tau,
-                                            delta_step=state.delta_interval,
-                                            integral=state.current_step.integral)
+                                            integral=state.current_step.integral,
+                                            core=self)
         else:
             # using step-wise formula
             #   u_{m+1}^{k+1} - \Delta_\tau F(u_{m+1}^{k+1})
