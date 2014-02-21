@@ -2,13 +2,16 @@
 
 import os
 from setuptools import setup
+from pypint import __version__
+
 
 def read(fname):
     return open(os.path.join(os.path.dirname(__file__), fname)).read()
 
+
 setup(
     name="PyPinT",
-    version="0.0.1",
+    version=__version__,
     author="Torbjörn Klatt, Dieter Moser",
     author_email="t.klatt@fz-juelich.de, d.moser@fz-juelich.de",
     description="A Python framework for Parallel-in-Time integration routines.",
