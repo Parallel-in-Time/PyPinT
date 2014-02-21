@@ -451,7 +451,7 @@ class Sdc(IIterativeTimeSolver):
                                        self.state.current_step.solution.value.copy())
                  ], dtype=self.problem.numeric_type)
 
-        _residual_integral = np.zeros(self.problem.dim)
+        _residual_integral = np.zeros(self.problem.dim, dtype=self.problem.numeric_type)
         for i in range(0, _current_step_index + 1):
             _residual_integral += self._integrator.evaluate(_integrate_values, last_node_index=i + 1)
         del _integrate_values
