@@ -23,7 +23,27 @@ class SdcIntegrator(IntegratorBase):
 
     def init(self, nodes_type=GaussLobattoNodes(), num_nodes=3,
              weights_function=PolynomialWeightFunction(), interval=None):
-        super(self.__class__, self).init(nodes_type, num_nodes, weights_function, interval)
+        """Initialize SDC Integrator
+
+        Parameters
+        ----------
+        nodes_type : :py:class:`.INodes`
+            type of the nodes
+            (defaults to :py:class:`.GaussLobattoNodes`)
+
+        num_nodes : :py:class:`int`
+            number of nodes
+            (defaults to 3)
+
+        weights_function : :py:class:`.IWeightFunction`
+            type of the weights function
+            (defaults to :py:class:`.PolynomialWeightFunction`)
+
+        interval : :py:class:`numpy.ndarray` or :py:class:`None`
+            interval for the nodes
+            (see :py:meth:`.INodes.transform` for possible values)
+        """
+        super(SdcIntegrator, self).init(nodes_type, num_nodes, weights_function, interval)
         self._construct_s_matrix()
 
     def evaluate(self, data, **kwargs):
@@ -57,11 +77,17 @@ class SdcIntegrator(IntegratorBase):
                          self)
         super(SdcIntegrator, self).evaluate(data, time_start=self.nodes[0],
                                             time_end=self.nodes[_index])
-        #LOG.debug("Integrating with S-Mat row {:d} ({:s}) on interval {:s}."
-        #          .format(_index - 1, self._smat[_index - 1], self.nodes_type.interval))
+        # LOG.debug("Integrating {:s} with S-Mat row {:d} ({:s}) on interval {:s}."
+        #           .format(data, _index - 1, self._smat[_index - 1], self.nodes_type.interval))
         return np.dot(self._smat[_index - 1], data)
 
     def transform_interval(self, interval):
+        """Transforms nodes onto new interval
+
+        See Also
+        --------
+        :py:meth:`.IntegratorBase.transform_interval` : overridden method
+        """
         if interval is not None:
             if interval[0] - interval[-1] != self.nodes[0] - self.nodes[-1]:
                 #LOG.debug("Size of interval changed. Recalculating weights.")
@@ -73,6 +99,11 @@ class SdcIntegrator(IntegratorBase):
             pass
 
     def _construct_s_matrix(self):
+        """Constructs integration :math:`S`-matrix
+
+        Rows of the matrix are the integration from one node to the next.
+        I.e. row :math:`i` integrates from node :math:`i-1` to node :math:`i`.
+        """
         assert_is_instance(self._nodes, GaussLobattoNodes,
                            "Other than Gauss-Lobatto integration nodes not yet supported.", self)
         self._smat = np.zeros((self.nodes.size - 1, self.nodes.size), dtype=float)

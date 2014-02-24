@@ -113,6 +113,15 @@ class IntegratorBase(object):
                          self)
 
     def transform_interval(self, interval):
+        """Transform current interval to the given one
+
+        The integration nodes are transformed to fit the given interval and subsequently the weights are recomputed to
+        match the new nodes.
+
+        See Also
+        --------
+        :py:meth:`.INodes.transform` : method called for node transformation
+        """
         if interval is not None:
             self._nodes.transform(interval)
         self._weights_function.evaluate(self._nodes.nodes)
@@ -139,8 +148,20 @@ class IntegratorBase(object):
 
     @property
     def nodes_type(self):
+        """Read-only accessor for the type of nodes
+
+        Returns
+        -------
+        nodes : :py:class:`.INodes`
+        """
         return self._nodes
 
     @property
     def weights_function(self):
+        """Read-only accessor for the weights function
+
+        Returns
+        -------
+        weights_function : :py:class:`.IWeightFunction`
+        """
         return self._weights_function
