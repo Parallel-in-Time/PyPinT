@@ -12,19 +12,43 @@ from pypint import LOG
 
 
 class ThresholdCheck(object):
+    """Threshold Checking Handler
+    """
+
     _default_min_threshold = 1e-7
+    """Default minimum threshold
+    """
+
     _default_max_threshold = 10
+    """Default maximum threshold
+    """
+
     _default_min_conditions = {
         "reduction": _default_min_threshold,
         "residual": _default_min_threshold,
         "error": _default_min_threshold
     }
+
     _default_max_conditions = {
         "iterations": _default_max_threshold
     }
 
     def __init__(self, min_threshold=_default_min_threshold, max_threshold=_default_max_threshold,
                  conditions=("residual", "iterations")):
+        """
+        Parameters
+        ----------
+        min_threshold : :py:class:`float`
+            threshold value for minimum criteria
+
+        max_threshold : :py:class:`int`
+            threshold value for maximum criteria
+
+        conditions : :py:class:`tuple` of :py:class:`str`
+            Tuple of strings defining the active criteria.
+            Possible values are: ``reduction``, ``residual``, ``error``, ``iterations``.
+            (defaults to: ``('residual', 'iterations')``)
+        """
         self._min_threshold = min_threshold
         self._max_threshold = max_threshold
         self._conditions = {}
@@ -32,6 +56,12 @@ class ThresholdCheck(object):
         self._reason = None
 
     def check(self, state):
+        """Checks thresholds of given state
+
+        Parameters
+        ----------
+        state : :py:class:`.ISolverState`
+        """
         self._reason = []
         self._check_reduction(state)
         self._check_minimum("residual", state.current_iteration.final_step.solution.residual)
@@ -41,6 +71,19 @@ class ThresholdCheck(object):
             self._reason = None
 
     def has_reached(self, human=False):
+        """Gives list of thresholds reached
+
+        Parameters
+        ----------
+        human : :py:class:`bool`
+            if :py:class:`True` returns a human readable string listing reached thresholds
+            (default :py:class:`False`)
+
+        Returns
+        -------
+        reached_thresholds : :py:class:`list` or :py:class:`None`
+            :py:class:`list` of matched thresholds or :py:class:`None` if non reached
+        """
         if human:
             return "Threshold condition(s) met: {:s}".format(self._reason)
         else:
@@ -48,6 +91,13 @@ class ThresholdCheck(object):
 
     @property
     def min_reduction(self):
+        """Read-only accessor for the minimum reduction threshold
+
+        Returns
+        -------
+        reduction_threshold : :py:class:`float` or :py:class:`None`
+            :py:class:`None` if reduction is not a criteria
+        """
         if "reduction" in self._conditions:
             return self._conditions["reduction"]
         else:
@@ -55,6 +105,13 @@ class ThresholdCheck(object):
 
     @property
     def min_residual(self):
+        """Read-only accessor for the minimum residual threshold
+
+        Returns
+        -------
+        residual_threshold : :py:class:`float` or :py:class:`None`
+            :py:class:`None` if residual is not a criteria
+        """
         if "residual" in self._conditions:
             return self._conditions["residual"]
         else:
@@ -62,6 +119,13 @@ class ThresholdCheck(object):
 
     @property
     def min_error(self):
+        """Read-only accessor for the minimum error threshold
+
+        Returns
+        -------
+        error_threshold : :py:class:`float` or :py:class:`None`
+            :py:class:`None` if error is not a criteria
+        """
         if "error" in self._conditions:
             return self._conditions["error"]
         else:
@@ -69,12 +133,21 @@ class ThresholdCheck(object):
 
     @property
     def max_iterations(self):
+        """Read-only accessor for the maximum iterations threshold
+
+        Returns
+        -------
+        iterations_threshold : :py:class:`int` or :py:class:`None`
+            :py:class:`None` if iterations is not a criteria
+        """
         if "iterations" in self._conditions:
             return self._conditions["iterations"]
         else:
             return None
 
     def print_conditions(self):
+        """Pretty-formatted string of all active criteria and their thresholds
+        """
         _outstr = ""
         first = True
         for cond in self._conditions:

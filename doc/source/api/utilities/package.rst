@@ -7,6 +7,7 @@ Utilities (:mod:`utilities`)
 
 .. toctree::
 
+    assertions
     logging
     threshold_check
     tracing
