@@ -680,7 +680,7 @@ class IIterationState(IStaticStateIterator):
         -------
         time_points : :py:class:`numpy.array(dtype=float)`
         """
-        return np.array([_step.time_point for _step in [_time for _time in self]], dtype=float)
+        return np.array([_step.time_point for _time_point in self for _step in _time_point], dtype=float)
 
 
 class ISolverState(IStateIterator):
