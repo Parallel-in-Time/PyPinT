@@ -308,6 +308,24 @@ class ITimeStepState(IStaticStateIterator):
     """Stores integration step states of a single time step.
     """
     def __init__(self, **kwargs):
+        """
+
+        Parameters
+        ----------
+        num_states : :py:class:`int`
+            number of states in this sequence
+        solution_class : :py:class:`.TrajectorySolutionData` or :py:class:`.StepSolutionData`
+            *(optional)*
+            defaults to :py:class:`.TrajectorySolutionData`
+        element_type : :py:class:`.IStepState` or :py:class:`.IStateIterator`
+            *(optional)*
+            defaults to :py:class:`.IStepState`
+
+        Raises
+        ------
+        ValueError
+            if ``num_states`` is not given
+        """
         if 'solution_class' not in kwargs:
             kwargs['solution_class'] = TrajectorySolutionData
         if 'element_type' not in kwargs:
@@ -320,6 +338,22 @@ class ITimeStepState(IStaticStateIterator):
 
     @property
     def delta_time_step(self):
+        """Accessor for the width of the time step
+
+        Parameters
+        ----------
+        delta_time_step : :py:class:`float`
+
+        Returns
+        -------
+        width_of_time_step : :py:class:`float`
+
+        Raises
+        ------
+        ValueError
+            *(only setter)*
+            if ``delta_time_step`` is not a non-zero positive :py:class:`float`
+        """
         return self._delta_time_step
 
     @delta_time_step.setter
@@ -331,6 +365,8 @@ class ITimeStepState(IStaticStateIterator):
 
     @property
     def initial(self):
+        """Accessor for the initial value of this time step
+        """
         return self._initial
 
     @initial.setter
@@ -339,50 +375,94 @@ class ITimeStepState(IStaticStateIterator):
 
     @property
     def time_points(self):
+        """Read-only accessor for the list of time points of this time step
+        """
         return np.array([step.time_point for step in self], dtype=float)
 
     @property
     def current_time_point(self):
+        """Accessor for the current step's time point
+
+        Returns
+        -------
+        current_time_point : :py:class:`float` or :py:class:`None`
+            :py:class:`None` is returned if :py:attr:`.current_step` is :py:class:`None`
+        """
         return self.current_step.time_point if self.current_step is not None else None
 
     @property
     def previous_time_point(self):
+        """Accessor for the previous step's time point
+
+        Returns
+        -------
+        previous_time_point : :py:class:`float` or :py:class:`None`
+            :py:class:`None` is returned if :py:attr:`.previous_step` is :py:class:`None`
+        """
         return self.previous_step.time_point if self.previous is not None else None
 
     @property
     def next_time_point(self):
-        return self.next.time_point if self.next is not None else None
+        """Accessor for the next step's time point
+
+        Returns
+        -------
+        next_time_point : :py:class:`float` or :py:class:`None`
+            :py:class:`None` is returned if :py:attr:`.next_step` is :py:class:`None`
+        """
+        return self.next.time_point if self.next_step is not None else None
 
     @property
     def current_step(self):
+        """Proxy for :py:attr:`.current`
+        """
         return self.current
 
     @property
     def current_step_index(self):
+        """Proxy for :py:attr:`.current_index`
+        """
         return self.current_index
 
     @property
     def previous_step(self):
+        """Accessor for the previous step
+
+        Returns
+        -------
+        previous step : :py:class:`.IStepState` or :py:class:`None`
+            :py:class:`None` is returned if :py:attr:`.previous_index` is :py:class:`None`
+        """
         return self.previous if self.previous_index is not None else self.initial
 
     @property
     def previous_step_index(self):
+        """Proxy for :py:attr:`.previous_index`
+        """
         return self.previous_index
 
     @property
     def next_step(self):
+        """Proxy for :py:attr:`.next`
+        """
         return self.next
 
     @property
     def next_step_index(self):
+        """Proxy for :py:attr:`.next_index`
+        """
         return self.next_index
 
     @property
     def last_step(self):
+        """Proxy for :py:attr:`.last`
+        """
         return self.last
 
     @property
     def last_step_index(self):
+        """Proxy for :py:attr:`.last_index`
+        """
         return self.last_index
 
 
@@ -390,6 +470,26 @@ class IIterationState(IStaticStateIterator):
     """Stores time step states of a single iteration.
     """
     def __init__(self, **kwargs):
+        """
+
+        Parameters
+        ----------
+        num_time_steps : :py:class:`int`
+            number of time steps in this sequence
+        num_states : :py:class:`int`
+            number of steps per time step
+        solution_class : :py:class:`.TrajectorySolutionData`, *any other solution class*
+            *(optional)*
+            defaults to :py:class:`.TrajectorySolutionData`
+        element_type : :py:class:`.IStateIterator`
+            *(optional)*
+            defaults to :py:class:`.ITimeStepState`
+
+        Raises
+        ------
+        ValueError
+            if ``num_time_steps`` is not given
+        """
         if 'solution_class' not in kwargs:
             kwargs['solution_class'] = TrajectorySolutionData
         if 'element_type' not in kwargs:
@@ -407,6 +507,17 @@ class IIterationState(IStaticStateIterator):
         self._initial = None
 
     def finalize(self):
+        """Finalizes this iteration and copies solutions
+
+        The solutions of all steps of all time steps are copied to this sequence's :py:class:`.TrajectorySolutionData`
+        and is finalized afterwards.
+
+        The remaining behaviour is the same as the overridden method.
+
+        See Also
+        --------
+        :py:meth:`.IStateIterator.finalize` : overridden method
+        """
         assert_condition(not self.finalized,
                          RuntimeError, "This {} is already done.".format(self.__class__.__name__),
                          self)
@@ -418,12 +529,19 @@ class IIterationState(IStaticStateIterator):
         self._finalized = True
 
     def proceed(self):
+        """Proceeds to the next time step
+
+        Same as :py:meth:`.IStaticStateIterator.proceed` with the addition, that the current time step's initial
+        value is set as a reference to the previous time step's last step.
+        """
         super(IIterationState, self).proceed()  # -> current_index += 1
         # link initial step of this time step to the previous' last step
         self.current_time_step.initial = self.previous_time_step.last_step
 
     @property
     def initial(self):
+        """Accessor to the initial value of this iteration
+        """
         return self._initial
 
     @initial.setter
@@ -432,72 +550,136 @@ class IIterationState(IStaticStateIterator):
 
     @property
     def current_time_step(self):
+        """Proxy for :py:attr:`.current`
+        """
         return self.current
 
     @property
     def current_time_step_index(self):
+        """Proxy for :py:attr:`.current_index`
+        """
         return self.current_index
 
     @property
     def previous_time_step(self):
+        """Proxy for :py:attr:`.previous`
+        """
         return self.previous
 
     @property
     def previous_time_step_index(self):
+        """Proxy for :py:attr:`.previous_index`
+        """
         return self.previous_index
 
     @property
     def next_time_step(self):
+        """Proxy for :py:attr:`.next`
+        """
         return self.next
 
     @property
     def next_time_step_index(self):
+        """Proxy for :py:attr:`.next_index`
+        """
         return self.next_index
 
     @property
     def first_time_step(self):
+        """Proxy for :py:attr:`.first`
+        """
         return self.first
 
     @property
     def first_time_step_index(self):
+        """Proxy for :py:attr:`.first_index`
+        """
         return self.first_index
 
     @property
     def last_time_step(self):
+        """Proxy for :py:attr:`.last`
+        """
         return self.last
 
     @property
     def last_time_step_index(self):
+        """Proxy for :py:attr:`.last_index`
+        """
         return self.last_index
 
     @property
     def current_step(self):
+        """Proxy for :py:attr:`.ITimeStepState.current_step`
+        """
         return self.current_time_step.current_step
 
     @property
     def current_step_index(self):
+        """Proxy for :py:attr:`.ITimeStepState.current_step_index`
+        """
         return self.current_time_step.current_step_index
 
     @property
     def previous_step(self):
+        """Read-only accessor for the previous step
+
+        Returns
+        -------
+        previous_step : :py:class:`.IStepState`
+            proxies :py:attr:`.ITimeStepState.previous_step` if it is not :py:class:`None`
+            else :py:attr:`.ITimeStepState.initial`
+        """
         return self.current_time_step.previous_step \
             if self.current_time_step.previous_step is not None else self.first_time_step.initial
 
     @property
     def next_step(self):
+        """Read-only accessor for the next step
+
+        Returns
+        -------
+        next_step : :py:class:`.IStepState`
+            proxies :py:attr:`.ITimeStepState.next_step` if it is not :py:class:`None`
+            else returns :py:attr:`.ITimeStepState.first` if :py:attr:`.next_time_step` is not :py:class:`None`
+            else returns :py:class:`None`
+        """
         return self.current_time_step.next_step \
-            if self.current_time_step.next_step is not None else self.next_time_step.first
+            if self.current_time_step.next_step is not None \
+            else (self.next_time_step.first if self.next_time_step is not None else None)
 
     @property
     def first_step(self):
+        """Read-only accessor for the first step
+
+        Returns
+        -------
+        first_step : :py:class:`.IStepState`
+            proxies :py:attr:`.ITimeStepState.first` if :py:attr:`.first_time_step` is not :py:class:`None`
+            else returns :py:class:`None`
+        """
         return self.first_time_step.first if self.first_time_step is not None else None
 
     @property
     def final_step(self):
+        """Read-only accessor for the very last step
+
+        Returns
+        -------
+        last_step : :py:class:`.IStepState`
+            proxies :py:attr:`.ITimeStepState.last` if :py:attr:`.last_time_step` is not :py:class:`None`
+            else returns :py:class:`None`
+        """
         return self.last_time_step.last if self.last_time_step is not None else None
 
     @property
     def time_points(self):
+        """Read-only accessor for all time points
+
+        Returns
+        -------
+        time_points : :py:class:`numpy.array(dtype=float)`
+        """
         return np.array([_step.time_point for _step in [_time for _time in self]], dtype=float)
 
 
@@ -517,12 +699,22 @@ class ISolverState(IStateIterator):
         self._initial = IStepState()
 
     def proceed(self):
+        """Proceeds to the next iteration
+
+        Extends the sequence of :py:class:`.IIterationState` by appending a new instance with the set
+        :py:attr:`.num_time_steps` and :py:attr:`.num_nodes`.
+        """
         self._add_iteration()
         self._current_index = len(self) - 1
         self.current_iteration.initial = self.initial
         self.current_iteration.first_time_step.initial = self.current_iteration.initial
 
     def finalize(self):
+        """Finalizes the whole solver state.
+
+        This copies the :py:class:`.TrajectorySolutionData` objects from the :py:class:`.IIterationState` instances of
+        this sequence to the main :py:class:`.IterativeSolution` object and finalizes it.
+        """
         assert_condition(not self.finalized,
                          RuntimeError, "This {} is already done.".format(self.__class__.__name__),
                          self)
@@ -534,14 +726,30 @@ class ISolverState(IStateIterator):
 
     @property
     def num_nodes(self):
+        """Read-only accessor for the number of nodes per time step.
+        """
         return self._num_nodes
 
     @property
     def num_time_steps(self):
+        """Read-only accessor for the number of time steps per iteration.
+        """
         return self._num_time_steps
 
     @property
     def delta_interval(self):
+        """Accessor for the total interval width.
+
+        Parameters
+        ----------
+        delta_interval : :py:class:`float`
+            width of the whole interval
+
+        Raises
+        ------
+        ValueError
+            if given interval is not a non-zero float
+        """
         return self._delta_interval
 
     @delta_interval.setter
@@ -553,6 +761,8 @@ class ISolverState(IStateIterator):
 
     @property
     def initial(self):
+        """Accessor for the initial value
+        """
         return self._initial
 
     @initial.setter
@@ -561,68 +771,131 @@ class ISolverState(IStateIterator):
 
     @property
     def current_iteration(self):
+        """Proxies :py:attr:`.IStateIterator.current`
+        """
         return self.current
 
     @property
     def current_iteration_index(self):
+        """Proxies :py:attr:`.IStateIterator.current_index`
+        """
         return self.current_index
 
     @property
     def previous_iteration(self):
+        """Proxies :py:attr:`.IStateIterator.previous`
+        """
         return self.previous
 
     @property
     def previous_iteration_index(self):
+        """Proxies :py:attr:`.IStateIterator.previous_index`
+        """
         return self.previous_index
 
     @property
     def first_iteration(self):
+        """Proxies :py:attr:`.IStateIterator.first`
+        """
         return self.first
 
     @property
     def is_first_iteration(self):
+        """Check on whether current iteration is the first one.
+
+        Returns
+        -------
+        is_first : :py:class:`bool`
+        
+            :py:class:`True`
+                if ``len(self)`` is one
+            :py:class:`False`
+                otherwise
+        """
         return len(self) == 1
 
     @property
     def last_iteration(self):
+        """Proxies :py:attr:`.IStateIterator.last`
+        """
         return self.last
 
     @property
     def last_iteration_index(self):
+        """Proxies :py:attr:`.IStateIterator.last_index`
+        """
         return self.last_index
 
     @property
     def current_time_step(self):
+        """Read-only accessor for the current time step
+
+        Proxies :py:attr:`.IIterationState.current_time_step` if :py:attr:`.current_iteration` is not :py:class:`None`
+        else returns :py:class:`None`.
+        """
         return self.current_iteration.current_time_step \
             if self.current_iteration is not None else None
 
     @property
     def current_time_step_index(self):
+        """Read-only accessor for the current time step's index
+
+        Proxies :py:attr:`.IIterationState.current_time_step_index` if :py:attr:`.current_iteration` is not
+        :py:class:`None` else returns :py:class:`None`.
+        """
         return self.current_iteration.current_time_step_index \
             if self.current_iteration is not None else None
 
     @property
     def previous_time_step(self):
+        """Read-only accessor for the revious time step
+
+        Proxies :py:attr:`.IIterationState.previous_time_step` if :py:attr:`.current_iteration` is not :py:class:`None`
+        else returns :py:class:`None`.
+        """
         return self.current_iteration.previous_time_step \
             if self.current_iteration is not None else None
 
     @property
     def next_time_step(self):
+        """Read-only accessor for the next time step
+
+        Proxies :py:attr:`.IIterationState.next_time_step` if :py:attr:`.current_iteration` is not :py:class:`None`
+        else returns :py:class:`None`.
+        """
         return self.current_iteration.next_time_step \
             if self.current_iteration is not None else None
 
     @property
     def current_step(self):
+        """Read-only accessor for the current step
+
+        Proxies :py:attr:`.ITimeStepState.current_step` if :py:attr:`.current_iteration` and
+        :py:attr:`.IIterationState.current_time_step` are not :py:class:`None` else returns :py:class:`None`.
+        """
         return self.current_iteration.current_time_step.current_step \
-            if (self.current_iteration is not None and self.current_iteration.current_time_step is not None) else None
+            if (self.current_iteration is not None and self.current_iteration.current_time_step is not None) \
+            else None
 
     @property
     def current_step_index(self):
-        return self.current_iteration.current_step_index \
-            if self.current_iteration is not None else None
+        """Read-only accessor for the current step's index
+
+        Proxies :py:attr:`.ITimeStepState.current_step_index` if :py:attr:`.current_iteration` and
+        :py:attr:`.IIterationState.current_time_step` are not :py:class:`None` else returns :py:class:`None`.
+        """
+        return self.current_iteration.current_time_step.current_step_index \
+            if (self.current_iteration is not None and self.current_iteration.current_time_step is not None) \
+            else None
 
     @property
     def previous_step(self):
+        """Read-only accessor for the previous step
+
+        Proxies :py:attr:`.ITimeStepState.previous_step` if neither :py:attr:`.current_iteration` nor
+        :py:attr:`.IIterationState.current_time_step` or :py:attr:`.IIterationState.previous_step` are :py:class:`None`
+        else returns :py:class:`None`.
+        """
         return self.current_iteration.current_time_step.previous_step \
             if (self.current_iteration is not None and self.current_iteration.current_time_step is not None
                 and self.current_iteration.current_time_step.previous_step is not None) \
@@ -630,6 +903,12 @@ class ISolverState(IStateIterator):
 
     @property
     def previous_step_index(self):
+        """Read-only accessor for the previous step's index
+
+        Proxies :py:attr:`.ITimeStepState.previous_step_index` if neither :py:attr:`.current_iteration` nor
+        :py:attr:`.IIterationState.current_time_step` or :py:attr:`.IIterationState.previous_step` are :py:class:`None`
+        else returns :py:class:`None`.
+        """
         return self.current_iteration.current_time_step.previous_step_index \
             if (self.current_iteration is not None and self.current_iteration.current_time_step is not None
                 and self.current_iteration.current_time_step.previous_step is not None) \
@@ -637,6 +916,11 @@ class ISolverState(IStateIterator):
 
     @property
     def next_step(self):
+        """Read-only accessor for the next step
+
+        Proxies :py:attr:`.IIterationState.next_step` if :py:attr:`.current_iteration` is not :py:class:`None` else
+        returns :py:class:`None`.
+        """
         return self.current_iteration.next_step if self.current_iteration is not None else None
 
     def _add_iteration(self):
