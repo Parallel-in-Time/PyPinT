@@ -171,7 +171,7 @@ class Sdc(IIterativeTimeSolver):
         # TODO: do we need this?
         _num_points = self.num_time_steps * (_num_nodes - 1) + 1
 
-        self.__exact = np.zeros(_num_points, dtype=self.problem.numeric_type)
+        self.__exact = np.zeros(_num_points, dtype=np.object)
 
         # compute time step and node distances
         self.state.delta_interval = self.problem.time_end - self.problem.time_start
