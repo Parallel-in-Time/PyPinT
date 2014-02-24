@@ -12,7 +12,7 @@ class IAnalyzer(object):
         self._data = None
         self._plotter = None
 
-    def run(self):
+    def run(self, **kwargs):
         """Runs the full analyzation procedure of this analyzer.
         """
         pass
