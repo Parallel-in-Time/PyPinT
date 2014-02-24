@@ -19,7 +19,7 @@ __version__ = '0.0.1'
 
 
 # initialize Logging framework
-from .utilities.logging import logger
+from pypint.utilities.logging import logger
 LOG = logger()
 """Easy accessor for the currently configured logger.
 
