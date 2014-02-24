@@ -74,10 +74,26 @@ class IIterativeTimeSolver(object):
 
     @property
     def state(self):
+        """Read-only accessor for the sovler's state
+
+        Returns
+        -------
+        state : :py:class:`.ISolverState`
+        """
         return self._state
 
     @property
     def timer(self):
+        """Accessor for the timer
+
+        Parameters
+        ----------
+        timer : :py:class:`.TimerBase`
+
+        Returns
+        -------
+        timer : :py:class:`.TimerBase`
+        """
         return self._timer
 
     @timer.setter
@@ -108,6 +124,12 @@ class IIterativeTimeSolver(object):
 
     @property
     def integrator(self):
+        """Read-only accessor for the used integrator
+
+        Returns
+        -------
+        integrator : :py:class:`.IntegratorBase`
+        """
         return self._integrator
 
     def _print_header(self):

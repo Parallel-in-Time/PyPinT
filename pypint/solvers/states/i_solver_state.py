@@ -806,7 +806,7 @@ class ISolverState(IStateIterator):
         Returns
         -------
         is_first : :py:class:`bool`
-        
+
             :py:class:`True`
                 if ``len(self)`` is one
             :py:class:`False`

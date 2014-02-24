@@ -9,6 +9,9 @@ from pypint.utilities import assert_is_instance, assert_is_key
 
 
 class ExplicitSdcCore(SdcSolverCore):
+    """Explicit SDC Core
+    """
+
     name = "Explicit SDC"
 
     def __init__(self):

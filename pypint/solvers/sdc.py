@@ -109,19 +109,32 @@ class Sdc(IIterativeTimeSolver):
 
         Parameters
         ----------
+        problem : :py:class:`.IInitialValueProblem`
+
+        integrator : :py:class:`.SdcIntegrator`
+
         num_time_steps : :py:class:`int`
             Number of time steps to be used within the time interval of the problem.
 
+        num_nodes : :py:class:`int`
+            *(otional)*
+            number of nodes per time step
+
         nodes_type : :py:class:`.INodes`
+            *(optional)*
             Type of integration nodes to be used.
 
         weights_type : :py:class:`.IWeightFunction`
+            *(optional)*
             Integration weights function to be used.
 
         Raises
         ------
         ValueError :
-            If given problem is not an :py:class:`.IInitialValueProblem`.
+
+            * if given problem is not an :py:class:`.IInitialValueProblem`
+            * if number of nodes per time step is not given; neither through ``num_nodes``, ``nodes_type`` nor
+              ``integrator``
 
         See Also
         --------

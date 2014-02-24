@@ -10,6 +10,9 @@ from pypint.utilities import assert_is_instance, assert_is_key
 
 
 class SemiImplicitSdcCore(SdcSolverCore):
+    """Semi-Implicit SDC Core
+    """
+
     name = "Semi-Implicit SDC"
 
     def __init__(self):
