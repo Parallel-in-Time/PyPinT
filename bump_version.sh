@@ -2,7 +2,7 @@
 
 new_version=$1
 if [[ "$new_version" == "" ]]; then
-  new_version=$(git describe)
+  new_version=$(git describe --match 'release-*')
 fi
 new_version=${new_version//./\\.}
 
