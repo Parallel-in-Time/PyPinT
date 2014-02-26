@@ -9,6 +9,7 @@ from pypint.utilities import assert_is_callable, assert_is_instance, \
 from pypint.plugins.multigrid.multigridproblem import MultiGridProblem
 from pypint.plugins.multigrid.stencil import Stencil
 
+# TODO : Das Slicing muss gemacht werden, besser keine subclasse von ndarray
 
 class Level1D(np.ndarray):
     """
@@ -79,9 +80,10 @@ class Level1D(np.ndarray):
                 forward_shape = shape.size
             else:
                 raise ValueError("Please provide an ndarray with the size of 2")
+
             obj = np.ndarray.__new__(cls, forward_shape, shape.dtype,
                                      buffer, offset,
-                                     shape.strides, order)
+                                     strides, order)
             obj[max_borders[0]:-max_borders[1]] = shape
 
             if isinstance(mg_problem, MultiGridProblem) \
@@ -96,10 +98,17 @@ class Level1D(np.ndarray):
 
         obj.borders = max_borders
         # gives view to the padded regions and the middle
-        obj.left = obj[:obj.borders[0]]
-        obj.right = obj[-obj.borders[1]:]
-        obj.mid = obj[obj.borders[0]:-obj.borders[1]]
+        # here it is important to use __array__, because
+        # the different parts are just ndarrays and not another Level1D objects
+        obj.left = obj.__array__()[:obj.borders[0]]
+        obj.right = obj.__array__()[-obj.borders[1]:]
+        obj.mid = obj.__array__()[obj.borders[0]:-obj.borders[1]]
+        obj.arr = obj.__array__()
         return obj
+
+    # def __init__(self, obj):
+    #     self = np.ndarray(obj)
+    #     return self
 
     def __array_finalize__(self, obj):
         """
@@ -111,16 +120,49 @@ class Level1D(np.ndarray):
             2. view casting , e.g. slicing
             3. or a creation from template
         """
-
+        # this is a constructer call
         if obj is None:
             return
-        # attributes to be inherited
-
-        self.borders = getattr(obj, 'borders', None)
+        # general case
         self._mg_problem = getattr(obj, '_mg_problem', None)
+        self.borders = getattr(obj, 'borders', None)
         self.left = getattr(obj, 'left', None)
-        self.right = getattr(obj, 'right', None)
         self.mid = getattr(obj, 'mid', None)
+        self.right = getattr(obj, 'right', None)
+        # case of sclicing
+        # if isinstance(obj, Level1D):
+        #     print("obj is Level1D")
+        #     # print("Object", obj)
+        #     # print("Self", type(self.__array__()))
+        #     # print(type(arr))
+        #     # print(arr)
+        #     # self.borders = getattr(obj, 'borders', None)
+        #     # self._mg_problem = getattr(obj, '_mg_problem', None)
+        #     # self.adjust_references()
+        #     # slicing returns simple nd array the level1d properties vanish
+        #     arr = self.__array__()
+        #     self = np.zeros(arr.size + obj.borders[0] + obj.borders[1])
+        #
+        #     self.borders = getattr(obj, 'borders', None)
+        #     self.left = self.__array__()[:self.borders[0]]
+        #     self.right = self.__array__()[-self.borders[1]:]
+        #     self.mid = self.__array__()[self.borders[0]:-self.borders[1]]
+        #     self.mid[:] = arr
+        #     print("borders:")
+        #     print(self.borders)
+        #     print("left:")
+        #     print(self.left)
+        #     print("mid:")
+        #     print(self.mid)
+        #     print("right:")
+        #     print(self.right)
+        #     print("self:")
+        #     print(self)
+
+    def adjust_references(self):
+        self.left = self.__array__()[:self.borders[0]]
+        self.right = self.__array__()[-self.borders[1]:]
+        self.mid = self.__array__()[self.borders[0]:-self.borders[1]]
 
     def __array_prepare__(self, in_arr, context=None):
         """
@@ -195,20 +237,30 @@ stencil = Stencil(3)
 stencil[:] = np.asarray([1, -2, 1])
 mg_prob = MultiGridProblem(stencil, lambda x: 5.)
 lvl = Level1D(5, mg_prob, np.asarray([3, 3]))
-print(type(lvl))
-print(lvl)
-# fuellen von werten
-lvl.mid[:] = np.arange(5)
-print(lvl)
-lvl.pad()
-print(lvl)
-print(lvl.left)
-print(lvl.mid)
-print(lvl.right)
-print(isinstance(lvl, Level1D))
-lvl2 = Level1D(lvl, None, np.asarray([1, 1]))
-lvl2.pad()
-print(lvl2)
+# print(type(lvl))
+# print(lvl)
+# # fuellen von werten
+# lvl.mid[:] = np.arange(5)
+# print(lvl)
+# lvl.pad()
+# print(lvl)
+# print(lvl.left)
+# print(lvl.mid)
+# print(lvl.right)
+# print(isinstance(lvl, Level1D))
+#lvl2 = Level1D(lvl, None, np.asarray([1, 1]))
+# a = lvl[1:3]
+# print(type(a))
+# print(a.left)
+# print(a.right)
+# print(a.mid)
+# print(lvl[1:2])
+# a = lvl[1:3]
+# print(type(a))
+# print(a.__array__())
+# lvl2.pad()
+# print(lvl2)
+# print(type(lvl.mid))
 #print(lvl2)
 
 #lvl2 = Level1D(lvl)
