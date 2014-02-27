@@ -92,7 +92,6 @@ class Level1D(np.ndarray):
             else:
                 raise ValueError("Please provide a MultiGridProblem")
 
-
         else:
             raise TypeError("shape is in no shape")
 
@@ -232,11 +231,19 @@ class Level1D(np.ndarray):
             #  right side
             self.right[:] = fr(r_f_b)
 
+    def evaluable_view(self, stencil):
+        """gives the right view of the array
 
-stencil = Stencil(3)
-stencil[:] = np.asarray([1, -2, 1])
-mg_prob = MultiGridProblem(stencil, lambda x: 5.)
-lvl = Level1D(5, mg_prob, np.asarray([3, 3]))
+        """
+        l = self.borders[0]-stencil.b[0][0]
+        r = -(self.borders[1]-stencil.b[0][1])
+        return self.arr[l:r]
+    
+
+# stencil = Stencil(3)
+# stencil[:] = np.asarray([1, -2, 1])
+# mg_prob = MultiGridProblem(stencil, lambda x: 5.)
+# lvl = Level1D(5, mg_prob, np.asarray([3, 3]))
 # print(type(lvl))
 # print(lvl)
 # # fuellen von werten

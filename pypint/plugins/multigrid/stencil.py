@@ -33,6 +33,12 @@ class Stencil(np.ndarray):
             right = arr.shape[i] - left - 1
             self.b[self._dimension - i - 1] = [left, right]
 
+    def eval(self, array_in, array_out):
+        """Evaluate via scipy.signal.convolve
+
+        """
+        array_out[:] = sig.convolve(array_in, self.arr, 'valid')
+
 
 class InterpolationStencil1D(object):
     """1D Stencil
@@ -93,3 +99,15 @@ class InterpolationStencil1D(object):
             array_out[j::self.increase_of_points] = \
                 sig.convolve(array_in, stencil, 'valid')
             j = j+1
+
+#
+# class RestrictionStencil(object):
+#     """Restriction stencil class
+#
+#     """
+#     def __init__(self, restriction_stencil):
+#         assert_is_instance(restriction_stencil, Stencil, "Not an stencil")
+#         self.rst_stencil = restriction_stencil
+#
+#     def eval(self, array_in, array_out):
+#         array_out[:] = sig.convolve(array_in, self.rst_stencil)
