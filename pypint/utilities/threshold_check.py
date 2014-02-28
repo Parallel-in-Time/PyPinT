@@ -24,17 +24,18 @@ class ThresholdCheck(object):
     """
 
     _default_min_conditions = {
-        "reduction": _default_min_threshold,
-        "residual": _default_min_threshold,
-        "error": _default_min_threshold
+        'error reduction': _default_min_threshold,
+        'solution reduction': _default_min_threshold,
+        'residual': _default_min_threshold,
+        'error': _default_min_threshold
     }
 
     _default_max_conditions = {
-        "iterations": _default_max_threshold
+        'iterations': _default_max_threshold
     }
 
     def __init__(self, min_threshold=_default_min_threshold, max_threshold=_default_max_threshold,
-                 conditions=("residual", "iterations")):
+                 conditions=('solution reduction', 'iterations')):
         """
         Parameters
         ----------
@@ -46,7 +47,14 @@ class ThresholdCheck(object):
 
         conditions : :py:class:`tuple` of :py:class:`str`
             Tuple of strings defining the active criteria.
-            Possible values are: ``reduction``, ``residual``, ``error``, ``iterations``.
+            Possible values are:
+
+            * "``error reduction``"
+            * "``solution reduction``"
+            * "``residual``"
+            * "``error``"
+            * "``iterations``"
+
             (defaults to: ``('residual', 'iterations')``)
         """
         self._min_threshold = min_threshold
@@ -64,9 +72,9 @@ class ThresholdCheck(object):
         """
         self._reason = []
         self._check_reduction(state)
-        self._check_minimum("residual", state.current_iteration.final_step.solution.residual)
-        self._check_minimum("error", state.current_iteration.final_step.solution.error)
-        self._check_maximum("iterations", state.current_iteration_index + 1)
+        self._check_minimum('residual', state.current_iteration.final_step.solution.residual)
+        self._check_minimum('error', state.current_iteration.final_step.solution.error)
+        self._check_maximum('iterations', state.current_iteration_index + 1)
         if len(self._reason) == 0:
             self._reason = None
 
@@ -90,16 +98,30 @@ class ThresholdCheck(object):
             return self._reason
 
     @property
-    def min_reduction(self):
-        """Read-only accessor for the minimum reduction threshold
+    def min_error_reduction(self):
+        """Read-only accessor for the minimum reduction threshold for the error
 
         Returns
         -------
         reduction_threshold : :py:class:`float` or :py:class:`None`
-            :py:class:`None` if reduction is not a criteria
+            :py:class:`None` if reduction of error is not a criteria
         """
-        if "reduction" in self._conditions:
-            return self._conditions["reduction"]
+        if 'error reduction' in self._conditions:
+            return self._conditions['error reduction']
+        else:
+            return None
+
+    @property
+    def min_solution_reduction(self):
+        """Read-only accessor for the minimum reduction threshold for the solution
+
+        Returns
+        -------
+        reduction_threshold : :py:class:`float` or :py:class:`None`
+            :py:class:`None` if reduction of solution is not a criteria
+        """
+        if 'solution reduction' in self._conditions:
+            return self._conditions['solution reduction']
         else:
             return None
 
@@ -189,9 +211,9 @@ class ThresholdCheck(object):
         self.compute_reduction(state)
 
         if state.solution.error_reduction(state.current_iteration_index):
-            self._check_minimum("reduction", state.solution.error_reduction(state.current_iteration_index))
+            self._check_minimum('error reduction', state.solution.error_reduction(state.current_iteration_index))
         elif state.solution.solution_reduction(state.current_iteration_index):
-            self._check_minimum("reduction", state.solution.solution_reduction(state.current_iteration_index))
+            self._check_minimum('solution reduction', state.solution.solution_reduction(state.current_iteration_index))
         else:
             # no reduction availbale
             pass
