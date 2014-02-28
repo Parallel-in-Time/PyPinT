@@ -79,16 +79,16 @@ class InterpolationStencil1D(object):
         else:
             raise RuntimeError("Something went terribly wrong")
 
-    def eval_own(self, array_in, array_out):
+    def eval_own(self, arrays_in, arrays_out):
         """Evaluation function if just one stencil is given
 
         There is no test if the in and out array are matching this is the task
         of the multilevel provider.
         """
-        array_out[::2] = array_in
-        array_out[1::2] = sig.convolve(array_out, self.stencil[0])[::2]
+        arrays_out[0][::2] = arrays_in
+        arrays_out[0][1::2] = sig.convolve(arrays_out[0], self.stencil[0])[::2]
 
-    def eval_list(self, array_in, array_out):
+    def eval_list(self, arrays_in, arrays_out):
         """Evaluation function if more than one stencil is given
 
         There is no test if the in and out array are matching this is the task
@@ -96,18 +96,46 @@ class InterpolationStencil1D(object):
         """
         j = 0
         for stencil in self.stencil_list:
-            array_out[j::self.increase_of_points] = \
-                sig.convolve(array_in, stencil, 'valid')
+            arrays_out[j][j::self.increase_of_points] = \
+                sig.convolve(arrays_in[j], stencil, 'valid')
             j = j+1
 
-#
-# class RestrictionStencil(object):
-#     """Restriction stencil class
-#
-#     """
-#     def __init__(self, restriction_stencil):
-#         assert_is_instance(restriction_stencil, Stencil, "Not an stencil")
-#         self.rst_stencil = restriction_stencil
-#
-#     def eval(self, array_in, array_out):
-#         array_out[:] = sig.convolve(array_in, self.rst_stencil)
+
+class RestrictionStencil(object):
+    """Restriction stencil class
+
+    """
+    def __init__(self, restriction_stencil, decrease_in_points=None):
+        assert_is_instance(restriction_stencil, Stencil, "Not an stencil")
+        self.rst_stencil = restriction_stencil
+        if decrease_in_points is None:
+            self.dip = np.asarray(self.rst_stencil.arr.shape) - 1
+        elif isinstance(decrease_in_points, np.ndarray) and\
+                        decrease_in_points.ndim == self.rst_stencil.ndim:
+            self.dip = decrease_in_points
+        else:
+            raise ValueError("Wrong decrease in points")
+        self.dim = restriction_stencil.dim
+
+        if self.dim == 1:
+            self.eval = self.evalA_1D
+        elif self.dim == 2:
+            self.eval = self.evalA_2D
+        elif self.dim == 3:
+            self.eval = self.evalA_2D
+        else:
+            raise NotImplementedError("More than 3 dimensions " +
+                                      "are not implemented")
+
+    def evalA_1D(self, array_in, array_out):
+        array_out = sig.convolve(array_in, self.rst_stencil)[::self.dip[0]]
+
+    def evalA_2D(self, array_in, array_out):
+        array_out = \
+            sig.convolve(array_in, self.rst_stencil)[::self.dip[0], ::self.dip[1]]
+
+    def evalA_3D(self, array_in, array_out):
+        array_out = \
+            sig.convolve(array_in, self.rst_stencil)[::self.dip[0], ::self.dip[1], ::self.dip[2]]
+
+# TODO: a more effective evaluation strategy is needed

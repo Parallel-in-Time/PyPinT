@@ -5,7 +5,7 @@ MultigridLevelProvider
 import numpy as np
 from pypint.multi_level_providers.multi_level_provider import MultiLevelProvider
 from pypint.utilities import assert_is_callable, assert_is_instance, assert_condition
-from pypint.plugins.multigrid.stencil import Stencil
+from pypint.plugins.multigrid.stencil import Stencil, InterpolationStencil1D
 from pypint.plugins.multigrid.level import Level1D
 import scipy.signal as sig
 
@@ -15,34 +15,47 @@ import scipy.signal as sig
 class StencilBasedLevelTransitionProvider1D(object):
     """Takes two stencils and constructs an instance
 
-    with the according interpolation and restriktion functions
+    with the according interpolation and restriction functions
     """
-    def __init__(self, rst_stencil, ipl_stencil):
-        assert_is_instance(ipl_stencil, Stencil)
+    def __init__(self, fine_level, coarse_level , rst_stencil, ipl_stencil):
+        assert_is_instance(fine_level, Level1D, "Not an Level1D")
+        assert_is_instance(coarse_level, Level1D, "Not an Level1D")
+
+        self.fl = fine_level
+        self.cl = coarse_level
+
+        assert_is_instance(ipl_stencil, InterpolationStencil1D)
         assert_is_instance(rst_stencil, Stencil)
-        assert_condition(ipl_stencil.ndim == 1 and rst_stencil.ndim == 1,
-                         ValueError, "Interpolation and Restriction Stencil"
-                         + "have not the dimension 1")
-        # interpolat
+        assert_condition(rst_stencil.ndim == 1,
+                         ValueError, "Restriction Stencil"
+                         + "has not the dimension 1")
+        self.ipl = ipl_stencil
+        self.rst = rst_stencil
+        self.ipl_fine_views = []
+        self.ipl_coarse_views = []
+        # collect the views which are needed,
+        if self.ipl.mode == "own":
+            self.ipl_fine_views.append(self.fl.evaluable_view(
+                self.ipl.stencil_list[0]))
+            self.ipl_coarse_views(self.cl.mid)
+        elif self.ipl.mode == "list":
+            for stencil in self.ipl.stencil_list:
+                self.ipl_fine_views.append(self.fl.evaluable_view(stencil))
+                self.ipl_coarse_views.append(self.cl.mid)
 
-    @property
-    def dimension(self):
-        """dimension getter """
-        return self._dimension
-
-    def prolongate(self, fine_level, coarse_level):
+    def prolongate(self):
         """Prolongates from one Level to another
 
+            Again the MultiLevelProvider hast to assure that the fine
+            and coarse level has to be designed right.
         """
+        self.ipl.eval(self.ipl_fine_views, self.ipl_coarse_views)
 
-
-        pass
-
-    def restringate(self, fine_level, coarse_level):
+    def restringate(self):
         """Restringates from one Level to another
 
         """
-        pass
+
 
 
 class MultiGridLevelProvider(object):

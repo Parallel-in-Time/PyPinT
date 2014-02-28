@@ -238,7 +238,19 @@ class Level1D(np.ndarray):
         l = self.borders[0]-stencil.b[0][0]
         r = -(self.borders[1]-stencil.b[0][1])
         return self.arr[l:r]
-    
+
+    # def __copy__(self):
+    #     copy = self.__class__.__new__(self.__class__)
+    #     copy.__dict__.update(self.__dict__)
+    #     return copy
+    #
+    # def __deepcopy__(self, memo):
+    #     copy = self.__class__.__new__(self.__class__)
+    #     memo[id(self)] = copy
+    #     for item, value in self.__dict__.items():
+    #         setattr(copy, item, deepcopy(value, memo))
+    #     return copy
+
 
 # stencil = Stencil(3)
 # stencil[:] = np.asarray([1, -2, 1])
