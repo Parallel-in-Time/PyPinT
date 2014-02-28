@@ -30,7 +30,7 @@ class SemiImplicitSdcCore(SdcSolverCore):
 
         Parameters
         ----------
-        solver_state : :py:class:`.SdcSolverState`
+        state : :py:class:`.SdcSolverState`
 
         Notes
         -----
@@ -53,19 +53,19 @@ class SemiImplicitSdcCore(SdcSolverCore):
         if problem_has_direct_implicit(_problem, self):
             _sol = _problem.direct_implicit(phis_of_time=[_previous_iteration_previous_step.solution.value,
                                                           _previous_iteration_current_step.solution.value,
-                                                          state.current_time_step.previous_step.solution.value],
+                                                          state.previous_step.solution.value],
                                             delta_node=state.current_step.delta_tau,
                                             delta_step=state.delta_interval,
                                             integral=state.current_step.integral)
 
         else:
             _expl_term = \
-                state.current_time_step.previous_step.solution.value \
+                state.previous_step.solution.value \
                 + state.current_step.delta_tau \
                 * (_problem.evaluate(state.current_step.time_point,
-                                     state.current_time_step.previous_step.solution.value,
+                                     state.previous_step.solution.value,
                                      partial="expl")
-                   - _problem.evaluate(state.current_time_step.previous_step.time_point,
+                   - _problem.evaluate(state.previous_step.time_point,
                                        _previous_iteration_previous_step.solution.value,
                                        partial="expl")
                    - _problem.evaluate(state.current_step.time_point,
