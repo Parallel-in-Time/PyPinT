@@ -19,6 +19,8 @@ class HasDirectImplicitMixin(object):
         ------
         NotImplementedError :
             If the problem using this Mixin actually does not override this method.
+
+        .. todo:: don't fiddle with separate phis but hand over the solver state
         """
         raise NotImplementedError("If this mixin is used, the problem must implement this function.")
 
