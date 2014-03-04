@@ -9,9 +9,10 @@ class ThresholdCheckTest(unittest.TestCase):
 
     def test_has_default_thresholds(self):
         self.assertIs(self._default.max_iterations, 10)
-        self.assertEqual(self._default.min_residual, 1e-7)
+        self.assertEqual(self._default.min_solution_reduction, 1e-7)
         self.assertIsNone(self._default.min_error)
-        self.assertIsNone(self._default.min_reduction)
+        self.assertIsNone(self._default.min_error_reduction)
+        self.assertIsNone(self._default.min_residual)
         self.assertIsNone(self._default.has_reached())
 
     def test_prints_conditions(self):
