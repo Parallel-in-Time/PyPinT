@@ -15,7 +15,7 @@ if version_info.major < 3:
     raise RuntimeError("PyPinT requires Python 3.x")
 
 
-__version__ = '0.0.1'
+__version__ = '0.0.2'
 
 
 # initialize Logging framework
