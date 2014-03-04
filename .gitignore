@@ -1,6 +1,8 @@
+.python-version
 *~
 
 *.py[cod]
+*.pickle
 
 # C extensions
 *.so
@@ -44,3 +46,10 @@ cover/
 
 # logging
 *.log
+
+*.png
+*.svg
+
+/runs
+!/runs/README
+

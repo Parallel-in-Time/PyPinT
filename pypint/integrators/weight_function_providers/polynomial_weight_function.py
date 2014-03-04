@@ -3,22 +3,18 @@
 
 .. moduleauthor:: Torbjörn Klatt <t.klatt@fz-juelich.de>
 """
-
-from .i_weight_function import IWeightFunction
 import numpy as np
 import numpy.polynomial.polynomial as pol
-from pypint.utilities import func_name
+
+from pypint.integrators.weight_function_providers.i_weight_function import IWeightFunction
+from pypint.utilities import func_name, assert_is_instance, assert_condition
+
 
 class PolynomialWeightFunction(IWeightFunction):
-    """
-    Summary
-    -------
-    Provider for polynomial weight functions.
+    """Provider for polynomial weight functions.
 
-    Extended Summary
-    ----------------
-    Computes weights of given nodes based on a polynomial weight function of
-    the form :math:`\\sum_{i=0}^\\infty c_i x^i`.
+    Computes weights of given nodes based on a polynomial weight function of the form
+    :math:`\\sum_{i=0}^\\infty c_i x^i`.
     By default, all powers have a coefficient of zero.
 
     Examples
@@ -39,29 +35,27 @@ class PolynomialWeightFunction(IWeightFunction):
     """
 
     def __init__(self):
-        super(self.__class__, self).__init__()
+        super(PolynomialWeightFunction, self).__init__()
         self._coefficients = np.zeros(0)
 
     def init(self, coeffs=[1.0], func=None):
-        """
-        Summary
-        -------
-        Sets and defines the weights function.
+        """Sets and defines the weights function.
 
         Parameters
         ----------
-        coeffs : numpy.ndarray | list
+        coeffs : :py:class:`numpy.ndarray` or :py:class:`list`
             Array of coefficients of the polynomial.
-        func : string of format ``c0 + c1 x^1 + c2 x^2...``
+
+        func : :py:class:`str`
+            Of format ``c0 + c1 x^1 + c2 x^2...``
             String representation of the polynomial.
 
         Notes
         -----
-        Parsing of a string representation of the polynomial is not yet
-        implemented.
+        Parsing of a string representation of the polynomial is not yet implemented.
         Usage will lead to a `NotImplementedError` exception.
         """
-        super(self.__class__, self).init(coeffs, func=None)
+        super(PolynomialWeightFunction, self).init(coeffs, func=None)
         if func is not None and isinstance(func, str):
             # TODO: implement parsing of polynomial function string
             raise NotImplementedError(func_name(self) +
@@ -71,13 +65,8 @@ class PolynomialWeightFunction(IWeightFunction):
             self.coefficients = np.array(coeffs)
 
     def evaluate(self, nodes, interval=None):
-        """
-        Summary
-        -------
-        Computes weights for stored polynomial and given nodes.
+        """Computes weights for stored polynomial and given nodes.
 
-        Extended Summary
-        ----------------
         The weights are calculated with help of the Lagrange polynomials
         .. math::
 
@@ -85,10 +74,9 @@ class PolynomialWeightFunction(IWeightFunction):
 
         See Also
         --------
-        .IWeightFunction.evaluate
-            overridden method
+        :py:meth:`.IWeightFunction.evaluate` : overridden method
         """
-        super(self.__class__, self).evaluate(nodes, interval)
+        super(PolynomialWeightFunction, self).evaluate(nodes, interval)
 
         a = self._interval[0]
         b = self._interval[1]
@@ -97,7 +85,6 @@ class PolynomialWeightFunction(IWeightFunction):
         alpha = np.zeros(n_nodes)
 
         for j in range(n_nodes):
-            selection = []
             selection = list(range(j))
             selection.extend(list(range(j + 1, n_nodes)))
             poly = [1.0]
@@ -110,27 +97,24 @@ class PolynomialWeightFunction(IWeightFunction):
             poly = pol.polyint(pol.polymul(poly, self._coefficients))
             alpha[j] = pol.polyval(b, poly) - pol.polyval(a, poly)
 
+        #LOG.debug("Computed polynomial weights for nodes {:s} in {:s}."
+        #          .format(nodes, self._interval))
         del self._interval
         self._weights = alpha
 
     def add_coefficient(self, coefficient, power):
-        """
-        Summary
-        -------
-        Adds or sets the coefficient :math:`c` of :math:`cx^p` for a specific
-        :math:`p`.
+        """Adds or sets the coefficient :math:`c` of :math:`cx^p` for a specific :math:`p`.
 
-        Extended Summary
-        ----------------
-        The polynomial gets automatically extended to hold the new coefficient
-        in case it didn't included the specified power previously.
+        The polynomial gets automatically extended to hold the new coefficient in case it didn't included the specified
+        power previously.
         Unset, but skipped powers have a coefficient of zero by default.
 
         Parameters
         ----------
-        coefficient : float
+        coefficient : :py:class:`float`
             Coefficient :math:`c` of :math:`cx^p`.
-        power : integer
+
+        power : :py:class:`int`
              Power :math:`p` of :math:`cx^p`.
 
         Examples
@@ -141,10 +125,8 @@ class PolynomialWeightFunction(IWeightFunction):
         >>> # Similar, to set the constant coefficient 42, e.i. 42*x^0, use:
         >>> polyWeights.add_coefficient(42, 0)
         """
-        if not isinstance(power, int) or power < 0:
-            raise ValueError(func_name(self) +
-                             "Given power ({}) is not an integer or is negative"
-                             .format(power))
+        assert_is_instance(power, int, "Power must be an integer.", checking_obj=self)
+        assert_condition(power >= 0, ValueError, "Power must be zero or positive: {:d}".format(power), self)
 
         if self._coefficients.size <= power + 1:
             self._coefficients = np.resize(self._coefficients, (power + 1))
@@ -153,40 +135,28 @@ class PolynomialWeightFunction(IWeightFunction):
 
     @property
     def coefficients(self):
-        """
-        Summary
-        -------
-        Accessor for the polynomial's coefficients.
+        """Accessor for the polynomial's coefficients.
 
-        Extended Summary
-        ----------------
         To add or alter single coefficients, see :py:meth:`.add_coefficient`.
-
-        Returns
-        -------
-        coefficients : numpy.ndarray
-            Coefficients :math:`c_i` of the polynomial
-            :math:`\\sum_{i=0}^\\infty c_i x^i`.
 
         Parameters
         ----------
-        coefficients : numpy.ndarray
+        coefficients : :py:class:`numpy.ndarray`
             Coefficients of the polynomial.
+
+        Returns
+        -------
+        coefficients : :py:class:`numpy.ndarray`
+            Coefficients :math:`c_i` of the polynomial :math:`\\sum_{i=0}^\\infty c_i x^i`.
 
         Raises
         ------
         ValueError
-            If ``coefficients`` is not a ``numpy.ndarray`` *(only Setter)*.
+            If ``coefficients`` is not a :py:class:`numpy.ndarray` *(only Setter)*.
         """
         return self._coefficients
 
     @coefficients.setter
     def coefficients(self, coefficients):
-        if isinstance(coefficients, np.ndarray):
-            self._coefficients = coefficients
-        else:
-            raise ValueError(func_name(self) +
-                             "Coefficients need to be a numpy.ndarray")
-
-
-
+        assert_is_instance(coefficients, np.ndarray, "Coefficients need to be a numpy.ndarray", self)
+        self._coefficients = coefficients

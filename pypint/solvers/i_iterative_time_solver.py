@@ -3,88 +3,97 @@
 
 .. moduleauthor: Torbjörn Klatt <t.klatt@fz-juelich.de>
 """
-
-from pypint.solutions.iterative_solution import IterativeSolution
+from pypint.solvers.states.i_solver_state import ISolverState
+from pypint.solvers.cores.i_solver_core import ISolverCore
+from pypint.utilities.threshold_check import ThresholdCheck
+from pypint.utilities import assert_condition
 
 
 class IIterativeTimeSolver(object):
-    """
-    Summary
-    -------
-    Basic interface for iterative time solvers.
+    """Basic interface for iterative time solvers.
     """
 
     def __init__(self, *args, **kwargs):
         self._problem = None
         self._integrator = None
+        self._core = ISolverCore()
         self._timer = None
-        self._max_iterations = None
-        self._min_reduction = None
+        self._threshold_check = ThresholdCheck()
+        self._state = ISolverState()
 
     def init(self, problem, integrator, **kwargs):
-        """
-        Summary
-        -------
-        Initializes the solver with a given problem and options.
+        """Initializes the solver with a given problem and options.
 
         Parameters
         ----------
         problem : :py:class:`.IProblem`
             The problem this solver should solve.
+
         integrator : :py:class:`.IntegratorBase`
             Integrator to be used by this solver.
-        kwargs : further named arguments
-            Supported names:
 
-            ``max_iterations`` : integer
-                see :py:attr:`.max_iterations`
-            ``min_reduction`` : integer
-                see :py:attr:`.min_reduction`
+        threshold : :py:class:`.ThresholdCheck`
+            *(optional)*
+            see :py:attr:`.threshold`
         """
         self._problem = problem
         self._integrator = integrator
-        if "max_iterations" in kwargs:
-            self.max_iterations = kwargs["max_iterations"]
-        if "min_reduction" in kwargs:
-            self.min_reduction = kwargs["min_reduction"]
+        if "threshold" in kwargs and isinstance(kwargs["threshold"], ThresholdCheck):
+            self.threshold = kwargs["threshold"]
 
-    def run(self, solution_class=IterativeSolution):
-        """
-        Summary
-        -------
-        Applies this solver.
+    def run(self, core):
+        """Applies this solver.
 
-        Extended Summary
-        ----------------
-        It is guaranteed that the solver does not carry out more than
-        :py:attr:`.max_iterations` iterations.
-        In case the desired :py:attr:`.min_reduction` is reached, the solver
-        will abort prior reaching :py:attr:`.max_iterations`.
+        Parameters
+        ----------
+        solution_type : :py:class:`tuple` of two :py:class:`class`
+            Tuple of two classes specifying the solution type and underlying solution storage data type.
+            The first item must be a class derived off :py:class:`.ISolution` and the second a class derived
+            off :py:class:`.ISolutionData`.
 
         Returns
         -------
         solution : :py:class:`.ISolution`
             The solution of the problem.
         """
-        return IterativeSolution()
+        assert_condition(issubclass(core, ISolverCore),
+                         ValueError, "The given solver core class must be valid: NOT {:s}".format(core.__name__),
+                         self)
+        self._core = core()
 
     @property
     def problem(self):
-        """
-        Summary
-        -------
-        Accessor for the stored problem.
+        """Accessor for the stored problem.
 
         Returns
         -------
-        stored problem : :py:class:`.IProblem` or ``None``
-            Stored problem after call to :py:meth:`.init` or ``None`` if no
-            problem was initialized.
+        stored problem : :py:class:`.IProblem` or :py:class:`None`
+            Stored problem after call to :py:meth:`.init` or :py:class:`None` if no problem was initialized.
         """
         return self._problem
 
     @property
+    def state(self):
+        """Read-only accessor for the sovler's state
+
+        Returns
+        -------
+        state : :py:class:`.ISolverState`
+        """
+        return self._state
+
+    @property
     def timer(self):
+        """Accessor for the timer
+
+        Parameters
+        ----------
+        timer : :py:class:`.TimerBase`
+
+        Returns
+        -------
+        timer : :py:class:`.TimerBase`
+        """
         return self._timer
 
     @timer.setter
@@ -92,60 +101,42 @@ class IIterativeTimeSolver(object):
         self._timer = timer
 
     @property
-    def max_iterations(self):
-        """
-        Summary
-        -------
-        Accessor for the maximum number of iterations for this solver.
+    def threshold(self):
+        """Accessor for threshold check of this solver.
 
-        Extended Summary
-        ----------------
-        The solver will never carry out more iterations than this number.
+        Depending on the solver's algorithm the threshold is used in multiple ways to check for termination conditions.
 
         Parameters
         ----------
-        max_iterations : integer
-            Maximum iterations of this solver.
+        threshold : :py:class:`.ThresholdCheck`
+            Desired threshold.
 
         Returns
         -------
-        maximum iterations : integer
-            Maximum iterations of this solver.
+        threshold : :py:class:`.ThresholdCheck`
+            Stored and used threshold.
         """
-        return self._max_iterations
+        return self._threshold_check
 
-    @max_iterations.setter
-    def max_iterations(self, max_iterations):
-        self._max_iterations = max_iterations
-
-    @property
-    def min_reduction(self):
-        """
-        Summary
-        -------
-        Accessor for the minimum reduction of this solver.
-
-        Extended Summary
-        ----------------
-        The solver will try to reach the specified minimum error reduction by
-        additional iterations, not exceeding :py:attr:`.max_iterations`.
-
-        Parameters
-        ----------
-        min_reduction : float
-            Desired minimum error reduction.
-
-        Returns
-        -------
-        minimum reduction : float
-            Desired minimum error reduction.
-        """
-        return self._min_reduction
-
-    @min_reduction.setter
-    def min_reduction(self, min_reduction):
-        self._min_reduction = min_reduction
+    @threshold.setter
+    def threshold(self, threshold):
+        self._threshold_check = threshold
 
     @property
     def integrator(self):
+        """Read-only accessor for the used integrator
+
+        Returns
+        -------
+        integrator : :py:class:`.IntegratorBase`
+        """
         return self._integrator
+
+    def _print_header(self):
+        pass
+
+    def _print_footer(self):
+        pass
+
+
+__all__ = ['IIterativeTimeSolver']

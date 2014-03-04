@@ -3,16 +3,13 @@
 
 .. moduleauthor:: Dieter Moser <d.moser@fz-juelich.de>
 """
-
 import numpy as np
 
 
 class PiecewiseFG(object):
-    """
-    Summary
-    -------
-    Takes a ``numpy.ndarray`` and function list to generate a piecewise
-    function only for :math:`R \\rightarrow R` functions, #function = #points + 1.
+    """Takes a :py:class:`numpy.ndarray` and function list to generate a piecewise function
+
+    Only for :math:`R \\rightarrow R` functions, #function = #points + 1.
 
     Examples
     --------
@@ -40,9 +37,9 @@ class PiecewiseFG(object):
             values = np.zeros(x.shape)
             for j in range(x.size):
                 for i in range(self.p.size):
-                    if ( x[j] <= self.p[i] and i == 0 ):
+                    if x[j] <= self.p[i] and i == 0:
                         val = self.funcs[0](x)
-                    elif (x[j] <= self.p[i] and x > self.p[i - 1] ):
+                    elif x[j] <= self.p[i] and x > self.p[i - 1]:
                         val = self.funcs[i + 1](x)
                     else:
                         val = self.funcs[-1](x)

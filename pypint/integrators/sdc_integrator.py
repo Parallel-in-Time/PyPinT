@@ -1,17 +1,21 @@
 # coding=utf-8
+"""
 
-from .integrator_base import IntegratorBase
+.. moduleauthor:: Torbjörn Klatt <t.klatt@fz-juelich.de>
+"""
+from copy import deepcopy
+
 import numpy as np
-from .node_providers.gauss_lobatto_nodes import GaussLobattoNodes
-from .weight_function_providers.polynomial_weight_function import PolynomialWeightFunction
-from pypint.utilities import func_name
+
+from pypint.integrators.integrator_base import IntegratorBase
+from pypint.integrators.node_providers.gauss_lobatto_nodes import GaussLobattoNodes
+from pypint.integrators.weight_function_providers.polynomial_weight_function import PolynomialWeightFunction
+from pypint.utilities import assert_is_instance, assert_condition
+from pypint import LOG
 
 
 class SdcIntegrator(IntegratorBase):
-    """
-    Summary
-    -------
-    Integral part of the SDC algorithm.
+    """Integral part of the SDC algorithm.
     """
     def __init__(self):
         super(self.__class__, self).__init__()
@@ -19,24 +23,40 @@ class SdcIntegrator(IntegratorBase):
 
     def init(self, nodes_type=GaussLobattoNodes(), num_nodes=3,
              weights_function=PolynomialWeightFunction(), interval=None):
-        super(self.__class__, self).init(nodes_type, num_nodes, weights_function, interval)
+        """Initialize SDC Integrator
+
+        Parameters
+        ----------
+        nodes_type : :py:class:`.INodes`
+            type of the nodes
+            (defaults to :py:class:`.GaussLobattoNodes`)
+
+        num_nodes : :py:class:`int`
+            number of nodes
+            (defaults to 3)
+
+        weights_function : :py:class:`.IWeightFunction`
+            type of the weights function
+            (defaults to :py:class:`.PolynomialWeightFunction`)
+
+        interval : :py:class:`numpy.ndarray` or :py:class:`None`
+            interval for the nodes
+            (see :py:meth:`.INodes.transform` for possible values)
+        """
+        super(SdcIntegrator, self).init(nodes_type, num_nodes, weights_function, interval)
         self._construct_s_matrix()
 
     def evaluate(self, data, **kwargs):
         """
-        Extended Summary
-        ----------------
+
         Computes the integral until the given node from the previous one.
 
-        For integration nodes :math:`\\tau_i`, :math:`i=0,\\dots,n` specifying :math:`\\tau_3` as
-        ``last_node_index`` results in the integral :math:`\\int_{\\tau_2}^{\\tau_3}`.
+        For integration nodes :math:`\\tau_i`, :math:`i=0,\\dots,n` specifying :math:`\\tau_3` as ``last_node_index``
+        results in the integral :math:`\\int_{\\tau_2}^{\\tau_3}`.
 
         Parameters
         ----------
-        In addition to the options provided by :py:meth:`.IntegratorBase.evaluate` the following
-        additional options are possible:
-
-        last_node_index : integer
+        last_node_index : :py:class:`int`
             (required)
             Index of the last node to integrate.
 
@@ -47,27 +67,58 @@ class SdcIntegrator(IntegratorBase):
 
         See Also
         --------
-        .IntegratorBase.evaluate
-            overridden method
+        :py:meth:`.IntegratorBase.evaluate` : overridden method
         """
-        if "last_node_index" not in kwargs:
-            raise ValueError(func_name(self) +
-                             "Last node index must be given.")
+        assert_condition("last_node_index" in kwargs, ValueError, "Last node index must be given.", self)
         _index = kwargs["last_node_index"]
-        if _index == 0 or _index > self._smat.shape[0]:
-            raise ValueError(func_name(self) +
-                             "Last node index {:d} too small or too large.".format(_index) +
-                             "Must be within [{:d},{:d})".format(1, self._smat.shape[0]))
+        assert_condition(_index != 0 and _index <= self._smat.shape[0],
+                         ValueError, "Last node index {:d} too small or too large. Must be within [{:d},{:d})"
+                                     .format(_index, 1, self._smat.shape[0]),
+                         self)
         super(SdcIntegrator, self).evaluate(data, time_start=self.nodes[0],
                                             time_end=self.nodes[_index])
+        # LOG.debug("Integrating {:s} with S-Mat row {:d} ({:s}) on interval {:s}."
+        #           .format(data, _index - 1, self._smat[_index - 1], self.nodes_type.interval))
         return np.dot(self._smat[_index - 1], data)
 
-    def _construct_s_matrix(self):
-        if isinstance(self._nodes, GaussLobattoNodes):
-            self._smat = np.zeros((self.nodes.size - 1, self.nodes.size), dtype=float)
-            for i in range(1, self.nodes.size):
-                self.weights_function.evaluate(self.nodes, np.array([self.nodes[i - 1], self.nodes[i]]))
-                self._smat[i - 1] = self.weights_function.weights
+    def transform_interval(self, interval):
+        """Transforms nodes onto new interval
+
+        See Also
+        --------
+        :py:meth:`.IntegratorBase.transform_interval` : overridden method
+        """
+        if interval is not None:
+            if interval[0] - interval[-1] != self.nodes[0] - self.nodes[-1]:
+                #LOG.debug("Size of interval changed. Recalculating weights.")
+                super(SdcIntegrator, self).transform_interval(interval)
+                self._construct_s_matrix()
+                #LOG.debug("S-Matrix for interval {:s}: {:s}".format(interval, self._smat))
         else:
-            raise ValueError(func_name(self) +
-                             "Other than Gauss-Lobatto integration nodes not yet supported.")
+            LOG.debug("Cannot transform interval to None.")
+            pass
+
+    def _construct_s_matrix(self):
+        """Constructs integration :math:`S`-matrix
+
+        Rows of the matrix are the integration from one node to the next.
+        I.e. row :math:`i` integrates from node :math:`i-1` to node :math:`i`.
+        """
+        assert_is_instance(self._nodes, GaussLobattoNodes,
+                           "Other than Gauss-Lobatto integration nodes not yet supported.", self)
+        self._smat = np.zeros((self.nodes.size - 1, self.nodes.size), dtype=float)
+        for i in range(1, self.nodes.size):
+            self.weights_function.evaluate(self.nodes, np.array([self.nodes[i - 1], self.nodes[i]]))
+            self._smat[i - 1] = self.weights_function.weights
+
+    def __copy__(self):
+        copy = self.__class__.__new__(self.__class__)
+        copy.__dict__.update(self.__dict__)
+        return copy
+
+    def __deepcopy__(self, memo):
+        copy = self.__class__.__new__(self.__class__)
+        memo[id(self)] = copy
+        for item, value in self.__dict__.items():
+            setattr(copy, item, deepcopy(value, memo))
+        return copy

@@ -3,33 +3,53 @@
 
 .. moduleauthor:: Torbjörn Klatt <t.klatt@fz-juelich.de>
 """
-
-from .i_analyzer import IAnalyzer
+from pypint.plugins.analyzers.i_analyzer import IAnalyzer
 from pypint.plugins.plotters.single_solution_plotter import SingleSolutionPlotter
+from pypint.solvers.i_iterative_time_solver import IIterativeTimeSolver
+from pypint.solvers.states import ISolverState
+from pypint.utilities import assert_is_key, assert_is_instance
 
 
 class SingleSolutionAnalyzer(IAnalyzer):
-    """
-    Summary
-    -------
-    Analyzer for a single solution instance.
+    """Analyzer for a single solution instance.
 
-    Extended Summary
-    ----------------
     For now, it only plots the final solution and the error of each iteration.
     """
     def __init__(self, *args, **kwargs):
+        """
+        Parameters
+        ----------
+        plotter_options : :py:class:`dict`
+            options to be passed on to the plotter
+        """
         super(SingleSolutionAnalyzer, self).__init__(args, **kwargs)
         self._solver = None
-        if "plotter_file_name" in kwargs:
-            self._plotter = SingleSolutionPlotter(file_name=kwargs["plotter_file_name"])
+        if 'plotter_options' in kwargs:
+            self._plotter = SingleSolutionPlotter(**kwargs['plotter_options'])
         else:
             self._plotter = SingleSolutionPlotter()
 
-    def run(self):
+    def run(self, **kwargs):
+        """
+        Parameters
+        ----------
+        solver : :py:class:`.IIterativeTimeSolver`
+
+        Raises
+        ------
+        ValueError
+            if ``solver`` is not given and not an :py:class:`.IIterativeTimeSolver`
+        """
+        super(SingleSolutionAnalyzer, self).run(**kwargs)
+
+        assert_is_key(kwargs, 'solver', "Solver must be given", self)
+        assert_is_instance(kwargs['solver'], IIterativeTimeSolver,
+                           "Solver must be an Iterative Time Solver: NOT %s" % kwargs['solver'].__class__.__name__,
+                           self)
+
         # plot the last solution
-        self._plotter.plot(solver=self._solver,
-                           solution=self._data,
+        self._plotter.plot(solver=kwargs['solver'],
+                           state=self._data,
                            errorplot=True,
                            residualplot=True)
 
@@ -37,14 +57,17 @@ class SingleSolutionAnalyzer(IAnalyzer):
         """
         Parameters
         ----------
-        solver : IIterativeTimeSolver
-            Solver instance used to calculate the solution to analyze.
+        state : :py:class:`.ISolverState`
+            state of the solver
 
-        solution : ISolution
-            Solution returned by the solver.
+        Raises
+        ------
+        ValueError
+            if ``state`` is not given or is not a :py:class:`.ISolverState`
         """
         super(SingleSolutionAnalyzer, self).add_data(args, kwargs)
-        if "solver" in kwargs:
-            self._solver = kwargs["solver"]
-        if "solution" in kwargs:
-            self._data = kwargs["solution"]
+        assert_is_key(kwargs, 'state', "State must be given", self)
+        assert_is_instance(kwargs['state'], ISolverState,
+                           "Given state must be a ISolverState: NOT %s" % kwargs['state'].__class__.__name__,
+                           self)
+        self._data = kwargs['state']

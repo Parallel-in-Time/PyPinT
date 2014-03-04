@@ -1,34 +1,24 @@
 # coding=utf-8
-"""
-Summary
--------
-Collection of utility functions related to the callstack and traceback.
+"""Collection of utility functions related to the callstack and traceback.
 
 .. moduleauthor:: Torbjörn Klatt <t.klatt@fz-juelich.de>
 """
-
 import inspect
 
 
 def func_name(obj=None):
-    """
-    Summary
-    -------
-    Formats the calling functions name.
+    """Formats the calling functions name.
 
-    Extended Summary
-    ----------------
-    Formats the calling functions name in the format
-    ``'ClassName.FunctionName(): '``.
+    Formats the calling functions name in the format ``'ClassName.FunctionName(): '``.
 
     Parameters
     ----------
-    obj : object
+    obj : :py:class:`object`
         Instance of an object the calling function is a member of.
 
     Returns
     -------
-    formatted function name : str
+    formatted_function_name : :py:class:`str`
         Formatted function name of calling function.
 
     Examples
@@ -42,4 +32,11 @@ def func_name(obj=None):
     MyClass.my_func(): Hello World!
     """
     return "{:s}.{:s}(): "\
-           .format(obj.__class__.__name__, inspect.stack()[1][3])
+           .format(checking_obj_name(obj), inspect.stack()[1][3])
+
+
+def checking_obj_name(obj=None):
+    return obj.__class__.__name__ if obj is not None else "unknown"
+
+
+__all__ = ['func_name']

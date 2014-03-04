@@ -6,24 +6,17 @@
 
 from .i_level_transition_provider import ILevelTransitionProvider
 import numpy as np
-from pypint.utilities import func_name
+from pypint.utilities import assert_condition
 from pypint import LOG
 
 
 class Injection(ILevelTransitionProvider):
-    """
-    Summary
-    -------
-    Injective restringation and prolongation.
+    """Injective restringation and prolongation.
 
-    Extended Summary
-    ----------------
-    Injection restringates a fine level with :math:`n` points onto a
-    coarse level with :math:`\\frac{n+1}{2}` points by leaving out every other
-    data point.
+    Injection restringates a fine level with :math:`n` points onto a coarse level with :math:`\\frac{n+1}{2}` points by
+    leaving out every other data point.
 
-    On prolongation, injection interpolates a new point between two coarse
-    data points as their arithmetic mean.
+    On prolongation, injection interpolates a new point between two coarse data points as their arithmetic mean.
 
     Raises
     ------
@@ -32,18 +25,14 @@ class Injection(ILevelTransitionProvider):
 
     Notes
     -----
-    Injective restringation and prolongation only works for a fine level with
-    an odd number of points.
+    Injective restringation and prolongation only works for a fine level with an odd number of points.
     The coarse level might have an even number of points.
 
-    In addition, injection should only be used when the number of coarse points
-    is a subset of the fine points.
+    In addition, injection should only be used when the number of coarse points is a subset of the fine points.
     """
     def __init__(self, num_fine_points, num_coarse_points=-1):
-        if num_fine_points % 2 == 0:
-            raise ValueError(func_name(self) +
-                             "Number of fine level points needs to be odd: {:d}"
-                             .format(num_fine_points))
+        assert_condition(num_fine_points % 2 != 0,
+                        ValueError, "Number of fine level points needs to be odd: {:d}".format(num_fine_points), self)
         super(self.__class__, self).__init__(num_fine_points, num_coarse_points)
         self._n_coarse_points = int((self.num_fine_points + 1) / 2)
         self.restringation_operator = \

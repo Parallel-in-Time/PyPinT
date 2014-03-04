@@ -6,20 +6,15 @@
 
 from .i_level_transition_provider import ILevelTransitionProvider
 import numpy as np
-from pypint.utilities import func_name
+from pypint.utilities import assert_condition
 from pypint import LOG
 
 
 class FullWeighting(ILevelTransitionProvider):
-    """
-    Summary
-    -------
-    Full weighting restriction and prolongation.
+    """Full weighting restriction and prolongation.
 
-    Extended Summary
-    ----------------
-    Full weighting restringates a fine level with :math:`n` points onto a
-    coarse level with :math:`\\frac{n+1}{2}` points.
+    Full weighting restringates a fine level with :math:`n` points onto a coarse level with :math:`\\frac{n+1}{2}`
+    points.
 
     Raises
     ------
@@ -28,19 +23,17 @@ class FullWeighting(ILevelTransitionProvider):
 
     Notes
     -----
-    The prolongation is equal to the injective prolongation, where the intermedia fine points
-    are calculated as the arithmetic mean of the sourounding coarse points.
+    The prolongation is equal to the injective prolongation, where the intermedia fine points are calculated as the
+    arithmetic mean of the sourounding coarse points.
 
     See Also
     --------
-    .Injection
-        Same prolongation operator.
+    :py:class:`.Injection` : Same prolongation operator.
     """
     def __init__(self, num_fine_points, num_coarse_points=-1):
-        if num_fine_points % 2 == 0:
-            raise ValueError(func_name(self) +
-                             "Number of fine level points needs to be odd: {:d}"
-                             .format(num_fine_points))
+        assert_condition(num_fine_points % 2 != 0,
+                        ValueError, "Number of fine level points needs to be odd: {:d}".format(num_fine_points),
+                        self)
         super(self.__class__, self).__init__(num_fine_points, num_coarse_points)
         self._n_coarse_points = int((self.num_fine_points + 1) / 2)
         self.restringation_operator = \

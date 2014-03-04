@@ -4,6 +4,7 @@ Development
 These lines should help in development of *PyPinT*.
 
 .. toctree::
+    :hidden:
 
     rationale
     todo

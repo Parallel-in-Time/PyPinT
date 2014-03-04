@@ -3,15 +3,11 @@
 
 .. moduleauthor:: Dieter Moser <d.moser@fz-juelich.de>
 """
-
 import numpy as np
 
 
 class PolynomialFG(object):
-    """
-    Summary
-    -------
-    Takes up to multiple ``numpy.ndarray`` and constructs (rational) polynomials.
+    """Takes up to multiple :py:class:`numpy.ndarray` and constructs (rational) polynomials
 
     Examples
     --------
