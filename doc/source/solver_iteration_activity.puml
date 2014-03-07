@@ -1,0 +1,49 @@
+@startuml
+
+start
+
+:<b><color:green>Solver</color>.run</b>(Core) called;
+note right
+    * started in parallel;
+    * previously set:
+    * * **T** number time steps
+    * * **M** number nodes per time step
+    * * **<color:red>P</color>** problem
+    * * **dt** width of a solver interval
+end note
+
+while (         <b>Work Loop</b>\n<b><color:orange>msg</color></b> = <b><color:green>S</color></b>.<b><color:blue>comm</color>.receive</b>()) is (<b><color:orange>msg</color></b>.flag != failed\nor <b><color:orange>msg</color></b>.t+<b>dt</b> <= <b><color:red>P</color></b>.t1)
+
+    if (<b><color:green>S</color></b>.last_flag == iterating) then (yes)
+        #AAAAAA:continue with same
+         interval as before;
+    else (no)
+        #AAAAAA:start new interval;
+        :  set new interval
+        <b><color:green>S</color></b>.I=[<b><color:orange>msg</color></b>.t, <b><color:orange>msg</color></b>.t+**dt**];
+    endif
+
+    while (<b>Time Steps Loop</b>\n     for t=1,...,<b>T</b>)
+        while (<b>Integration Loop</b>\n    for m=1,...,<b>M</b>)
+            :integrate node //m// of time step //t//
+                             with //Core//;
+        endwhile
+    endwhile
+
+    if (finished?) then (yes)
+        if (converged?) then (yes)
+            :<b><color:green>S</color></b>.last_flag = converged;
+        else (failed?)
+            :<b><color:green>S</color></b>.last_flag = failed;
+        endif
+    else (no)
+        :<b><color:green>S</color></b>.last_flag = iterating;
+    endif
+
+    :<b><color:green>S</color></b>.<b><color:blue>comm</color>.send</b>(t=<b><color:green>S</color></b>.I[1], flag=<b><color:green>S</color></b>.last_flag);
+
+endwhile (no more work to do)
+
+stop
+
+@enduml
