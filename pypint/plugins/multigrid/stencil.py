@@ -1,43 +1,243 @@
 # coding=utf-8
 import numpy as np
 import scipy.signal as sig
+import scipy.sparse as sprs
+import scipy.sparse.linalg as spla
+import functools as ft
 from pypint.utilities import assert_is_callable, assert_is_instance, assert_condition
 
-#Todo: Enhance the stencil class with useful methods,
-#       which emerge as necessity in the development process
 
-# diese klasse währe super, aber einfach nicht praktikabel in der Zeit die ich habe
-
-
-class Stencil(np.ndarray):
+class Stencil(object):
     """
     Summary
     -------
-    a class which knows its middle and borders
+    a class which knows its center
     """
-    def __init__(self, arr, center=None):
+    def __init__(self, arr, center=None, **kwargs):
         assert_is_instance(arr, np.ndarray, "the array is not a numpy array")
         if center is None:
-            center = np.floor(np.asarray(arr.shape)*0.5)
-
-        assert_is_instance(center, np.ndarray, "the center is not a np array")
-        assert_condition(arr.ndim == center.size, ValueError,
-                         "center does not match with stencil array")
+            self.center = np.floor(np.asarray(arr.shape)*0.5)
+        else:
+            assert_is_instance(center, np.ndarray,
+                               "the center is not a np array")
+            assert_condition(arr.ndim == center.size, ValueError,
+                             "center does not match with stencil array")
+            self.center = center
         self.arr = arr
         self.dim = arr.ndim
-        self.center = center
+
         # compute borders
-        self.b = [[0.0, 0.0]]*self._dimension
+        self.b = [[0.0, 0.0]]*self.dim
         for i in range(self.dim):
             left = arr.shape[i] - self.center[i] - 1
             right = arr.shape[i] - left - 1
-            self.b[self._dimension - i - 1] = [left, right]
+            self.b[self.dim - i - 1] = [left, right]
+        # check if a grid is given
+        if kwargs['grid'] is None:
+            self.grid = tuple([3]*self.dim)
+        else:
+            self.grid = tuple(kwargs["grid"])
+
+        # construct sparse matrix
+        self.sp_matrix = self.to_sparse_matrix(self.grid)
+        # check which solver should be used
+        if kwargs.get('solver') is None or kwargs.get('solver') == "richardson":
+            self.solver = self.richardson_solver
+            self.solver_info = "Richardson Solver"
+        elif kwargs['solver'] == 'factorize':
+            self.solver = self.generate_direct_solver()
+            self.solver_info = "Direct Fast Solver through factorization"
+        elif isinstance(kwargs['solver'], str):
+            self.solver = ft.partial(self.iterative_solver_list,
+                                     self, kwargs["solver"])
+            self.solver_info = "Iterative solver of type" + kwargs['solver']
+        elif callable(kwargs['solver']):
+            # this is the case of user solver
+            self.solver = kwargs['solver']
+            if kwargs['solver_info'] is None:
+                self.solver_info = " "
+        else:
+            raise TypeError("this solver is unknown!")
+
+
+    def richardson_solver(self, rhs, options):
+        pass
+
+    def generate_direct_solver(self, grid=None):
+        """Generates direct solver from a LU factorization of the sparse matrix
+
+        """
+        if grid is None:
+            solver = spla.factorized(self.sp_matrix)
+        else:
+            sp_matrix = self.to_sparse_matrix(grid)
+            solver = spla.factorized(sp_matrix)
+        return solver
 
     def eval(self, array_in, array_out):
         """Evaluate via scipy.signal.convolve
 
+        Parameters
+        ----------
+        array_in : ndarray
+            array to convolve
+        array_out : ndarray
+            array to storage the result
         """
         array_out[:] = sig.convolve(array_in, self.arr, 'valid')
+
+    def centered_stencil(self):
+        """ use zero padding to put the center into the center
+
+        """
+
+        # compute the shape of the new stencil
+        shp = self.arr.shape
+        shp = tuple(max(i, j-(i+1))*2 + 1 for i, j in zip(self.center, shp))
+        # print("New Shape :", shp)
+        # generate the stencil in the right shape
+        S = np.zeros(shp)
+        # embed the stencil into the bigger stencil in order to place the center
+        # into the center
+        slc = []
+        for c, shp_arr, shp_s in zip(self.center, self.arr.shape, shp):
+            if c < shp_arr/2:
+                slc.append(slice(shp_s - shp_arr, None))
+            else:
+                slc.append(slice(0, -(shp_s - shp_arr)))
+
+        # print(slc)
+        S[slc] = self.arr[:]
+        # print("The Stencil")
+        # print(self.arr)
+        # print("Centered stencil")
+        # print(S)
+        return S
+
+    def to_sparse_matrix(self, grid, format=None):
+        """constructs a scipy dia sparse matrix
+
+        This algorithm is , besides the embedding in the first few lines,
+        taken from PyAMG - googlecode
+        Parameters
+        ----------
+        grid : tuple
+            tuple containing the N grid dimensions
+        format : string
+            sparse matrix format to return , e.g. "csr", "coo", etc.
+        """
+        S = self.centered_stencil()
+        print("grid :")
+
+        grid = tuple(grid)
+        print(grid)
+        if not (np.asarray(S.shape) % 2 == 1).all():
+            raise ValueError('all stencil dimensions must be odd')
+
+        assert_condition(len(grid) == np.rank(S), ValueError,
+                         'stencil rank must equal number of grid dimensions')
+        assert_condition(min(grid) >= 1, ValueError,
+                         'grid dimensions must be positive')
+
+        N_v = np.prod(grid)     # number of vertices in the mesh
+        N_s = (S != 0).sum()    # number of nonzero stencil entries
+
+        # diagonal offsets
+        diags = np.zeros(N_s, dtype=int)
+
+        # compute index offset of each dof within the stencil
+        strides = np.cumprod( [1] + list(reversed(grid)) )[:-1]
+        indices = tuple(i.copy() for i in S.nonzero())
+        for i,s in zip(indices,S.shape):
+            i -= s // 2
+        for stride,coords in zip(strides, reversed(indices)):
+            diags += stride * coords
+
+        #
+        data = S[S != 0].repeat(N_v).reshape(N_s, N_v)
+        indices = np.vstack(indices).T
+
+        # zero boundary connections
+        for index,diag in zip(indices,data):
+            diag = diag.reshape(grid)
+            for n,i in enumerate(index):
+                if i > 0:
+                    s = [ slice(None) ]*len(grid)
+                    s[n] = slice(0,i)
+                    diag[s] = 0
+                elif i < 0:
+                    s = [ slice(None) ]*len(grid)
+                    s[n] = slice(i,None)
+                    diag[s] = 0
+
+        # remove diagonals that lie outside matrix
+        mask = abs(diags) < N_v
+        if not mask.all():
+            diags = diags[mask]
+            data  = data[mask]
+
+        # sum duplicate diagonals
+        if len(np.unique(diags)) != len(diags):
+            new_diags = np.unique(diags)
+            new_data  = np.zeros( (len(new_diags),data.shape[1]), dtype=data.dtype)
+            for dia,dat in zip(diags,data):
+                n = np.searchsorted(new_diags,dia)
+                new_data[n,:] += dat
+
+            diags = new_diags
+            data  = new_data
+
+        return sprs.dia_matrix((data,diags), shape=(N_v, N_v)).asformat(format)
+
+    def iterative_solver_list(self, which, rhs, *args):
+        """Solves the linear problem Ab = x using the sparse matrix
+
+            Parameters
+            ----------
+            rhs : ndarray
+                the right hand side
+            which : string
+                choose which solver is used
+                    bicg(A, b[, x0, tol, maxiter, xtype, M, ...])
+                        Use BIConjugate Gradient iteration to solve A x = b
+
+                    bicgstab(A, b[, x0, tol, maxiter, xtype, M, ...])
+                        Use BIConjugate Gradient STABilized iteration to solve A x = b
+
+                    cg(A, b[, x0, tol, maxiter, xtype, M, callback])
+                        Use Conjugate Gradient iteration to solve A x = b
+
+                    cgs(A, b[, x0, tol, maxiter, xtype, M, callback])
+                        Use Conjugate Gradient Squared iteration to solve A x = b
+
+                    gmres(A, b[, x0, tol, restart, maxiter, ...])
+                        Use Generalized Minimal RESidual iteration to solve A x = b.
+
+                    lgmres(A, b[, x0, tol, maxiter, M, ...])
+                        Solve a matrix equation using the LGMRES algorithm.
+
+                    minres(A, b[, x0, shift, tol, maxiter, ...])
+                        Use MINimum RESidual iteration to solve Ax=b
+
+                    qmr(A, b[, x0, tol, maxiter, xtype, M1, M2, ...])
+                        Use Quasi-Minimal Residual iteration to solve A x = b
+        """
+        if which == 'bicg':
+            return spla.bicg(self.sp_matrix, rhs, args)
+        elif which == "cg":
+            return spla.cg(self.sp_matrix, rhs, args)
+        elif which == "bicgstab":
+            return spla.bicgstab(self.sp_matrix, rhs, args)
+        elif which == "cgs":
+            return spla.cgs(self.sp_matrix, rhs, args)
+        elif which == "gmres":
+            return spla.gmres(self.sp_matrix, rhs, args)
+        elif which == "lgmres":
+            return spla.lgmres(self.sp_matrix, rhs, args)
+        elif which == "qmr":
+            return spla.qmr(self.sp_matrix, rhs, args)
+        else:
+            raise NotImplementedError("this solver is unknown")
 
 
 class InterpolationStencil1D(object):
@@ -50,7 +250,7 @@ class InterpolationStencil1D(object):
 
         """
         # in the case of just one stencil
-        if isinstance(stencil_list, np.ndarray) and arr_list.ndim == 1:
+        if isinstance(stencil_list, np.ndarray) and stencil_list.ndim == 1:
             self.mode = "own"
             self.increase_of_points = 2
             self.stencil_list = []
@@ -139,3 +339,21 @@ class RestrictionStencil(object):
             sig.convolve(array_in, self.rst_stencil)[::self.dip[0], ::self.dip[1], ::self.dip[2]]
 
 # TODO: a more effective evaluation strategy is needed
+
+
+class InvertibleStencil(Stencil):
+    """ An stencil with the capacity to solve the resulting Ax=b Problem
+
+
+    """
+    whoiam=42
+
+if __name__ == '__main__':
+    print("Teste Stencilklasse ein wenig")
+    st_arr = np.asarray([[ 0, 1],
+                         [-1, 0]])
+    center = np.asarray([0, 0])
+    st = Stencil(st_arr, center)
+    print(st.centered_stencil())
+    A = st.to_sparse_matrix((3, 3))
+    print(A.todense())

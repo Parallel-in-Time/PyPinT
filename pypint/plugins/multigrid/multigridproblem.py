@@ -12,9 +12,6 @@ def stupid_func(x, *args, **kwargs):
     return 1.0
 
 
-# TODO: Stencil klasse vllt. falls bestimmte eigenschaften des stencils häufiger
-#       genutzt werden.
-# Note: the boundary conditions and are ordered in numpy style
 
 
 class MultiGridProblem(object):
@@ -49,7 +46,8 @@ class MultiGridProblem(object):
         # check if boundary conditions are specified
         if kwargs.get('boundaries') is None:
             self._boundaries = ["periodic"]*self._dimension
-        elif isinstance(kwargs["boundaries"], str) and kwargs["boundaries"] in self.valid_boundary_conditions:
+        elif isinstance(kwargs["boundaries"], str) and\
+                        kwargs["boundaries"] in self.valid_boundary_conditions:
             self._boundaries = [kwargs['boundaries']]*self._dimension
         elif isinstance(kwargs["boundaries"], list):
             check = 0
