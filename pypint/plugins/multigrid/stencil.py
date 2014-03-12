@@ -12,6 +12,11 @@ class Stencil(object):
     Summary
     -------
     a class which knows its center
+
+    Has a lot to over, like the conversion to a sparse matrix,
+    a wrapper around the solvers of the sparse linalg scipy class,
+    and with self.b it has the appropriate information for the
+    handling of the ghostcells.
     """
     def __init__(self, arr, center=None, **kwargs):
         assert_is_instance(arr, np.ndarray, "the array is not a numpy array")
@@ -33,24 +38,29 @@ class Stencil(object):
             right = arr.shape[i] - left - 1
             self.b[self.dim - i - 1] = [left, right]
         # check if a grid is given
+        self._grid = None
         if kwargs['grid'] is None:
-            self.grid = tuple([3]*self.dim)
+            self._grid = tuple([3]*self.dim)
         else:
-            self.grid = tuple(kwargs["grid"])
+            self._grid = tuple(kwargs["grid"])
 
         # construct sparse matrix
-        self.sp_matrix = self.to_sparse_matrix(self.grid)
+        self.sp_matrix = self.to_sparse_matrix(self._grid)
         # check which solver should be used
         if kwargs.get('solver') is None or kwargs.get('solver') == "richardson":
             self.solver = self.richardson_solver
             self.solver_info = "Richardson Solver"
+            self.solver_type = "iterative"
         elif kwargs['solver'] == 'factorize':
+            self.sp_matrix = self.sp_matrix.tocsc()
             self.solver = self.generate_direct_solver()
             self.solver_info = "Direct Fast Solver through factorization"
+            self.solver_type = "factorized"
         elif isinstance(kwargs['solver'], str):
             self.solver = ft.partial(self.iterative_solver_list,
                                      self, kwargs["solver"])
             self.solver_info = "Iterative solver of type" + kwargs['solver']
+            self.solver_type = "iterative"
         elif callable(kwargs['solver']):
             # this is the case of user solver
             self.solver = kwargs['solver']
@@ -59,8 +69,39 @@ class Stencil(object):
         else:
             raise TypeError("this solver is unknown!")
 
+    @property
+    def num_nodes(self):
+        """Accessor for the number of desired integration nodes.
+
+        Returns
+        -------
+        number of nodes : :py:class:`int`
+            The number of desired and/or computed integration nodes.
+
+        Notes
+        -----
+        Specializations of this interface might override this accessor.
+        """
+        return self._grid
+
+    @grid.setter
+    def grid(self, grd):
+        """Grid setter
+
+        A new Grid implicates a whole new stencil matrix and if
+        the solver constucted from the factorization one needs also a new
+        factorization
+        """
+        self._grid = grd
+        self.sp_matrix = self.to_sparse_matrix(grd)
+        if self.solver_type == "factorized":
+            self.solver = self.generate_direct_solver(grd)
+
 
     def richardson_solver(self, rhs, options):
+        """Simple richardson Iteration
+
+        """
         pass
 
     def generate_direct_solver(self, grid=None):
@@ -74,7 +115,7 @@ class Stencil(object):
             solver = spla.factorized(sp_matrix)
         return solver
 
-    def eval(self, array_in, array_out):
+    def eval_convolve(self, array_in):
         """Evaluate via scipy.signal.convolve
 
         Parameters
@@ -84,7 +125,20 @@ class Stencil(object):
         array_out : ndarray
             array to storage the result
         """
-        array_out[:] = sig.convolve(array_in, self.arr, 'valid')
+        return sig.convolve(array_in, self.arr, 'valid')
+
+    def eval_sparse(self, array_in, array_out):
+        """Evaluate via the sparse matrix
+
+        Parameters
+        ----------
+        array_in : ndarray
+            array to convolve
+        array_out : ndarray
+            array to storage the result
+        """
+        array_out[:] = self.sp_matrix.dot(array_in.flatten())
+
 
     def centered_stencil(self):
         """ use zero padding to put the center into the center
@@ -339,21 +393,3 @@ class RestrictionStencil(object):
             sig.convolve(array_in, self.rst_stencil)[::self.dip[0], ::self.dip[1], ::self.dip[2]]
 
 # TODO: a more effective evaluation strategy is needed
-
-
-class InvertibleStencil(Stencil):
-    """ An stencil with the capacity to solve the resulting Ax=b Problem
-
-
-    """
-    whoiam=42
-
-if __name__ == '__main__':
-    print("Teste Stencilklasse ein wenig")
-    st_arr = np.asarray([[ 0, 1],
-                         [-1, 0]])
-    center = np.asarray([0, 0])
-    st = Stencil(st_arr, center)
-    print(st.centered_stencil())
-    A = st.to_sparse_matrix((3, 3))
-    print(A.todense())

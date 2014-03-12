@@ -6,7 +6,7 @@ import numpy as np
 from pypint.multi_level_providers.multi_level_provider import MultiLevelProvider
 from pypint.utilities import assert_is_callable, assert_is_instance, assert_condition
 from pypint.plugins.multigrid.stencil import Stencil, InterpolationStencil1D, RestrictionStencil
-from pypint.plugins.multigrid.level import Level1D
+from pypint.plugins.multigrid.level import MultiGridLevel1D
 import scipy.signal as sig
 
 
@@ -18,8 +18,8 @@ class StencilBasedLevelTransitionProvider1D(object):
     with the according interpolation and restriction functions
     """
     def __init__(self, fine_level, coarse_level , rst_stencil, ipl_stencil):
-        assert_is_instance(fine_level, Level1D, "Not an Level1D")
-        assert_is_instance(coarse_level, Level1D, "Not an Level1D")
+        assert_is_instance(fine_level, MultiGridLevel1D, "Not an MultiGridLevel1D")
+        assert_is_instance(coarse_level, MultiGridLevel1D, "Not an MultiGridLevel1D")
 
         self.fl = fine_level
         self.cl = coarse_level
@@ -73,7 +73,8 @@ class MultiGridLevelProvider1D(object):
                  smth_dict=None):
         self._level_smoother = []
         for lvl in levels:
-            assert_is_instance(lvl, Level1D, "Not an Level1D object")
+            assert_is_instance(lvl, MultiGridLevel1D,
+                               "Not an MultiGridLevel1D object")
 
         for k, v in ipl_dict.iteritems():
             assert_is_instance(k, str, "Keys should be strings.")
@@ -88,6 +89,7 @@ class MultiGridLevelProvider1D(object):
 
         self._num_levels = len(levels)
         self._levels
+
 # class MultiGridLevelProvider(object):
 #     """
 #     Summary

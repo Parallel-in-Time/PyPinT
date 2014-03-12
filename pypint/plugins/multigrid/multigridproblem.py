@@ -8,10 +8,10 @@ import scipy.signal as sig
 from pypint.utilities import assert_is_callable, assert_is_instance, assert_condition
 from pypint.plugins.multigrid.stencil import Stencil
 
+
 def stupid_func(x, *args, **kwargs):
+    """Duh I am stupid"""
     return 1.0
-
-
 
 
 class MultiGridProblem(object):

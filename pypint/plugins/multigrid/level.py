@@ -11,7 +11,14 @@ from pypint.plugins.multigrid.stencil import Stencil
 
 # TODO : Das Slicing muss gemacht werden, besser keine subclasse von ndarray
 
-class Level1D(np.ndarray):
+class MultiGridLevel(object):
+    """
+
+    """
+    raise NotImplementedError("I am not done yet sorry")
+
+
+class MultiGridLevel1D(np.ndarray):
     """
     Summary
     -------
@@ -48,7 +55,7 @@ class Level1D(np.ndarray):
                 obj._mg_problem = mg_problem
             else:
                 raise ValueError("Please provide a MultiGridProblem")
-        elif isinstance(shape, Level1D):
+        elif isinstance(shape, MultiGridLevel1D):
             # now we have a fallback solution if the borders are chosen wrong
             forward_shape = shape.size - shape.borders[0] - shape.borders[1]
             if isinstance(max_borders, np.ndarray) and max_borders.size >= 2:
@@ -98,7 +105,7 @@ class Level1D(np.ndarray):
         obj.borders = max_borders
         # gives view to the padded regions and the middle
         # here it is important to use __array__, because
-        # the different parts are just ndarrays and not another Level1D objects
+        # the different parts are just ndarrays and not another MultiGridLevel1D objects
         obj.left = obj.__array__()[:obj.borders[0]]
         obj.right = obj.__array__()[-obj.borders[1]:]
         obj.mid = obj.__array__()[obj.borders[0]:-obj.borders[1]]
@@ -129,8 +136,8 @@ class Level1D(np.ndarray):
         self.mid = getattr(obj, 'mid', None)
         self.right = getattr(obj, 'right', None)
         # case of sclicing
-        # if isinstance(obj, Level1D):
-        #     print("obj is Level1D")
+        # if isinstance(obj, MultiGridLevel1D):
+        #     print("obj is MultiGridLevel1D")
         #     # print("Object", obj)
         #     # print("Self", type(self.__array__()))
         #     # print(type(arr))
@@ -235,8 +242,13 @@ class Level1D(np.ndarray):
         """gives the right view of the array
 
         """
-        l = self.borders[0]-stencil.b[0][0]
-        r = -(self.borders[1]-stencil.b[0][1])
+        if isinstance(stencil, Stencil):
+            l = self.borders[0]-stencil.b[0][0]
+            r = -(self.borders[1]-stencil.b[0][1])
+        else:
+            l = self.borders[0]-stencil[0]
+            r = -(self.borders[1]-stencil[1])
+
         return self.arr[l:r]
 
     # def __copy__(self):
@@ -255,7 +267,7 @@ class Level1D(np.ndarray):
 # stencil = Stencil(3)
 # stencil[:] = np.asarray([1, -2, 1])
 # mg_prob = MultiGridProblem(stencil, lambda x: 5.)
-# lvl = Level1D(5, mg_prob, np.asarray([3, 3]))
+# lvl = MultiGridLevel1D(5, mg_prob, np.asarray([3, 3]))
 # print(type(lvl))
 # print(lvl)
 # # fuellen von werten
@@ -266,8 +278,8 @@ class Level1D(np.ndarray):
 # print(lvl.left)
 # print(lvl.mid)
 # print(lvl.right)
-# print(isinstance(lvl, Level1D))
-#lvl2 = Level1D(lvl, None, np.asarray([1, 1]))
+# print(isinstance(lvl, MultiGridLevel1D))
+#lvl2 = MultiGridLevel1D(lvl, None, np.asarray([1, 1]))
 # a = lvl[1:3]
 # print(type(a))
 # print(a.left)
@@ -282,7 +294,7 @@ class Level1D(np.ndarray):
 # print(type(lvl.mid))
 #print(lvl2)
 
-#lvl2 = Level1D(lvl)
+#lvl2 = MultiGridLevel1D(lvl)
 #print(lvl2)
 
 #lvl.embed(np.arange(5))
