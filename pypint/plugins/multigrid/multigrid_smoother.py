@@ -56,7 +56,7 @@ class SplitSmoother(Smoother):
 
         # construct stencils
 
-        super().__init__(l_plus.ndim)
+        super().__init__(l_plus.ndim, kwargs)
 
     def relax(self, n=1):
         """Does the relaxation step several times on the lvl

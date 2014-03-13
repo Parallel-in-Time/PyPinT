@@ -49,9 +49,6 @@ class MultiGridCore(object):
                            "not a proper multigridlevelprovider", self)
         assert_is_instance(mgsolution, MultiGridSolution,
                            "not a proper multigridsolution", self)
-        assert_is_instance(mgcontrol, ControlMultiGridFlow,
-                           "Not a proper control flow", self)
-
         self.mgprob = mgprob
         self.mglprov = mglprov
         self.mgsolution = mgsolution

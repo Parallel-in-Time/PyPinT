@@ -7,6 +7,7 @@ from pypint.multi_level_providers.multi_level_provider import MultiLevelProvider
 from pypint.utilities import assert_is_callable, assert_is_instance, assert_condition
 from pypint.plugins.multigrid.stencil import Stencil, InterpolationStencil1D, RestrictionStencil
 from pypint.plugins.multigrid.level import MultiGridLevel1D
+from pypint.plugins.multigrid.multigrid_smoother import Smoother, SplitSmoother
 import scipy.signal as sig
 
 
@@ -17,7 +18,7 @@ class StencilBasedLevelTransitionProvider1D(object):
 
     with the according interpolation and restriction functions
     """
-    def __init__(self, fine_level, coarse_level , rst_stencil, ipl_stencil):
+    def __init__(self, fine_level, coarse_level, rst_stencil, ipl_stencil):
         assert_is_instance(fine_level, MultiGridLevel1D, "Not an MultiGridLevel1D")
         assert_is_instance(coarse_level, MultiGridLevel1D, "Not an MultiGridLevel1D")
 
@@ -66,29 +67,77 @@ class MultiGridLevelProvider1D(object):
     """Contains the needed LevelTransition Provider
 
     Different cycles are provided, like the full multigrid cycle through the
-    use of a char list.
+    use of a char list. Note that the Smoother can also be a simple solver if
+    the grid is coarse enough.
     """
 
     def __init__(self, levels, ipl_dict=None, rst_dict=None,
                  smth_dict=None):
-        self._level_smoother = []
-        for lvl in levels:
-            assert_is_instance(lvl, MultiGridLevel1D,
-                               "Not an MultiGridLevel1D object")
 
+
+
+        for k, v in levels.iteritems():
+            assert_is_instance(v, MultiGridLevel1D,
+                               "Not an MultiGridLevel1D object")
         for k, v in ipl_dict.iteritems():
             assert_is_instance(k, str, "Keys should be strings.")
             assert_is_instance(v, InterpolationStencil1D,
-                               "Not an interpolation stencil.")
+                               k+" is not an interpolation stencil.")
         for k, v in rst_dict.iteritems():
             assert_is_instance(k, str, "Keys should be strings")
             assert_is_instance(v, RestrictionStencil,
-                               k+"is not a restriction stencil!")
+                               k+" is not a restriction stencil!")
         for k, v in smth_dict.iteritems():
             assert_is_instance(k, str, "Keys should be strings")
+            assert_is_instance(v, Smoother,
+                               k+" is not a smoother!")
 
+        self.smth_dict = smth_dict
+        self.levels = levels
         self._num_levels = len(levels)
-        self._levels
+        self.ipl_dict = ipl_dict
+        self.rst_dict = rst_dict
+
+
+    def do(self, **kwargs):
+        """Takes order in string format and parse them into operations
+
+        It follows the following notation, where k is the key of the level
+        or smoother. the following keys are necessary for the different tasks
+
+        smoothing : smoother=name of smoother or smoother itself or
+                             the SmootherClass which is beeing used
+                    smooth_n_times = ...
+        interpolating : interpolation=name of interpolationstencil
+                        from_level = name of the finer level
+                        to_level = name of the coarser level
+        restriction :   restriction=name of interpolationstencil
+                        from_level = name of the finer level
+                        to_level = name of the coarser level
+        padding:        level = level or name of the level
+
+        Note that each smoother object is bounded to a certain level,
+        hence it is possible to use different smoothers on the same level,
+        they have just to be in the smth_dict.
+        """
+
+        if kwargs["level"]:
+            # padding
+            self.levels[kwargs["level"]].pad()
+        elif kwargs["smoother"]:
+            # smooth
+            self.smth_dict[kwargs["smoother"]].relax(kwargs["smooth_n_times"])
+        elif kwargs["interpolation"]:
+            arr_in = self.levels[kwargs["from_level"]]
+            arr_out = self.levels[kwargs["to_level"]]
+            self.ipl_dict[kwargs["interpolation"]].eval(arr_in, arr_out)
+        elif kwargs["restriction"]:
+            arr_in = self.levels[kwargs["from_level"]]
+            arr_out = self.levels[kwargs["to_level"]]
+            self.ipl_dict[kwargs["restriction"]].eval(arr_in, arr_out)
+        else:
+            raise NotImplementedError("I got my finger stuck in the bottle, "
+                                      "the instructions were unclear")
 
 # class MultiGridLevelProvider(object):
 #     """
