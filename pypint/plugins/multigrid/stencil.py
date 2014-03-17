@@ -39,10 +39,11 @@ class Stencil(object):
             self.b[self.dim - i - 1] = [left, right]
         # check if a grid is given
         self._grid = None
-        if kwargs['grid'] is None:
-            self._grid = tuple([3]*self.dim)
+
+        if 'grid' in kwargs:
+            self._grid = tuple(kwargs['grid'])
         else:
-            self._grid = tuple(kwargs["grid"])
+            self._grid = tuple([3]*self.dim)
 
         # construct sparse matrix
         self.sp_matrix = self.to_sparse_matrix(self._grid)
@@ -81,6 +82,13 @@ class Stencil(object):
         Notes
         -----
         Specializations of this interface might override this accessor.
+        """
+        return self._grid
+
+    @property
+    def grid(self):
+        """grid getter
+
         """
         return self._grid
 
@@ -200,7 +208,7 @@ class Stencil(object):
         diags = np.zeros(N_s, dtype=int)
 
         # compute index offset of each dof within the stencil
-        strides = np.cumprod( [1] + list(reversed(grid)) )[:-1]
+        strides = np.cumprod([1] + list(reversed(grid)))[:-1]
         indices = tuple(i.copy() for i in S.nonzero())
         for i,s in zip(indices,S.shape):
             i -= s // 2
@@ -293,6 +301,29 @@ class Stencil(object):
         else:
             raise NotImplementedError("this solver is unknown")
 
+    def modify_rhs(self, u, rhs):
+        """ Modifies rhs
+
+        Parameters
+        ----------
+        u : ndarray
+            contains the ghostcells
+        rhs : ndarray
+            rhs which has to be modified
+        """
+
+        if self.dim == 1:
+            rhs[0:self.center] -= np.dot(self.arr[0:self.center],
+                                         u[0:self.center])
+            til = self.arr.size - self.center
+            rhs[:-til] -= np.dot(self.arr[:-til],
+                                 u[:-til])
+        elif self.dim == 2:
+            raise NotImplementedError("Not done yet")
+        elif self.dim == 3:
+            raise NotImplementedError("Sure I will do it , like, really soon")
+        else:
+            raise NotImplementedError("No one needs more than 3 dimensions")
 
 class InterpolationStencil(object):
     """ Empty super class for instance checking
