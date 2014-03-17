@@ -12,13 +12,13 @@ from pypint.plugins.multigrid.stencil import Stencil
 # TODO : Das Slicing muss gemacht werden, besser keine subclasse von ndarray
 
 class MultiGridLevel(object):
+    """ Empty super class, for instance checking
     """
+    def __init__(self):
+        raise NotImplementedError("I am not done yet sorry")
 
-    """
-    raise NotImplementedError("I am not done yet sorry")
 
-
-class MultiGridLevel1D(np.ndarray):
+class MultiGridLevel1D(np.ndarray, MultiGridLevel):
     """
     Summary
     -------

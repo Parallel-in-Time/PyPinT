@@ -294,8 +294,16 @@ class Stencil(object):
             raise NotImplementedError("this solver is unknown")
 
 
-class InterpolationStencil1D(object):
-    """1D Stencil
+class InterpolationStencil(object):
+    """ Empty super class for instance checking
+
+    """
+    def __init__(self):
+        pass
+
+
+class InterpolationStencil1D(InterpolationStencil):
+    """1D Stencil for Interpolation
 
     """
 
