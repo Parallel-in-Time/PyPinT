@@ -162,13 +162,9 @@ class MultiGridLevel1D(MultiGridLevel):
             fl = self._mg_problem.boundary_functions[0][0]
             fr = self._mg_problem.boundary_functions[0][1]
                 # left from border
-            l_f_b = np.linspace(-self.borders[0], -1, self.borders[0]) *\
-                self.h +\
-                self._mg_problem.geometry[0][0]
+            l_f_b = self.space_tensor[0:self.borders[0]]
             # right_from_border
-            r_f_b = np.linspace(1, self.borders[1], self.borders[1]) *\
-                self.h +\
-                self._mg_problem.geometry[0][1]
+            r_f_b = self.space_tensor[-self.borders[1]:]
             #  left side
             self.left[:] = fl(l_f_b)
             #  right side
