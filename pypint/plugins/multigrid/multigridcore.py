@@ -1,9 +1,12 @@
 # coding=utf-8
 import numpy as np
-from .multigridproblem import MultiGridProblem
-from .multigridlevelprovider import MultiGridLevelProvider
-from .multigridsolution import MultiGridSolution
+from pypint.plugins.multigrid.multigridproblem import MultiGridProblem
+from pypint.plugins.multigrid.multigridlevelprovider import MultiGridLevelProvider
+from pypint.plugins.multigrid.multigridsolution import MultiGridSolution
+from pypint.plugins.multigrid.level import MultiGridLevel1D
+from pypint.plugins.multigrid.multigrid_smoother import SplitSmoother, DirectSolverSmoother
 from pypint.utilities import assert_is_callable, assert_is_instance, assert_condition
+from pypint.plugins.multigrid.stencil import Stencil
 import networkx as nx
 
 class MultiGridControl(object):
@@ -80,6 +83,7 @@ class MultiGridControl(object):
             command = {"from_level": self.lvl_list[self.where_i_am],
                        "to_level": self.lvl_list[self.where_to_go],
                        "restriction": ""}
+
         else:
             command = {"from_level": self.lvl_list[self.where_i_am],
                        "to_level": self.lvl_list[self.where_to_go],
@@ -88,15 +92,23 @@ class MultiGridControl(object):
         self.where_i_were = self.where_i_am
         self.where_i_am = self.where_to_go
         self.decide_where_to_go()
-
+        self.history.append("Went from level " + str(self.where_i_were) +
+                            " to level " + str(self.where_i_am))
         return command
 
     def go_to_level(self, level):
         pass
 
-    def relax_with(self, smoother, ntimes):
-        pass
+    def relax(self, n_times, smoother=""):
+        """Gives the command to relax n_times
 
+        """
+        command = {"level": self.lvl_list[self.where_i_am],
+                   "smoother": smoother,
+                   "smooth_n_times": n_times}
+        self.history.append("Applied the smoother "
+                            + smoother + " " + str(n_times))
+        return command
 
 
 class ResidualErrorControl(MultiGridControl):
@@ -118,7 +130,11 @@ class ResidualErrorControl(MultiGridControl):
         super(ResidualErrorControl, self).__init__(args, kwargs)
 
     def _standard_residual_computation(self, prev_arr, act_arr):
+        """standard residual computation
+
+        """
         return np.sum(np.abs(prev_arr - act_arr))
+
 
 
 class MultiGridCore(object):
@@ -139,18 +155,18 @@ class MultiGridCore(object):
     the most important function is the run command
     """
 
-    def __init__(self, mgprob, mglprov, mgsolution, mgcontrol):
+    def __init__(self, mg_prob, mg_level_prov, mg_solution, mg_control):
         # Check types
-        assert_is_instance(mgprob, MultiGridProblem,
+        assert_is_instance(mg_prob, MultiGridProblem,
                            "not a proper Multigridproblem", self)
-        assert_is_instance(mglprov, MultiGridLevelProvider,
+        assert_is_instance(mg_level_prov, MultiGridLevelProvider,
                            "not a proper multigridlevelprovider", self)
-        assert_is_instance(mgsolution, MultiGridSolution,
+        assert_is_instance(mg_solution, MultiGridSolution,
                            "not a proper multigridsolution", self)
-        self.mgprob = mgprob
-        self.mglprov = mglprov
-        self.mgsolution = mgsolution
-        self.mgcontrol = mgcontrol
+        self.mg_prob = mg_prob
+        self.mg_level_prov = mg_level_prov
+        self.mg_solution = mg_solution
+        self.mg_control = mg_control
 
 
     def run(self, controlflow):
@@ -171,3 +187,69 @@ class MultiGridCore(object):
 
     def gauss_seidel_smoother(self):
         pass
+
+if __name__ == '__main__':
+    print("Lets solve, you guessed it, the heat equation")
+    # heat equation needs a stencil
+    laplace_stencil = Stencil(np.asarray([1, -2, 1]))
+    # test stencil to some extend
+    print("stencil.b:", laplace_stencil.b)
+
+    # geometry is a 1 dimensional line
+    geo = np.asarray([[0, 1]])
+    print(geo.shape)
+    # the boundary conditions, in this case dirichlet boundary conditions
+    boundary_type = ["dirichlet"]*2
+    left_f = lambda x: 100.0
+    right_f = lambda x: 110.0
+    boundary_functions = [[left_f, right_f]]
+    rhs_function = lambda x: 0.0
+    mg_problem = MultiGridProblem(laplace_stencil,
+                                  rhs_function,
+                                  boundary_functions=boundary_functions,
+                                  boundaries=boundary_type,
+                                  geometry=geo)
+    # test some of the methods of mg_problem
+    print("Mid of stencil method", mg_problem.mid_of_stencil(laplace_stencil))
+    print(mg_problem.construct_space_tensor(12))
+    print(mg_problem.act_grid_distances)
+
+    # they work properly at least for the 1d case
+    # lets define the different levels lets try 3
+    borders = np.asarray([3, 3])
+
+    top_level = MultiGridLevel1D(512, mg_problem=mg_problem,
+                                 max_borders=borders)
+
+    mid_level = MultiGridLevel1D(256, mg_problem=mg_problem,
+                                 max_borders=borders)
+
+    low_level = MultiGridLevel1D(32, mg_problem=mg_problem,
+                                 max_borders=borders)
+    # check if the distance between points is calculated right
+    print(top_level.h)
+    print(mid_level.h)
+    print(low_level.h)
+    print(*mg_problem.act_grid_distances)
+    # define the smoother from the split smoother class on each level,
+    # where the last level is solved directly
+    l_plus = np.asarray([0, -2, 0])
+    l_minus = np.asarray([1, 0, 1])
+    omega = 0.5
+    top_jacobi_smoother = SplitSmoother(l_plus / top_level.h / omega,
+                                        l_minus / top_level.h * (1 - 1 / omega),
+                                        top_level)
+    mid_jacobi_smoother = SplitSmoother(l_plus / mid_level.h / omega,
+                                        l_minus / mid_level.h * (1 - 1 / omega),
+                                        mid_level)
+    low_direct_smoother = DirectSolverSmoother(laplace_stencil, low_level)
+    # time to test the relaxation methods
+    low_level.rhs[:] = 0.0
+    low_level.pad()
+    print("arr:", low_level.arr)
+    laplace_stencil.modify_rhs(low_level)
+    print("rhs:", low_level.rhs)
+    # low_direct_smoother.relax()
+    # print(low_level.arr)
+    # low_level.pad()
+

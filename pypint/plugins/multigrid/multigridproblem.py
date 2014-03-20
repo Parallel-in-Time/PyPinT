@@ -19,7 +19,7 @@ class MultiGridProblem(object):
     Summary
     _______
     Contains every aspect of the Problem that has to be solved,
-    like A_h for each level. A_h=b
+    like the stencil from which on may derive A_h for each level. A_h=b
     """
     def __init__(self, stencil, function, stencil_center=None, **kwargs):
         # the Space tensor which is actually used
@@ -36,8 +36,8 @@ class MultiGridProblem(object):
         self._function = function
         self._stencil = stencil
         self._numeric_type = np.float
-        self._dimension = stencil.ndim
-        self._shape = stencil.shape
+        self._dimension = stencil.arr.ndim
+        self._shape = stencil.arr.shape
 
         if stencil_center is None:
             self._stencil_center = self.mid_of_stencil(stencil)
@@ -52,9 +52,9 @@ class MultiGridProblem(object):
         elif isinstance(kwargs["boundaries"], list):
             check = 0
             for bc in kwargs["boundaries"]:
-                if bc not in self.valid_boundary_conditions:
+                if bc in self.valid_boundary_conditions:
                     check += 1
-            if check == self._dimension:
+            if check == self._dimension*2:
                 self._boundaries = kwargs["boundaries"]
             else:
                 print('Boundary specifications are not valid,',
@@ -72,7 +72,7 @@ class MultiGridProblem(object):
             assert_condition(len(kwargs["boundary_functions"]) is self._dimension,
                              "Not enough function tupel", self)
             for ftpls in kwargs["boundary_functions"]:
-                if self._boundaries[check] is "dirichlet":
+                if ftpls is "dirichlet":
                     assert_condition(isinstance(ftpls, list),
                                      "Dirichlet function list not available",
                                      self)
@@ -90,7 +90,7 @@ class MultiGridProblem(object):
         elif isinstance(kwargs["geometry"], np.ndarray):
             assert_condition(len(kwargs["geometry"].shape) == 2,
                              "Numpy array has the wrong dimensions", self)
-            assert_condition(kwargs["geometry"].shape[1] == self._dimension and
+            assert_condition(kwargs["geometry"].shape[0] == self._dimension and
                              kwargs["geometry"].shape[1] == 2,
                              "Numpy array has a wrong shape", self)
             self._geometry = kwargs["geometry"]
@@ -140,10 +140,10 @@ class MultiGridProblem(object):
         -------
         Getter for the geometry
         """
-        return self._boundary_functions
+        return self._geometry
 
     def mid_of_stencil(self, stencil):
-        return np.floor(np.asarray(stencil.shape)*0.5)
+        return np.floor(np.asarray(stencil.arr.shape)*0.5)
 
     def construct_space_tensor(self, number_of_points_list, set_act = True):
         """
@@ -159,8 +159,8 @@ class MultiGridProblem(object):
 
         if isinstance(number_of_points_list, (int, float, complex)):
             npoints = int(number_of_points_list)
-            print("Your number " + number_of_points_list +
-                  " was modified to "+npoints)
+            print("Your number " + str(number_of_points_list) +
+                  " was modified to "+ str(npoints))
             assert_condition(npoints > max(self._shape),
                              "Not enough points for the stencil", self)
             npoints = np.asarray([npoints] * self._dimension)
@@ -177,19 +177,22 @@ class MultiGridProblem(object):
         self._act_npoints = npoints
         lspc = []
         for i in range(self._dimension):
-            lspc.append(np.linspace(self._geometry[1, i], self._geometry[2, i],
+            lspc.append(np.linspace(self._geometry[i, 0], self._geometry[i, 1],
                                     npoints[i]))
-
-        space_tensor = np.asarray(np.meshgrid(*lspc))
-
+        if self._dimension > 1:
+            space_tensor = np.asarray(np.meshgrid(*lspc))
+        else:
+            space_tensor = np.linspace(self._geometry[0, 0],
+                                       self._geometry[0, 1],
+                                       npoints)
         if set_act:
-            self._act_space_tensor = self.space_tensor
+            self._act_space_tensor = space_tensor
             self._act_grid_distances = []
             zero_point = tuple([0]*self._dimension)
             for i in range(self._dimension):
                 diff_point = tuple([0]*i+[1]+[0]*(self._dimension - i - 1))
-                self._act_grid_distances.append(space_tensor[zero_point]
-                                                - space_tensor[diff_point])
+                self._act_grid_distances.append(- space_tensor[zero_point]
+                                                + space_tensor[diff_point])
             self._act_grid_distances = np.asarray(self._act_grid_distances)
         return space_tensor
 

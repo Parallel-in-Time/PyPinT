@@ -118,7 +118,7 @@ class MultiGridLevelProvider(object):
         self.ipl_dict = ipl_dict
         self.rst_dict = rst_dict
 
-        # the restriction dict has the following structure
+                # one has also
 
 
 
@@ -140,6 +140,7 @@ class MultiGridLevelProvider(object):
                         to_level = name of the coarser level
         padding:        level = level or name of the level
 
+        communicate_residual :
         Note that each smoother object is bounded to a certain level,
         hence it is possible to use different smoothers on the same level,
         they have just to be in the smth_dict.
@@ -152,17 +153,28 @@ class MultiGridLevelProvider(object):
             # smooth
             self.smth_dict[kwargs["smoother"]].relax(kwargs["smooth_n_times"])
         elif kwargs.get("interpolation"):
-            arr_in = self.levels[kwargs["from_level"]]
-            arr_out = self.levels[kwargs["to_level"]]
+            # at this point one wants to take the correction
+            # from the previous level and improve the current level
+            arr_in = self.levels[kwargs["from_level"]].arr
+            arr_tmp = self.levels[kwargs["to_level"]].rhs
             self.ipl_dict[(kwargs["from_level"],
                            kwargs["to_level"],
-                           kwargs["restriction"])].eval(arr_in, arr_out)
+                           kwargs["restriction"])].eval(arr_in, arr_tmp)
+            self.levels[kwargs["to_level"]].mid += arr_tmp
         elif kwargs.get("restriction"):
-            arr_in = self.levels[kwargs["from_level"]]
-            arr_out = self.levels[kwargs["to_level"]]
+            # at this point the residual is computed and restricted to the
+            # rhs of the next level.
+            # arr_in is the residual of the current level
+            current_lvl = self.levels[kwargs["from_level"]]
+            current_stencil = current_lvl.mg_problem.stencil
+            arr_in = current_lvl.rhs - \
+                     current_stencil.eval_convolve(current_lvl.arr)
+            arr_out = self.levels[kwargs["to_level"]].rhs
             self.rst_dict[(kwargs["from_level"],
                            kwargs["to_level"],
                            kwargs["restriction"])].eval(arr_in, arr_out)
+            # set initial condition to zero
+            self.levels[kwargs["to_level"]].arr[:] = 0.0
         else:
             raise NotImplementedError("I got my finger stuck in the bottle, "
                                       "the instructions were unclear")

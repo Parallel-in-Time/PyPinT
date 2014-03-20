@@ -18,7 +18,7 @@ class MultiGridLevel(object):
         raise NotImplementedError("I am not done yet sorry")
 
 
-class MultiGridLevel1D(np.ndarray, MultiGridLevel):
+class MultiGridLevel1D(MultiGridLevel):
     """
     Summary
     -------
@@ -31,9 +31,8 @@ class MultiGridLevel1D(np.ndarray, MultiGridLevel):
     --------
 
     """
-    def __new__(cls, shape, mg_problem=None, max_borders=None,
-                dtype=float, buffer=None, offset=0,
-                strides=None, order=None):
+    def __init__(self, shape, mg_problem=None, max_borders=None,
+                dtype=float):
         """
         Summary
         -------
@@ -48,11 +47,10 @@ class MultiGridLevel1D(np.ndarray, MultiGridLevel):
                 forward_shape = shape
             else:
                 raise ValueError("Please provide an ndarray with the size of 2")
-            obj = np.ndarray.__new__(cls, forward_shape, dtype, buffer, offset,
-                                     strides, order)
+            self.arr = np.zeros(forward_shape, dtype=dtype)
             if isinstance(mg_problem, MultiGridProblem) \
                     and mg_problem.dimension == 1:
-                obj._mg_problem = mg_problem
+                self._mg_problem = mg_problem
             else:
                 raise ValueError("Please provide a MultiGridProblem")
         elif isinstance(shape, MultiGridLevel1D):
@@ -64,17 +62,15 @@ class MultiGridLevel1D(np.ndarray, MultiGridLevel):
                 max_borders = shape.borders
                 forward_shape = forward_shape + max_borders[0] + max_borders[1]
 
-            obj = np.ndarray.__new__(cls, forward_shape, shape.dtype,
-                                     buffer, offset,
-                                     shape.strides, order)
+            self.arr = np.zeros(forward_shape, dtype=dtype)
 
-            obj[max_borders[0]:-max_borders[1]] = shape.mid
+            self.arr[max_borders[0]:-max_borders[1]] = shape.mid
 
             if isinstance(mg_problem, MultiGridProblem) \
                     and mg_problem.dimension == 1:
-                obj._mg_problem = mg_problem
+                self._mg_problem = mg_problem
             else:
-                obj._mg_problem = shape.mg_problem
+                self._mg_problem = shape.mg_problem
         elif isinstance(shape, np.ndarray):
             # in this case new memory has to be wasted because we have to
             # embed this array into a bigger one
@@ -88,105 +84,39 @@ class MultiGridLevel1D(np.ndarray, MultiGridLevel):
             else:
                 raise ValueError("Please provide an ndarray with the size of 2")
 
-            obj = np.ndarray.__new__(cls, forward_shape, shape.dtype,
-                                     buffer, offset,
-                                     strides, order)
-            obj[max_borders[0]:-max_borders[1]] = shape
+            self.arr = np.zeros(forward_shape, dtype=dtype)
+            self.arr[max_borders[0]:-max_borders[1]] = shape
 
             if isinstance(mg_problem, MultiGridProblem) \
                     and mg_problem.dimension == 1:
-                obj._mg_problem = mg_problem
+                self._mg_problem = mg_problem
             else:
                 raise ValueError("Please provide a MultiGridProblem")
 
         else:
             raise TypeError("shape is in no shape")
 
-        obj.borders = max_borders
+        self.borders = max_borders
         # gives view to the padded regions and the middle
         # here it is important to use __array__, because
         # the different parts are just ndarrays and not another MultiGridLevel1D objects
-        obj.left = obj.__array__()[:obj.borders[0]]
-        obj.right = obj.__array__()[-obj.borders[1]:]
-        obj.mid = obj.__array__()[obj.borders[0]:-obj.borders[1]]
-        obj.arr = obj.__array__()
-        return obj
-
+        self.left = self.arr.__array__()[:self.borders[0]]
+        self.right = self.arr.__array__()[-self.borders[1]:]
+        self.mid = self.arr.__array__()[self.borders[0]:-self.borders[1]]
+        self.rhs = np.copy(self.mid)
+        self._mg_problem.construct_space_tensor(self.mid.size)
+        self.h = self._mg_problem.act_grid_distances[0]
+        self._mid_points = self.mid.size
+        self.dim = 1
     # def __init__(self, obj):
     #     self = np.ndarray(obj)
     #     return self
 
-    def __array_finalize__(self, obj):
-        """
-        Summary
-        -------
-        This function is called, everytime a new ndarray is constructed by
-        one of the  following methods
-            1. direct constructor call
-            2. view casting , e.g. slicing
-            3. or a creation from template
-        """
-        # this is a constructer call
-        if obj is None:
-            return
-        # general case
-        self._mg_problem = getattr(obj, '_mg_problem', None)
-        self.borders = getattr(obj, 'borders', None)
-        self.left = getattr(obj, 'left', None)
-        self.mid = getattr(obj, 'mid', None)
-        self.right = getattr(obj, 'right', None)
-        # case of sclicing
-        # if isinstance(obj, MultiGridLevel1D):
-        #     print("obj is MultiGridLevel1D")
-        #     # print("Object", obj)
-        #     # print("Self", type(self.__array__()))
-        #     # print(type(arr))
-        #     # print(arr)
-        #     # self.borders = getattr(obj, 'borders', None)
-        #     # self._mg_problem = getattr(obj, '_mg_problem', None)
-        #     # self.adjust_references()
-        #     # slicing returns simple nd array the level1d properties vanish
-        #     arr = self.__array__()
-        #     self = np.zeros(arr.size + obj.borders[0] + obj.borders[1])
-        #
-        #     self.borders = getattr(obj, 'borders', None)
-        #     self.left = self.__array__()[:self.borders[0]]
-        #     self.right = self.__array__()[-self.borders[1]:]
-        #     self.mid = self.__array__()[self.borders[0]:-self.borders[1]]
-        #     self.mid[:] = arr
-        #     print("borders:")
-        #     print(self.borders)
-        #     print("left:")
-        #     print(self.left)
-        #     print("mid:")
-        #     print(self.mid)
-        #     print("right:")
-        #     print(self.right)
-        #     print("self:")
-        #     print(self)
-
     def adjust_references(self):
-        self.left = self.__array__()[:self.borders[0]]
-        self.right = self.__array__()[-self.borders[1]:]
-        self.mid = self.__array__()[self.borders[0]:-self.borders[1]]
+        self.left = self.arr.__array__()[:self.borders[0]]
+        self.right = self.arr.__array__()[-self.borders[1]:]
+        self.mid = self.arr.__array__()[self.borders[0]:-self.borders[1]]
 
-    def __array_prepare__(self, in_arr, context=None):
-        """
-        Summary
-        -------
-        called before a ufunc
-        """
-
-        return np.ndarray.__array_prepare__(self, in_arr[:], context)
-
-    def __array_wrap__(self, out_arr, context=None):
-        """
-        Summary
-        -------
-        called after a ufunc
-        """
-        self.embed(out_arr)
-        return np.ndarray.__array_wrap__(self, self.flatten(), context)
 
     @property
     def mg_problem(self):
@@ -227,11 +157,11 @@ class MultiGridLevel1D(np.ndarray, MultiGridLevel):
             fr = self._mg_problem.boundary_functions[0][1]
                 # left from border
             l_f_b = np.linspace(-self.borders[0], -1, self.borders[0]) *\
-                self._mg_problem.act_grid_distances[0] +\
+                self.h +\
                 self._mg_problem.geometry[0][0]
             # right_from_border
             r_f_b = np.linspace(1, self.borders[1], self.borders[1]) *\
-                self._mg_problem.act_grid_distances[0] +\
+                self.h +\
                 self._mg_problem.geometry[0][1]
             #  left side
             self.left[:] = fl(l_f_b)
@@ -246,8 +176,8 @@ class MultiGridLevel1D(np.ndarray, MultiGridLevel):
             l = self.borders[0]-stencil.b[0][0]
             r = -(self.borders[1]-stencil.b[0][1])
         else:
-            l = self.borders[0]-stencil[0]
-            r = -(self.borders[1]-stencil[1])
+            l = self.borders[0]-stencil[0][0]
+            r = -(self.borders[1]-stencil[0][1])
 
         return self.arr[l:r]
 

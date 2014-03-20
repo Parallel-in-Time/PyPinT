@@ -21,13 +21,14 @@ class Stencil(object):
     def __init__(self, arr, center=None, **kwargs):
         assert_is_instance(arr, np.ndarray, "the array is not a numpy array")
         if center is None:
-            self.center = np.floor(np.asarray(arr.shape)*0.5)
+            self.center = np.array(np.floor(np.asarray(arr.shape)*0.5),
+                                   dtype=np.int)
         else:
             assert_is_instance(center, np.ndarray,
                                "the center is not a np array")
             assert_condition(arr.ndim == center.size, ValueError,
                              "center does not match with stencil array")
-            self.center = center
+            self.center = np.array(center, dtype=np.int)
         self.arr = arr
         self.dim = arr.ndim
 
@@ -37,6 +38,7 @@ class Stencil(object):
             left = arr.shape[i] - self.center[i] - 1
             right = arr.shape[i] - left - 1
             self.b[self.dim - i - 1] = [left, right]
+        self.b = np.asarray(self.b)
         # check if a grid is given
         self._grid = None
 
@@ -119,7 +121,7 @@ class Stencil(object):
         if grid is None:
             solver = spla.factorized(self.sp_matrix)
         else:
-            sp_matrix = self.to_sparse_matrix(grid)
+            sp_matrix = self.to_sparse_matrix(grid, "csc")
             solver = spla.factorized(sp_matrix)
         return solver
 
@@ -301,23 +303,30 @@ class Stencil(object):
         else:
             raise NotImplementedError("this solver is unknown")
 
-    def modify_rhs(self, u, rhs):
+    def modify_rhs(self, level):
         """ Modifies rhs
 
         Parameters
         ----------
-        u : ndarray
-            contains the ghostcells
-        rhs : ndarray
-            rhs which has to be modified
+        level: np.ndarray
         """
+        u = level.evaluable_view(self)
+        rhs = level.rhs
+        print("here from modify your right hand side:")
+        print("u", u)
+        print("rhs", rhs)
 
         if self.dim == 1:
-            rhs[0:self.center] -= np.dot(self.arr[0:self.center],
-                                         u[0:self.center])
-            til = self.arr.size - self.center
-            rhs[:-til] -= np.dot(self.arr[:-til],
-                                 u[:-til])
+            # left side
+            for i in range(self.center[0]):
+                rhs[i] -= np.dot(self.arr[i:self.center[0]],
+                                 u[0:self.center[0]-i])
+            # the same for the right side
+            til = self.arr.size - self.center[0] - 1
+            print(til)
+            for i in range(til):
+                rhs[-til] -= np.dot(self.arr[-til + i:], u[-til: u.size - i])
+
         elif self.dim == 2:
             raise NotImplementedError("Not done yet")
         elif self.dim == 3:
@@ -394,6 +403,7 @@ class InterpolationStencil1D(InterpolationStencil):
             j = j+1
 
 
+
 class RestrictionStencil(object):
     """Restriction stencil class
 
@@ -401,9 +411,10 @@ class RestrictionStencil(object):
     def __init__(self, restriction_stencil, decrease_in_points=None):
         assert_is_instance(restriction_stencil, Stencil, "Not an stencil")
         self.rst_stencil = restriction_stencil
+
         if decrease_in_points is None:
             self.dip = np.asarray(self.rst_stencil.arr.shape) - 1
-        elif isinstance(decrease_in_points, np.ndarray) and\
+        elif isinstance(decrease_in_points, np.ndarray) and \
                         decrease_in_points.ndim == self.rst_stencil.ndim:
             self.dip = decrease_in_points
         else:
@@ -415,20 +426,22 @@ class RestrictionStencil(object):
         elif self.dim == 2:
             self.eval = self.evalA_2D
         elif self.dim == 3:
-            self.eval = self.evalA_2D
+            self.eval = self.evalA_3D
         else:
             raise NotImplementedError("More than 3 dimensions " +
                                       "are not implemented")
 
     def evalA_1D(self, array_in, array_out):
-        array_out = sig.convolve(array_in, self.rst_stencil)[::self.dip[0]]
+        array_out[:] = sig.convolve(array_in, self.rst_stencil)[::self.dip[0]]
 
     def evalA_2D(self, array_in, array_out):
-        array_out = \
+        array_out[:] = \
             sig.convolve(array_in, self.rst_stencil)[::self.dip[0], ::self.dip[1]]
 
     def evalA_3D(self, array_in, array_out):
-        array_out = \
+        array_out[:] = \
             sig.convolve(array_in, self.rst_stencil)[::self.dip[0], ::self.dip[1], ::self.dip[2]]
 
 # TODO: a more effective evaluation strategy is needed
+#       for example by writing a rst_stencil to sparse matrix function,
+#       assumable the best way. And a great exercise
