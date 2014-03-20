@@ -75,3 +75,6 @@ class Message(object):
     @flag.deleter
     def flag(self):
         self._flag = Message.SolverFlag.none
+
+    def __str__(self):
+        return "Message(value=%s, time_point=%s, flag=%s)" % (self.value, self.time_point, self.flag)

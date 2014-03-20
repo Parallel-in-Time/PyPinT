@@ -6,7 +6,7 @@
 import inspect
 
 
-def func_name(obj=None):
+def func_name(obj=None, *args, **kwargs):
     """Formats the calling functions name.
 
     Formats the calling functions name in the format ``'ClassName.FunctionName(): '``.
@@ -31,8 +31,19 @@ def func_name(obj=None):
     >>> my_obj.my_func()
     MyClass.my_func(): Hello World!
     """
-    return "{:s}.{:s}(): "\
-           .format(checking_obj_name(obj), inspect.stack()[1][3])
+    _params = ''
+    if len(args) > 0:
+        _params += ', '.join(args)
+        if len(kwargs) > 0:
+            _params += ', '
+    if len(kwargs) > 0:
+        _c = 0
+        for _k in kwargs:
+            if _c > 0:
+                _params += ', '
+            _params += str(_k) + '=' + str(kwargs[_k])
+            _c += 1
+    return "%s.%s(%s): " % (checking_obj_name(obj), inspect.stack()[1][3], _params)
 
 
 def checking_obj_name(obj=None):

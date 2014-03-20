@@ -3,7 +3,8 @@
 .. moduleauthor:: Torbjörn Klatt <t.klatt@fz-juelich.de>
 """
 from pypint.communicators.i_communication_provider import ICommunicationProvider
-from pypint.utilities import assert_condition, assert_is_key, assert_is_instance
+from pypint.utilities import assert_condition, assert_is_key, assert_is_instance, func_name
+from pypint import LOG
 
 
 class ForwardSendingMessaging(ICommunicationProvider):
@@ -23,6 +24,7 @@ class ForwardSendingMessaging(ICommunicationProvider):
             for allowed arguments
         """
         super(ForwardSendingMessaging, self).send(*args, **kwargs)
+        LOG.debug(func_name(self, *args, **kwargs))
         self._next.write_buffer(*args, **kwargs)
 
     def receive(self, *args, **kwargs):
@@ -33,6 +35,7 @@ class ForwardSendingMessaging(ICommunicationProvider):
         message : :py:class:`.Message`
         """
         super(ForwardSendingMessaging, self).receive(*args, **kwargs)
+        LOG.debug(func_name(self) + str(self.buffer))
         return self.buffer
 
     def link_solvers(self, *args, **kwargs):
@@ -52,7 +55,7 @@ class ForwardSendingMessaging(ICommunicationProvider):
         """
         super(ForwardSendingMessaging, self).link_solvers(*args, **kwargs)
         assert_condition(len(kwargs) == 2,
-                         ValueError, "Exactly two solver processes must be given: NOT %d" % len(kwargs),
+                         ValueError, "Exactly two communicators must be given: NOT %d" % len(kwargs),
                          self)
 
         assert_is_key(kwargs, 'previous', "Previous solver must be given.", self)

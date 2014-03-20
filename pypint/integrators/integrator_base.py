@@ -56,12 +56,13 @@ class IntegratorBase(object):
         >>> options["num_nodes"] = 4
         >>> integrator.init(**options)
         """
+
         assert_is_instance(nodes_type, INodes,
-                           "Given nodes type is not a valid type: {:s}".format(type(nodes_type)), self)
+                           "Given nodes type is not a valid type: %s" % type(nodes_type),
+                           self)
         if isinstance(weights_function, dict):
             assert_condition("class" in weights_function or isinstance(weights_function["class"], IWeightFunction),
-                             ValueError, "Given weight function is not a valid type: {:s}"
-                                         .format(type(weights_function)),
+                             ValueError, "Given weight function is not a valid type: %s" % type(weights_function),
                              self)
             self._weights_function = weights_function["class"]
             # copy() is necessary as dictionaries are passed by reference
@@ -70,11 +71,13 @@ class IntegratorBase(object):
             self._weights_function.init(**_weight_function_options)
         else:
             assert_is_instance(weights_function, IWeightFunction,
-                               "Given weight function is not a valid type: {:s}".format(type(weights_function)), self)
+                               "Given weight function is not a valid type: %s" % type(weights_function),
+                               self)
             self._weights_function = weights_function
             self._weights_function.init()
         assert_is_instance(num_nodes, int,
-                           "Number of nodes need to be an integer (not {:s}).".format(type(num_nodes)), self)
+                           "Number of nodes need to be an integer: NOT %s" % type(num_nodes),
+                           self)
         self._nodes = nodes_type
         self._nodes.init(num_nodes)
         self.transform_interval(interval)
