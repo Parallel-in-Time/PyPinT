@@ -249,7 +249,7 @@ class Sdc(IIterativeTimeSolver):
         --------
         :py:meth:`.IIterativeTimeSolver.run` : overridden method
         """
-        super(Sdc, self).run(core)
+        super(Sdc, self).run(core, **kwargs)
 
         # start logging output
         self._print_header()
@@ -272,9 +272,7 @@ class Sdc(IIterativeTimeSolver):
             # initialize a new integration state
             self.state.proceed()
 
-            self._output(['time step', 'start', 'end', 'delta'],
-                         ['str', 'str', 'str', 'str'],
-                         padding=10, debug=True)
+            self._print_iteration(self.state.current_iteration_index + 1)
 
             # iterate on time steps
             _iter_timer.start()
@@ -291,24 +289,19 @@ class Sdc(IIterativeTimeSolver):
             # log this iteration's summary
             if self.state.is_first_iteration:
                 # on first iteration we do not have comparison values
-                self._output([1, None, _iter_timer.past()],
-                             ['int', None, 'float'],
-                             padding=4)
+                self._print_iteration_end(None, None, None, _iter_timer.past())
             else:
                 if problem_has_exact_solution(self.problem, self) and not self.state.is_first_iteration:
                     # we could compute the correct error of our current solution
-                    self._output([self.state.current_iteration_index + 1,
-                                  self.state.solution.solution_reduction(self.state.current_iteration_index),
-                                  _iter_timer.past(), self.state.current_step.solution.residual,
-                                  self.state.solution.error_reduction(self.state.current_iteration_index)],
-                                 ['int', 'exp', 'float', 'exp', 'exp'],
-                                 padding=4)
+                    self._print_iteration_end(self.state.solution.solution_reduction(self.state.current_iteration_index),
+                                              self.state.solution.error_reduction(self.state.current_iteration_index),
+                                              self.state.current_step.solution.residual,
+                                              _iter_timer.past())
                 else:
-                    self._output([self.state.current_iteration_index + 1,
-                                  self.state.solution.solution_reduction(self.state.current_iteration_index),
-                                  _iter_timer.past(), self.state.current_step.solution.residual],
-                                 ['int', 'exp', 'float', 'exp'],
-                                 padding=4)
+                    self._print_iteration_end(self.state.solution.solution_reduction(self.state.current_iteration_index),
+                                              None,
+                                              self.state.current_step.solution.residual,
+                                              _iter_timer.past())
 
             # finalize this iteration (i.e. TrajectorySolutionData.finalize())
             self.state.current_iteration.finalize()
@@ -374,27 +367,17 @@ class Sdc(IIterativeTimeSolver):
             self.state.current_time_step[_step].solution.time_point = \
                 self.__time_points['nodes'][self.state.current_time_step_index][_step + 1]
 
-        self._output([self.state.current_time_step_index + 1,
-                      self.state.current_time_step.initial.time_point,
-                      self.state.current_time_step.last.time_point,
-                      self.state.current_time_step.delta_time_step],
-                     ['int', 'float', 'float', 'float'],
-                     padding=10, debug=True)
-
-        # step result table header
-        if problem_has_exact_solution(self.problem, self):
-            self._output(['step', 't_0', 't_1', '\phi(t_1)', 'resid', 'err'],
-                         ['str', 'str', 'str', 'str', 'str', 'str'],
-                         padding=14, debug=True)
-        else:
-            self._output(['step', 't_0', 't_1', '\phi(t_1)', 'resid'],
-                         ['str', 'str', 'str', 'str', 'str'],
-                         padding=14, debug=True)
+        self._print_time_step(self.state.current_time_step_index + 1,
+                              self.state.current_time_step.initial.time_point,
+                              self.state.current_time_step.last.time_point,
+                              self.state.current_time_step.delta_time_step)
 
         for _current_step in self.state.current_time_step:
             self._sdc_step()
             if self.state.current_step_index < len(self.state.current_time_step) - 1:
                 self.state.current_time_step.proceed()
+
+        self._print_time_step_end()
 
         # finalizing the current time step (i.e. TrajectorySolutionData.finalize)
         self.state.current_time_step.finalize()
@@ -478,80 +461,115 @@ class Sdc(IIterativeTimeSolver):
         _previous_time = self.state.previous_step.time_point
 
         if problem_has_exact_solution(self.problem, self):
-            self._output([self.state.current_step_index + 1,
-                          _previous_time,
-                          self.state.current_step.time_point,
-                          supremum_norm(self.state.current_step.solution.value),
-                          self.state.current_step.solution.residual,
-                          self.state.current_step.solution.error],
-                         ['int', 'float', 'float', 'float', 'exp', 'exp'],
-                         padding=14, debug=True)
+            self._print_step(self.state.current_step_index + 2,
+                             _previous_time,
+                             self.state.current_step.time_point,
+                             supremum_norm(self.state.current_step.solution.value),
+                             self.state.current_step.solution.residual,
+                             self.state.current_step.solution.error)
         else:
-            self._output([self.state.current_step_index,
-                          _previous_time,
-                          self.state.current_step.time_point,
-                          self.state.current_step.solution.residual],
-                         ['int', 'float', 'float', 'exp'],
-                         padding=14, debug=True)
+            self._print_step(self.state.current_step_index + 2,
+                             _previous_time,
+                             self.state.current_step.time_point,
+                             supremum_norm(self.state.current_step.solution.value),
+                             self.state.current_step.solution.residual,
+                             None)
 
         # finalize this current step (i.e. StepSolutionData.finalize())
         self.state.current_step.done()
 
     def _print_header(self):
         LOG.info("> " + '#' * 78)
-        LOG.info("{:#<80}".format("> START: {:s} SDC ".format(self._core.name)))
-        LOG.info(">   Interval:               [{:.3f}, {:.3f}]".format(self.problem.time_start, self.problem.time_end))
+        LOG.info("{:#<80}".format("> START: {:s} ".format(self._core.name)))
         LOG.info(">   Time Steps:             {:d}".format(self.num_time_steps))
         LOG.info(">   Integration Nodes:      {:d}".format(self.num_nodes))
         LOG.info(">   Termination Conditions: {:s}".format(self.threshold.print_conditions()))
         LOG.info(">   Problem: {:s}".format(self.problem))
-        LOG.info("> " + '-' * 78)
 
-        # itartion result table header
-        if problem_has_exact_solution(self.problem, self):
-            self._output(['iter', 'rel red', 'time', 'resid', 'err red'],
-                         ['str', 'str', 'str', 'str', 'str'],
-                         padding=4)
-        else:
-            self._output(['iter', 'rel red', 'time', 'resid'],
-                         ['str', 'str', 'str', 'str'],
-                         padding=4)
+    def _print_interval_header(self):
+        LOG.info("> " + '-' * 78)
+        LOG.info(">   Interval:               [{:.3f}, {:.3f}]".format(self.state.initial.time_point,
+                                                                       self.state.initial.time_point + self._dt))
+        self._print_output_tree_header()
+
+    def _print_output_tree_header(self):
+        LOG.info(">    iter")
+        LOG.info(">         \\")
+        LOG.info("!>          |- time    start     end        delta")
+        LOG.info("!>          |     \\")
+        LOG.info("!>          |      |- step    t_0      t_1       phi(t_1)   resid      err")
+        LOG.info("!>          |      \\_")
+        LOG.info(">          \\_   sol r.red    err r.red      resid       time")
+
+    def _print_iteration(self, iter):
+        _iter = self._output_format(iter, 'int', width=5)
+        LOG.info(">    %s" % _iter)
+        LOG.info(">         \\")
+
+    def _print_iteration_end(self, solred, errred, resid, time):
+        _solred = self._output_format(solred, 'exp')
+        _errred = self._output_format(errred, 'exp')
+        _resid = self._output_format(resid, 'exp')
+        _time = self._output_format(time, 'float', width=6.3)
+        LOG.info(">          \\_   %s    %s    %s    %s" % (_solred, _errred, _resid, _time))
+
+    def _print_time_step(self, time_step, start, end, delta):
+        _time_step = self._output_format(time_step, 'int', width=3)
+        _start = self._output_format(start, 'float', width=6.3)
+        _end = self._output_format(end, 'float', width=6.3)
+        _delta = self._output_format(delta, 'float', width=6.3)
+        LOG.info("!>          |- %s    %s    %s    %s" % (_time_step, _start, _end, _delta))
+        LOG.info("!>          |     \\")
+        self._print_step(1, None, self.state.current_time_step.initial.time_point,
+                         supremum_norm(self.state.current_time_step.initial.solution.value),
+                         None, None)
+
+    def _print_time_step_end(self):
+        LOG.info("!>          |      \\_")
+
+    def _print_step(self, step, t0, t1, phi, resid, err):
+        _step = self._output_format(step, 'int', width=2)
+        _t0 = self._output_format(t0, 'float', width=6.3)
+        _t1 = self._output_format(t1, 'float', width=6.3)
+        _phi = self._output_format(phi, 'float', width=6.3)
+        _resid = self._output_format(resid, 'exp')
+        _err = self._output_format(err, 'exp')
+        LOG.info("!>          |      |- %s    %s    %s    %s    %s    %s" % (_step, _t0, _t1, _phi, _resid, _err))
 
     def _print_footer(self):
         LOG.info("{:#<80}".format("> FINISHED: {:s} SDC ({:.3f} sec) ".format(self._core.name, self.timer.past())))
         LOG.info("> " + '#' * 78)
 
-    def _output(self, values, types, padding=0, debug=False):
-        assert_condition(len(values) == len(types), ValueError, "Number of values must equal number of types.", self)
-        _outstr = ' ' * padding
-
+    def _output_format(self, value, type, width=None):
         def _value_to_numeric(value):
             if isinstance(value, (np.ndarray, IDiagnosisValue)):
                 return supremum_norm(value)
             else:
                 return value
 
-        for i in range(0, len(values)):
-            if values[i] is None:
-                _outstr += ' ' * 10
+        if type and width is None:
+            if type == 'float':
+                width = 10.3
+            elif type == 'int':
+                width = 10
+            elif type == 'exp':
+                width = 9.2
             else:
-                if types[i] == 'float':
-                    _outstr += "{: 10.3f}".format(_value_to_numeric(values[i]))
-                elif types[i] == 'int':
-                    _outstr += "{: 10d}".format(int(_value_to_numeric(values[i])))
-                elif types[i] == 'exp':
-                    _outstr += "{: 10.2e}".format(_value_to_numeric(values[i]))
-                elif types[i] == 'str':
-                    _outstr += "{: >10s}".format(values[i])
-                else:
-                    raise ValueError(func_name(self) +
-                                     "Given type for value '{:s}' is invalid: {:s}"
-                                     .format(values[i], types[i]))
-            _outstr += "    "
-        if debug:
-            LOG.debug("!> {:s}".format(_outstr))
+                width = 10
+
+        if value is None:
+            _outstr = "{: ^{width}s}".format('na', width=int(width))
         else:
-            LOG.info("> {:s}".format(_outstr))
+            if type == 'float':
+                _outstr = "{: {width}f}".format(_value_to_numeric(value), width=width)
+            elif type == 'int':
+                _outstr = "{: {width}d}".format(_value_to_numeric(value), width=width)
+            elif type == 'exp':
+                _outstr = "{: {width}e}".format(_value_to_numeric(value), width=width)
+            else:
+                _outstr = "{: >{width}s}".format(value, width=width)
+
+        return _outstr
 
 
 __all__ = ['Sdc']

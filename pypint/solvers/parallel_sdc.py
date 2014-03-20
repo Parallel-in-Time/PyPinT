@@ -720,4 +720,5 @@ class ParallelSdc(IIterativeTimeSolver, IParallelSolver):
 
         return _outstr
 
+
 __all__ = ['Sdc']
