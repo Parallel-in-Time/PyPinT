@@ -39,6 +39,7 @@ class ExplicitSdcCore(SdcSolverCore):
                       "The problem is required as a proxy to the implicit space solver.",
                       self)
         _problem = kwargs['problem']
+        _prob_interval_width = _problem.time_end - _problem.time_start
 
         _previous_step_solution = state.previous_step.solution
         _previous_iteration_step_solution = self._previous_iteration_previous_step(state).solution
@@ -50,7 +51,7 @@ class ExplicitSdcCore(SdcSolverCore):
             (_previous_step_solution.value + state.current_step.delta_tau
              * (_problem.evaluate(state.current_step.time_point, _previous_step_solution.value)
                 - _problem.evaluate(state.current_step.time_point, _previous_iteration_step_solution.value))
-             + state.delta_interval * state.current_step.integral)
+             + _prob_interval_width * state.current_step.integral)
 
 
 __all__ = ['ExplicitSdcCore']
