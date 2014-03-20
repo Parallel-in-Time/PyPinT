@@ -122,6 +122,7 @@ class Stencil(object):
             solver = spla.factorized(self.sp_matrix)
         else:
             sp_matrix = self.to_sparse_matrix(grid, "csc")
+            print(sp_matrix.todense())
             solver = spla.factorized(sp_matrix)
         return solver
 

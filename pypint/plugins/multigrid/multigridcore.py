@@ -224,7 +224,7 @@ if __name__ == '__main__':
     mid_level = MultiGridLevel1D(256, mg_problem=mg_problem,
                                  max_borders=borders)
 
-    low_level = MultiGridLevel1D(32, mg_problem=mg_problem,
+    low_level = MultiGridLevel1D(64, mg_problem=mg_problem,
                                  max_borders=borders)
     # check if the distance between points is calculated right
     print(top_level.h)
@@ -244,12 +244,13 @@ if __name__ == '__main__':
                                         mid_level)
     low_direct_smoother = DirectSolverSmoother(laplace_stencil, low_level)
     # time to test the relaxation methods
+
     low_level.rhs[:] = 0.0
     low_level.pad()
     print("arr:", low_level.arr)
     laplace_stencil.modify_rhs(low_level)
     print("rhs:", low_level.rhs)
-    # low_direct_smoother.relax()
-    # print(low_level.arr)
-    # low_level.pad()
+    low_direct_smoother.relax()
+    print(low_level.arr)
+    low_level.pad()
 

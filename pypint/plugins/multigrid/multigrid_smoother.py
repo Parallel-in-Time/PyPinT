@@ -40,8 +40,8 @@ class DirectSolverSmoother(Smoother):
     def relax(self, n=1):
         """ Just solves it, and puts the solution into self.level.mid
         """
-        self.level.mid = self.solver(self.level.rhs)
-
+        self.level.mid.reshape(-1)[:] = self.solver(self.level.rhs)
+        # print("kakao:", self.level.mid)
 
 
 class SplitSmoother(Smoother):
