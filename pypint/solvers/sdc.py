@@ -200,7 +200,7 @@ class Sdc(IIterativeTimeSolver):
                 _deltas_n[_i + 1] = _nodes.nodes[_n + 1] - _nodes.nodes[_n]
         self._deltas['n'] = _deltas_n[1:].copy()
 
-    def run(self, core):
+    def run(self, core, **kwargs):
         """Applies SDC solver to the initialized problem setup.
 
         Solves the given problem with the explicit SDC algorithm.

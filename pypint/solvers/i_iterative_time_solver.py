@@ -41,7 +41,7 @@ class IIterativeTimeSolver(object):
         if "threshold" in kwargs and isinstance(kwargs["threshold"], ThresholdCheck):
             self.threshold = kwargs["threshold"]
 
-    def run(self, core):
+    def run(self, core, **kwargs):
         """Applies this solver.
 
         Parameters
