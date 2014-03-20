@@ -250,11 +250,12 @@ class StepSolutionData(object):
 
     def __str__(self):
         return "StepSolutionData(value={}, time_point={}, finalized={})"\
-                .format(self.value, self.time_point, self.finalized)
+            .format(self.value, self.time_point, self.finalized)
 
     def __copy__(self):
         copy = self.__class__.__new__(self.__class__)
         copy.__dict__.update(self.__dict__)
+        copy._finalized = False
         return copy
 
     def __deepcopy__(self, memo):
@@ -262,6 +263,7 @@ class StepSolutionData(object):
         memo[id(self)] = copy
         for item, value in self.__dict__.items():
             setattr(copy, item, deepcopy(value, memo))
+        copy._finalized = False
         return copy
 
     def __eq__(self, other):

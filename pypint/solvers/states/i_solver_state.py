@@ -10,6 +10,7 @@ import numpy as np
 from pypint.solutions.data_storage import StepSolutionData, TrajectorySolutionData
 from pypint.solutions import IterativeSolution
 from pypint.utilities import assert_is_key, assert_condition
+from pypint import LOG
 
 
 class IStepState(object):
@@ -72,6 +73,18 @@ class IStepState(object):
 
     def __str__(self):
         return "{}(solution={})".format(self.__class__.__name__, self.solution)
+
+    def __copy__(self):
+        copy = self.__class__.__new__(self.__class__)
+        copy.__dict__.update(self.__dict__)
+        return copy
+
+    def __deepcopy__(self, memo):
+        copy = self.__class__.__new__(self.__class__)
+        memo[id(self)] = copy
+        for item, value in self.__dict__.items():
+            setattr(copy, item, deepcopy(value, memo))
+        return copy
 
 
 class IStateIterator(object):
@@ -706,8 +719,8 @@ class ISolverState(IStateIterator):
         """
         self._add_iteration()
         self._current_index = len(self) - 1
-        self.current_iteration.initial = self.initial
-        self.current_iteration.first_time_step.initial = self.current_iteration.initial
+        self.current_iteration.initial = deepcopy(self.initial)
+        self.current_iteration.first_time_step.initial = deepcopy(self.current_iteration.initial)
 
     def finalize(self):
         """Finalizes the whole solver state.

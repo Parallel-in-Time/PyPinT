@@ -1,0 +1,71 @@
+@startuml
+
+actor Script
+participant Problem <<(P,pink)>>
+participant CP as "Solver-Communicator\nFactory Function"
+participant Cn as "Communicator n" <<(C,lightblue)>>
+participant Sn as "Solver" <<(S,lightgreen)>>
+
+note over Script
+    started parallel
+    with #T, #M, #N
+end note
+
+== Initialization ==
+
+Script -> Problem: call <b><color:red>P</color>.init</b>(iv, t0, t1)
+
+Script -> CP: call <b><color:blue>C</color>.init</b>(<b><color:red>P</color></b>, N, T, M)
+
+CP -> Cn: creates N Communicators <b><color:blue>Cn</color></b>
+activate Cn
+
+CP -> Sn: creates N Solvers <b><color:green>Sn</color></b>
+activate Sn
+
+Cn <--> Sn: three <b><color:green>Sx</color></b> (x={n-1, n, n+1})\n           linked via <color:blue><b>Cn</b></color>
+
+CP -> Script: return Solver <color:green><b>Sn</b></color> of process n
+
+== Computation ==
+
+Script -> Sn: call <b><color:green>Sn</color>.run</b>(Core)
+
+loop over work
+    Sn -> Cn: call <b><color:blue>Cn</color>.recv</b>()
+    Cn --> Sn: receive <b><color:orange>M</color></b>essage
+
+    group if <b><color:orange>M</color></b>.flag != failed\n   && <b><color:orange>M</color></b>.t == <b><color:green>Sn</color></b>.t0
+        note over Sn: continue with previous interval
+    else else new interval
+        note over Sn
+                    set new interval
+            <b><color:green>Sn</color></b>.I = [<b><color:orange>M</color></b>.t, <b><color:orange>M</color></b>.t+<b><color:green>Sn</color></b>.dt]
+            <b><color:green>Sn</color></b>.t1 = <b><color:green>Sn</color></b>.I[1]
+        end note
+    end
+
+    group if <b><color:green>Sn</color></b>.t1 <= <color:red><b>P</b></color>.t1
+        Sn -> Sn: call <b><color:green>Sn</color>.iterate</b>()
+        loop over time steps
+            Sn -> Sn: call <b><color:green>Sn</color>.time_step</b>()
+            loop over nodes
+                Sn -> Sn: call <b><color:green>Sn</color>.step</b>()
+            end
+        end
+
+        Sn -> Cn: call <b><color:blue>Cn</color>.send</b>(value, t1, flag)
+    else else no more work
+        note over Sn
+            break loop over work and exit
+        end note
+    end
+end
+
+== Termination ==
+
+Sn -> Script: return
+deactivate Sn
+deactivate Cn
+
+@enduml
