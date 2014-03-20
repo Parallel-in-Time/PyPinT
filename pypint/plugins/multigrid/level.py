@@ -104,8 +104,14 @@ class MultiGridLevel1D(MultiGridLevel):
         self.right = self.arr.__array__()[-self.borders[1]:]
         self.mid = self.arr.__array__()[self.borders[0]:-self.borders[1]]
         self.rhs = np.copy(self.mid)
-        self._mg_problem.construct_space_tensor(self.mid.size)
-        self.h = self._mg_problem.act_grid_distances[0]
+
+        # the first border points coincides with the geometrical border
+        # that is why self.mid.size+1 is used instead of self.mid.size - 1
+        self.h = (self._mg_problem.geometry[0][1]
+                  - self._mg_problem.geometry[0][0]) / (self.mid.size + 1)
+        start = self._mg_problem.geometry[0][0] - self.h * (max_borders[0] - 1)
+        stop = self._mg_problem.geometry[0][1] + self.h * (max_borders[1] - 1)
+        self.space_tensor = np.linspace(start, stop, self.arr.size)
         self._mid_points = self.mid.size
         self.dim = 1
     # def __init__(self, obj):

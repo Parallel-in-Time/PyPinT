@@ -193,6 +193,7 @@ if __name__ == '__main__':
     # heat equation needs a stencil
     laplace_stencil = Stencil(np.asarray([1, -2, 1]))
     # test stencil to some extend
+    print("===== Stencil tests =====")
     print("stencil.b:", laplace_stencil.b)
 
     # geometry is a 1 dimensional line
@@ -210,9 +211,12 @@ if __name__ == '__main__':
                                   boundaries=boundary_type,
                                   geometry=geo)
     # test some of the methods of mg_problem
+
     print("Mid of stencil method", mg_problem.mid_of_stencil(laplace_stencil))
-    print(mg_problem.construct_space_tensor(12))
-    print(mg_problem.act_grid_distances)
+    print("===== MultiGridProblemTest =====")
+    print("Constructed SpaceTensor", mg_problem.construct_space_tensor(12))
+    print("Checked if the grid distances are right",
+          mg_problem.act_grid_distances)
 
     # they work properly at least for the 1d case
     # lets define the different levels lets try 3
@@ -227,9 +231,13 @@ if __name__ == '__main__':
     low_level = MultiGridLevel1D(64, mg_problem=mg_problem,
                                  max_borders=borders)
     # check if the distance between points is calculated right
+    print("===== MultiGridLevel Test =====")
+    print("3 different GridDistances from top to low level:")
     print(top_level.h)
     print(mid_level.h)
     print(low_level.h)
+    print("the space_tensor of the last level")
+    print(low_level.space_tensor)
     print(*mg_problem.act_grid_distances)
     # define the smoother from the split smoother class on each level,
     # where the last level is solved directly
@@ -244,7 +252,7 @@ if __name__ == '__main__':
                                         mid_level)
     low_direct_smoother = DirectSolverSmoother(laplace_stencil, low_level)
     # time to test the relaxation methods
-
+    print("===== DirectSolverSmoother Test =====")
     low_level.rhs[:] = 0.0
     low_level.pad()
     print("arr:", low_level.arr)
@@ -253,4 +261,9 @@ if __name__ == '__main__':
     low_direct_smoother.relax()
     print(low_level.arr)
     low_level.pad()
+    # Lets test the SplitSmoother by using the jacobi smoother
+    # but for this case we need an initial guess
+
+    # mid_level.mid[:] =
+
 
