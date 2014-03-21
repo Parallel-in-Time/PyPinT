@@ -3,7 +3,6 @@
 .. moduleauthor: Torbjörn Klatt <t.klatt@fz-juelich.de>
 """
 from pypint.communicators.i_communication_provider import ICommunicationProvider
-from pypint.solvers.states.i_solver_state import ISolverState
 from pypint.utilities import assert_is_key, assert_is_instance
 
 
@@ -23,7 +22,7 @@ class IParallelSolver(object):
                            % kwargs['communicator'].__class__.__name__,
                            self)
         self._communicator = kwargs['communicator']
-        self._states = [ISolverState()]
+        self._states = []
 
     @property
     def comm(self):
