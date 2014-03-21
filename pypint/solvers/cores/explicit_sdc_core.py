@@ -39,19 +39,19 @@ class ExplicitSdcCore(SdcSolverCore):
                       "The problem is required as a proxy to the implicit space solver.",
                       self)
         _problem = kwargs['problem']
-        _prob_interval_width = _problem.time_end - _problem.time_start
 
         _previous_step_solution = state.previous_step.solution
-        _previous_iteration_step_solution = self._previous_iteration_previous_step(state).solution
+        _previous_iteration_previous_step_solution = self._previous_iteration_previous_step(state).solution
 
         # using step-wise formula
         # Formula:
         #   u_{m+1}^{k+1} = u_m^{k+1} + \Delta_\tau [ F(u_m^{k+1}) - F(u_m^k) ] + \Delta_t I_m^{m+1}(F(u^k))
+        # Note: \Delta_t is always 1.0 as it's part of the integral
         state.current_step.solution.value = \
             (_previous_step_solution.value + state.current_step.delta_tau
              * (_problem.evaluate(state.current_step.time_point, _previous_step_solution.value)
-                - _problem.evaluate(state.current_step.time_point, _previous_iteration_step_solution.value))
-             + _prob_interval_width * state.current_step.integral)
+                - _problem.evaluate(state.current_step.time_point, _previous_iteration_previous_step_solution.value))
+             + state.current_step.integral)
 
 
 __all__ = ['ExplicitSdcCore']
