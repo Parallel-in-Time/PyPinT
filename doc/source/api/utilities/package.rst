@@ -9,5 +9,6 @@ Utilities (:mod:`utilities`)
 
     assertions
     logging
+    sdc_solver_factory
     threshold_check
     tracing
