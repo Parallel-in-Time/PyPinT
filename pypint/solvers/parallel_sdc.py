@@ -5,6 +5,7 @@
 """
 from copy import deepcopy
 import warnings as warnings
+from collections import OrderedDict
 
 import numpy as np
 
@@ -21,6 +22,7 @@ from pypint.solvers.diagnosis.norms import supremum_norm
 from pypint.plugins.timers.timer_base import TimerBase
 from pypint.utilities.threshold_check import ThresholdCheck
 from pypint.utilities import assert_is_instance, assert_condition, assert_is_key, func_name
+from pypint.utilities.logging import *
 from pypint import LOG
 
 # General Notes on Implementation
@@ -44,7 +46,7 @@ class ParallelSdc(IIterativeTimeSolver, IParallelSolver):
 
     Default Values:
 
-        * :py:attr:`.ThresholdCheck.max_iterations`: 5
+        * :py:attr:`.ThresholdCheck.max_iterations`: 10
 
         * :py:attr:`.ThresholdCheck.min_reduction`: 1e-7
 
@@ -71,6 +73,8 @@ class ParallelSdc(IIterativeTimeSolver, IParallelSolver):
     --------
     :py:class:`.IIterativeTimeSolver` :
         implemented interface
+    :py:class:`.IParallelSolver` :
+        mixed-in interface
     """
     def __init__(self, **kwargs):
         super(ParallelSdc, self).__init__(**kwargs)
@@ -324,27 +328,37 @@ class ParallelSdc(IIterativeTimeSolver, IParallelSolver):
 
                         if _current_flag in \
                                 [Message.SolverFlag.converged, Message.SolverFlag.finished, Message.SolverFlag.failed]:
+                            _log_msgs = {'': OrderedDict()}
                             if self.state.last_iteration_index <= self.threshold.max_iterations:
-                                LOG.info("> Converged after {:d} iteration(s).".format(self.state.last_iteration_index + 1))
-                                LOG.info(">   {:s}".format(self.threshold.has_reached(human=True)))
-                                LOG.info(">   Final Residual: {:.3e}"
-                                         .format(supremum_norm(self.state.last_iteration.final_step.solution.residual)))
-                                LOG.info(">   Solution Reduction: {:.3e}"
-                                         .format(supremum_norm(self.state.solution.solution_reduction(self.state.last_iteration_index))))
+                                _group = 'Converged after %d iteration(s)' % (self.state.last_iteration_index + 1)
+                                _log_msgs[''][_group] = OrderedDict()
+                                _log_msgs[''][_group] = self.threshold.has_reached(log=True)
+                                _log_msgs[''][_group]['Final Residual'] = "{:.3e}"\
+                                    .format(supremum_norm(self.state.last_iteration.final_step.solution.residual))
+                                _log_msgs[''][_group]['Solution Reduction'] = "{:.3e}"\
+                                    .format(supremum_norm(self.state.solution
+                                                          .solution_reduction(self.state.last_iteration_index)))
                                 if problem_has_exact_solution(self.problem, self):
-                                    LOG.info(">   Error Reduction: {:.3e}"
-                                             .format(supremum_norm(self.state.solution.error_reduction(self.state.last_iteration_index))))
+                                    _log_msgs[''][_group]['Error Reduction'] = "{:.3e}"\
+                                        .format(supremum_norm(self.state.solution
+                                                              .error_reduction(self.state.last_iteration_index)))
                             else:
-                                warnings.warn("{} SDC: Did not converged: {:s}".format(self._core.name, self.problem))
-                                LOG.info("> FAILED: After maximum of {:d} iteration(s).".format(self.state.last_iteration_index + 1))
-                                LOG.info(">   Final Residual: {:.3e}"
-                                         .format(supremum_norm(self.state.last_iteration.final_step.solution.residual)))
-                                LOG.info(">   Solution Reduction: {:.3e}"
-                                         .format(supremum_norm(self.state.solution.solution_reduction(self.state.last_iteration_index))))
+                                warnings.warn("{}: Did not converged: {:s}".format(self._core.name, self.problem))
+                                _group = "FAILED: After maximum of {:d} iteration(s)"\
+                                         .format(self.state.last_iteration_index + 1)
+                                _log_msgs[''][_group] = OrderedDict()
+                                _log_msgs[''][_group]['Final Residual'] = "{:.3e}"\
+                                    .format(supremum_norm(self.state.last_iteration.final_step.solution.residual))
+                                _log_msgs[''][_group]['Solution Reduction'] = "{:.3e}"\
+                                    .format(supremum_norm(self.state.solution
+                                                          .solution_reduction(self.state.last_iteration_index)))
                                 if problem_has_exact_solution(self.problem, self):
-                                    LOG.info(">   Error Reduction: {:.3e}"
-                                             .format(supremum_norm(self.state.solution.error_reduction(self.state.last_iteration_index))))
-                                LOG.warn("{} SDC Failed: Maximum number iterations reached without convergence.".format(self._core.name))
+                                    _log_msgs[''][_group]['Error Reduction'] = "{:.3e}"\
+                                        .format(supremum_norm(self.state.solution
+                                                              .error_reduction(self.state.last_iteration_index)))
+                                LOG.warn("  {} Failed: Maximum number iterations reached without convergence."
+                                         .format(self._core.name))
+                            print_logging_message_tree(_log_msgs)
                     elif _previous_flag in [Message.SolverFlag.converged, Message.SolverFlag.finished]:
                         LOG.debug("Solver Finished.")
 
@@ -701,55 +715,64 @@ class ParallelSdc(IIterativeTimeSolver, IParallelSolver):
 
         # step gets finalized after computation of residual
 
+    def print_lines_for_log(self):
+        _lines = super(ParallelSdc, self).print_lines_for_log()
+        if 'Number Nodes per Time Step' not in _lines['Integrator']:
+            _lines['Integrator']['Number Nodes per Time Step'] = "%d" % self.__num_nodes
+        if 'Number Time Steps' not in _lines['Integrator']:
+            _lines['Integrator']['Number Time Steps'] = "%d" % self._num_time_steps
+        return _lines
+
     def _print_header(self):
-        LOG.info("> " + '#' * 78)
-        LOG.info("{:#<80}".format("> START: {:s} ".format(self._core.name)))
-        LOG.info(">   Time Steps:             {:d}".format(self.num_time_steps))
-        LOG.info(">   Integration Nodes:      {:d}".format(self.num_nodes))
-        LOG.info(">   Termination Conditions: {:s}".format(self.threshold.print_conditions()))
-        LOG.info(">   Problem:                {:s}".format(self.problem))
-        LOG.info(">   Classic SDC:            {}".format(self.classic))
+        # LOG.info("> " + '#' * 78)
+        # LOG.info("{:#<80}".format("> START: {:s} ".format(self._core.name)))
+        # LOG.info(">   Time Steps:             {:d}".format(self.num_time_steps))
+        # LOG.info(">   Integration Nodes:      {:d}".format(self.num_nodes))
+        # LOG.info(">   Termination Conditions: {:s}".format(self.threshold.print_conditions()))
+        # LOG.info(">   Problem:                {:s}".format(self.problem))
+        # LOG.info(">   Classic SDC:            {}".format(self.classic))
+        pass
 
     def _print_interval_header(self):
-        LOG.info("> " + '-' * 78)
-        LOG.info(">   Interval:               [{:.3f}, {:.3f}]".format(self.state.initial.time_point,
-                                                                       self.state.initial.time_point + self._dt))
+        LOG.info("%s%s" % (VERBOSITY_LVL1, SEPARATOR_LVL3))
+        LOG.info("{}  Interval: [{:.3f}, {:.3f}]"
+                 .format(VERBOSITY_LVL1, self.state.initial.time_point, self.state.initial.time_point + self._dt))
         self._print_output_tree_header()
 
     def _print_output_tree_header(self):
-        LOG.info(">    iter")
-        LOG.info(">         \\")
-        LOG.info("!>          |- time    start     end        delta")
-        LOG.info("!>          |     \\")
-        LOG.info("!>          |      |- step    t_0      t_1       phi(t_1)    resid       err")
-        LOG.info("!>          |      \\_")
-        LOG.info(">          \\_   sol r.red    err r.red      resid       time")
+        LOG.info("%s   iter" % VERBOSITY_LVL1)
+        LOG.info("%s        \\" % VERBOSITY_LVL2)
+        LOG.info("%s         |- time    start     end        delta" % VERBOSITY_LVL2)
+        LOG.info("%s         |     \\" % VERBOSITY_LVL3)
+        LOG.info("%s         |      |- step    t_0      t_1       phi(t_1)    resid       err" % VERBOSITY_LVL3)
+        LOG.info("%s         |      \\_" % VERBOSITY_LVL2)
+        LOG.info("%s         \\_   sol r.red    err r.red      resid       time" % VERBOSITY_LVL1)
 
     def _print_iteration(self, iter):
         _iter = self._output_format(iter, 'int', width=5)
-        LOG.info(">    %s" % _iter)
-        LOG.info(">         \\")
+        LOG.info("%s   %s" % (VERBOSITY_LVL1, _iter))
+        LOG.info("%s        \\" % VERBOSITY_LVL2)
 
     def _print_iteration_end(self, solred, errred, resid, time):
         _solred = self._output_format(solred, 'exp')
         _errred = self._output_format(errred, 'exp')
         _resid = self._output_format(resid, 'exp')
         _time = self._output_format(time, 'float', width=6.3)
-        LOG.info(">          \\_   %s    %s    %s    %s" % (_solred, _errred, _resid, _time))
+        LOG.info("%s         \\_   %s    %s    %s    %s" % (VERBOSITY_LVL1, _solred, _errred, _resid, _time))
 
     def _print_time_step(self, time_step, start, end, delta):
         _time_step = self._output_format(time_step, 'int', width=3)
         _start = self._output_format(start, 'float', width=6.3)
         _end = self._output_format(end, 'float', width=6.3)
         _delta = self._output_format(delta, 'float', width=6.3)
-        LOG.info("!>          |- %s    %s    %s    %s" % (_time_step, _start, _end, _delta))
-        LOG.info("!>          |     \\")
+        LOG.info("%s         |- %s    %s    %s    %s" % (VERBOSITY_LVL2, _time_step, _start, _end, _delta))
+        LOG.info("%s         |     \\" % VERBOSITY_LVL3)
         self._print_step(1, None, self.state.current_time_step.initial.time_point,
                          supremum_norm(self.state.current_time_step.initial.solution.value),
                          None, None)
 
     def _print_time_step_end(self):
-        LOG.info("!>          |      \\_")
+        LOG.info("%s         |      \\_" % VERBOSITY_LVL2)
 
     def _print_step(self, step, t0, t1, phi, resid, err):
         _step = self._output_format(step, 'int', width=2)
@@ -758,11 +781,12 @@ class ParallelSdc(IIterativeTimeSolver, IParallelSolver):
         _phi = self._output_format(phi, 'float', width=6.3)
         _resid = self._output_format(resid, 'exp')
         _err = self._output_format(err, 'exp')
-        LOG.info("!>          |      |- %s    %s    %s    %s    %s    %s" % (_step, _t0, _t1, _phi, _resid, _err))
+        LOG.info("%s         |      |- %s    %s    %s    %s    %s    %s" % (VERBOSITY_LVL3, _step, _t0, _t1, _phi, _resid, _err))
 
     def _print_footer(self):
-        LOG.info("{:#<80}".format("> FINISHED: {:s} ({:.3f} sec) ".format(self._core.name, self.timer.past())))
-        LOG.info("> " + '#' * 78)
+        # LOG.info("{:#<80}".format("> FINISHED: {:s} ({:.3f} sec) ".format(self._core.name, self.timer.past())))
+        # LOG.info("> " + '#' * 78)
+        pass
 
     def _output_format(self, value, type, width=None):
         def _value_to_numeric(value):
@@ -796,4 +820,4 @@ class ParallelSdc(IIterativeTimeSolver, IParallelSolver):
         return _outstr
 
 
-__all__ = ['Sdc']
+__all__ = ['ParallelSdc']
