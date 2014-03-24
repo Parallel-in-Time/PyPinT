@@ -4,6 +4,7 @@
 .. moduleauthor: Torbjörn Klatt <t.klatt@fz-juelich.de>
 """
 import warnings
+from collections import OrderedDict
 
 import numpy as np
 
@@ -249,6 +250,13 @@ class IProblem(object):
         spacial_dimension : :py:class:`int`
         """
         return self._dim
+
+    def print_lines_for_log(self):
+        _lines = OrderedDict()
+        if self._strings['rhs'] is not None:
+            _lines['Formula'] = 'u(t, \phi(t)) = %s' % self._strings["rhs"]
+        _lines['Interval'] = '[{:.3f}, {:.3f}]'.format(self.time_start, self.time_end)
+        return _lines
 
     def __str__(self):
         if self._strings["rhs"] is not None:

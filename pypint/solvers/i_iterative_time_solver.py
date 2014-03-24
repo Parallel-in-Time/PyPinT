@@ -132,6 +132,12 @@ class IIterativeTimeSolver(object):
         """
         return self._integrator
 
+    def print_lines_for_log(self):
+        _lines = {}
+        _lines['Integrator'] = self.integrator.print_lines_for_log()
+        _lines['Thresholds'] = self.threshold.print_lines_for_log()
+        return _lines
+
     def _print_header(self):
         pass
 

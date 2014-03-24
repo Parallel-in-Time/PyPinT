@@ -160,3 +160,8 @@ class PolynomialWeightFunction(IWeightFunction):
     def coefficients(self, coefficients):
         assert_is_instance(coefficients, np.ndarray, "Coefficients need to be a numpy.ndarray", self)
         self._coefficients = coefficients
+
+    def print_lines_for_log(self):
+        _lines = super(PolynomialWeightFunction, self).print_lines_for_log()
+        _lines['Coefficients'] = "{}".format(self.coefficients)
+        return _lines

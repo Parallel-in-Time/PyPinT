@@ -80,7 +80,7 @@ class INodes(object):
         self._interval = interval
         self._nodes = (self.nodes - _old_interval[0]) * (interval[1] - interval[0]) / \
                       (_old_interval[1] - _old_interval[0]) + interval[0]
-        assert_condition(self._nodes[0] == self._interval[0] and self._nodes[-1] == self._interval[1],
+        assert_condition(self._nodes[0] - self._interval[0] <= 1e-16 and self._nodes[-1] - self._interval[1] <= 1e-16,
                          RuntimeError, "Newly computed nodes do not match new interval: %s NOT IN %s"
                                        % (self._nodes, self._interval),
                          self)
@@ -143,6 +143,13 @@ class INodes(object):
     @num_nodes.setter
     def num_nodes(self, num_nodes):
         self._num_nodes = num_nodes
+
+    def print_lines_for_log(self):
+        _lines = {
+            'Type': self.__class__.__name__,
+            'Number Nodes': "%d" % self.num_nodes
+        }
+        return _lines
 
     def __copy__(self):
         copy = self.__class__.__new__(self.__class__)

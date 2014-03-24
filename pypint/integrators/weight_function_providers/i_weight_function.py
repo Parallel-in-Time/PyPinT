@@ -63,6 +63,12 @@ class IWeightFunction(object):
         """
         return self._weights
 
+    def print_lines_for_log(self):
+        _lines = {
+            'Type': self.__class__.__name__
+        }
+        return _lines
+
     def __copy__(self):
         copy = self.__class__.__new__(self.__class__)
         copy.__dict__.update(self.__dict__)

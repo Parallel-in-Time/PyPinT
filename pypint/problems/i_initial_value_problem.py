@@ -58,6 +58,11 @@ class IInitialValueProblem(IProblem):
                          self)
         self._initial_value = initial_value
 
+    def print_lines_for_log(self):
+        _lines = super(IInitialValueProblem, self).print_lines_for_log()
+        _lines['Initial Value'] = 'u({:.3f}) = {}'.format(self.time_start, self.initial_value)
+        return _lines
+
     def __str__(self):
         _out = super(IInitialValueProblem, self).__str__()
         _out += r", u({:.2f})={:s}".format(self.time_start, self.initial_value)
