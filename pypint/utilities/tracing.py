@@ -49,8 +49,12 @@ def func_name(obj=None, *args, **kwargs):
         return "%s(%s): " % (inspect.stack()[1][3], _params)
 
 
+def class_name(obj):
+    return obj.__class__.__name__
+
+
 def checking_obj_name(obj=None):
-    return obj.__class__.__name__ if obj is not None else "unknown"
+    return class_name(obj) if obj else "unknown"
 
 
-__all__ = ['func_name']
+__all__ = ['func_name', 'class_name']
