@@ -7,7 +7,7 @@ from copy import deepcopy
 
 import numpy as np
 
-from pypint.utilities import assert_is_instance, assert_condition
+from pypint.utilities import assert_is_instance, assert_condition, class_name
 
 
 class INodes(object):
@@ -150,7 +150,7 @@ class INodes(object):
 
     def print_lines_for_log(self):
         _lines = {
-            'Type': self.__class__.__name__,
+            'Type': class_name(self),
             'Number Nodes': "%d" % self.num_nodes
         }
         return _lines

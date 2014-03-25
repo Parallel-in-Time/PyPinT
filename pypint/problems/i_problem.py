@@ -9,7 +9,7 @@ from collections import OrderedDict
 import numpy as np
 
 from pypint.plugins.implicit_solvers.find_root import find_root
-from pypint.utilities import assert_is_callable, assert_is_instance, assert_is_in
+from pypint.utilities import assert_is_callable, assert_is_instance, assert_is_in, class_name
 from pypint.utilities.logging import LOG
 
 
@@ -253,7 +253,7 @@ class IProblem(object):
         if self._strings["rhs"] is not None:
             _outstr = r"u'(t,\phi(t))={:s}".format(self._strings["rhs"])
         else:
-            _outstr = r"{:s}".format(self.__class__.__name__)
+            _outstr = r"{:s}".format(class_name(self))
         _outstr += r", t \in [{:.2f}, {:.2f}]".format(self.time_start, self.time_end)
         return _outstr
 

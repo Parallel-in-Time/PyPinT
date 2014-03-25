@@ -5,7 +5,7 @@
 """
 from copy import deepcopy
 
-from pypint.utilities import assert_condition
+from pypint.utilities import assert_condition, class_name
 
 
 class ISolution(object):
@@ -97,7 +97,7 @@ class ISolution(object):
         return copy
 
     def __str__(self):
-        return self.__class__.__name__ + ": {:s}".format(self._data)
+        return "{:s}: {:s}".format(class_name(self), self._data)
 
 
 __all__ = ['ISolution']

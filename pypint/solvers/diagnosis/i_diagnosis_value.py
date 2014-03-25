@@ -7,7 +7,7 @@ from copy import deepcopy
 
 import numpy as np
 
-from pypint.utilities import assert_is_instance, assert_condition
+from pypint.utilities import assert_is_instance, assert_condition, class_name
 
 
 class IDiagnosisValue(object):
@@ -80,7 +80,7 @@ class IDiagnosisValue(object):
 
     def __eq__(self, other):
         assert_condition(isinstance(other, self.__class__), TypeError,
-                         message="Can not compare {} with {}".format(self.__class__, other.__class__.__name__),
+                         message="Can not compare {} with {}".format(self.__class__, class_name(other)),
                          checking_obj=self)
         return (
             self.numeric_type == other.numeric_type
@@ -101,7 +101,7 @@ class IDiagnosisValue(object):
 
     def __ne__(self, other):
         assert_condition(isinstance(other, self.__class__), TypeError,
-                         message="Can not compare {} with {}".format(self.__class__, other.__class__.__name__),
+                         message="Can not compare {} with {}".format(self.__class__, class_name(other)),
                          checking_obj=self)
         return not self.__eq__(other)
 

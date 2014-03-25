@@ -8,7 +8,7 @@ import warnings
 import numpy as np
 
 from pypint.solutions.data_storage.step_solution_data import StepSolutionData
-from pypint.utilities import assert_condition
+from pypint.utilities import assert_condition, class_name
 
 
 class TrajectorySolutionData(object):
@@ -240,7 +240,7 @@ class TrajectorySolutionData(object):
 
     def __contains__(self, item):
         assert_condition(isinstance(item, StepSolutionData), TypeError,
-                         message="Item must be a StepSolutionData: NOT {}".format(item.__class__.__name__),
+                         message="Item must be a StepSolutionData: NOT {}".format(class_name(item)),
                          checking_obj=self)
         for elem in self._data:
             if elem == item:

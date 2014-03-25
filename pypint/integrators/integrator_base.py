@@ -7,7 +7,7 @@ import numpy as np
 
 from pypint.integrators.node_providers.i_nodes import INodes
 from pypint.integrators.weight_function_providers.i_weight_function import IWeightFunction
-from pypint.utilities import assert_is_instance, assert_condition
+from pypint.utilities import assert_is_instance, assert_condition, class_name
 
 
 class IntegratorBase(object):
@@ -173,7 +173,7 @@ class IntegratorBase(object):
 
     def print_lines_for_log(self):
         _lines = {}
-        _lines['Type'] = self.__class__.__name__
+        _lines['Type'] = class_name(self)
         if self._nodes is not None:
             _lines['Nodes'] = self._nodes.print_lines_for_log()
         if self._weights_function is not None:

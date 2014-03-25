@@ -9,7 +9,7 @@ import numpy as np
 
 from pypint.solutions.data_storage import StepSolutionData, TrajectorySolutionData
 from pypint.solutions import IterativeSolution
-from pypint.utilities import func_name, assert_condition, assert_named_argument
+from pypint.utilities import func_name, assert_condition, assert_named_argument, class_name
 from pypint.utilities.logging import LOG
 
 
@@ -72,7 +72,7 @@ class IStepState(object):
         self._delta_tau = delta_tau
 
     def __str__(self):
-        return "{}(solution={})".format(self.__class__.__name__, self.solution)
+        return "{}(solution={})".format(class_name(self), self.solution)
 
     def __copy__(self):
         copy = self.__class__.__new__(self.__class__)
@@ -150,7 +150,7 @@ class IStateIterator(object):
             if this state has already been finalized
         """
         assert_condition(not self.finalized, RuntimeError,
-                         message="This {} is already done.".format(self.__class__.__name__),
+                         message="This {} is already done.".format(class_name(self)),
                          checking_obj=self)
         for _state in self:
             self.solution.add_solution_data(deepcopy(_state.solution))
@@ -270,7 +270,7 @@ class IStateIterator(object):
 
     def __str__(self):
         _states = [state.__str__() for state in self._states]
-        return "{}({}, solution={}, _states={})".format(self.__class__.__name__, self._element_type.__name__,
+        return "{}({}, solution={}, _states={})".format(class_name(self), self._element_type.__name__,
                                                         self.solution.__str__(), _states.__str__())
 
 
@@ -287,7 +287,7 @@ class IStaticStateIterator(IStateIterator):
         """
         LOG.debug(func_name(self))
         assert_condition(not self.finalized, RuntimeError,
-                         message="This {} is already done.".format(self.__class__.__name__),
+                         message="This {} is already done.".format(class_name(self)),
                          checking_obj=self)
         if self.next_index is not None:
             self._current_index += 1
@@ -533,7 +533,7 @@ class IIterationState(IStaticStateIterator):
         :py:meth:`.IStateIterator.finalize` : overridden method
         """
         assert_condition(not self.finalized, RuntimeError,
-                         message="This {} is already done.".format(self.__class__.__name__),
+                         message="This {} is already done.".format(class_name(self)),
                          checking_obj=self)
         for _time_step in self:
             for _step in _time_step:
@@ -732,7 +732,7 @@ class ISolverState(IStateIterator):
         this sequence to the main :py:class:`.IterativeSolution` object and finalizes it.
         """
         assert_condition(not self.finalized, RuntimeError,
-                         message="This {} is already done.".format(self.__class__.__name__),
+                         message="This {} is already done.".format(class_name(self)),
                          checking_obj=self)
         for _iter in self:
             self.solution.add_solution(_iter.solution)

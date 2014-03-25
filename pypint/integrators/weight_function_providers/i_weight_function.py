@@ -7,6 +7,8 @@ from copy import deepcopy
 
 import numpy as np
 
+from pypint.utilities import class_name
+
 
 class IWeightFunction(object):
     """Provider for integration weights functions.
@@ -65,7 +67,7 @@ class IWeightFunction(object):
 
     def print_lines_for_log(self):
         _lines = {
-            'Type': self.__class__.__name__
+            'Type': class_name(self)
         }
         return _lines
 

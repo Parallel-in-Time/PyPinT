@@ -8,7 +8,7 @@ from copy import deepcopy
 import numpy as np
 
 from pypint.solvers.diagnosis import Error, Residual
-from pypint.utilities import assert_is_instance, assert_condition
+from pypint.utilities import assert_is_instance, assert_condition, class_name
 
 
 class StepSolutionData(object):
@@ -263,7 +263,7 @@ class StepSolutionData(object):
 
     def __eq__(self, other):
         assert_is_instance(other, StepSolutionData,
-                           message="Can not compare StepSolutionData with {}".format(other.__class__.__name__),
+                           message="Can not compare StepSolutionData with {}".format(class_name(other)),
                            checking_obj=self)
         return (
             self.time_point == other.time_point
@@ -276,7 +276,7 @@ class StepSolutionData(object):
 
     def __ge__(self, other):
         assert_is_instance(other, StepSolutionData,
-                           message="Can not compare StepSolutionData with {}".format(other.__class__.__name__),
+                           message="Can not compare StepSolutionData with {}".format(class_name(other)),
                            checking_obj=self)
         return (
             self.dim == other.dim
@@ -286,7 +286,7 @@ class StepSolutionData(object):
 
     def __gt__(self, other):
         assert_is_instance(other, StepSolutionData,
-                           message="Can not compare StepSolutionData with {}".format(other.__class__.__name__),
+                           message="Can not compare StepSolutionData with {}".format(class_name(other)),
                            checking_obj=self)
         return (
             self.dim == other.dim
@@ -296,7 +296,7 @@ class StepSolutionData(object):
 
     def __le__(self, other):
         assert_is_instance(other, StepSolutionData,
-                           message="Can not compare StepSolutionData with {}".format(other.__class__.__name__),
+                           message="Can not compare StepSolutionData with {}".format(class_name(other)),
                            checking_obj=self)
         return (
             self.dim == other.dim
@@ -306,7 +306,7 @@ class StepSolutionData(object):
 
     def __lt__(self, other):
         assert_is_instance(other, StepSolutionData,
-                           message="Can not compare StepSolutionData with {}".format(other.__class__.__name__),
+                           message="Can not compare StepSolutionData with {}".format(class_name(other)),
                            checking_obj=self)
         return (
             self.dim == other.dim
@@ -316,7 +316,7 @@ class StepSolutionData(object):
 
     def __ne__(self, other):
         assert_is_instance(other, StepSolutionData,
-                           message="Can not compare StepSolutionData with {}".format(other.__class__.__name__),
+                           message="Can not compare StepSolutionData with {}".format(class_name(other)),
                            checking_obj=self)
         return not self.__eq__(other)
 
