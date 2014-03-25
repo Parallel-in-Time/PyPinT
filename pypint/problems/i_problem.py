@@ -9,8 +9,8 @@ from collections import OrderedDict
 import numpy as np
 
 from pypint.plugins.implicit_solvers.find_root import find_root
-from pypint import LOG
 from pypint.utilities import assert_is_callable, assert_is_instance, assert_is_in
+from pypint.utilities.logging import LOG
 
 
 class IProblem(object):

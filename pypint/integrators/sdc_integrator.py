@@ -11,7 +11,7 @@ from pypint.integrators.integrator_base import IntegratorBase
 from pypint.integrators.node_providers.gauss_lobatto_nodes import GaussLobattoNodes
 from pypint.integrators.weight_function_providers.polynomial_weight_function import PolynomialWeightFunction
 from pypint.utilities import assert_is_instance, assert_condition
-from pypint import LOG
+from pypint.utilities.logging import LOG
 
 
 class SdcIntegrator(IntegratorBase):

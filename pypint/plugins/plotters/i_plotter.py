@@ -5,7 +5,7 @@
 """
 import matplotlib.pyplot as plt
 
-from pypint import LOG
+from pypint.utilities.logging import LOG
 
 
 class IPlotter(object):

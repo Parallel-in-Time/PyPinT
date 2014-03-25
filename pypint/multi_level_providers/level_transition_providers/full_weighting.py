@@ -7,7 +7,7 @@
 from .i_level_transition_provider import ILevelTransitionProvider
 import numpy as np
 from pypint.utilities import assert_condition
-from pypint import LOG
+from pypint.utilities.logging import LOG
 
 
 class FullWeighting(ILevelTransitionProvider):

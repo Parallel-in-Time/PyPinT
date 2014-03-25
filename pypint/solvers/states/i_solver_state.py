@@ -9,8 +9,8 @@ import numpy as np
 
 from pypint.solutions.data_storage import StepSolutionData, TrajectorySolutionData
 from pypint.solutions import IterativeSolution
-from pypint.utilities import assert_is_key, assert_condition
-from pypint import LOG
+from pypint.utilities import func_name, assert_is_key, assert_condition
+from pypint.utilities.logging import LOG
 
 
 class IStepState(object):
@@ -285,6 +285,7 @@ class IStaticStateIterator(IStateIterator):
         RuntimeError
             if this sequence has already been finalized via :py:meth:`.finalize`
         """
+        LOG.debug(func_name(self))
         assert_condition(not self.finalized,
                          RuntimeError, "This {} is already done.".format(self.__class__.__name__),
                          self)
@@ -548,6 +549,7 @@ class IIterationState(IStaticStateIterator):
         value is set as a reference to the previous time step's last step.
         """
         super(IIterationState, self).proceed()  # -> current_index += 1
+        LOG.debug(func_name(self))
         # link initial step of this time step to the previous' last step
         self.current_time_step.initial = self.previous_time_step.last_step
 
@@ -717,6 +719,7 @@ class ISolverState(IStateIterator):
         Extends the sequence of :py:class:`.IIterationState` by appending a new instance with the set
         :py:attr:`.num_time_steps` and :py:attr:`.num_nodes`.
         """
+        LOG.debug(func_name(self))
         self._add_iteration()
         self._current_index = len(self) - 1
         self.current_iteration.initial = deepcopy(self.initial)

@@ -16,16 +16,3 @@ if version_info.major < 3:
 
 
 __version__ = '0.0.2'
-
-
-# initialize Logging framework
-from pypint.utilities.logging import logger
-LOG = logger()
-"""Easy accessor for the currently configured logger.
-
-See Also
---------
-:py:meth:`.utilities.logging.Logging.logger` : aliased accessor function
-"""
-
-__all__ = ["LOG"]

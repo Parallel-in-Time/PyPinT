@@ -10,7 +10,7 @@ import numpy as np
 from pypint.solvers.diagnosis import IDiagnosisValue
 from pypint.solvers.diagnosis.norms import supremum_norm
 from pypint.utilities import assert_condition, func_name
-from pypint import LOG
+from pypint.utilities.logging import LOG
 
 
 class ThresholdCheck(object):

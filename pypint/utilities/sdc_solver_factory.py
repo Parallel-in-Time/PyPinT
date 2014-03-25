@@ -9,7 +9,7 @@ from pypint.communicators.forward_sending_messaging import ForwardSendingMessagi
 from pypint.problems.i_initial_value_problem import IInitialValueProblem
 from pypint.utilities import assert_is_instance, assert_condition
 from pypint.utilities.logging import *
-from pypint import LOG
+from pypint.utilities.logging import LOG
 
 
 def SdcSolverFactory(problem, num_solvers, num_total_time_steps, solver_core, **solver_options):

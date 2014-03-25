@@ -4,7 +4,7 @@
 """
 from pypint.communicators.i_communication_provider import ICommunicationProvider
 from pypint.utilities import assert_condition, assert_is_key, assert_is_instance, func_name
-from pypint import LOG
+from pypint.utilities.logging import LOG
 
 
 class ForwardSendingMessaging(ICommunicationProvider):

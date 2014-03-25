@@ -23,7 +23,6 @@ from pypint.plugins.timers.timer_base import TimerBase
 from pypint.utilities.threshold_check import ThresholdCheck
 from pypint.utilities import assert_is_instance, assert_condition, assert_is_key, func_name
 from pypint.utilities.logging import *
-from pypint import LOG
 
 # General Notes on Implementation
 # ===============================

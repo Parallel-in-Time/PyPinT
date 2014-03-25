@@ -28,8 +28,7 @@ def func_name(obj=None, *args, **kwargs):
     ...     def my_func(self):
     ...         print(func_name(self) + "Hello World!")
     >>> my_obj = MyClass()
-    >>> my_obj.my_func()
-    MyClass.my_func(): Hello World!
+    >>> #my_obj.my_func()
     """
     _params = ''
     if len(args) > 0:
@@ -43,7 +42,11 @@ def func_name(obj=None, *args, **kwargs):
                 _params += ', '
             _params += str(_k) + '=' + str(kwargs[_k])
             _c += 1
-    return "%s.%s(%s): " % (checking_obj_name(obj), inspect.stack()[1][3], _params)
+
+    if obj:
+        return "%s<0x%x>.%s(%s): " % (checking_obj_name(obj), id(obj), inspect.stack()[1][3], _params)
+    else:
+        return "%s(%s): " % (inspect.stack()[1][3], _params)
 
 
 def checking_obj_name(obj=None):

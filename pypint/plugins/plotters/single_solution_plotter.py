@@ -14,7 +14,7 @@ from pypint.solvers.i_iterative_time_solver import IIterativeTimeSolver
 from pypint.solvers.states import ISolverState
 from pypint.solvers.diagnosis.norms import supremum_norm
 from pypint.utilities import assert_is_key, assert_is_instance
-from pypint import LOG
+from pypint.utilities.logging import LOG
 
 
 class SingleSolutionPlotter(IPlotter):
