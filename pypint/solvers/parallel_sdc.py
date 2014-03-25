@@ -21,8 +21,9 @@ from pypint.solvers.diagnosis import IDiagnosisValue
 from pypint.solvers.diagnosis.norms import supremum_norm
 from pypint.plugins.timers.timer_base import TimerBase
 from pypint.utilities.threshold_check import ThresholdCheck
-from pypint.utilities import assert_is_instance, assert_condition, assert_is_key, func_name
+from pypint.utilities import assert_is_instance, assert_condition, func_name, assert_named_argument
 from pypint.utilities.logging import *
+
 
 # General Notes on Implementation
 # ===============================
@@ -146,9 +147,7 @@ class ParallelSdc(IIterativeTimeSolver, IParallelSolver):
         :py:meth:`.IParallelSolver.init`
             mixed in overridden method (with further parameters)
         """
-        assert_is_instance(problem, IInitialValueProblem,
-                           "SDC requires an initial value problem: {:s}".format(problem.__class__.__name__),
-                           self)
+        assert_is_instance(problem, IInitialValueProblem, descriptor="Initial Value Problem", checking_obj=self)
 
         super(ParallelSdc, self).init(problem, integrator, **kwargs)
 
@@ -162,8 +161,7 @@ class ParallelSdc(IIterativeTimeSolver, IParallelSolver):
         elif integrator.nodes_type is not None and integrator.nodes_type.num_nodes is not None:
             self.__num_nodes = integrator.nodes_type.num_nodes
         else:
-            raise ValueError(func_name(self) +
-                             "Number of nodes per time step not given.")
+            raise ValueError(func_name(self) + "Number of nodes per time step not given.")
 
         if 'notes_type' in kwargs:
             self.__nodes_type = kwargs['notes_type']
@@ -172,10 +170,7 @@ class ParallelSdc(IIterativeTimeSolver, IParallelSolver):
             self.__weights_type = kwargs['weights_type']
 
         if 'classic' in kwargs:
-            assert_is_instance(kwargs['classic'], bool,
-                               "Classic flag must either be True or False: NOT %s"
-                               % kwargs['classic'].__class__.__name__,
-                               self)
+            assert_is_instance(kwargs['classic'], bool, descriptor="Classic Flag", checking_obj=self)
             self._classic = kwargs['classic']
 
         # TODO: need to store the exact solution somewhere else
@@ -240,10 +235,7 @@ class ParallelSdc(IIterativeTimeSolver, IParallelSolver):
         """
         super(ParallelSdc, self).run(core, **kwargs)
 
-        assert_is_key(kwargs, 'dt', "Width of interval must be given", self)
-        assert_is_instance(kwargs['dt'], float,
-                           "Width of interval must be a float: NOT %s" % kwargs['dt'].__class__.__name__,
-                           self)
+        assert_named_argument('dt', kwargs, types=float, descriptor="Width of Interval", checking_obj=self)
         self._dt = kwargs['dt']
 
         self._print_header()
@@ -461,9 +453,7 @@ class ParallelSdc(IIterativeTimeSolver, IParallelSolver):
                 if no new interval have been initialized
                 (i.e. new interval end would exceed end of time given by problem)
         """
-        assert_is_instance(start, float,
-                           "Time point must be a float: NOT %s" % start.__class__.__name__,
-                           self)
+        assert_is_instance(start, float, descriptor="Time Point", checking_obj=self)
 
         if start + self._dt > self.problem.time_end:
             return False
@@ -594,9 +584,9 @@ class ParallelSdc(IIterativeTimeSolver, IParallelSolver):
             del _initial_value_rhs
 
             assert_condition(_integrate_values.size == self.num_nodes,
-                             ValueError, "Number of integration values not correct: {:d} != {:d}"
-                                         .format(_integrate_values.size, self.num_nodes),
-                             self)
+                             ValueError, message="Number of integration values not correct: {:d} != {:d}"
+                                                 .format(_integrate_values.size, self.num_nodes),
+                             checking_obj=self)
 
         _full_integral = 0.0
 
@@ -696,9 +686,9 @@ class ParallelSdc(IIterativeTimeSolver, IParallelSolver):
                                    ], dtype=self.problem.numeric_type
                               ), axis=0)
             assert_condition(_integrate_values.size == self.num_nodes,
-                             ValueError, "Number of integration values not correct: {:d} != {:d}"
-                                         .format(_integrate_values.size, self.num_nodes),
-                             self)
+                             ValueError, message="Number of integration values not correct: {:d} != {:d}"
+                                                 .format(_integrate_values.size, self.num_nodes),
+                             checking_obj=self)
 
             # integrate
             self.state.current_step.integral = self._integrator.evaluate(_integrate_values,

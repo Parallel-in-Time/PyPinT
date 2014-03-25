@@ -3,7 +3,7 @@
 .. moduleauthor: Torbjörn Klatt <t.klatt@fz-juelich.de>
 """
 from pypint.communicators.i_communication_provider import ICommunicationProvider
-from pypint.utilities import assert_is_key, assert_is_instance
+from pypint.utilities import assert_named_argument
 
 
 class IParallelSolver(object):
@@ -16,11 +16,8 @@ class IParallelSolver(object):
         ----------
         communicator : :py:class:`.ICommunicationProvider`
         """
-        assert_is_key(kwargs, 'communicator', "Communicator must be given", self)
-        assert_is_instance(kwargs['communicator'], ICommunicationProvider,
-                           "Communicator must be a valid communication provider: NOT %s"
-                           % kwargs['communicator'].__class__.__name__,
-                           self)
+        assert_named_argument('communicator', kwargs, types=ICommunicationProvider, descriptor="Communicator",
+                              checking_obj=self)
         self._communicator = kwargs['communicator']
         self._states = []
 

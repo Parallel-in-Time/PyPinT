@@ -5,8 +5,9 @@
 """
 from pypint.solvers.cores.sdc_solver_core import SdcSolverCore
 from pypint.solvers.states.sdc_solver_state import SdcSolverState
+from pypint.problems import IProblem
 from pypint.problems.has_direct_implicit_mixin import problem_has_direct_implicit
-from pypint.utilities import assert_is_instance, assert_is_key
+from pypint.utilities import assert_is_instance, assert_named_argument
 
 
 class SemiImplicitSdcCore(SdcSolverCore):
@@ -38,13 +39,8 @@ class SemiImplicitSdcCore(SdcSolverCore):
         """
         super(SemiImplicitSdcCore, self).run(state, **kwargs)
 
-        assert_is_instance(state, SdcSolverState,
-                           "State must be an SdcSolverState: NOT {:s}".format(state.__class__.__name__),
-                           self)
-
-        assert_is_key(kwargs, 'problem',
-                      "The problem is required as a proxy to the implicit space solver.",
-                      self)
+        assert_is_instance(state, SdcSolverState, descriptor="State", checking_obj=self)
+        assert_named_argument('problem', kwargs, types=IProblem, descriptor="Problem", checking_obj=self)
         _problem = kwargs['problem']
 
         _previous_iteration_current_step = self._previous_iteration_current_step(state)

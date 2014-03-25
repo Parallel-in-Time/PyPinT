@@ -30,9 +30,7 @@ class ICommunicationProvider(object):
         self._buffer = None
 
         if 'buffer' in kwargs:
-            assert_is_instance(kwargs['buffer'], Message,
-                               "Initial buffer must be a Message: NOT %s" % kwargs['buffer'].__class__.__name__,
-                               self)
+            assert_is_instance(kwargs['buffer'], Message, descriptor="Buffer", checking_obj=self)
             self._buffer = kwargs['buffer']
         else:
             self._buffer = Message()
@@ -92,9 +90,7 @@ class ICommunicationProvider(object):
             self._buffer.value = deepcopy(kwargs['value'])
 
         if 'time_point' in kwargs:
-            assert_is_instance(kwargs['time_point'], float,
-                               "Time point must be a float: NOT %s" % kwargs['time_point'].__class__.__name__,
-                               self)
+            assert_is_instance(kwargs['time_point'], float, descriptor="Time Point", checking_obj=self)
             self._buffer.time_point = deepcopy(kwargs['time_point'])
 
         if 'flag' in kwargs:

@@ -240,8 +240,9 @@ class ThresholdCheck(object):
 
         if name in self._conditions and self._conditions[name] is not None:
             assert_condition(_value is not None,
-                             ValueError, "'{:s}' is a termination condition but not available to check."
-                                         .format(name[0].capitalize() + name[1:]), self)
+                             ValueError, message="'{:s}' is a termination condition but not available to check."
+                                                 .format(name[0].capitalize() + name[1:]),
+                             checking_obj=self)
 
             if operator == "min":
                 if _value <= self._conditions[name]:

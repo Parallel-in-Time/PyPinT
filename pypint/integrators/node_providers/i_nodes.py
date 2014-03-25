@@ -70,20 +70,24 @@ class INodes(object):
         -----
         It may be this transformation is numerically inconvenient because of the loss of significance.
         """
-        assert_is_instance(interval, np.ndarray, "Interval must be a numpy.ndarray.", self)
+        assert_is_instance(interval, np.ndarray, descriptor="Interval", checking_obj=self)
         assert_condition(interval.size == 2,
-                         ValueError, "Intervals must be of size 2: {:s} ({:s})".format(interval, type(interval)), self)
+                         ValueError,
+                         message="Intervals must be of size 2: {:s} ({:s})".format(interval, type(interval)),
+                         checking_obj=self)
         assert_condition(interval[0] < interval[1],
-                         ValueError, "Given interval is not positive: {:.2f} > {:.2f}".format(interval[0], interval[1]),
-                         self)
+                         ValueError,
+                         message="Interval must be positive: {:.2f} > {:.2f}".format(interval[0], interval[1]),
+                         checking_obj=self)
         _old_interval = self.interval
         self._interval = interval
         self._nodes = (self.nodes - _old_interval[0]) * (interval[1] - interval[0]) / \
                       (_old_interval[1] - _old_interval[0]) + interval[0]
         assert_condition(self._nodes[0] - self._interval[0] <= 1e-16 and self._nodes[-1] - self._interval[1] <= 1e-16,
-                         RuntimeError, "Newly computed nodes do not match new interval: %s NOT IN %s"
-                                       % (self._nodes, self._interval),
-                         self)
+                         RuntimeError,
+                         message="Newly computed nodes do not match new interval: %s NOT IN %s"
+                                 % (self._nodes, self._interval),
+                         checking_obj=self)
 
     @property
     def interval(self):

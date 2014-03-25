@@ -40,9 +40,7 @@ class IDiagnosisValue(object):
         ValueError:
             If ``value`` is not a :py:class:`numpy.ndarray`.
         """
-        assert_is_instance(value, np.ndarray,
-                           "Diagnosis values must be a numpy.ndarray: NOT {}".format(value.__class__.__name__),
-                           self)
+        assert_is_instance(value, np.ndarray, descriptor="Diagnosis Values", checking_obj=self)
         self._data = value
         self._numeric_type = self.value.dtype
 
@@ -81,9 +79,9 @@ class IDiagnosisValue(object):
         return copy
 
     def __eq__(self, other):
-        assert_condition(isinstance(other, self.__class__),
-                         TypeError, "Can not compare {} with {}".format(self.__class__, other.__class__.__name__),
-                         self)
+        assert_condition(isinstance(other, self.__class__), TypeError,
+                         message="Can not compare {} with {}".format(self.__class__, other.__class__.__name__),
+                         checking_obj=self)
         return (
             self.numeric_type == other.numeric_type
             and np.array_equal(self.value, other.value)
@@ -102,9 +100,9 @@ class IDiagnosisValue(object):
         return NotImplemented
 
     def __ne__(self, other):
-        assert_condition(isinstance(other, self.__class__),
-                         TypeError, "Can not compare {} with {}".format(self.__class__, other.__class__.__name__),
-                         self)
+        assert_condition(isinstance(other, self.__class__), TypeError,
+                         message="Can not compare {} with {}".format(self.__class__, other.__class__.__name__),
+                         checking_obj=self)
         return not self.__eq__(other)
 
     __hash__ = None

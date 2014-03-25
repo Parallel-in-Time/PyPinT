@@ -48,7 +48,8 @@ def problem_has_direct_implicit(problem, checking_obj=None):
     ValueError :
         If the given problem is not an instance of :py:class:`.IProblem`.
     """
-    assert_is_instance(problem, IProblem, "It needs to be a problem to have an exact solution.", checking_obj)
+    assert_is_instance(problem, IProblem,
+                       message="It needs to be a problem to have a direct implicit formula.", checking_obj=checking_obj)
     return isinstance(problem, HasDirectImplicitMixin)
 
 

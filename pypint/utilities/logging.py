@@ -9,6 +9,8 @@ from sys import stdout
 from datetime import datetime
 from collections import OrderedDict
 
+from pypint.utilities.tracing import func_name
+
 
 LOG = Logger('PyPinT Logging')
 LOG.handlers = [
@@ -58,9 +60,13 @@ def print_logging_message_tree(messages):
             LOG.info("{}{: <34s} {}".format(VERBOSITY_LVL1, "%s: " % _key1, _value1))
 
 
+def this_got_called(obj, *args, add_log_msg="", **kwargs):
+    LOG.debug(func_name(obj, *args, **kwargs) + add_log_msg)
+
+
 __all__ = [
     'LOG',
     'VERBOSITY_LVL1', 'VERBOSITY_LVL2', 'VERBOSITY_LVL3',
     'SEPARATOR_LVL1', 'SEPARATOR_LVL2', 'SEPARATOR_LVL3',
-    'print_logging_message_tree'
+    'this_got_called', 'print_logging_message_tree'
 ]

@@ -91,12 +91,8 @@ class IProblem(object):
         ValueError :
             if ``time`` or ``phi_of_time`` are not of correct type.
         """
-        assert_is_instance(time, float,
-                           "Time must be given as a floating point number: NOT {:s}".format(time.__class__.__name__),
-                           self)
-        assert_is_instance(phi_of_time, np.ndarray,
-                           "Data must be given as a numpy.ndarray: NOT {:s}".format(phi_of_time.__class__.__name__),
-                           self)
+        assert_is_instance(time, float, descriptor="Time Point", checking_obj=self)
+        assert_is_instance(phi_of_time, np.ndarray, descriptor="Data Vector", checking_obj=self)
         return np.zeros(self.dim, dtype=self.numeric_type)
 
     def implicit_solve(self, next_x, func, method="hybr"):
@@ -136,19 +132,15 @@ class IProblem(object):
         UserWarning :
             If the implicit solver did not converged, i.e. the solution object's ``success`` is not :py:class:`True`.
         """
-        assert_is_instance(next_x, np.ndarray,
-                           "Need a numpy.ndarray: NOT {:s}".format(next_x.__class__.__name__),
-                           self)
-        assert_is_callable(func, "Need a callable function.", self)
+        assert_is_instance(next_x, np.ndarray, descriptor="Initial Guess", checking_obj=self)
+        assert_is_callable(func, descriptor="Function of RHS", checking_obj=self)
         sol = find_root(fun=func, x0=next_x, method=method)
         if not sol.success:
             warnings.warn("Implicit solver did not converged.")
             LOG.debug("sol.x: " + str(sol.x))
             LOG.error("Implicit solver failed: {:s}".format(sol.message))
         else:
-            assert_is_instance(sol.x, np.ndarray,
-                               "Solution must be a numpy.ndarray: NOT {:s}".format(sol.x.__class__.__name__),
-                               self)
+            assert_is_instance(sol.x, np.ndarray, descriptor="Solution", checking_obj=self)
         return sol.x
 
     @property
@@ -169,7 +161,7 @@ class IProblem(object):
 
     @function.setter
     def function(self, function):
-        assert_is_callable(function)
+        assert_is_callable(function, checking_obj=self)
         self._function = function
 
     @property
@@ -236,9 +228,8 @@ class IProblem(object):
     def numeric_type(self, numeric_type):
         numeric_type = np.dtype(numeric_type)
         _valid_types = ['i', 'u', 'f', 'c']
-        assert_is_in(numeric_type.kind, _valid_types,
-                     "Numeric type must be one of {:s}: NOT {:s}".format(_valid_types, numeric_type.__class__.__name__),
-                     self)
+        assert_is_in(numeric_type.kind, _valid_types, elem_desc="Numeric Type", list_desc="Valid Types",
+                     checking_obj=self)
         self._numeric_type = numeric_type
 
     @property

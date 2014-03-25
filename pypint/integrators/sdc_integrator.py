@@ -10,7 +10,7 @@ import numpy as np
 from pypint.integrators.integrator_base import IntegratorBase
 from pypint.integrators.node_providers.gauss_lobatto_nodes import GaussLobattoNodes
 from pypint.integrators.weight_function_providers.polynomial_weight_function import PolynomialWeightFunction
-from pypint.utilities import assert_is_instance, assert_condition
+from pypint.utilities import assert_is_instance, assert_condition, assert_named_argument
 from pypint.utilities.logging import LOG
 
 
@@ -21,8 +21,8 @@ class SdcIntegrator(IntegratorBase):
         super(self.__class__, self).__init__()
         self._smat = np.zeros(0)
 
-    def init(self, nodes_type=GaussLobattoNodes(), num_nodes=3,
-             weights_function=PolynomialWeightFunction(), interval=None):
+    def init(self, nodes_type=GaussLobattoNodes(), num_nodes=3, weights_function=PolynomialWeightFunction(),
+             interval=None):
         """Initialize SDC Integrator
 
         Parameters
@@ -69,12 +69,12 @@ class SdcIntegrator(IntegratorBase):
         --------
         :py:meth:`.IntegratorBase.evaluate` : overridden method
         """
-        assert_condition("last_node_index" in kwargs, ValueError, "Last node index must be given.", self)
+        assert_named_argument('last_node_index', kwargs, types=int, descriptor="Last Node Index", checking_obj=self)
         _index = kwargs["last_node_index"]
         assert_condition(_index != 0 and _index <= self._smat.shape[0],
-                         ValueError, "Last node index {:d} too small or too large. Must be within [{:d},{:d})"
-                                     .format(_index, 1, self._smat.shape[0]),
-                         self)
+                         ValueError, message="Last node index {:d} too small or too large. Must be within [{:d},{:d})"
+                                             .format(_index, 1, self._smat.shape[0]),
+                         checking_obj=self)
         super(SdcIntegrator, self).evaluate(data, time_start=self.nodes[0],
                                             time_end=self.nodes[_index])
         # LOG.debug("Integrating {:s} with S-Mat row {:d} ({:s}) on interval {:s}."
@@ -105,7 +105,7 @@ class SdcIntegrator(IntegratorBase):
         I.e. row :math:`i` integrates from node :math:`i-1` to node :math:`i`.
         """
         assert_is_instance(self._nodes, GaussLobattoNodes,
-                           "Other than Gauss-Lobatto integration nodes not yet supported.", self)
+                           message="Other than Gauss-Lobatto integration nodes not yet supported.", checking_obj=self)
         self._smat = np.zeros((self.nodes.size - 1, self.nodes.size), dtype=float)
         for i in range(1, self.nodes.size):
             self.weights_function.evaluate(self.nodes, np.array([self.nodes[i - 1], self.nodes[i]]))

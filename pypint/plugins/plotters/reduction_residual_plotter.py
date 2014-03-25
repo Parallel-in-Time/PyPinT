@@ -11,7 +11,7 @@ from pypint.plugins.plotters.i_plotter import IPlotter
 from pypint.solvers.i_iterative_time_solver import IIterativeTimeSolver
 from pypint.solvers.states import ISolverState
 from pypint.solvers.diagnosis.norms import supremum_norm
-from pypint.utilities import assert_is_key, assert_is_instance, assert_condition
+from pypint.utilities import assert_is_instance, assert_condition, assert_named_argument
 from pypint.utilities.logging import LOG
 
 
@@ -60,31 +60,23 @@ class ReductionResidualPlotter(IPlotter):
         """
         super(ReductionResidualPlotter, self).plot(args, **kwargs)
 
-        assert_is_key(kwargs, 'solvers', "Solver must be given", self)
-        assert_is_instance(kwargs['solvers'], np.ndarray,
-                           "Solver must be a numpy.ndarray: NOT %s" % kwargs['solvers'].__class__.__name__,
-                           self)
-        [assert_is_instance(_solver, IIterativeTimeSolver,
-                            "All solvers must be an Iterative Time Solver: NOT %s" % _solver.__class__.__name__,
-                            self) for _solver in kwargs['solvers']]
+        assert_named_argument('solvers', kwargs, types=np.ndarray, descriptor="Solver", checking_obj=self)
+        [assert_is_instance(_solver, IIterativeTimeSolver, descriptor="All Solvers", checking_obj=self)
+         for _solver in kwargs['solvers']]
         self._solvers = kwargs['solvers']
 
-        assert_is_key(kwargs, 'states', "States must be given", self)
-        assert_is_instance(kwargs['states'], np.ndarray,
-                           "States must be a list: NOT %s" % kwargs['states'].__class__.__name__,
-                           self)
+        assert_named_argument('states', kwargs, types=np.ndarray, descriptor="States", checking_obj=self)
         assert_condition(kwargs['states'].size <= 7,
                          ValueError, "Can only handle up to 7 solutions: %d" % kwargs['states'].size,
                          self)
         [assert_is_instance(_state, ISolverState,
-                            "All states must be an ISolverState: NOT %s" % _state.__class__.__name__,
-                            self) for _state in kwargs['states']]
+                            descriptor="All States", checking_obj=self) for _state in kwargs['states']]
         self._states = kwargs['states']
 
         assert_condition(self._solvers.size == self._states.size,
-                         ValueError, "Number of solvers must equal number of states: %d != %d"
-                                     % (self._solvers.size, self._states.size),
-                         self)
+                         ValueError, message="Number of solvers must equal number of states: %d != %d"
+                                             % (self._solvers.size, self._states.size),
+                         checking_obj=self)
 
         self._nodes = self._states[0].first.time_points
 

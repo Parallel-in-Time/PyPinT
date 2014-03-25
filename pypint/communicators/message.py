@@ -68,8 +68,7 @@ class Message(object):
 
     @flag.setter
     def flag(self, flag):
-        assert_is_instance(flag, Message.SolverFlag,
-                           "Given flag is not a SolverFlag: %s" % type(flag))
+        assert_is_instance(flag, Message.SolverFlag, descriptor="Flag", checking_obj=self)
         self._flag = flag
 
     @flag.deleter

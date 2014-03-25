@@ -9,7 +9,6 @@ from pypint.communicators.forward_sending_messaging import ForwardSendingMessagi
 from pypint.problems.i_initial_value_problem import IInitialValueProblem
 from pypint.utilities import assert_is_instance, assert_condition
 from pypint.utilities.logging import *
-from pypint.utilities.logging import LOG
 
 
 def SdcSolverFactory(problem, num_solvers, num_total_time_steps, solver_core, **solver_options):
@@ -46,19 +45,15 @@ def SdcSolverFactory(problem, num_solvers, num_total_time_steps, solver_core, **
         * if ``solver_options`` is not a :py:class:`dict`
         * if the interval width per solver core is invalid (i.e. not non-zero possitive or larger the problem width)
     """
-    assert_is_instance(problem, IInitialValueProblem,
-                       "The problem must be an Initial Value Problem: NOT %s" % problem.__class__.__name__)
-    assert_is_instance(num_solvers, int,
-                       "Number of desired solvers must be an integer: NOT %s" % num_solvers.__class__.__name__)
+    assert_is_instance(problem, IInitialValueProblem, descriptor="Problem")
+    assert_is_instance(num_solvers, int, descriptor="Number of Desired Solvers")
     assert_condition(num_solvers > 0,
-                     ValueError, "Number of solvers must be greater 0: NOT %d" % num_solvers)
-    assert_is_instance(num_total_time_steps, int,
-                       "Number of time steps must be an integer: NOT %s" % num_total_time_steps.__class__.__name__)
+                     ValueError, message="Number of solvers must be greater 0: NOT %d" % num_solvers)
+    assert_is_instance(num_total_time_steps, int, descriptor="Total Number of Time Steps")
     assert_condition(num_total_time_steps >= num_solvers,
-                     ValueError, "Number of time steps must be at least as large as number of solvers: %d < %d"
-                                 % (num_total_time_steps, num_solvers))
-    assert_is_instance(solver_options, dict,
-                       "The solver options must be given as a dict: NOT %s" % solver_options.__class__.__name__)
+                     ValueError, message=("Total Number of Time Steps must be at least as large as number of solvers: "
+                                          "%d < %d" % (num_total_time_steps, num_solvers)))
+    assert_is_instance(solver_options, dict, descriptor="Solver Options")
 
     _log_messages = OrderedDict({'': OrderedDict()})
 
@@ -79,9 +74,11 @@ def SdcSolverFactory(problem, num_solvers, num_total_time_steps, solver_core, **
 
     _dt = _prob_width / float(_total_num_calls)
     assert_condition(_dt > 0.0 and _dt <= _prob_width,
-                     RuntimeError, "Width of interval per solver is invalid: 0.0 > %f <= %f" % (_dt, _prob_width))
+                     RuntimeError,
+                     message="Width of interval per solver is invalid: 0.0 > %f <= %f" % (_dt, _prob_width))
     assert_condition(abs((_dt * _total_num_calls) - _prob_width) <= 1e-16,
-                     ValueError, "Number of solver calls and calculated interval width do not make sense.")
+                     ValueError,
+                     message="Number of solver calls and calculated interval width do not make sense.")
     LOG.debug("Interval width per solver call: %f" % _dt)
 
     _log_messages['']['Number Solver Instances'] = "%d" % num_solvers

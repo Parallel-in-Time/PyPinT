@@ -3,8 +3,8 @@
 .. moduleauthor:: Torbjörn Klatt <t.klatt@fz-juelich.de>
 """
 from pypint.communicators.i_communication_provider import ICommunicationProvider
-from pypint.utilities import assert_condition, assert_is_key, assert_is_instance, func_name
-from pypint.utilities.logging import LOG
+from pypint.utilities import assert_condition, assert_named_argument
+from pypint.utilities.logging import this_got_called
 
 
 class ForwardSendingMessaging(ICommunicationProvider):
@@ -24,7 +24,7 @@ class ForwardSendingMessaging(ICommunicationProvider):
             for allowed arguments
         """
         super(ForwardSendingMessaging, self).send(*args, **kwargs)
-        LOG.debug(func_name(self, *args, **kwargs))
+        this_got_called(self, *args, **kwargs)
         self._next.write_buffer(*args, **kwargs)
 
     def receive(self, *args, **kwargs):
@@ -35,7 +35,7 @@ class ForwardSendingMessaging(ICommunicationProvider):
         message : :py:class:`.Message`
         """
         super(ForwardSendingMessaging, self).receive(*args, **kwargs)
-        LOG.debug(func_name(self) + str(self.buffer))
+        this_got_called(self, *args, add_log_msg=str(self.buffer), **kwargs)
         return self.buffer
 
     def link_solvers(self, *args, **kwargs):
@@ -55,19 +55,13 @@ class ForwardSendingMessaging(ICommunicationProvider):
         """
         super(ForwardSendingMessaging, self).link_solvers(*args, **kwargs)
         assert_condition(len(kwargs) == 2,
-                         ValueError, "Exactly two communicators must be given: NOT %d" % len(kwargs),
-                         self)
+                         ValueError, message="Exactly two communicators must be given: NOT %d" % len(kwargs),
+                         checking_obj=self)
 
-        assert_is_key(kwargs, 'previous', "Previous solver must be given.", self)
-        assert_is_instance(kwargs['previous'], ForwardSendingMessaging,
-                           "Previous Communicator must also be a ForwardSendingMessaging instance: NOT %s"
-                           % kwargs['previous'].__class__.__name__,
-                           self)
+        assert_named_argument('previous', kwargs, types=ForwardSendingMessaging, descriptor="Previous Communicator",
+                              checking_obj=self)
         self._previous = kwargs['previous']
 
-        assert_is_key(kwargs, 'next', "Next solver must be given.", self)
-        assert_is_instance(kwargs['next'], ForwardSendingMessaging,
-                           "Next Communicator must also be a ForwardSendingMessaging instance: NOT %s"
-                           % kwargs['next'].__class__.__name__,
-                           self)
+        assert_named_argument('next', kwargs, types=ForwardSendingMessaging, descriptor="Next Communicator",
+                              checking_obj=self)
         self._next = kwargs['next']

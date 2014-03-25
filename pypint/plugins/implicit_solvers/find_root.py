@@ -41,9 +41,9 @@ def find_root(fun, x0, method="hybr"):
         fun = lambda x: (-1.0 + 1.0j) * x
         sol = find_root(fun, numpy.array([0.0]))
     """
-    assert_is_instance(x0, np.ndarray, "Initial start value must be a numpy.ndarray.")
-    assert_is_callable(fun, "Function to find root of must be callable.")
-    assert_is_instance(method, str, "Root finding method must be defined as a string.")
+    assert_is_instance(x0, np.ndarray, descriptor="Initial Guess")
+    assert_is_callable(fun, descriptor="Function to find root of")
+    assert_is_instance(method, str, descriptor="Root finding method")
 
     _value_map = {}
     _transformed_size = 0

@@ -3,9 +3,10 @@
 
 .. moduleauthor:: Torbjörn Klatt <t.klatt@fz-juelich.de>
 """
-
-from .i_level_transition_provider import ILevelTransitionProvider
 import numpy as np
+
+from pypint.multi_level_providers.level_transition_providers.i_level_transition_provider \
+    import ILevelTransitionProvider
 from pypint.utilities import assert_condition
 from pypint.utilities.logging import LOG
 
@@ -31,8 +32,9 @@ class Injection(ILevelTransitionProvider):
     In addition, injection should only be used when the number of coarse points is a subset of the fine points.
     """
     def __init__(self, num_fine_points, num_coarse_points=-1):
-        assert_condition(num_fine_points % 2 != 0,
-                        ValueError, "Number of fine level points needs to be odd: {:d}".format(num_fine_points), self)
+        assert_condition(num_fine_points % 2 != 0, ValueError,
+                         message="Number of fine level points needs to be odd: {:d}".format(num_fine_points),
+                         checking_obj=self)
         super(self.__class__, self).__init__(num_fine_points, num_coarse_points)
         self._n_coarse_points = int((self.num_fine_points + 1) / 2)
         self.restringation_operator = \

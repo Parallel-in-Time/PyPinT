@@ -125,8 +125,9 @@ class PolynomialWeightFunction(IWeightFunction):
         >>> # Similar, to set the constant coefficient 42, e.i. 42*x^0, use:
         >>> polyWeights.add_coefficient(42, 0)
         """
-        assert_is_instance(power, int, "Power must be an integer.", checking_obj=self)
-        assert_condition(power >= 0, ValueError, "Power must be zero or positive: {:d}".format(power), self)
+        assert_is_instance(power, int, descriptor="Power", checking_obj=self)
+        assert_condition(power >= 0, ValueError,
+                         message="Power must be zero or positive: {:d}".format(power), checking_obj=self)
 
         if self._coefficients.size <= power + 1:
             self._coefficients = np.resize(self._coefficients, (power + 1))
@@ -158,7 +159,7 @@ class PolynomialWeightFunction(IWeightFunction):
 
     @coefficients.setter
     def coefficients(self, coefficients):
-        assert_is_instance(coefficients, np.ndarray, "Coefficients need to be a numpy.ndarray", self)
+        assert_is_instance(coefficients, np.ndarray, descriptor="Coefficients", checking_obj=self)
         self._coefficients = coefficients
 
     def print_lines_for_log(self):

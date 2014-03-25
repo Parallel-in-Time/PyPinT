@@ -4,8 +4,9 @@
 """
 from pypint.solvers.cores.i_solver_core import ISolverCore
 from pypint.problems.has_exact_solution_mixin import problem_has_exact_solution
+from pypint.problems import IProblem
 from pypint.solvers.diagnosis import Error, Residual
-from pypint.utilities import assert_is_key
+from pypint.utilities import assert_named_argument
 
 
 class SdcSolverCore(ISolverCore):
@@ -51,9 +52,8 @@ class SdcSolverCore(ISolverCore):
     def compute_error(self, state, **kwargs):
         super(SdcSolverCore, self).compute_error(state, **kwargs)
 
-        assert_is_key(kwargs, 'problem',
-                      "The problem is required as a proxy to the implicit space solver.",
-                      self)
+        assert_named_argument('problem', kwargs, types=IProblem, descriptor="Problem", checking_obj=self)
+
         _problem = kwargs['problem']
 
         if problem_has_exact_solution(_problem, self):

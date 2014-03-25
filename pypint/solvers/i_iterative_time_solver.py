@@ -57,8 +57,9 @@ class IIterativeTimeSolver(object):
             The solution of the problem.
         """
         assert_condition(issubclass(core, ISolverCore),
-                         ValueError, "The given solver core class must be valid: NOT {:s}".format(core.__name__),
-                         self)
+                         ValueError, message="The given solver core class must be valid: NOT {:s}"
+                                             .format(core.__name__),
+                         checking_obj=self)
         self._core = core()
 
     @property

@@ -9,7 +9,7 @@ import numpy as np
 
 from pypint.solutions.data_storage import StepSolutionData, TrajectorySolutionData
 from pypint.solutions import IterativeSolution
-from pypint.utilities import func_name, assert_is_key, assert_condition
+from pypint.utilities import func_name, assert_condition, assert_named_argument
 from pypint.utilities.logging import LOG
 
 
@@ -66,9 +66,9 @@ class IStepState(object):
 
     @delta_tau.setter
     def delta_tau(self, delta_tau):
-        assert_condition(delta_tau > 0.0,
-                         ValueError, "Delta tau must be non-zero positive: NOT {}".format(delta_tau),
-                         self)
+        assert_condition(delta_tau > 0.0, ValueError,
+                         message="Delta tau must be non-zero positive: NOT {}".format(delta_tau),
+                         checking_obj=self)
         self._delta_tau = delta_tau
 
     def __str__(self):
@@ -120,8 +120,8 @@ class IStateIterator(object):
         ValueError
             if ``num_states`` is not a non-zero positive integer
         """
-        assert_is_key(kwargs, 'solution_class', "Solution type must be given.")
-        assert_is_key(kwargs, 'element_type', "Element type must be given.")
+        assert_named_argument('solution_class', kwargs, descriptor="Solution Type", checking_obj=self)
+        assert_named_argument('element_type', kwargs, descriptor="Element Type", checking_obj=self)
         self._solution = kwargs['solution_class']()
         del kwargs['solution_class']
         self._element_type = kwargs['element_type']
@@ -133,9 +133,9 @@ class IStateIterator(object):
         if 'num_states' in kwargs:
             _num_states = kwargs['num_states']
             assert_condition(isinstance(_num_states, int) and _num_states > 0,
-                             ValueError, "Number of states must be a non-zero positive integer: NOT {}"
-                                         .format(_num_states),
-                             self)
+                             ValueError, message="Number of states must be a non-zero positive integer: NOT {}"
+                                                 .format(_num_states),
+                             checking_obj=self)
             self._states = [self._element_type(**kwargs) for i in range(0, _num_states)]
 
     def finalize(self):
@@ -149,9 +149,9 @@ class IStateIterator(object):
         RuntimeError
             if this state has already been finalized
         """
-        assert_condition(not self.finalized,
-                         RuntimeError, "This {} is already done.".format(self.__class__.__name__),
-                         self)
+        assert_condition(not self.finalized, RuntimeError,
+                         message="This {} is already done.".format(self.__class__.__name__),
+                         checking_obj=self)
         for _state in self:
             self.solution.add_solution_data(deepcopy(_state.solution))
         self.solution.finalize()
@@ -170,9 +170,9 @@ class IStateIterator(object):
         """
         if self._finalized:
             # if this throws, something is really broken
-            assert_condition(self.solution.finalized,
-                             RuntimeError, "State is finalized but not its solution object.",
-                             self)
+            assert_condition(self.solution.finalized, RuntimeError,
+                             message="State is finalized but not its solution object.",
+                             checking_obj=self)
         return self._finalized
 
     @property
@@ -286,9 +286,9 @@ class IStaticStateIterator(IStateIterator):
             if this sequence has already been finalized via :py:meth:`.finalize`
         """
         LOG.debug(func_name(self))
-        assert_condition(not self.finalized,
-                         RuntimeError, "This {} is already done.".format(self.__class__.__name__),
-                         self)
+        assert_condition(not self.finalized, RuntimeError,
+                         message="This {} is already done.".format(self.__class__.__name__),
+                         checking_obj=self)
         if self.next_index is not None:
             self._current_index += 1
         else:
@@ -344,7 +344,7 @@ class ITimeStepState(IStaticStateIterator):
             kwargs['solution_class'] = TrajectorySolutionData
         if 'element_type' not in kwargs:
             kwargs['element_type'] = IStepState
-        assert_is_key(kwargs, 'num_states', "Number of states must be given.")
+        assert_named_argument('num_states', kwargs, types=int, descriptor="Number of States", checking_obj=self)
         super(ITimeStepState, self).__init__(**kwargs)
 
         self._delta_time_step = 0.0
@@ -372,9 +372,9 @@ class ITimeStepState(IStaticStateIterator):
 
     @delta_time_step.setter
     def delta_time_step(self, delta_time_step):
-        assert_condition(delta_time_step > 0.0,
-                         ValueError, "Delta interval must be non-zero positive: NOT {}".format(delta_time_step),
-                         self)
+        assert_condition(delta_time_step > 0.0, ValueError,
+                         message="Delta interval must be non-zero positive: NOT {}".format(delta_time_step),
+                         checking_obj=self)
         self._delta_time_step = delta_time_step
 
     @property
@@ -512,7 +512,7 @@ class IIterationState(IStaticStateIterator):
         del kwargs['solution_class']
         del kwargs['element_type']
 
-        assert_is_key(kwargs, 'num_time_steps', "Number of time steps must be given.")
+        assert_named_argument('num_time_steps', kwargs, types=int, descriptor="Number of Time Steps", checking_obj=self)
         _num_time_steps = kwargs['num_time_steps']
         del kwargs['num_time_steps']
         self._states = [self._element_type(**kwargs) for i in range(0, _num_time_steps)]
@@ -532,9 +532,9 @@ class IIterationState(IStaticStateIterator):
         --------
         :py:meth:`.IStateIterator.finalize` : overridden method
         """
-        assert_condition(not self.finalized,
-                         RuntimeError, "This {} is already done.".format(self.__class__.__name__),
-                         self)
+        assert_condition(not self.finalized, RuntimeError,
+                         message="This {} is already done.".format(self.__class__.__name__),
+                         checking_obj=self)
         for _time_step in self:
             for _step in _time_step:
                 self.solution.add_solution_data(deepcopy(_step.solution))
@@ -731,9 +731,9 @@ class ISolverState(IStateIterator):
         This copies the :py:class:`.TrajectorySolutionData` objects from the :py:class:`.IIterationState` instances of
         this sequence to the main :py:class:`.IterativeSolution` object and finalizes it.
         """
-        assert_condition(not self.finalized,
-                         RuntimeError, "This {} is already done.".format(self.__class__.__name__),
-                         self)
+        assert_condition(not self.finalized, RuntimeError,
+                         message="This {} is already done.".format(self.__class__.__name__),
+                         checking_obj=self)
         for _iter in self:
             self.solution.add_solution(_iter.solution)
         self.solution.finalize()
@@ -770,9 +770,9 @@ class ISolverState(IStateIterator):
 
     @delta_interval.setter
     def delta_interval(self, delta_interval):
-        assert_condition(delta_interval > 0.0,
-                         ValueError, "Delta interval must be non-zero positive: NOT {}".format(delta_interval),
-                         self)
+        assert_condition(delta_interval > 0.0, ValueError,
+                         message="Delta interval must be non-zero positive: NOT {}".format(delta_interval),
+                         checking_obj=self)
         self._delta_interval = delta_interval
 
     @property
@@ -941,9 +941,9 @@ class ISolverState(IStateIterator):
 
     def _add_iteration(self):
         assert_condition(self.num_time_steps > 0 and self.num_nodes > 0,
-                         ValueError, "Number of time steps and nodes per time step must be larger 0: NOT {}, {}"
-                                     .format(self.num_time_steps, self.num_nodes),
-                         self)
+                         ValueError, message="Number of time steps and nodes per time step must be larger 0: NOT {}, {}"
+                                             .format(self.num_time_steps, self.num_nodes),
+                         checking_obj=self)
         self._states.append(self._element_type(num_states=self.num_nodes,
                                                num_time_steps=self.num_time_steps))
 

@@ -16,7 +16,7 @@ Examples
 >>> assert_is_in(2, l, "2 is in the list")
 
 >>> m = {'hello': 'world'}
->>> assert_is_key(m, 'hello', "'hello' is a key")
+>>> assert_is_key('hello', m, "'hello' is a key")
 
 >>> a = 1
 >>> assert_is_instance(a, int, "'a' is an integer")
@@ -172,16 +172,16 @@ def assert_is_instance(obj, instances, message=None, descriptor=None, checking_o
         raise ValueError("{:s}.{:s}(): {:s}".format(checking_obj_name(checking_obj), inspect.stack()[2][3], message))
 
 
-def assert_is_key(dictionary, key, message=None, key_desc=None, dict_desc=None, checking_obj=None):
+def assert_is_key(key, dictionary, message=None, key_desc=None, dict_desc=None, checking_obj=None):
     """Asserts dictionary has a certain key
 
     Parameters
     ----------
-    dictionary : :py:class:`dict`
-        dictionary to check
-
     key : ``key``
         key to check
+
+    dictionary : :py:class:`dict`
+        dictionary to check
 
     message : :py:class:`str`
         *(optional)*

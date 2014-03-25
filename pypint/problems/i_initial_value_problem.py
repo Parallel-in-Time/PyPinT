@@ -49,13 +49,11 @@ class IInitialValueProblem(IProblem):
 
     @initial_value.setter
     def initial_value(self, initial_value):
-        assert_is_instance(initial_value, np.ndarray,
-                           "Initial value must be a numpy.ndarray: NOT {:s}".format(initial_value.__class__.__name__),
-                           self)
-        assert_condition(initial_value.size == self.dim,
-                         ValueError, "Initial value must match spacial dimension: {:d} != {:d}"
-                                     .format(self.dim, initial_value.size),
-                         self)
+        assert_is_instance(initial_value, np.ndarray, descriptor="Initial Value", checking_obj=self)
+        assert_condition(initial_value.size == self.dim, ValueError,
+                         message="Initial value must match spacial dimension: {:d} != {:d}"
+                                 .format(self.dim, initial_value.size),
+                         checking_obj=self)
         self._initial_value = initial_value
 
     def print_lines_for_log(self):

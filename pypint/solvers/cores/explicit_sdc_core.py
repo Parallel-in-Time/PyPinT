@@ -5,7 +5,8 @@
 """
 from pypint.solvers.cores.sdc_solver_core import SdcSolverCore
 from pypint.solvers.states.sdc_solver_state import SdcSolverState
-from pypint.utilities import assert_is_instance, assert_is_key
+from pypint.problems import IProblem
+from pypint.utilities import assert_is_instance, assert_named_argument
 
 
 class ExplicitSdcCore(SdcSolverCore):
@@ -31,13 +32,9 @@ class ExplicitSdcCore(SdcSolverCore):
         """
         super(ExplicitSdcCore, self).run(state, **kwargs)
 
-        assert_is_instance(state, SdcSolverState,
-                           "State must be an SdcSolverState: NOT {:s}".format(state.__class__.__name__),
-                           self)
+        assert_is_instance(state, SdcSolverState, descriptor="State", checking_obj=self)
+        assert_named_argument('problem', kwargs, types=IProblem, descriptor="Problem", checking_obj=self)
 
-        assert_is_key(kwargs, 'problem',
-                      "The problem is required as a proxy to the implicit space solver.",
-                      self)
         _problem = kwargs['problem']
 
         _previous_step_solution = state.previous_step.solution

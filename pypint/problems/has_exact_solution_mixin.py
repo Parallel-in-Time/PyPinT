@@ -42,8 +42,8 @@ class HasExactSolutionMixin(object):
             * if ``phi_of_time`` is not a :py:class:`numpy.ndarray`
             * if not exact function is given
         """
-        assert_is_instance(time, float, "Time must be a float.", self)
-        assert_is_callable(self._exact_function, "Exact function not given.", self)
+        assert_is_instance(time, float, descriptor="Time Point", checking_obj=self)
+        assert_is_callable(self._exact_function, descriptor="Exact Function", checking_obj=self)
         return self._exact_function(time)
 
     @property
@@ -59,7 +59,7 @@ class HasExactSolutionMixin(object):
 
     @exact_function.setter
     def exact_function(self, exact_function):
-        assert_is_callable(exact_function, "Exact function must be callable.", self)
+        assert_is_callable(exact_function, descriptor="Exact Function", checking_obj=self)
         self._exact_function = exact_function
 
 
@@ -86,7 +86,8 @@ def problem_has_exact_solution(problem, checking_obj=None):
     ValueError :
         If the given problem is not an instance of :py:class:`.IProblem`.
     """
-    assert_is_instance(problem, IProblem, "It needs to be a problem to have an exact solution.", checking_obj)
+    assert_is_instance(problem, IProblem, message="It needs to be a problem to have an exact solution.",
+                       checking_obj=checking_obj)
     return isinstance(problem, HasExactSolutionMixin)
 
 

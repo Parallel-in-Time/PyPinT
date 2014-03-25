@@ -107,13 +107,15 @@ class IntegratorBase(object):
             * if either ``time_start`` or ``time_end`` are not given
             * if ``time_start`` is larger or equals ``time_end``
         """
-        assert_is_instance(data, np.ndarray, "Data to integrate must be an numpy.ndarray.", self)
+        assert_is_instance(data, np.ndarray, descriptor="Data to integrate", checking_obj=self)
         assert_condition("time_start" in kwargs or "time_end" in kwargs,
-                         ValueError, "Either start or end of time interval need to be given.", self)
+                         ValueError, message="Either start or end of time interval need to be given.",
+                         checking_obj=self)
         assert_condition(kwargs["time_start"] < kwargs["time_end"],
-                         ValueError, "Time interval need to be non-zero positive: [{:f}, {:f}]"
-                                     .format(kwargs["time_start"], kwargs["time_end"]),
-                         self)
+                         ValueError,
+                         message="Time interval need to be non-zero positive: [{:f}, {:f}]"
+                                 .format(kwargs["time_start"], kwargs["time_end"]),
+                         checking_obj=self)
 
     def transform_interval(self, interval):
         """Transform current interval to the given one
