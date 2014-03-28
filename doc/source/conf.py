@@ -55,7 +55,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'PyPinT'
-copyright = u'2013-2014, PinT Research Group, Jülich Supercomputing Centre'
+#copyright = u''
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -252,6 +252,8 @@ html_sidebars = {
     'genindex': [],
     'py-modindex': [],
     '*': ['localtoc.html'],
+    'user/**': ['localtoc.html'],
+    'development/**': ['localtoc.html'],
     'api/package': ['localtoc.html'],
     'api/**': []
 }
