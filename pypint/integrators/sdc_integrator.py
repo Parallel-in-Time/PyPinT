@@ -18,11 +18,11 @@ class SdcIntegrator(IntegratorBase):
     """Integral part of the SDC algorithm.
     """
     def __init__(self):
-        super(self.__class__, self).__init__()
+        super(SdcIntegrator, self).__init__()
         self._smat = np.zeros(0)
+        self._qmat = np.zeros(0)
 
-    def init(self, nodes_type=GaussLobattoNodes(), num_nodes=3, weights_function=PolynomialWeightFunction(),
-             interval=None):
+    def init(self, nodes_type=GaussLobattoNodes, num_nodes=3, weights_function=PolynomialWeightFunction, interval=None):
         """Initialize SDC Integrator
 
         Parameters
@@ -47,39 +47,74 @@ class SdcIntegrator(IntegratorBase):
         self._construct_s_matrix()
 
     def evaluate(self, data, **kwargs):
-        """
+        """Computes the integral until the given node from the previous one.
 
-        Computes the integral until the given node from the previous one.
-
-        For integration nodes :math:`\\tau_i`, :math:`i=0,\\dots,n` specifying :math:`\\tau_3` as ``last_node_index``
+        For integration nodes :math:`\\tau_i`, :math:`i=1,\\dots,n` specifying :math:`\\tau_3` as ``target_node``
         results in the integral :math:`\\int_{\\tau_2}^{\\tau_3}`.
+
+        Examples
+        --------
+        Given five integration nodes: :math:`\\tau_1, \\dots, \\tau_5`.
+
+        To compute the integral from :math:`\\tau_2` to :math:`\\tau_3` one need to specify ``target_node`` as ``3`` and
+        ``from_node`` as ``2``.
+        Internally, the :math:`S`-matrix is used.
+
+        To compute the full integral over all nodes one need to specify ``target_node`` as ``5`` only.
+        Internally, the :math:`Q`-matrix is used.
 
         Parameters
         ----------
-        last_node_index : :py:class:`int`
-            (required)
-            Index of the last node to integrate.
+        target_node : :py:class:`int`
+            *(required)*
+            (1-based) index of the last node to integrate.
+
+        from_node : :py:class:`int`
+            *(optional)*
+            (1-based) index of the first node to integrate from.
+            *(defaults to ``0``)*
 
         Raises
         ------
         ValueError
-            if ``last_node_index`` is not given
+
+            * if ``target_node`` is not given
+            * if ``from_node`` is not smaller than ``target_node``
 
         See Also
         --------
         :py:meth:`.IntegratorBase.evaluate` : overridden method
         """
-        assert_named_argument('last_node_index', kwargs, types=int, descriptor="Last Node Index", checking_obj=self)
-        _index = kwargs["last_node_index"]
-        assert_condition(_index != 0 and _index <= self._smat.shape[0],
-                         ValueError, message="Last node index {:d} too small or too large. Must be within [{:d},{:d})"
-                                             .format(_index, 1, self._smat.shape[0]),
+        assert_named_argument('target_node', kwargs, types=int, descriptor="Target Node Index", checking_obj=self)
+        _target_index = kwargs["target_node"]
+
+        _from_index = 0
+        if 'from_node' in kwargs:
+            assert_is_instance(kwargs['from_node'], int, descriptor="From Node Index", checking_obj=self)
+            _from_index = kwargs['from_node']
+
+        assert_condition(_from_index < _target_index,
+                         ValueError,
+                         message="Integration must cover at least two nodes: %d !< %d" % (_from_index, _target_index),
                          checking_obj=self)
-        super(SdcIntegrator, self).evaluate(data, time_start=self.nodes[0],
-                                            time_end=self.nodes[_index])
-        # LOG.debug("Integrating {:s} with S-Mat row {:d} ({:s}) on interval {:s}."
-        #           .format(data, _index - 1, self._smat[_index - 1], self.nodes_type.interval))
-        return np.dot(self._smat[_index - 1], data)
+
+        super(SdcIntegrator, self).evaluate(data, time_start=self.nodes[_from_index], time_end=self.nodes[_target_index])
+        if _from_index != 0:
+            assert_condition(_target_index <= self._smat.shape[0],
+                             ValueError, message="Target Node Index {:d} too large. Must be within [{:d},{:d})"
+                                                 .format(_target_index, 1, self._smat.shape[0]),
+                             checking_obj=self)
+            LOG.debug("Integrating {:s} from node {:d} to {:d} with S-Mat row {:d} ({:s}) on interval {:s}."
+                      .format(data, _from_index, _target_index, _target_index - 1, self._smat[_target_index - 1], self.nodes_type.interval))
+            return np.dot(self._smat[_target_index - 1], data)
+        else:
+            assert_condition(_target_index < self._qmat.shape[0],
+                             ValueError, message="Target Node Index {:d} too large. Must be within [{:d}, {:d}]"
+                                                 .format(_target_index, 1, self._qmat.shape[0]),
+                             checking_obj=self)
+            LOG.debug("Integrating {:s} to node {:d} with Q-Mat row {:d} ({:s}) on interval {:s}."
+                      .format(data, _target_index, _target_index, self._qmat[_target_index], self.nodes_type.interval))
+            return np.dot(self._qmat[_target_index], data)
 
     def transform_interval(self, interval):
         """Transforms nodes onto new interval
@@ -90,13 +125,14 @@ class SdcIntegrator(IntegratorBase):
         """
         if interval is not None:
             if interval[0] - interval[-1] != self.nodes[0] - self.nodes[-1]:
-                #LOG.debug("Size of interval changed. Recalculating weights.")
+                LOG.debug("Size of interval changed. Recalculating weights.")
                 super(SdcIntegrator, self).transform_interval(interval)
                 self._construct_s_matrix()
-                #LOG.debug("S-Matrix for interval {:s}: {:s}".format(interval, self._smat))
         else:
-            LOG.debug("Cannot transform interval to None.")
+            # LOG.info("Cannot transform interval to None. Skipping.")
             pass
+        # LOG.info("S-Matrix for interval {:s}:\n{:s}".format(interval, self._smat))
+        # LOG.info("Q-Matrix for interval {:s}:\n{:s}".format(interval, self._qmat))
 
     def _construct_s_matrix(self):
         """Constructs integration :math:`S`-matrix
@@ -110,6 +146,21 @@ class SdcIntegrator(IntegratorBase):
         for i in range(1, self.nodes.size):
             self.weights_function.evaluate(self.nodes, np.array([self.nodes[i - 1], self.nodes[i]]))
             self._smat[i - 1] = self.weights_function.weights
+
+        # compute Q-matrix
+        self._construct_q_matrix()
+
+    def _construct_q_matrix(self):
+        """Constructs integration :math:`Q`-matrix
+
+        The :math:`Q`-matrix is the commulation of the rows of the :math:`S`-matrix.
+        I.e. row :math:`i` of :math:`Q` is the sum of the rows :math:`0` to :math:`i - 1` of :math:`S`.
+
+        However, :math:`Q` has one row more than :math:`S`, namely the first, which is constant zero.
+        """
+        self._qmat = np.zeros((self.nodes.size, self.nodes.size), dtype=float)
+        for i in range(0, self._smat.shape[0]):
+            self._qmat[i + 1] = self._qmat[i] + self._smat[i]
 
     def __copy__(self):
         copy = self.__class__.__new__(self.__class__)

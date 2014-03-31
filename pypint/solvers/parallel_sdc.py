@@ -12,7 +12,7 @@ import numpy as np
 from pypint.solvers.i_iterative_time_solver import IIterativeTimeSolver
 from pypint.solvers.i_parallel_solver import IParallelSolver
 from pypint.communicators.message import Message
-from pypint.integrators.sdc_integrator import SdcIntegrator
+from pypint.integrators.integrator_base import IntegratorBase
 from pypint.integrators.node_providers.gauss_lobatto_nodes import GaussLobattoNodes
 from pypint.integrators.weight_function_providers.polynomial_weight_function import PolynomialWeightFunction
 from pypint.problems import IInitialValueProblem, problem_has_exact_solution
@@ -101,7 +101,7 @@ class ParallelSdc(IIterativeTimeSolver, IParallelSolver):
             'nodes': np.zeros(0)
         }
 
-    def init(self, problem, integrator=SdcIntegrator(), **kwargs):
+    def init(self, problem, integrator, **kwargs):
         """Initializes SDC solver with given problem and integrator.
 
         Parameters
@@ -148,6 +148,10 @@ class ParallelSdc(IIterativeTimeSolver, IParallelSolver):
             mixed in overridden method (with further parameters)
         """
         assert_is_instance(problem, IInitialValueProblem, descriptor="Initial Value Problem", checking_obj=self)
+        assert_condition(issubclass(integrator, IntegratorBase),
+                         ValueError, message="Integrator must be an IntegratorBase: NOT %s"
+                                             % integrator.__mro__[-2].__name__,
+                         checking_obj=self)
 
         super(ParallelSdc, self).init(problem, integrator, **kwargs)
 
@@ -473,7 +477,7 @@ class ParallelSdc(IIterativeTimeSolver, IParallelSolver):
         self.__time_points['steps'] = np.linspace(start, start + self._dt, self.num_time_steps + 1)
 
         # initialize and transform integrator for time step width
-        self._integrator.init(self.__nodes_type(), self.__num_nodes, self.__weights_type(),
+        self._integrator.init(self.__nodes_type, self.__num_nodes, self.__weights_type,
                               interval=np.array([self.__time_points['steps'][0], self.__time_points['steps'][1]],
                                                 dtype=np.float))
 
@@ -594,7 +598,9 @@ class ParallelSdc(IIterativeTimeSolver, IParallelSolver):
         for _step_index in range(0, len(self.state.current_time_step)):
             _current_step = self.state.current_time_step[_step_index]
             if self.classic:
-                _integral = self._integrator.evaluate(_integrate_values, last_node_index=_step_index + 1)
+                _integral = self._integrator.evaluate(_integrate_values,
+                                                      from_node=_step_index, target_node=_step_index + 1)
+                # we successively compute the full integral, which is used for the residual at the end
                 _full_integral += _integral
             _current_step.integral = _integral.copy()
             # do the SDC step of this sweep
@@ -692,7 +698,8 @@ class ParallelSdc(IIterativeTimeSolver, IParallelSolver):
 
             # integrate
             self.state.current_step.integral = self._integrator.evaluate(_integrate_values,
-                                                                         last_node_index=_current_step_index + 1)
+                                                                         from_node=_current_step_index,
+                                                                         target_node=_current_step_index + 1)
             del _integrate_values
         # END if not self.classic
 

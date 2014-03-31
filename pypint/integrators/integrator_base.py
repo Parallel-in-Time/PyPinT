@@ -1,6 +1,5 @@
 # coding=utf-8
 """
-
 .. moduleauthor:: Torbjörn Klatt <t.klatt@fz-juelich.de>
 """
 import numpy as np
@@ -27,7 +26,7 @@ class IntegratorBase(object):
         Parameters
         ----------
         nodes_type : :py:class:`.INodes`
-            Type of integration nodes.
+            Type of integration nodes as the class name **not instance**.
 
         num_nodes : :py:class:`int`
             Number of integration nodes
@@ -35,52 +34,55 @@ class IntegratorBase(object):
         weights_function : :py:class:`.IWeightFunction` or :py:class:`dict`
             Weight function for the integration nodes.
             If it is a dictionary, it must have a ``class`` field with the :py:class:`.IWeightFunction` as the value.
-            Further fields are used as parameters to :py:class:`.IWeightFunction.init`
+            Further fields are used as parameters to :py:class:`.IWeightFunction.init`.
+            In both cases the weight function class must be given as a name **not instance**.
 
         Raises
         ------
         ValueError :
             If the type of one of the given arguments does not match.
 
-            * ``nodes_type`` must be an :py:class:`.INodes`
+            * ``nodes_type`` must be a subclass of :py:class:`.INodes`
             * ``num_nodes`` must be an :py:class:`int`
-            * ``weights_function`` must be an :py:class:`.IWeightFunction` or :py:class:`dict`
-                - If ``weights_function`` is a dictionary, its field ``class`` must be an :py:class:`.IWeightFunction`.
+            * ``weights_function`` must be a subclass of :py:class:`.IWeightFunction` or :py:class:`dict`
+                - if ``weights_function`` is a dictionary, its field ``class`` must be an :py:class:`.IWeightFunction`.
 
         Examples
         --------
         >>> from pypint.integrators import INTEGRATOR_PRESETS
         >>> integrator = IntegratorBase()
         >>> # create classic Gauss-Lobatto integrator with 4 integration nodes
-        >>> options = INTEGRATOR_PRESETS["Gauss-Lobatto"]
-        >>> options["num_nodes"] = 4
+        >>> options = INTEGRATOR_PRESETS['Gauss-Lobatto']
+        >>> options['num_nodes'] = 4
         >>> integrator.init(**options)
         """
-
-        assert_is_instance(nodes_type, INodes,
-                           "Given nodes type is not a valid type: %s" % type(nodes_type),
-                           self)
+        assert_condition(isinstance(nodes_type, type) and issubclass(nodes_type, INodes),
+                         ValueError, message="Given nodes type is not a valid type: %s"
+                                             % nodes_type.__mro__[-2].__name__,
+                         checking_obj=self)
         if isinstance(weights_function, dict):
-            assert_condition("class" in weights_function or isinstance(weights_function["class"], IWeightFunction),
-                             ValueError, "Given weight function is not a valid type: %s" % type(weights_function),
+            assert_condition('class' in weights_function and issubclass(weights_function['class'], IWeightFunction),
+                             ValueError, "Given weight function is not a valid type: %s"
+                                         % weights_function['class'].__mro__[-2].__name__,
                              self)
-            self._weights_function = weights_function["class"]
+            self._weights_function = weights_function['class']()
             # copy() is necessary as dictionaries are passed by reference
             _weight_function_options = weights_function.copy()
-            del _weight_function_options["class"]
+            del _weight_function_options['class']
             self._weights_function.init(**_weight_function_options)
         else:
-            assert_is_instance(weights_function, IWeightFunction,
-                               "Given weight function is not a valid type: %s" % type(weights_function),
-                               self)
-            self._weights_function = weights_function
+            assert_condition(issubclass(weights_function, IWeightFunction),
+                             ValueError, message="Given Weight Function is not a valid type: %s"
+                                                 % weights_function.__mro__[-2].__name__,
+                             checking_obj=self)
+            self._weights_function = weights_function()
             self._weights_function.init()
         assert_is_instance(num_nodes, int,
                            "Number of nodes need to be an integer: NOT %s" % type(num_nodes),
                            self)
-        self._nodes = nodes_type
-        self._nodes.init(num_nodes)
-        self.transform_interval(interval)
+        self._nodes = nodes_type()
+        self._nodes.init(num_nodes, interval=interval)
+        self._weights_function.evaluate(self._nodes.nodes, interval=self._nodes.interval)
 
     def evaluate(self, data, **kwargs):
         """Applies this integrator to given data in specified time interval.
@@ -149,6 +151,7 @@ class IntegratorBase(object):
         --------
         :py:attr:`.IWeightFunction.weights`
         """
+        print("%s<0x%x>: %s" % (type(self._weights_function), id(self._weights_function), self._weights_function))
         return self._weights_function.weights
 
     @property

@@ -37,7 +37,7 @@ class IIterativeTimeSolver(object):
             see :py:attr:`.threshold`
         """
         self._problem = problem
-        self._integrator = integrator
+        self._integrator = integrator()
         if "threshold" in kwargs and isinstance(kwargs["threshold"], ThresholdCheck):
             self.threshold = kwargs["threshold"]
 
