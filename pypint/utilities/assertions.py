@@ -24,7 +24,7 @@ Examples
 import inspect
 from collections import Callable
 
-from pypint.utilities.tracing import checking_obj_name, class_name
+from pypint.utilities.tracing import checking_obj_name, class_name, func_name
 from pypint.utilities.logging import LOG
 
 
@@ -52,6 +52,7 @@ def assert_condition(condition, exception_type, message, checking_obj=None):
         if ``condition`` evaluates to :py:class:`False`
     """
     if not condition:
+        LOG.critical(func_name(checking_obj) + message)
         raise exception_type("{:s}.{:s}(): {:s}"
                              .format(checking_obj_name(checking_obj), inspect.stack()[1][3], message))
 
@@ -83,7 +84,7 @@ def assert_is_callable(obj, message=None, descriptor=None, checking_obj=None):
                 message = "Required a callable: NOT {:s}.".format(class_name(obj))
             else:
                 message = "{:s} must be callable.".format(descriptor)
-        LOG.critical(message)
+        LOG.critical(func_name(checking_obj) + message)
         raise ValueError("{:s}.{:s}(): {:s}".format(checking_obj_name(checking_obj), inspect.stack()[2][3], message))
 
 
@@ -119,8 +120,8 @@ def assert_is_in(element, test_list, message=None, elem_desc=None, list_desc=Non
             if not elem_desc:
                 elem_desc = "Element {:r}".format(element)
             message = "{:s} is not in {:s}.".format(elem_desc, list_desc)
-        LOG.critical(message)
-        LOG.debug("Elements in {:s}: {:s}".format(class_name(test_list), ', '.join(test_list)))
+        LOG.critical(func_name(checking_obj) + message)
+        LOG.debug(func_name(checking_obj) + "Elements in {:s}: {:s}".format(class_name(test_list), ', '.join(test_list)))
         raise ValueError("{:s}.{:s}(): {:s}".format(checking_obj_name(checking_obj), inspect.stack()[2][3], message))
 
 
@@ -168,7 +169,7 @@ def assert_is_instance(obj, instances, message=None, descriptor=None, checking_o
                     message = "Required one of {:s}: NOT {:s}.".format(', '.join(_instances_str), class_name(obj))
                 else:
                     message = "Required a {:s}: NOT {:s}.".format(', '.join(_instances_str), class_name(obj))
-        LOG.critical(message)
+        LOG.critical(func_name(checking_obj) + message)
         raise ValueError("{:s}.{:s}(): {:s}".format(checking_obj_name(checking_obj), inspect.stack()[2][3], message))
 
 
@@ -204,8 +205,8 @@ def assert_is_key(key, dictionary, message=None, key_desc=None, dict_desc=None, 
             if not dict_desc:
                 dict_desc = "given dict"
             message = "{:s} is not a key in {:s}.".format(key_desc, dict_desc)
-        LOG.critical(message)
-        LOG.debug("Keys in {:s}: {:s}".format(id(dictionary), ', '.join(dictionary.keys())))
+        LOG.critical(func_name(checking_obj) + message)
+        LOG.debug(func_name(checking_obj) + "Keys in {:s}: {:s}".format(id(dictionary), ', '.join(dictionary.keys())))
         raise ValueError("{:s}.{:s}(): {:s}".format(checking_obj_name(checking_obj), inspect.stack()[2][3], message))
 
 
@@ -216,8 +217,8 @@ def assert_named_argument(name, kwargs, types=None, message=None, descriptor=Non
                 message = "%s ('%s') is a required argument." % (descriptor, name)
             else:
                 message = "'%s' is a required argument." % name
-        LOG.critical(message)
-        LOG.debug("Named arguments were: %s" % ', '.join(kwargs.keys()))
+        LOG.critical(func_name(checking_obj) + message)
+        LOG.debug(func_name(checking_obj) + "Named arguments were: %s" % ', '.join(kwargs.keys()))
         raise ValueError("{:s}.{:s}(): {:s}".format(checking_obj_name(checking_obj), inspect.stack()[2][3], message))
 
     if types:

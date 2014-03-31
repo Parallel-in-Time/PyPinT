@@ -8,8 +8,9 @@ from logbook.more import ColorizedStderrHandler
 from sys import stdout
 from datetime import datetime
 from collections import OrderedDict
+import inspect
 
-from pypint.utilities.tracing import func_name
+from pypint.utilities.tracing import checking_obj_name
 
 
 LOG = Logger('PyPinT Logging')
@@ -19,12 +20,12 @@ LOG.handlers = [
                            format_string='[{record.level_name: <8s}] {record.module:s}.{record.func_name:s}(): {record.message:s}',
                            bubble=True),
     # then write all ERROR, WARNING and INFO messages to stdout
-    StreamHandler(stdout, level='INFO',
+    StreamHandler(stdout, level='DEBUG',
                   format_string='[{record.level_name: <8s}] {record.message:s}',
-                  bubble=True),
+                  bubble=False),
     # finally, write everything (including DEBUG messages) to a logfile
-    FileHandler('{:%Y-%m-%d_%H-%M-%S}_debug.log'.format(datetime.now()), level='DEBUG',
-                format_string='[{record.time}] [{record.level_name: <8s}] <{record.process}.{record.thread}> {record.module:s}.{record.func_name:s}():{record.lineno:d}: {record.message:s}')
+    # FileHandler('{:%Y-%m-%d_%H-%M-%S}_debug.log'.format(datetime.now()), level='DEBUG',
+    #             format_string='[{record.time}] [{record.level_name: <8s}] <{record.process}.{record.thread}> {record.module:s}.{record.func_name:s}():{record.lineno:d}: {record.message:s}')
 ]
 
 
@@ -61,7 +62,23 @@ def print_logging_message_tree(messages):
 
 
 def this_got_called(obj, *args, add_log_msg="", **kwargs):
-    LOG.debug(func_name(obj, *args, **kwargs) + add_log_msg)
+    _params = ''
+    if len(args) > 0:
+        _params += ', '.join(args)
+        if len(kwargs) > 0:
+            _params += ', '
+    if len(kwargs) > 0:
+        _c = 0
+        for _k in kwargs:
+            if _c > 0:
+                _params += ', '
+            _params += str(_k) + '=' + str(kwargs[_k])
+            _c += 1
+
+    if obj:
+        LOG.debug("%s<0x%x>.%s(%s): " % (checking_obj_name(obj), id(obj), inspect.stack()[2][3], _params) + add_log_msg)
+    else:
+        LOG.debug("unknown<>.%s(%s): " % (inspect.stack()[2][3], _params) + add_log_msg)
 
 
 __all__ = [
