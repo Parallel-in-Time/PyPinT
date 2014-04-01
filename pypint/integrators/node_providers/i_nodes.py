@@ -73,7 +73,7 @@ class INodes(object):
         assert_is_instance(interval, np.ndarray, descriptor="Interval", checking_obj=self)
         assert_condition(interval.size == 2,
                          ValueError,
-                         message="Intervals must be of size 2: {:s} ({:s})".format(interval, type(interval)),
+                         message="Intervals must be of size 2: {} ({:s})".format(interval, class_name(interval)),
                          checking_obj=self)
         assert_condition(interval[0] < interval[1],
                          ValueError,
@@ -85,8 +85,8 @@ class INodes(object):
                       (_old_interval[1] - _old_interval[0]) + interval[0]
         assert_condition(self._nodes[0] - self._interval[0] <= 1e-16 and self._nodes[-1] - self._interval[1] <= 1e-16,
                          RuntimeError,
-                         message="Newly computed nodes do not match new interval: %s NOT IN %s"
-                                 % (self._nodes, self._interval),
+                         message="Newly computed nodes do not match new interval: {} NOT IN {}"
+                                 .format(self._nodes, self._interval),
                          checking_obj=self)
 
     @property

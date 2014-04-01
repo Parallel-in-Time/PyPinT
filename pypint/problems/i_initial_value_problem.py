@@ -63,7 +63,7 @@ class IInitialValueProblem(IProblem):
 
     def __str__(self):
         _out = super(IInitialValueProblem, self).__str__()
-        _out += r", u({:.2f})={:s}".format(self.time_start, self.initial_value)
+        _out += r", u({:.2f})={}".format(self.time_start, self.initial_value)
         return _out
 
 

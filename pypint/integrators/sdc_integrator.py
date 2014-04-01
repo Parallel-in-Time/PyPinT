@@ -98,22 +98,23 @@ class SdcIntegrator(IntegratorBase):
                          message="Integration must cover at least two nodes: %d !< %d" % (_from_index, _target_index),
                          checking_obj=self)
 
-        super(SdcIntegrator, self).evaluate(data, time_start=self.nodes[_from_index], time_end=self.nodes[_target_index])
+        super(SdcIntegrator, self).evaluate(data, time_start=self.nodes[_from_index],
+                                            time_end=self.nodes[_target_index])
         if _from_index != 0:
             assert_condition(_target_index <= self._smat.shape[0],
                              ValueError, message="Target Node Index {:d} too large. Must be within [{:d},{:d})"
                                                  .format(_target_index, 1, self._smat.shape[0]),
                              checking_obj=self)
-            LOG.debug("Integrating {:s} from node {:d} to {:d} with S-Mat row {:d} ({:s}) on interval {:s}."
-                      .format(data, _from_index, _target_index, _target_index - 1, self._smat[_target_index - 1], self.nodes_type.interval))
+            LOG.debug("Integrating from node {:d} to {:d} with S-Mat row {:d} on interval {}."
+                      .format(_from_index, _target_index, _target_index - 1, self.nodes_type.interval))
             return np.dot(self._smat[_target_index - 1], data)
         else:
             assert_condition(_target_index < self._qmat.shape[0],
                              ValueError, message="Target Node Index {:d} too large. Must be within [{:d}, {:d}]"
                                                  .format(_target_index, 1, self._qmat.shape[0]),
                              checking_obj=self)
-            LOG.debug("Integrating {:s} to node {:d} with Q-Mat row {:d} ({:s}) on interval {:s}."
-                      .format(data, _target_index, _target_index, self._qmat[_target_index], self.nodes_type.interval))
+            LOG.debug("Integrating to node {:d} with Q-Mat row {:d} on interval {}."
+                      .format(_target_index, _target_index, self.nodes_type.interval))
             return np.dot(self._qmat[_target_index], data)
 
     def transform_interval(self, interval):

@@ -42,10 +42,8 @@ class Injection(ILevelTransitionProvider):
         self.prolongation_operator = \
             np.zeros([self.num_fine_points, self.num_coarse_points])
         self._construct_transform_matrices()
-        LOG.debug("Restringation operator: {:s}"
-                  .format(self.restringation_operator))
-        LOG.debug("Prolongation operator: {:s}"
-                  .format(self.prolongation_operator))
+        LOG.debug("Restringation operator: {}".format(self.restringation_operator))
+        LOG.debug("Prolongation operator: {}".format(self.prolongation_operator))
 
     def prolongate(self, coarse_data):
         super(self.__class__, self).prolongate(coarse_data)

@@ -97,7 +97,7 @@ class ISolution(object):
         return copy
 
     def __str__(self):
-        return "{:s}: {:s}".format(class_name(self), self._data)
+        return "{:s}: {}".format(class_name(self), self._data)
 
 
 __all__ = ['ISolution']
