@@ -20,12 +20,12 @@ LOG.handlers = [
                            format_string='[{record.level_name: <8s}] {record.module:s}.{record.func_name:s}(): {record.message:s}',
                            bubble=True),
     # then write all ERROR, WARNING and INFO messages to stdout
-    StreamHandler(stdout, level='DEBUG',
+    StreamHandler(stdout, level='INFO',
                   format_string='[{record.level_name: <8s}] {record.message:s}',
-                  bubble=False),
+                  bubble=True),
     # finally, write everything (including DEBUG messages) to a logfile
-    # FileHandler('{:%Y-%m-%d_%H-%M-%S}_debug.log'.format(datetime.now()), level='DEBUG',
-    #             format_string='[{record.time}] [{record.level_name: <8s}] <{record.process}.{record.thread}> {record.module:s}.{record.func_name:s}():{record.lineno:d}: {record.message:s}')
+    FileHandler('{:%Y-%m-%d_%H-%M-%S}_debug.log'.format(datetime.now()), level='DEBUG',
+                format_string='[{record.time}] [{record.level_name: <8s}] <{record.process}.{record.thread}> {record.module:s}.{record.func_name:s}():{record.lineno:d}: {record.message:s}')
 ]
 
 
