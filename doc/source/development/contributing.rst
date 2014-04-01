@@ -12,14 +12,14 @@ We use the `git-flow`_ workflow to that extend, that branch names(paces) have a 
 ``development``
     tip of the ``development`` branch is the current state of development and not expected to be stable or even usable
 
-``feature-*``
+``feature/*``
     various feature branches are used to implement new features and should be based off the ``development`` branch
 
-``release-*``
+``release/*``
     a release branch is created from the ``development`` branch and used to prepare a new release and will be merged
     into ``master``
 
-``hotfix-*``
+``hotfix/*``
     hotfix branches are based off ``master`` or ``development`` to fix important and severe bugs and should be merged
     into ``development`` and ``master`` as soon as possible
 
@@ -58,7 +58,7 @@ How to Implement a New Feature?
 2. switch to the ``development`` branch and pull in the latest changes
 
 3. create a new branch ``feature-XYZ`` where ``XYZ`` is a short title of your planned feature
-   (word seperation should be done with underscores, e.g. ``feature-my_awesome_feature``)
+   (word seperation should be done with underscores, e.g. ``feature/my_awesome_feature``)
 
 4. hack and write Unit Tests
 
