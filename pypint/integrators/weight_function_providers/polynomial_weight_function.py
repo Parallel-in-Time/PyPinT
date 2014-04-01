@@ -45,7 +45,6 @@ class PolynomialWeightFunction(IWeightFunction):
         ----------
         coeffs : :py:class:`numpy.ndarray` or :py:class:`list`
             Array of coefficients of the polynomial.
-
         func : :py:class:`str`
             Of format ``c0 + c1 x^1 + c2 x^2...``
             String representation of the polynomial.
@@ -68,6 +67,7 @@ class PolynomialWeightFunction(IWeightFunction):
         """Computes weights for stored polynomial and given nodes.
 
         The weights are calculated with help of the Lagrange polynomials
+
         .. math::
 
             \\alpha_i = \\int_a^b\\omega (x) \\prod_{j=1,j \\neq i}^{n} \\frac{x-x_j}{x_i-x_j} \\mathrm{d}x
@@ -113,7 +113,6 @@ class PolynomialWeightFunction(IWeightFunction):
         ----------
         coefficient : :py:class:`float`
             Coefficient :math:`c` of :math:`cx^p`.
-
         power : :py:class:`int`
              Power :math:`p` of :math:`cx^p`.
 

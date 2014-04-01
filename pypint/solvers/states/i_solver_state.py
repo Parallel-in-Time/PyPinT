@@ -283,7 +283,7 @@ class IStaticStateIterator(IStateIterator):
         Raises
         ------
         RuntimeError
-            if this sequence has already been finalized via :py:meth:`.finalize`
+            if this sequence has already been finalized via :py:meth:`.IStateIterator.finalize`
         """
         LOG.debug(func_name(self))
         assert_condition(not self.finalized, RuntimeError,
@@ -328,9 +328,11 @@ class ITimeStepState(IStaticStateIterator):
         ----------
         num_states : :py:class:`int`
             number of states in this sequence
+
         solution_class : :py:class:`.TrajectorySolutionData` or :py:class:`.StepSolutionData`
             *(optional)*
             defaults to :py:class:`.TrajectorySolutionData`
+
         element_type : :py:class:`.IStepState` or :py:class:`.IStateIterator`
             *(optional)*
             defaults to :py:class:`.IStepState`
@@ -490,11 +492,14 @@ class IIterationState(IStaticStateIterator):
         ----------
         num_time_steps : :py:class:`int`
             number of time steps in this sequence
+
         num_states : :py:class:`int`
             number of steps per time step
+
         solution_class : :py:class:`.TrajectorySolutionData`, *any other solution class*
             *(optional)*
             defaults to :py:class:`.TrajectorySolutionData`
+
         element_type : :py:class:`.IStateIterator`
             *(optional)*
             defaults to :py:class:`.ITimeStepState`
@@ -822,11 +827,7 @@ class ISolverState(IStateIterator):
         Returns
         -------
         is_first : :py:class:`bool`
-
-            :py:class:`True`
-                if ``len(self)`` is one
-            :py:class:`False`
-                otherwise
+            :py:class:`True` if ``len(self)`` is one, :py:class:`False` otherwise
         """
         return len(self) == 1
 

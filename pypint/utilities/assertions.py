@@ -35,20 +35,17 @@ def assert_condition(condition, exception_type, message, checking_obj=None):
     ----------
     condition : :py:class:`bool` or ``boolean expression``
         expression to be asserted
-
     exception_type : :py:class:`Exception`
         type of exception to be raised if ``condition`` evaluates to :py:class:`False`
-
     message : :py:class:`str`
         message content of exception raised
-
     checking_obj : :py:class:`object` or :py:class:`None`
         The exception will be raised in the scope of the given object.
         If :py:class:`None` (default) no scope will be displayed.
 
     Raises
     ------
-    ``exception_type``
+    exception_type
         if ``condition`` evaluates to :py:class:`False`
     """
     if not condition:
@@ -64,10 +61,8 @@ def assert_is_callable(obj, message=None, descriptor=None, checking_obj=None):
     ----------
     obj : :py:class:`object`
         object to be asserted callable
-
     message : :py:class:`str` or :py:class:`None`
         *(optional)*
-
     checking_obj : :py:class:`object` or :py:class:`None`
         *(optional)*
         The exception will be raised in the scope of the given object.
@@ -95,14 +90,11 @@ def assert_is_in(element, test_list, message=None, elem_desc=None, list_desc=Non
     ----------
     element : :py:class:`object`
         element to check membership
-
     test_list : ``Sequence``
         sequence to check
-
     message : :py:class:`str`
         *(optional)*
         message content of exception raised
-
     checking_obj : :py:class:`object` or :py:class:`None`
         *(optional)*
         The exception will be raised in the scope of the given object.
@@ -133,14 +125,11 @@ def assert_is_instance(obj, instances, message=None, descriptor=None, checking_o
     ----------
     obj : :py:class:`object`
         object to check type
-
     instances : :py:class:`type` of ``classes`` or :py:class:`class`
         types to check
-
     message : :py:class:`str`
         *(optional)*
         message content of exception raised
-
     checking_obj : :py:class:`object` or :py:class:`None`
         *(optional)*
         The exception will be raised in the scope of the given object.
@@ -183,14 +172,11 @@ def assert_is_key(key, dictionary, message=None, key_desc=None, dict_desc=None, 
     ----------
     key : ``key``
         key to check
-
     dictionary : :py:class:`dict`
         dictionary to check
-
     message : :py:class:`str`
         *(optional)*
         message content of exception raised
-
     checking_obj : :py:class:`object` or :py:class:`None`
         *(optional)*
         The exception will be raised in the scope of the given object.

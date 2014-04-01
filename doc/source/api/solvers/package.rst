@@ -7,8 +7,7 @@ Solvers (:mod:`solvers`)
 
 The general call sequence for a parallel iterative time solver is depicted as follows:
 
-.. image:: /../../_static/imgs/solver_sequence.svg
-    :width: 90%
+.. image:: /_static/imgs/solver_sequence.svg
     :align: center
 
 .. toctree::

@@ -25,9 +25,9 @@ class SemiImplicitSdcCore(SdcSolverCore):
         .. math::
 
             u_{m+1}^{k+1} - \\Delta_\\tau F_I(t_{m+1}, u_{m+1}^{k+1}) =
-                u_m^{k+1} + \\Delta_\\tau \\left( F_I(t_{m+1}, u_{m+1}^k)
-                                                  - F_E(t_m, u_m^{k+1}) + F_E(t_m, u_m^k) \\right)
-                          + \\Delta_t I_m^{m+1} \\left( F(\\vec{u}^k) \\right)
+                u_m^{k+1} &+ \\Delta_\\tau \\left( F_I(t_{m+1}, u_{m+1}^k)
+                                                  - F_E(t_m, u_m^{k+1}) + F_E(t_m, u_m^k) \\right) \\\\
+                          &+ \\Delta_t I_m^{m+1} \\left( F(\\vec{u}^k) \\right)
 
         Parameters
         ----------

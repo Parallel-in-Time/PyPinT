@@ -43,10 +43,8 @@ class ThresholdCheck(object):
         ----------
         min_threshold : :py:class:`float`
             threshold value for minimum criteria
-
         max_threshold : :py:class:`int`
             threshold value for maximum criteria
-
         conditions : :py:class:`tuple` of :py:class:`str`
             Tuple of strings defining the active criteria.
             Possible values are:
@@ -57,7 +55,7 @@ class ThresholdCheck(object):
             * "``error``"
             * "``iterations``"
 
-            (defaults to: ``('residual', 'iterations')``)
+            (defaults to: ``('solution reduction', 'iterations')``)
         """
         self._min_threshold = min_threshold
         self._max_threshold = max_threshold

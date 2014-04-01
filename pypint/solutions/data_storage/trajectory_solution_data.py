@@ -17,7 +17,7 @@ class TrajectorySolutionData(object):
     Basically, this is nothing more than an array of :py:class:`.StepSolutionData` objects and a couple of
     utility functions for easy data access and consistency checks.
 
-    This class provides a selected subset of Python's mutable sequence datatype methods:
+    This class provides a selected subset of `Python's mutable sequence datatype methods`_:
 
     :py:meth:`.__len__`
         Returns the number of :py:class:`.StepSolutionData` objects stored in this instance.
@@ -35,6 +35,8 @@ class TrajectorySolutionData(object):
 
     :py:meth:`.__contains__`
         Finds the given :py:class:`.StepSolutionData` object in this sequence.
+
+    .. _Python's mutable sequence datatype methods: https://docs.python.org/3/library/stdtypes.html?highlight=sequence#mutable-sequence-types
     """
 
     def __init__(self):
@@ -55,12 +57,10 @@ class TrajectorySolutionData(object):
             In case a single unnamed argument is given, this is required to be an instance of
             :py:class:`.StepSolutionData`.
             If no named argument is given, the following two parameters are *not* optional.
-
         values : :py:class:`numpy.ndarray`
             *(optional)*
             Solution values.
             Passed on to constructor of :py:class:`.StepSolutionData`.
-
         time_point : :py:class:`float`
             *(optional)*
             Time point of the solution.
@@ -118,11 +118,7 @@ class TrajectorySolutionData(object):
         Returns
         -------
         finilized : :py:class:`bool`
-
-            :py:class:`True`
-                if it has been finalized before
-            :py:class:`False`
-                otherwise
+            :py:class:`True` if it has been finalized before, :py:class:`False` otherwise
         """
         return self._finalized
 

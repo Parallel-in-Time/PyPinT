@@ -7,8 +7,7 @@ Communicators (:mod:`communicators`)
 
 The communication pattern is implemented as follows:
 
-.. image:: /../../_static/imgs/solver_communication_pattern.svg
-    :width: 75%
+.. image:: /_static/imgs/solver_communication_pattern.svg
     :align: center
 
 .. toctree::

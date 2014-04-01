@@ -30,12 +30,12 @@ class IInitialValueProblem(IProblem):
 
         Parameters
         ----------
-        initial value : :py:class:`numpy.ndarray`
+        initial_value : :py:class:`numpy.ndarray`
             Initial value of the solution.
 
         Returns
         -------
-        initial value : :py:class:`numpy.ndarray`
+        initial_value : :py:class:`numpy.ndarray`
             Initial value of the solution.
 
         Raises
@@ -43,7 +43,7 @@ class IInitialValueProblem(IProblem):
         ValueError
 
             * if ``initial_value`` is not a :py:class:`numpy.ndarray`
-            * if ``initial_value``'s size is not equal the number of spacial :py:attr:`.dim`
+            * if ``initial_value``'s size is not equal the number of spacial :py:attr:`.IProblem.dim`
         """
         return self._initial_value
 

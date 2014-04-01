@@ -39,13 +39,10 @@ class StepSolutionData(object):
         value : :py:class:`numpy.ndarray`
             Solution value.
             Size of the vector must equal the spacial dimension of the problem.
-
         time_point : :py:class:`float`
             Time point of associated with the solution.
-
         error : :py:class:`.Error` or :py:class:`numpy.ndarray`
             Error of the solution.
-
         residual : :py:class:`.Residual` or :py:class:`numpy.ndarray`
             Residual of the solution.
             Same abundance of constrains apply as for the error.
@@ -107,11 +104,7 @@ class StepSolutionData(object):
         Returns
         -------
         finilized : :py:class:`bool`
-
-            :py:class:`True`
-                if it has been finalized before
-            :py:class:`False`
-                otherwise
+            :py:class:`True` if it has been finalized before, :py:class:`False` otherwise
         """
         return self._finalized
 

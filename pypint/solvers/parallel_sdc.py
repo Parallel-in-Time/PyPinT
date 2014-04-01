@@ -46,9 +46,13 @@ class ParallelSdc(IIterativeTimeSolver, IParallelSolver):
 
     Default Values:
 
-        * :py:attr:`.ThresholdCheck.max_iterations`: 10
+        * :py:class:`.ThresholdCheck`
 
-        * :py:attr:`.ThresholdCheck.min_reduction`: 1e-7
+            * ``max_threshold``: 10
+
+            * ``min_threshold``: 1e-7
+
+            * ``conditions``: ``('residual', 'iterations')``
 
         * :py:attr:`.num_time_steps`: 1
 
@@ -108,28 +112,20 @@ class ParallelSdc(IIterativeTimeSolver, IParallelSolver):
         ----------
         num_time_steps : :py:class:`int`
             Number of time steps to be used within the time interval of the problem.
-
         num_nodes : :py:class:`int`
             *(otional)*
             number of nodes per time step
-
         nodes_type : :py:class:`.INodes`
             *(optional)*
-            Type of integration nodes to be used (class name, **NOT** instance).
-
+            Type of integration nodes to be used (class name, **NOT instance**).
         weights_type : :py:class:`.IWeightFunction`
             *(optional)*
-            Integration weights function to be used (class name, **NOT** instance).
-
+            Integration weights function to be used (class name, **NOT instance**).
         classic : :py:class:`bool`
             *(optional)*
             Flag for specifying the type of the SDC sweep.
-
-            :py:class:`True`
-                *(default)*
-                For the classic SDC as known from the literature
-            :py:class:`False`
-                For the modified SDC as developed by Torbjörn Klatt.
+            :py:class:`True`: *(default)* For the classic SDC as known from the literature;
+            :py:class:`False`: For the modified SDC as developed by Torbjörn Klatt.
 
 
         Raises
@@ -184,46 +180,6 @@ class ParallelSdc(IIterativeTimeSolver, IParallelSolver):
         """Applies SDC solver to the initialized problem setup.
 
         Solves the given problem with the explicit SDC algorithm.
-
-        The output for the iterations explained:
-
-            **iter**
-                The iteration number.
-
-            **rel red**
-                The relative reduction of the solution from one iteration to the previous.
-                Is only displayed from the second iteration onwards.
-
-            **time**
-                Seconds taken for the iteration.
-
-            **resid**
-                Residual of the last time step of the iteration.
-
-            **err red**
-                Reduction of the absolute error from the first iteration to the current.
-                Is only displayed from the second iteration onwards and only if the given problem
-                provides a function of the exact solution (see :py:meth:`.problem_has_exact_solution()`).
-
-        The output for the time steps of an iteration explained (will only show up when running with
-        logger level ``DEBUG``):
-
-            **step**
-                Number of the time step.
-
-            **t_0**
-                Start of the time step interval.
-
-            **t_1**
-                End of the time step interval.
-
-            **resid**
-                Residual of the time step.
-
-            **err**
-                Inifnity norm of error for the time step.
-                Is only displayed if the given problem provides a function for the
-                exact solution (see :py:meth:`.problem_has_exact_solution()`).
 
         Parameters
         ----------
@@ -418,11 +374,8 @@ class ParallelSdc(IIterativeTimeSolver, IParallelSolver):
         Returns
         -------
         is_classic : :py:class:`bool`
-
-            :py:class:`True`
-                if it's the classic SDC as known from papers
-            :py:class:`False`
-                if it's the modified SDC by Torbjörn Klatt
+            :py:class:`True` if it's the classic SDC as known from papers;
+            :py:class:`False` if it's the modified SDC by Torbjörn Klatt
         """
         return self._classic
 
@@ -450,12 +403,9 @@ class ParallelSdc(IIterativeTimeSolver, IParallelSolver):
         Returns
         -------
         has_work : :py:class:`bool`
-
-            :py:class:`True`
-                if new interval have been initialized
-            :py:class:`False`
-                if no new interval have been initialized
-                (i.e. new interval end would exceed end of time given by problem)
+            :py:class:`True` if new interval have been initialized;
+            :py:class:`False` if no new interval have been initialized (i.e. new interval end would exceed end of time
+            given by problem)
         """
         assert_is_instance(start, float, descriptor="Time Point", checking_obj=self)
 

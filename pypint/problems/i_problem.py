@@ -25,16 +25,12 @@ class IProblem(object):
             Function describing the right hand side of the problem equation.
             Two arguments are required, the first being the time point :math:`t` and the second the time-dependent
             value :math:`\\phi(t)`.
-
         time_start : :py:class:`float`
             Start of the time interval to integrate over.
-
         time_end : :py:class:`float`
             End of the time interval to integrate over.
-
         dim : :py:class:`int`
             Number of spacial dimensions.
-
         rhs: :py:class:`str`
             *(optional)*
             String representation of the right hand side function for logging output.
@@ -72,10 +68,8 @@ class IProblem(object):
         ----------
         time : :py:class:`float`
             Time point :math:`t`
-
         phi_of_time : :py:class:`numpy.ndarray`
             Time-dependent data.
-
         partial : :py:class:`str` or :py:class:`None`
             Specifying whether only a certain part of the problem function should be evaluated.
             E.g. useful for semi-implicit SDC where the imaginary part of the function is explicitly evaluated and
@@ -84,7 +78,7 @@ class IProblem(object):
 
         Returns
         -------
-        RHS value : :py:class:`numpy.ndarray`
+        rhs_value : :py:class:`numpy.ndarray`
 
         Raises
         ------
@@ -106,10 +100,8 @@ class IProblem(object):
         ----------
         next_x : :py:class:`numpy.ndarray`
             A starting guess for the implicitly defined value.
-
         rhs_call : :py:class:`callable`
             The right hand side function depending on the implicitly defined new value.
-
         method : :py:class:`str`
             *(optional, default=``hybr``)*
             Method fo the root finding algorithm. See `scipy.optimize.root

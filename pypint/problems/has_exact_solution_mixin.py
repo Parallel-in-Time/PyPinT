@@ -15,7 +15,7 @@ class HasExactSolutionMixin(object):
         Parameters
         ----------
         exact_function : :py:class:`callable`
-            *(optional)
+            *(optional)*
             If given initializes the problem with the exact solution function.
         """
         self._exact_function = None
@@ -32,7 +32,7 @@ class HasExactSolutionMixin(object):
 
         Returns
         -------
-        exact solution : :py:class:`numpy.ndarray`
+        exact_solution : :py:class:`numpy.ndarray`
 
         Raises
         ------
@@ -70,7 +70,6 @@ def problem_has_exact_solution(problem, checking_obj=None):
     ----------
     problem : :py:class:`.IProblem`
         The problem to check for an exact solution function.
-
     checking_obj : object
         *(optional)*
         The object calling this function for a meaningful error message.

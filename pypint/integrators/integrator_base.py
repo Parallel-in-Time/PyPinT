@@ -27,10 +27,8 @@ class IntegratorBase(object):
         ----------
         nodes_type : :py:class:`.INodes`
             Type of integration nodes as the class name **not instance**.
-
         num_nodes : :py:class:`int`
             Number of integration nodes
-
         weights_function : :py:class:`.IWeightFunction` or :py:class:`dict`
             Weight function for the integration nodes.
             If it is a dictionary, it must have a ``class`` field with the :py:class:`.IWeightFunction` as the value.
@@ -45,6 +43,7 @@ class IntegratorBase(object):
             * ``nodes_type`` must be a subclass of :py:class:`.INodes`
             * ``num_nodes`` must be an :py:class:`int`
             * ``weights_function`` must be a subclass of :py:class:`.IWeightFunction` or :py:class:`dict`
+
                 - if ``weights_function`` is a dictionary, its field ``class`` must be an :py:class:`.IWeightFunction`.
 
         Examples
@@ -92,11 +91,9 @@ class IntegratorBase(object):
         data : :py:class:`numpy.ndarray`
             Data vector of the values at given time points.
             Its length must equal the number of integration nodes.
-
         time_start : :py:class:`float`
             *(optional)*
             Begining of the time interval to integrate over.
-
         time_end : :py:class:`float`
             *(optional)*
             End of the time interval to integrate over.
