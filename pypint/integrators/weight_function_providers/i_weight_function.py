@@ -53,7 +53,7 @@ class IWeightFunction(object):
         if interval is None:
             self._interval = np.array([nodes[0], nodes[-1]])
         else:
-            pass
+            self._interval = interval
 
     @property
     def weights(self):
