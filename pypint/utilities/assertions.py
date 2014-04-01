@@ -121,7 +121,8 @@ def assert_is_in(element, test_list, message=None, elem_desc=None, list_desc=Non
                 elem_desc = "Element {:r}".format(element)
             message = "{:s} is not in {:s}.".format(elem_desc, list_desc)
         LOG.critical(func_name(checking_obj) + message)
-        LOG.debug(func_name(checking_obj) + "Elements in {:s}: {:s}".format(class_name(test_list), ', '.join(test_list)))
+        LOG.debug(func_name(checking_obj) +
+                  "Elements in {:s}: {:s}".format(class_name(test_list), ', '.join(test_list)))
         raise ValueError("{:s}.{:s}(): {:s}".format(checking_obj_name(checking_obj), inspect.stack()[2][3], message))
 
 
@@ -161,9 +162,11 @@ def assert_is_instance(obj, instances, message=None, descriptor=None, checking_o
 
             if descriptor:
                 if len(_instances_str) > 1:
-                    message = "{:s} must be one of {:s}: NOT {:s}".format(descriptor, ', '.join(_instances_str), class_name(obj))
+                    message = "{:s} must be one of {:s}: NOT {:s}"\
+                              .format(descriptor, ', '.join(_instances_str), class_name(obj))
                 else:
-                    message = "{:s} must be a {:s}: NOT {:s}".format(descriptor, ', '.join(_instances_str), class_name(obj))
+                    message = "{:s} must be a {:s}: NOT {:s}"\
+                              .format(descriptor, ', '.join(_instances_str), class_name(obj))
             else:
                 if len(_instances_str) > 1:
                     message = "Required one of {:s}: NOT {:s}.".format(', '.join(_instances_str), class_name(obj))

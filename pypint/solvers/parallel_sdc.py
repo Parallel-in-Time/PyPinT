@@ -744,8 +744,8 @@ class ParallelSdc(IIterativeTimeSolver, IParallelSolver):
         LOG.info("%s         |      \\_" % VERBOSITY_LVL2)
         LOG.info("%s         \\_   sol r.red    err r.red      resid       time" % VERBOSITY_LVL1)
 
-    def _print_iteration(self, iter):
-        _iter = self._output_format(iter, 'int', width=5)
+    def _print_iteration(self, _iter):
+        _iter = self._output_format(_iter, 'int', width=5)
         LOG.info("%s   %s" % (VERBOSITY_LVL1, _iter))
         LOG.info("%s        \\" % VERBOSITY_LVL2)
 
@@ -777,26 +777,27 @@ class ParallelSdc(IIterativeTimeSolver, IParallelSolver):
         _phi = self._output_format(phi, 'float', width=6.3)
         _resid = self._output_format(resid, 'exp')
         _err = self._output_format(err, 'exp')
-        LOG.info("%s         |      |- %s    %s    %s    %s    %s    %s" % (VERBOSITY_LVL3, _step, _t0, _t1, _phi, _resid, _err))
+        LOG.info("%s         |      |- %s    %s    %s    %s    %s    %s"
+                 % (VERBOSITY_LVL3, _step, _t0, _t1, _phi, _resid, _err))
 
     def _print_footer(self):
         # LOG.info("{:#<80}".format("> FINISHED: {:s} ({:.3f} sec) ".format(self._core.name, self.timer.past())))
         # LOG.info("> " + '#' * 78)
         pass
 
-    def _output_format(self, value, type, width=None):
-        def _value_to_numeric(value):
-            if isinstance(value, (np.ndarray, IDiagnosisValue)):
-                return supremum_norm(value)
+    def _output_format(self, value, _type, width=None):
+        def _value_to_numeric(val):
+            if isinstance(val, (np.ndarray, IDiagnosisValue)):
+                return supremum_norm(val)
             else:
-                return value
+                return val
 
-        if type and width is None:
-            if type == 'float':
+        if _type and width is None:
+            if _type == 'float':
                 width = 10.3
-            elif type == 'int':
+            elif _type == 'int':
                 width = 10
-            elif type == 'exp':
+            elif _type == 'exp':
                 width = 9.2
             else:
                 width = 10
@@ -804,11 +805,11 @@ class ParallelSdc(IIterativeTimeSolver, IParallelSolver):
         if value is None:
             _outstr = "{: ^{width}s}".format('na', width=int(width))
         else:
-            if type == 'float':
+            if _type == 'float':
                 _outstr = "{: {width}f}".format(_value_to_numeric(value), width=width)
-            elif type == 'int':
+            elif _type == 'int':
                 _outstr = "{: {width}d}".format(_value_to_numeric(value), width=width)
-            elif type == 'exp':
+            elif _type == 'exp':
                 _outstr = "{: {width}e}".format(_value_to_numeric(value), width=width)
             else:
                 _outstr = "{: >{width}s}".format(value, width=width)

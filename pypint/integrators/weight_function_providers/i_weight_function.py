@@ -17,6 +17,7 @@ class IWeightFunction(object):
     """
     def __init__(self):
         self._weights = None
+        self._interval = None
 
     def init(self, *args, **kwargs):
         """Sets and defines the weights function.
@@ -52,7 +53,7 @@ class IWeightFunction(object):
         if interval is None:
             self._interval = np.array([nodes[0], nodes[-1]])
         else:
-            self._interval = interval
+            pass
 
     @property
     def weights(self):

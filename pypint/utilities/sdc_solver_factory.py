@@ -12,7 +12,7 @@ from pypint.utilities import assert_is_instance, assert_condition
 from pypint.utilities.logging import *
 
 
-def SdcSolverFactory(problem, num_solvers, num_total_time_steps, solver_core, **solver_options):
+def sdc_solver_factory(problem, num_solvers, num_total_time_steps, solver_core, **solver_options):
     """Factory function for Parallel SDC with Forward Sending Messaging
 
     This function creates, initializes and executes one or more SDC solvers in parallel for a given problem.
@@ -74,7 +74,7 @@ def SdcSolverFactory(problem, num_solvers, num_total_time_steps, solver_core, **
     LOG.debug("Total number of solver calls: %d" % _total_num_calls)
 
     _dt = _prob_width / float(_total_num_calls)
-    assert_condition(_dt > 0.0 and _dt <= _prob_width,
+    assert_condition(0.0 < _dt <= _prob_width,
                      RuntimeError,
                      message="Width of interval per solver is invalid: 0.0 > %f <= %f" % (_dt, _prob_width))
     assert_condition(abs((_dt * _total_num_calls) - _prob_width) <= 1e-16,
@@ -138,4 +138,4 @@ def SdcSolverFactory(problem, num_solvers, num_total_time_steps, solver_core, **
     return _solvers
 
 
-__all__ = ['SdcSolverFactory']
+__all__ = ['sdc_solver_factory']

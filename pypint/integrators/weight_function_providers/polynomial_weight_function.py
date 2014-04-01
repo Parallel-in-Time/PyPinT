@@ -19,19 +19,19 @@ class PolynomialWeightFunction(IWeightFunction):
 
     Examples
     --------
-        >>> import numpy
-        >>> nodes = numpy.array([-1.0, 0.0, 1.0])
-        >>> # To compute the integration weights for a given set of nodes based
-        >>> # on the constant weight function 1.0 use:
-        >>> # create an instance
-        >>> polyWeights = PolynomialWeightFunction()
-        >>> # set the coefficients of the polynom
-        >>> polyWeights.init([1.0])
-        >>> # compute the weights
-        >>> polyWeights.evaluate(nodes)
-        >>> # access the weights
-        >>> polyWeights.weights
-        array([ 0.33333333,  1.33333333,  0.33333333])
+    >>> import numpy
+    >>> nodes = numpy.array([-1.0, 0.0, 1.0])
+    >>> # To compute the integration weights for a given set of nodes based
+    >>> # on the constant weight function 1.0 use:
+    >>> # create an instance
+    >>> polyWeights = PolynomialWeightFunction()
+    >>> # set the coefficients of the polynom
+    >>> polyWeights.init([1.0])
+    >>> # compute the weights
+    >>> polyWeights.evaluate(nodes)
+    >>> # access the weights
+    >>> polyWeights.weights
+    array([ 0.33333333,  1.33333333,  0.33333333])
     """
 
     def __init__(self):

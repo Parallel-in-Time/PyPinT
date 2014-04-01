@@ -17,7 +17,8 @@ LOG = Logger('PyPinT Logging')
 LOG.handlers = [
     # log ERRORS and WARNINGS to stderr
     ColorizedStderrHandler(level='WARNING',
-                           format_string='[{record.level_name: <8s}] {record.module:s}.{record.func_name:s}(): {record.message:s}',
+                           format_string='[{record.level_name: <8s}] {record.module:s}.{record.func_name:s}(): '
+                                         '{record.message:s}',
                            bubble=True),
     # then write all ERROR, WARNING and INFO messages to stdout
     StreamHandler(stdout, level='INFO',
@@ -25,7 +26,8 @@ LOG.handlers = [
                   bubble=True),
     # finally, write everything (including DEBUG messages) to a logfile
     FileHandler('{:%Y-%m-%d_%H-%M-%S}_debug.log'.format(datetime.now()), level='DEBUG',
-                format_string='[{record.time}] [{record.level_name: <8s}] <{record.process}.{record.thread}> {record.module:s}.{record.func_name:s}():{record.lineno:d}: {record.message:s}')
+                format_string='[{record.time}] [{record.level_name: <8s}] <{record.process}.{record.thread}> '
+                              '{record.module:s}.{record.func_name:s}():{record.lineno:d}: {record.message:s}')
 ]
 
 

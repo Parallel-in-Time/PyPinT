@@ -59,7 +59,8 @@ def find_root(fun, x0, method="hybr"):
 
     if _transform_necessary:
         _wrapped_func = \
-            lambda x_next: _transform_to_real(fun(_transform_to_complex(x_next, _value_map)), _value_map, _transformed_size)
+            lambda x_next: _transform_to_real(fun(_transform_to_complex(x_next, _value_map)),
+                                              _value_map, _transformed_size)
         sol = root(fun=_wrapped_func, x0=_transform_to_real(x0, _value_map, _transformed_size), method=method)
     else:
         sol = root(fun=fun, x0=x0, method=method)

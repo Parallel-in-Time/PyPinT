@@ -175,8 +175,9 @@ class IntegratorBase(object):
         return self._weights_function
 
     def print_lines_for_log(self):
-        _lines = {}
-        _lines['Type'] = class_name(self)
+        _lines = {
+            'Type': class_name(self)
+        }
         if self._nodes is not None:
             _lines['Nodes'] = self._nodes.print_lines_for_log()
         if self._weights_function is not None:
