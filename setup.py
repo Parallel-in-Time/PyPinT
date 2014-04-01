@@ -2,7 +2,20 @@
 
 import os
 from setuptools import setup
-from pypint import __version__
+
+##
+# this block is taken from
+# http://stackoverflow.com/a/7071358
+import re
+VERSIONFILE = "pypint/_version.py"
+verstrline = open(VERSIONFILE, "rt").read()
+VSRE = r"^__version__ = ['\"]([^'\"]*)['\"]"
+mo = re.search(VSRE, verstrline, re.M)
+if mo:
+    verstr = mo.group(1)
+else:
+    raise RuntimeError("Unable to find version string in %s." % VERSIONFILE)
+##
 
 
 def read(fname):
@@ -11,7 +24,7 @@ def read(fname):
 
 setup(
     name="PyPinT",
-    version=__version__,
+    version=verstr,
     author="Torbjörn Klatt, Dieter Moser",
     author_email="t.klatt@fz-juelich.de, d.moser@fz-juelich.de",
     description="A Python framework for Parallel-in-Time integration routines.",
@@ -28,7 +41,7 @@ setup(
         "License :: OSI Approved :: MIT License",
         "Natural Language :: English",
         "Operating System :: OS Independent",
-        "Programming Language :: Python :: 3.3",
+        "Programming Language :: Python :: 3.2",
         "Topic :: Scientific/Engineering :: Mathematics"
     ]
 )

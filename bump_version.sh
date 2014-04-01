@@ -6,7 +6,7 @@ if [[ "$new_version" == "" ]]; then
 fi
 new_version=${new_version//./\\.}
 
-file="pypint/__init__.py"
+file="pypint/_version.py"
 
 old_version=$(grep '__version__' "${file}" | grep -o "'.*'")
 
