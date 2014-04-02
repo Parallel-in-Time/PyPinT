@@ -11,8 +11,8 @@ benefits of parallel-in-time routines to a zoo of time integrators in various ap
 """
 
 from sys import version_info
-if version_info.major < 3 and version_info.minor < 2:
-    raise RuntimeError("PyPinT requires at least Python 3.2.")
+if version_info.major < 3 and version_info.minor < 3:
+    raise RuntimeError("PyPinT requires at least Python 3.3.")
 
 try:
     from _version import __version__

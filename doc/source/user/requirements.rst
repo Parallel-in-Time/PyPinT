@@ -6,7 +6,8 @@ It is advised to use the provided ``requirements.txt`` (or ``requirements34.txt`
 
 `Python`_ (obviously, >= 3.3)
     *PyPinT* has been tested with Python version 3.3.x and 3.4.0.
-    Versions prior to 3.2 will most likely not work as the `SciPy stack`_ is `not compatible`_ with it.
+    Python 3.2 does not have :py:mod:`unittest.mock` included [#]_ and do not support Unicode literals of the form
+    ``u'text`` (cf. `PEP414`_), which is used by `Logbook`_, thus Python 3.2 is not supported.
     All 2.x versions are known to not be compatible. This is on purpose. [#]_
 
 `enum34`_ (required if Python < 3.4)
@@ -20,6 +21,9 @@ It is advised to use the provided ``requirements.txt`` (or ``requirements34.txt`
 
 `matplotlib`_ (required, >= 1.2.0)
     Required for the plotters
+
+`configobj`_ (required, >=5.0.2)
+    Required for dealing with configuration files
 
 `Logbook`_ (required, >= 0.6.0)
     The logging output is handeled via *LogBook*.
@@ -42,12 +46,14 @@ It is advised to use the provided ``requirements.txt`` (or ``requirements34.txt`
         Plugin for nose to generate test coverage.
 
 .. _Python: http://python.org/
+.. _PEP414: http://www.python.org/dev/peps/pep-0414
 .. _SciPy stack: http://www.scipy.org/install.html
 .. _not compatible: http://www.scipy.org/stackspec.html
 .. _enum34: https://pypi.python.org/pypi/enum34
 .. _NumPy: http://numpy.scipy.org/
 .. _SciPy: http://www.scipy.org/scipylib/index.html
 .. _matplotlib: http://matplotlib.org/
+.. _configobj: https://github.com/DiffSK/configobj
 .. _Logbook: https://pythonhosted.org/Logbook/index.html
 .. _Sphinx: http://sphinx-doc.org/
 .. _sphinx-rtd-theme: https://github.com/snide/sphinx_rtd_theme
@@ -57,4 +63,5 @@ It is advised to use the provided ``requirements.txt`` (or ``requirements34.txt`
 
 .. rubric:: Footnotes
 
+.. [#] https://docs.python.org/3.3/library/unittest.mock.html#module-unittest.mock
 .. [#] Blame your system's administrator in case you don't have any Python 3 available.
