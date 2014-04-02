@@ -11,24 +11,34 @@ from collections import OrderedDict
 import inspect
 
 from pypint.utilities.tracing import checking_obj_name
+from pypint.utilities.config import config
 
 
 LOG = Logger('PyPinT Logging')
-LOG.handlers = [
+LOG.handlers = []
+
+if config()['Logger']['Stderr']['enable']:
     # log ERRORS and WARNINGS to stderr
-    ColorizedStderrHandler(level='WARNING',
-                           format_string='[{record.level_name: <8s}] {record.module:s}.{record.func_name:s}(): '
-                                         '{record.message:s}',
-                           bubble=True),
+    LOG.handlers.append(
+        ColorizedStderrHandler(level=config()['Logger']['Stderr']['level'],
+                               format_string=config()['Logger']['Stderr']['format_string'],
+                               bubble=config()['Logger']['Stderr']['bubble'])
+    )
+if config()['Logger']['Stdout']['enable']:
     # then write all ERROR, WARNING and INFO messages to stdout
-    StreamHandler(stdout, level='INFO',
-                  format_string='[{record.level_name: <8s}] {record.message:s}',
-                  bubble=True),
+    LOG.handlers.append(
+        StreamHandler(stdout,
+                      level=config()['Logger']['Stdout']['level'],
+                      format_string=config()['Logger']['Stdout']['format_string'],
+                      bubble=config()['Logger']['Stdout']['bubble'])
+    )
+if config()['Logger']['File']['enable']:
     # finally, write everything (including DEBUG messages) to a logfile
-    FileHandler('{:%Y-%m-%d_%H-%M-%S}_debug.log'.format(datetime.now()), level='DEBUG',
-                format_string='[{record.time}] [{record.level_name: <8s}] <{record.process}.{record.thread}> '
-                              '{record.module:s}.{record.func_name:s}():{record.lineno:d}: {record.message:s}')
-]
+    LOG.handlers.append(
+        FileHandler(config()['Logger']['File']['file_name_format'].format(datetime.now()),
+                    level=config()['Logger']['File']['level'],
+                    format_string=config()['Logger']['File']['format_string'])
+    )
 
 
 VERBOSITY_LVL1 = '!> '
