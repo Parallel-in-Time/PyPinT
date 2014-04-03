@@ -21,6 +21,7 @@ User Manual
     user/requirements
     user/installation
     user/basic_usage
+    Examples <api/examples/package>
     user/theory
     license
     history
