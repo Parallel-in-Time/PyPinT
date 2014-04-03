@@ -57,7 +57,7 @@ How to Implement a New Feature?
 
 2. switch to the ``development`` branch and pull in the latest changes
 
-3. create a new branch ``feature-XYZ`` where ``XYZ`` is a short title of your planned feature
+3. create a new branch ``feature/XYZ`` where ``XYZ`` is a short title of your planned feature
    (word seperation should be done with underscores, e.g. ``feature/my_awesome_feature``)
 
 4. hack and write Unit Tests
