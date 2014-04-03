@@ -1,8 +1,9 @@
 Requirements
 ============
 
-It is advised to use the provided ``requirements.txt`` (or ``requirements34.txt`` if you are on Python 3.4) and
-``test_requirements.txt`` (only for testing and development) for installing the required dependencies with Pip.
+It is advised to use `setuptools`_ via the provided ``setup.py`` file for pulling in the required dependencies.
+The dependencies for building the documentation and running the test coverage analysis, two requirements files to be
+passed to ``pip install -r`` are provided: ``test_requirements.txt`` and ``docu_requirements.txt``.
 
 `Python`_ (obviously, >= 3.3)
     *PyPinT* has been tested with Python version 3.3.x and 3.4.0.
@@ -45,6 +46,7 @@ It is advised to use the provided ``requirements.txt`` (or ``requirements34.txt`
     `nose-cover3`_ (required if *coverage* is installed)
         Plugin for nose to generate test coverage.
 
+.. _setuptools: https://pypi.python.org/pypi/setuptools
 .. _Python: http://python.org/
 .. _PEP414: http://www.python.org/dev/peps/pep-0414
 .. _SciPy stack: http://www.scipy.org/install.html
