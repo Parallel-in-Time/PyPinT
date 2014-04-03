@@ -10,10 +10,10 @@ benefits of parallel-in-time routines to a zoo of time integrators in various ap
 
 ## Installation
 
-Before installation, please read about the (required packages)[doc/source/user/requirements.rst] carefully.
+Before installation, please read about the [required packages](doc/source/user/requirements.rst) carefully.
 
-We strongly recommend to use virtual environments as provided by (pyenv)[https://github.com/yyuu/pyenv] and/or
-(virtualenv)[http://virtualenv.org/].
+We strongly recommend to use virtual environments as provided by [pyenv](https://github.com/yyuu/pyenv) and/or
+[virtualenv](http://virtualenv.org/).
 
 *PyPinT* is not yet available via PyPi but will be in the near future.
 
@@ -26,14 +26,14 @@ This will install all required modules and packages for you.
 
 ## Development and Contributing
 
-(Please see)[doc/source/development/contributing.rst]
+[Please see](doc/source/development/contributing.rst)
 
 
 ## History
 
-(See here)[CHANGELOG]
+[See here](CHANGELOG)
 
 
 ## License
 
-(See here)[doc/source/license.rst]
+[See here](doc/source/license.rst)
