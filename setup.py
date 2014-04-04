@@ -18,7 +18,7 @@ MAJOR = 0
 MINOR = 0
 MICRO = 3
 ISRELEASED = True
-RELEASE_CANDIDATE = 2  # set to None or 0 if it's not a release candidate
+RELEASE_CANDIDATE = None  # set to None or 0 if it's not a release candidate
 
 VERSION = '%d.%d.%d' % (MAJOR, MINOR, MICRO)
 if RELEASE_CANDIDATE and RELEASE_CANDIDATE > 0:
