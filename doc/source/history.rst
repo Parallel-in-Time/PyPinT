@@ -1,4 +1,4 @@
 History
 =======
 
-.. include:: ../../CHANGELOG
+.. include:: ../../CHANGELOG.rst

@@ -83,15 +83,15 @@ def _get_config(config_file=None):
 
     if not isfile(_config_file):
         print("WARNING: Configuration file '%s' not found. Using defaults." % _config_file, file=stdout)
-        print("WARNING: Configuration file '%s' not found. Using defaults." % _config_file,file=stderr)
+        print("WARNING: Configuration file '%s' not found. Using defaults." % _config_file, file=stderr)
         _config_file = _DEFAULT_CONFIG_FILE
 
     _config_spec = ConfigObj(_CONFIG_SPEC_FILE, encoding='UTF-8', interpolation=False, list_values=False,
                              _inspec=True)
 
     try:
-        return ConfigObj(_config_file, interpolation=False, file_error=True, raise_errors=True, encoding='UTF-8',
-                         configspec=_config_spec)
+        config = ConfigObj(_config_file, interpolation=False, file_error=True, raise_errors=True, encoding='UTF-8',
+                           configspec=_config_spec)
     except IOError as err:
         # Shouldn't happend!
         print("Configuration file '%s' not found." % _config_file, file=stdout)
@@ -102,6 +102,12 @@ def _get_config(config_file=None):
         print("Error occured while parsing the config file at '%s'. Check syntax." % _config_file, file=stdout)
         print("Error occured while parsing the config file at '%s'. Check syntax." % _config_file, file=stderr)
         raise err
+
+    from validate import Validator
+    if config.validate(Validator()) is True:
+        return config
+    else:
+        raise ConfigObjError("Invalid config file.")
 
 
 __all__ = [

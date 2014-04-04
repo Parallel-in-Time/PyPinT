@@ -17,6 +17,7 @@ from pypint.utilities.config import config
 LOG = Logger('PyPinT Logging')
 LOG.handlers = []
 
+
 if config()['Logger']['Stderr']['enable']:
     # log ERRORS and WARNINGS to stderr
     LOG.handlers.append(

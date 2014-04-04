@@ -32,7 +32,6 @@ Developer Manual
 .. toctree::
     :maxdepth: 2
 
-    development/roadmap
     development/coding_style
     development/documentation
     development/contributing
