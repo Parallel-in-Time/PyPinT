@@ -17,7 +17,7 @@ import builtins
 MAJOR = 0
 MINOR = 0
 MICRO = 3
-ISRELEASED = False
+ISRELEASED = True
 RELEASE_CANDIDATE = 2  # set to None or 0 if it's not a release candidate
 
 VERSION = '%d.%d.%d' % (MAJOR, MINOR, MICRO)
