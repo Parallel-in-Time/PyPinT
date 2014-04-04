@@ -28,7 +28,7 @@ class PolynomialFG(object):
             assert coeffs.ndim == 1 and exponents.ndim == 2 and exponents.shape[1] == coeffs.size
             self.dim = coeffs.shape[0]
 
-        if final_op == None:
+        if final_op is None:
             self.f_op = lambda x: x
         elif hasattr(final_op, '__call__'):
             self.f_op = final_op

@@ -7,6 +7,8 @@ from copy import deepcopy
 
 import numpy as np
 
+from pypint.utilities import class_name
+
 
 class IWeightFunction(object):
     """Provider for integration weights functions.
@@ -15,6 +17,7 @@ class IWeightFunction(object):
     """
     def __init__(self):
         self._weights = None
+        self._interval = None
 
     def init(self, *args, **kwargs):
         """Sets and defines the weights function.
@@ -62,6 +65,12 @@ class IWeightFunction(object):
             Cached computed weights.
         """
         return self._weights
+
+    def print_lines_for_log(self):
+        _lines = {
+            'Type': class_name(self)
+        }
+        return _lines
 
     def __copy__(self):
         copy = self.__class__.__new__(self.__class__)

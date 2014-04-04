@@ -1,0 +1,45 @@
+@startuml
+
+box "Solvers"
+    participant Sp as "<b>p</b>revious\n<b>S</b>olver"
+    participant S as "<b>c</b>urrent\n<b>S</b>olver"
+    participant Sn as "<b>n</b>ext\n<b>S</b>olver"
+end box
+
+box "Communicators" #lightblue
+    participant Cp as "<b>p</b>revious\n<b>C</b>ommunicator"
+    participant C as "<b>c</b>urrent\n<b>C</b>ommunicator"
+    participant Cn as "<b>n</b>ext\n<b>C</b>ommunicator"
+end box
+
+group Forward Sending Communication
+    Sp -> Cp: calls <b>pC</b>.send(value, time_point, flag)
+    Cp --> C: writes into <b>cC</b>.buffer
+
+    S -> C: calls <b>cC</b>.receive()
+    C --> S: returns <b>cC</b>.buffer
+
+    S -> C: calls <b>cC</b>.send(value, time_point, flag)
+    C --> Cn: writes into <b>nC</b>.buffer
+
+    Sn -> Cn: calls <b>nC</b>.receive()
+    Cn --> Sn: returns <b>nC</b>.buffer
+end group
+
+group Backward Receiving Communication
+    Sp -> Cp: calls <b>pC</b>.send(value, time_point, flag)
+    Cp --> Cp: writes into <b>pC</b>.buffer
+
+    S -> C: calls <b>cC</b>.receive()
+    C --> Cp: reads <b>pC</b>.buffer
+    C --> S: returns <b>pC</b>.buffer
+
+    S -> C: calls <b>cC</b>.send(value, time_point, flag)
+    C --> C: writes into <b>cC</b>.buffer
+
+    Sn -> Cn: calls <b>nC</b>.receive()
+    Cn --> C: reads <b>cC</b>.buffer
+    Cn --> Sn: returns <b>cC</b>.buffer
+end group
+
+@enduml

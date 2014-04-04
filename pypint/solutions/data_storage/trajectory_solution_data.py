@@ -8,7 +8,7 @@ import warnings
 import numpy as np
 
 from pypint.solutions.data_storage.step_solution_data import StepSolutionData
-from pypint.utilities import assert_condition
+from pypint.utilities import assert_condition, class_name
 
 
 class TrajectorySolutionData(object):
@@ -17,7 +17,7 @@ class TrajectorySolutionData(object):
     Basically, this is nothing more than an array of :py:class:`.StepSolutionData` objects and a couple of
     utility functions for easy data access and consistency checks.
 
-    This class provides a selected subset of Python's mutable sequence datatype methods:
+    This class provides a selected subset of `Python's mutable sequence datatype methods`_:
 
     :py:meth:`.__len__`
         Returns the number of :py:class:`.StepSolutionData` objects stored in this instance.
@@ -35,6 +35,8 @@ class TrajectorySolutionData(object):
 
     :py:meth:`.__contains__`
         Finds the given :py:class:`.StepSolutionData` object in this sequence.
+
+    .. _Python's mutable sequence datatype methods: https://docs.python.org/3/library/stdtypes.html?highlight=sequence#mutable-sequence-types
     """
 
     def __init__(self):
@@ -55,12 +57,10 @@ class TrajectorySolutionData(object):
             In case a single unnamed argument is given, this is required to be an instance of
             :py:class:`.StepSolutionData`.
             If no named argument is given, the following two parameters are *not* optional.
-
         values : :py:class:`numpy.ndarray`
             *(optional)*
             Solution values.
             Passed on to constructor of :py:class:`.StepSolutionData`.
-
         time_point : :py:class:`float`
             *(optional)*
             Time point of the solution.
@@ -73,13 +73,13 @@ class TrajectorySolutionData(object):
             * if construction of :py:class:`.StepSolutionData` fails
             * if internal consistency check fails (see :py:meth:`._check_consistency`)
         """
-        assert_condition(not self.finalized, AttributeError, "Cannot change this solution data storage any more.", self)
+        assert_condition(not self.finalized, AttributeError,
+                         message="Cannot change this solution data storage any more.", checking_obj=self)
         _old_data = self._data  # backup for potential rollback
 
         if len(args) == 1 and isinstance(args[0], StepSolutionData):
-            assert_condition(args[0].time_point is not None,
-                             ValueError, "Time point must not be None.",
-                             self)
+            assert_condition(args[0].time_point is not None, ValueError,
+                             message="Time point must not be None.", checking_obj=self)
             self._data = np.append(self._data, np.array([args[0]], dtype=np.object))
         else:
             self._data = np.append(self._data, np.array([StepSolutionData(*args, **kwargs)], dtype=np.object))
@@ -107,7 +107,8 @@ class TrajectorySolutionData(object):
         ValueError :
             If it has already been locked.
         """
-        assert_condition(not self.finalized, AttributeError, "This solution data storage is already finalized.", self)
+        assert_condition(not self.finalized, AttributeError,
+                         message="This solution data storage is already finalized.", checking_obj=self)
         self._finalized = True
 
     @property
@@ -117,11 +118,7 @@ class TrajectorySolutionData(object):
         Returns
         -------
         finilized : :py:class:`bool`
-
-            :py:class:`True`
-                if it has been finalized before
-            :py:class:`False`
-                otherwise
+            :py:class:`True` if it has been finalized before, :py:class:`False` otherwise
         """
         return self._finalized
 
@@ -200,21 +197,22 @@ class TrajectorySolutionData(object):
         if self._data.size > 0:
             _time_point = self.data[0].time_point
             for step in range(1, self.data.size):
-                assert_condition(self.data[step].time_point > _time_point,
-                                 ValueError, "Time points must be strictly increasing: {:f} <= {:f}"
-                                             .format(self.data[step].time_point, _time_point),
-                                 self)
+                assert_condition(self.data[step].time_point > _time_point, ValueError,
+                                 message="Time points must be strictly increasing: {:f} <= {:f}"
+                                         .format(self.data[step].time_point, _time_point),
+                                 checking_obj=self)
                 assert_condition(self.data[step].numeric_type == self.numeric_type,
                                  ValueError,
-                                 ("Numeric type of step {:d} does not match global numeric type: "
-                                  .format(step, self.numeric_type) +
-                                  "{} != {}".format(self.data[step].numeric_type, self.numeric_type)),
-                                 self)
+                                 message=("Numeric type of step {:d} does not match global numeric type: "
+                                          .format(step, self.numeric_type) +
+                                          "{} != {}".format(self.data[step].numeric_type, self.numeric_type)),
+                                 checking_obj=self)
                 assert_condition(self.data[step].dim == self.dim,
                                  ValueError,
-                                 ("Spacial dimension of step {:d} does not match global spacial dimension: "
-                                  .format(step, self.dim) + "{:d} != {:d}".format(self.data[step].dim, self.dim)),
-                                 self)
+                                 message=("Spacial dimension of step {:d} does not match global spacial dimension: "
+                                          .format(step, self.dim) +
+                                          "{:d} != {:d}".format(self.data[step].dim, self.dim)),
+                                 checking_obj=self)
 
     def append(self, p_object):
         """
@@ -237,9 +235,9 @@ class TrajectorySolutionData(object):
         return iter(self._data)
 
     def __contains__(self, item):
-        assert_condition(isinstance(item, StepSolutionData),
-                         TypeError, "Item must be a StepSolutionData: NOT {}".format(item.__class__.__name__),
-                         self)
+        assert_condition(isinstance(item, StepSolutionData), TypeError,
+                         message="Item must be a StepSolutionData: NOT {}".format(class_name(item)),
+                         checking_obj=self)
         for elem in self._data:
             if elem == item:
                 return True

@@ -5,7 +5,7 @@
 """
 from copy import deepcopy
 
-from pypint.utilities import assert_condition
+from pypint.utilities import assert_condition, class_name
 
 
 class ISolution(object):
@@ -34,9 +34,8 @@ class ISolution(object):
         raise NotImplementedError("Must be implemented and overridden by subclasses.")
 
     def finalize(self):
-        assert_condition(not self.finalized,
-                         ValueError, "Solution cannot be changed any more.",
-                         self)
+        assert_condition(not self.finalized, ValueError,
+                         message="Solution cannot be changed any more.", checking_obj=self)
         self._finalized = True
 
     @property
@@ -62,13 +61,12 @@ class ISolution(object):
 
     @used_iterations.setter
     def used_iterations(self, used_iterations):
-        assert_condition(not self.finalized,
-                         ValueError, "Solution cannot be changed any more.",
-                         self)
-        assert_condition(used_iterations > 0,
-                         ValueError, "Number of used iterations must be non-zero positive: NOT {:d}"
-                                     .format(used_iterations),
-                         self)
+        assert_condition(not self.finalized, ValueError,
+                         message="Solution cannot be changed any more.", checking_obj=self)
+        assert_condition(used_iterations > 0, ValueError,
+                         message="Number of used iterations must be non-zero positive: NOT {:d}"
+                                 .format(used_iterations),
+                         checking_obj=self)
         self._used_iterations = used_iterations
 
     @property
@@ -99,7 +97,7 @@ class ISolution(object):
         return copy
 
     def __str__(self):
-        return self.__class__.__name__ + ": {:s}".format(self._data)
+        return "{:s}: {}".format(class_name(self), self._data)
 
 
 __all__ = ['ISolution']

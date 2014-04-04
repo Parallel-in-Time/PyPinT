@@ -9,12 +9,11 @@ from matplotlib import is_interactive
 
 from pypint.plugins.plotters.i_plotter import IPlotter
 from pypint.plugins.plotters import colorline
-from pypint.problems import problem_has_exact_solution
 from pypint.solvers.i_iterative_time_solver import IIterativeTimeSolver
 from pypint.solvers.states import ISolverState
 from pypint.solvers.diagnosis.norms import supremum_norm
-from pypint.utilities import assert_is_key, assert_is_instance
-from pypint import LOG
+from pypint.utilities import assert_named_argument
+from pypint.utilities.logging import LOG
 
 
 class SingleSolutionPlotter(IPlotter):
@@ -60,14 +59,8 @@ class SingleSolutionPlotter(IPlotter):
         """
         super(SingleSolutionPlotter, self).plot(args, **kwargs)
 
-        assert_is_key(kwargs, 'solver', "Solver must be given", self)
-        assert_is_instance(kwargs['solver'], IIterativeTimeSolver,
-                           "Solver must be an Iterative Time Solver: NOT %s" % kwargs['solver'].__class__.__name__,
-                           self)
-        assert_is_key(kwargs, 'state', "State must be given", self)
-        assert_is_instance(kwargs['state'], ISolverState,
-                           "State must be an ISolverState: NOT %s" % kwargs['state'].__class__.__name__,
-                           self)
+        assert_named_argument('solver', kwargs, types=IIterativeTimeSolver, descriptor="Solver", checking_obj=self)
+        assert_named_argument('state', kwargs, types=ISolverState, descriptor="State must be given", checking_obj=self)
 
         self._solver = kwargs['solver']
         self._state = kwargs['state']

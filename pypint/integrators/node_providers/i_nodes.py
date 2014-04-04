@@ -7,7 +7,7 @@ from copy import deepcopy
 
 import numpy as np
 
-from pypint.utilities import assert_is_instance, assert_condition
+from pypint.utilities import assert_is_instance, assert_condition, class_name
 
 
 class INodes(object):
@@ -70,16 +70,24 @@ class INodes(object):
         -----
         It may be this transformation is numerically inconvenient because of the loss of significance.
         """
-        assert_is_instance(interval, np.ndarray, "Interval must be a numpy.ndarray.", self)
+        assert_is_instance(interval, np.ndarray, descriptor="Interval", checking_obj=self)
         assert_condition(interval.size == 2,
-                        ValueError, "Intervals must be of size 2: {:s} ({:s})".format(interval, type(interval)), self)
+                         ValueError,
+                         message="Intervals must be of size 2: {} ({:s})".format(interval, class_name(interval)),
+                         checking_obj=self)
         assert_condition(interval[0] < interval[1],
-                        ValueError, "Given interval is not positive: {:.2f} > {:.2f}".format(interval[0], interval[1]),
-                        self)
+                         ValueError,
+                         message="Interval must be positive: {:.2f} > {:.2f}".format(interval[0], interval[1]),
+                         checking_obj=self)
         _old_interval = self.interval
         self._interval = interval
         self._nodes = (self.nodes - _old_interval[0]) * (interval[1] - interval[0]) / \
                       (_old_interval[1] - _old_interval[0]) + interval[0]
+        assert_condition(self._nodes[0] - self._interval[0] <= 1e-16 and self._nodes[-1] - self._interval[1] <= 1e-16,
+                         RuntimeError,
+                         message="Newly computed nodes do not match new interval: {} NOT IN {}"
+                                 .format(self._nodes, self._interval),
+                         checking_obj=self)
 
     @property
     def interval(self):
@@ -139,6 +147,13 @@ class INodes(object):
     @num_nodes.setter
     def num_nodes(self, num_nodes):
         self._num_nodes = num_nodes
+
+    def print_lines_for_log(self):
+        _lines = {
+            'Type': class_name(self),
+            'Number Nodes': "%d" % self.num_nodes
+        }
+        return _lines
 
     def __copy__(self):
         copy = self.__class__.__new__(self.__class__)

@@ -74,30 +74,24 @@ class IterativeSolution(ISolution):
             * if not exactly one solution data object is given
         """
         if 'iteration' in kwargs:
-            assert_is_instance(kwargs['iteration'], int,
-                               "Iteration index must be an integer: NOT {:s}"
-                               .format(kwargs['iteration'].__class__.__name__),
-                               self)
+            assert_is_instance(kwargs['iteration'], int, descriptor="Iteration Index", checking_obj=self)
             _iteration = kwargs['iteration'] - 1
             if _iteration > 0:
                 assert_condition(_iteration in range(-1, len(self._data)),
                                  ValueError,
-                                 ("Iteration index must be within the size of the solution data array:" +
-                                  "{:d} not in [0, {:d}]".format(_iteration, len(self._data))),
-                                 self)
+                                 message=("Iteration index must be within the size of the solution data array: "
+                                          "{:d} not in [0, {:d}]".format(_iteration, len(self._data))),
+                                 checking_obj=self)
             # remove the `iteration` key from the keyword arguments so it does not get passed onto the solution data
             # storage creation
             del kwargs['iteration']
         else:
             _iteration = -1
 
-        assert_condition(len(args) == 1 or 'data' in kwargs,
-                         ValueError, "Exactly one solution data object or 'data' must be given.",
-                         self)
-        assert_is_instance(args[0], self._data_type,
-                           "Given solution data storage must be a {}: NOT {}"
-                           .format(self._data_type, args[0].__class__.__name__),
-                           self)
+        assert_condition(len(args) == 1 or 'data' in kwargs, ValueError,
+                         message="Exactly one solution data object or 'data' must be given.",
+                         checking_obj=self)
+        assert_is_instance(args[0], self._data_type, descriptor="Solution Data Storage", checking_obj=self)
 
         _old_data = copy.copy(self._data)  # backup for potential rollback
         if _iteration == -1:
@@ -137,10 +131,10 @@ class IterativeSolution(ISolution):
             If given ``iteration`` index is not in the valid range.
         """
         if len(self._data) > 0:
-            assert_condition(iteration in range(-1, len(self._data)),
-                             ValueError, "Iteration index not within valid range: {:d} not in [-1, {:d}"
-                                         .format(iteration, len(self._data)),
-                             self)
+            assert_condition(iteration in range(-1, len(self._data)), ValueError,
+                             message="Iteration index not within valid range: {:d} not in [-1, {:d}"
+                                     .format(iteration, len(self._data)),
+                             checking_obj=self)
             return self._data[iteration]
         else:
             return None
@@ -165,10 +159,10 @@ class IterativeSolution(ISolution):
             If given ``iteration`` index is not in the valid range.
         """
         if len(self._data) > 0:
-            assert_condition(iteration in range(-1, len(self._data)),
-                             ValueError, "Iteration index not within valid range: {:d} not in [-1, {:d}"
-                                         .format(iteration, len(self._data)),
-                             self)
+            assert_condition(iteration in range(-1, len(self._data)), ValueError,
+                             message="Iteration index not within valid range: {:d} not in [-1, {:d}"
+                                     .format(iteration, len(self._data)),
+                             checking_obj=self)
             if self._data_type == StepSolutionData:
                 return np.array(self._data[iteration].error, dtype=np.object)
             else:
@@ -196,10 +190,10 @@ class IterativeSolution(ISolution):
             If given ``iteration`` index is not in the valid range.
         """
         if len(self._data) > 0:
-            assert_condition(iteration in range(-1, len(self._data)),
-                             ValueError, "Iteration index not within valid range: {:d} not in [-1, {:d}"
-                                         .format(iteration, len(self._data)),
-                             self)
+            assert_condition(iteration in range(-1, len(self._data)), ValueError,
+                             message="Iteration index not within valid range: {:d} not in [-1, {:d}"
+                                     .format(iteration, len(self._data)),
+                             checking_obj=self)
             if self._data_type == StepSolutionData:
                 return np.array(self._data[iteration].residual, dtype=np.object)
             else:
@@ -220,23 +214,17 @@ class IterativeSolution(ISolution):
             return None
 
     def set_error_reduction(self, iteration, reduction):
-        assert_condition(isinstance(iteration, int) and iteration > 0,
-                         ValueError, "Iteration must be a non-zero positive integer: NOT {}".format(iteration),
-                         self)
-        assert_is_instance(reduction, (float, np.ndarray),
-                           "Reduction of error must be given as a float or numpy.ndarray: NOT {}"
-                           .format(reduction.__class__.__name__),
-                           self)
+        assert_condition(isinstance(iteration, int) and iteration > 0, ValueError,
+                         message="Iteration must be a non-zero positive integer: NOT {}".format(iteration),
+                         checking_obj=self)
+        assert_is_instance(reduction, (float, np.ndarray), descriptor="Reduction of Error", checking_obj=self)
         self._error_reduction[iteration] = copy.copy(reduction)
 
     def set_solution_reduction(self, iteration, reduction):
         assert_condition(isinstance(iteration, int) and iteration > 0,
                          ValueError, "Iteration must be a non-zero positive integer: NOT {}".format(iteration),
                          self)
-        assert_is_instance(reduction, (float, np.ndarray),
-                           "Reduction of solution must be given as a float or numpy.ndarray: NOT {}"
-                           .format(reduction.__class__.__name__),
-                           self)
+        assert_is_instance(reduction, (float, np.ndarray), descriptor="Reduction of Solution", checking_obj=self)
         self._solution_reduction[iteration] = copy.copy(reduction)
 
     @property
@@ -277,9 +265,9 @@ class IterativeSolution(ISolution):
         if len(self._data) > 0:
             _time_points = self._data[0].time_points
             for iteration in range(1, len(self._data)):
-                assert_condition(np.array_equal(_time_points, self._data[iteration].time_points),
-                                 ValueError, "Time points of one or more stored solution data objects do not match.",
-                                 self)
+                assert_condition(np.array_equal(_time_points, self._data[iteration].time_points), ValueError,
+                                 message="Time points of one or more stored solution data objects do not match.",
+                                 checking_obj=self)
 
 
 __all__ = ['IterativeSolution']

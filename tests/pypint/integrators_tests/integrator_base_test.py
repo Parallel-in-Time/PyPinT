@@ -1,14 +1,14 @@
 # coding=utf-8
 """
-
 .. moduleauthor: Torbjörn Klatt <t.klatt@fz-juelich.de>
 """
+import unittest
+
+import numpy
+from nose.tools import *
 
 from pypint.integrators.integrator_base import IntegratorBase
 from pypint.integrators import INTEGRATOR_PRESETS
-import numpy
-import unittest
-from nose.tools import *
 
 
 def init_with_presets(preset):
@@ -28,3 +28,7 @@ def test_init_with_presets():
 class IntegratorBaseTest(unittest.TestCase):
     def test_initialization(self):
         integrator = IntegratorBase()
+
+
+if __name__ == "__main__":
+    unittest.main()

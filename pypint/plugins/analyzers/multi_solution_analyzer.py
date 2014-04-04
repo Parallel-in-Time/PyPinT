@@ -9,7 +9,7 @@ from pypint.plugins.analyzers.i_analyzer import IAnalyzer
 from pypint.plugins.plotters.reduction_residual_plotter import ReductionResidualPlotter
 from pypint.solvers.i_iterative_time_solver import IIterativeTimeSolver
 from pypint.solvers.states import ISolverState
-from pypint.utilities import assert_is_key, assert_is_instance
+from pypint.utilities import assert_named_argument
 
 
 class MultiSolutionAnalyzer(IAnalyzer):
@@ -63,15 +63,10 @@ class MultiSolutionAnalyzer(IAnalyzer):
         """
         super(MultiSolutionAnalyzer, self).add_data(args, kwargs)
 
-        assert_is_key(kwargs, 'solver', "Solver must be given", self)
-        assert_is_instance(kwargs['solver'], IIterativeTimeSolver,
-                           "Solver must be an Iterative Time Solver: NOT %s" % kwargs['solver'].__class__.__name__,
-                           self)
+        assert_named_argument('solver', kwargs, types=IIterativeTimeSolver,
+                              descriptor="Solver", checking_obj=self)
 
-        assert_is_key(kwargs, 'state', "State must be given", self)
-        assert_is_instance(kwargs['state'], ISolverState,
-                           "Given state must be a ISolverState: NOT %s" % kwargs['state'].__class__.__name__,
-                           self)
+        assert_named_argument('state', kwargs, types=ISolverState, descriptor="State", checking_obj=self)
 
         self._solvers.append(kwargs['solver'])
         self._data.append(kwargs['state'])

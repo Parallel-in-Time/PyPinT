@@ -57,7 +57,7 @@ class TrigonometricFG(object):
                 mult = 1.0
                 for i in range(self.cs.size):
                     for j in range(self.dim):
-                        mult = mult * (np.cos(x[j] * (self.freqs[j, i]) + self.trans[j, i]) )
+                        mult = mult * (np.cos(x[j] * (self.freqs[j, i]) + self.trans[j, i]))
                     f_x = f_x + mult * self.cs[i]
                     mult = 1.0
                 return self.f_op(f_x)

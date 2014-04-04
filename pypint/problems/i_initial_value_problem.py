@@ -30,12 +30,12 @@ class IInitialValueProblem(IProblem):
 
         Parameters
         ----------
-        initial value : :py:class:`numpy.ndarray`
+        initial_value : :py:class:`numpy.ndarray`
             Initial value of the solution.
 
         Returns
         -------
-        initial value : :py:class:`numpy.ndarray`
+        initial_value : :py:class:`numpy.ndarray`
             Initial value of the solution.
 
         Raises
@@ -43,24 +43,27 @@ class IInitialValueProblem(IProblem):
         ValueError
 
             * if ``initial_value`` is not a :py:class:`numpy.ndarray`
-            * if ``initial_value``'s size is not equal the number of spacial :py:attr:`.dim`
+            * if ``initial_value``'s size is not equal the number of spacial :py:attr:`.IProblem.dim`
         """
         return self._initial_value
 
     @initial_value.setter
     def initial_value(self, initial_value):
-        assert_is_instance(initial_value, np.ndarray,
-                           "Initial value must be a numpy.ndarray: NOT {:s}".format(initial_value.__class__.__name__),
-                           self)
-        assert_condition(initial_value.size == self.dim,
-                         ValueError, "Initial value must match spacial dimension: {:d} != {:d}"
-                                     .format(self.dim, initial_value.size),
-                         self)
+        assert_is_instance(initial_value, np.ndarray, descriptor="Initial Value", checking_obj=self)
+        assert_condition(initial_value.size == self.dim, ValueError,
+                         message="Initial value must match spacial dimension: {:d} != {:d}"
+                                 .format(self.dim, initial_value.size),
+                         checking_obj=self)
         self._initial_value = initial_value
+
+    def print_lines_for_log(self):
+        _lines = super(IInitialValueProblem, self).print_lines_for_log()
+        _lines['Initial Value'] = 'u({:.3f}) = {}'.format(self.time_start, self.initial_value)
+        return _lines
 
     def __str__(self):
         _out = super(IInitialValueProblem, self).__str__()
-        _out += r", u({:.2f})={:s}".format(self.time_start, self.initial_value)
+        _out += r", u({:.2f})={}".format(self.time_start, self.initial_value)
         return _out
 
 

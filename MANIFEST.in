@@ -1,0 +1,4 @@
+include README.md
+recursive-include pypint *.conf *.spec
+recursive-include scripts *
+include examples/*.sh

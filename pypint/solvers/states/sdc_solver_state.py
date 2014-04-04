@@ -27,6 +27,7 @@ class SdcStepState(IStepState):
             (no consistency checks are done)
         """
         return self._integral
+    
     @integral.setter
     def integral(self, integral):
         self._integral = integral

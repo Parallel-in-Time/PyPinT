@@ -8,6 +8,8 @@ Utilities (:mod:`utilities`)
 .. toctree::
 
     assertions
+    config
     logging
+    sdc_solver_factory
     threshold_check
     tracing

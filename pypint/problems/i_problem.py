@@ -4,12 +4,13 @@
 .. moduleauthor: Torbjörn Klatt <t.klatt@fz-juelich.de>
 """
 import warnings
+from collections import OrderedDict
 
 import numpy as np
 
 from pypint.plugins.implicit_solvers.find_root import find_root
-from pypint import LOG
-from pypint.utilities import assert_is_callable, assert_is_instance, assert_is_in
+from pypint.utilities import assert_is_callable, assert_is_instance, assert_is_in, class_name
+from pypint.utilities.logging import LOG
 
 
 class IProblem(object):
@@ -24,16 +25,12 @@ class IProblem(object):
             Function describing the right hand side of the problem equation.
             Two arguments are required, the first being the time point :math:`t` and the second the time-dependent
             value :math:`\\phi(t)`.
-
         time_start : :py:class:`float`
             Start of the time interval to integrate over.
-
         time_end : :py:class:`float`
             End of the time interval to integrate over.
-
         dim : :py:class:`int`
             Number of spacial dimensions.
-
         rhs: :py:class:`str`
             *(optional)*
             String representation of the right hand side function for logging output.
@@ -71,10 +68,8 @@ class IProblem(object):
         ----------
         time : :py:class:`float`
             Time point :math:`t`
-
         phi_of_time : :py:class:`numpy.ndarray`
             Time-dependent data.
-
         partial : :py:class:`str` or :py:class:`None`
             Specifying whether only a certain part of the problem function should be evaluated.
             E.g. useful for semi-implicit SDC where the imaginary part of the function is explicitly evaluated and
@@ -83,19 +78,15 @@ class IProblem(object):
 
         Returns
         -------
-        RHS value : :py:class:`numpy.ndarray`
+        rhs_value : :py:class:`numpy.ndarray`
 
         Raises
         ------
         ValueError :
             if ``time`` or ``phi_of_time`` are not of correct type.
         """
-        assert_is_instance(time, float,
-                           "Time must be given as a floating point number: NOT {:s}".format(time.__class__.__name__),
-                           self)
-        assert_is_instance(phi_of_time, np.ndarray,
-                           "Data must be given as a numpy.ndarray: NOT {:s}".format(phi_of_time.__class__.__name__),
-                           self)
+        assert_is_instance(time, float, descriptor="Time Point", checking_obj=self)
+        assert_is_instance(phi_of_time, np.ndarray, descriptor="Data Vector", checking_obj=self)
         return np.zeros(self.dim, dtype=self.numeric_type)
 
     def implicit_solve(self, next_x, func, method="hybr"):
@@ -109,10 +100,8 @@ class IProblem(object):
         ----------
         next_x : :py:class:`numpy.ndarray`
             A starting guess for the implicitly defined value.
-
         rhs_call : :py:class:`callable`
             The right hand side function depending on the implicitly defined new value.
-
         method : :py:class:`str`
             *(optional, default=``hybr``)*
             Method fo the root finding algorithm. See `scipy.optimize.root
@@ -135,19 +124,15 @@ class IProblem(object):
         UserWarning :
             If the implicit solver did not converged, i.e. the solution object's ``success`` is not :py:class:`True`.
         """
-        assert_is_instance(next_x, np.ndarray,
-                           "Need a numpy.ndarray: NOT {:s}".format(next_x.__class__.__name__),
-                           self)
-        assert_is_callable(func, "Need a callable function.", self)
+        assert_is_instance(next_x, np.ndarray, descriptor="Initial Guess", checking_obj=self)
+        assert_is_callable(func, descriptor="Function of RHS", checking_obj=self)
         sol = find_root(fun=func, x0=next_x, method=method)
         if not sol.success:
             warnings.warn("Implicit solver did not converged.")
             LOG.debug("sol.x: " + str(sol.x))
             LOG.error("Implicit solver failed: {:s}".format(sol.message))
         else:
-            assert_is_instance(sol.x, np.ndarray,
-                               "Solution must be a numpy.ndarray: NOT {:s}".format(sol.x.__class__.__name__),
-                               self)
+            assert_is_instance(sol.x, np.ndarray, descriptor="Solution", checking_obj=self)
         return sol.x
 
     @property
@@ -168,7 +153,7 @@ class IProblem(object):
 
     @function.setter
     def function(self, function):
-        assert_is_callable(function)
+        assert_is_callable(function, checking_obj=self)
         self._function = function
 
     @property
@@ -235,9 +220,8 @@ class IProblem(object):
     def numeric_type(self, numeric_type):
         numeric_type = np.dtype(numeric_type)
         _valid_types = ['i', 'u', 'f', 'c']
-        assert_is_in(numeric_type.kind, _valid_types,
-                     "Numeric type must be one of {:s}: NOT {:s}".format(_valid_types, numeric_type.__class__.__name__),
-                     self)
+        assert_is_in(numeric_type.kind, _valid_types, elem_desc="Numeric Type", list_desc="Valid Types",
+                     checking_obj=self)
         self._numeric_type = numeric_type
 
     @property
@@ -250,11 +234,18 @@ class IProblem(object):
         """
         return self._dim
 
+    def print_lines_for_log(self):
+        _lines = OrderedDict()
+        if self._strings['rhs'] is not None:
+            _lines['Formula'] = 'u(t, \phi(t)) = %s' % self._strings["rhs"]
+        _lines['Interval'] = '[{:.3f}, {:.3f}]'.format(self.time_start, self.time_end)
+        return _lines
+
     def __str__(self):
         if self._strings["rhs"] is not None:
             _outstr = r"u'(t,\phi(t))={:s}".format(self._strings["rhs"])
         else:
-            _outstr = r"{:s}".format(self.__class__.__name__)
+            _outstr = r"{:s}".format(class_name(self))
         _outstr += r", t \in [{:.2f}, {:.2f}]".format(self.time_start, self.time_end)
         return _outstr
 
