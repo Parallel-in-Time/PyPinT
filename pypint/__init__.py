@@ -15,6 +15,10 @@ if version_info.major < 3 and version_info.minor < 3:
     raise RuntimeError("PyPinT requires at least Python 3.3.")
 
 try:
-    from _version import __version__
+    from pypint.version import git_revision as __git_revision__
+    from pypint.version import version as __version__
 except ImportError:
-    __version__ = "unknown"
+    import warnings
+    warnings.warn("Version file could not be loaded!")
+    __git_revision__ = "UNKNOWN"
+    __version__ = "UNKNOWN"

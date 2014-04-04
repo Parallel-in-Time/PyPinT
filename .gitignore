@@ -50,6 +50,8 @@ cover/
 *.png
 *.svg
 
+pypint/version.py
+
 /runs
 !/runs/README
 
