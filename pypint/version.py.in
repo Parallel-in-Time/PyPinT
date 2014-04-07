@@ -1,0 +1,13 @@
+# coding=utf-8
+# THIS FILE IS GENERATED FROM PYPINT SETUP.PY
+short_version = $VERSION
+version = $VERSION
+full_version = $FULL_VERSION
+git_revision = $GIT_REVISION
+git_tag = $GIT_TAG
+git_commits_since = $GIT_COMMITS_SINCE
+git_desc = $GIT_DESC
+release = $IS_RELEASE
+
+if not release:
+    version = full_version

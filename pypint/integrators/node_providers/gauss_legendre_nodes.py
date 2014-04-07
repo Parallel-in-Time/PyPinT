@@ -60,8 +60,8 @@ class GaussLegendreNodes(INodes):
     def num_nodes(self, n_nodes):
         super(self.__class__, self.__class__).num_nodes.fset(self, n_nodes)
         assert_condition(n_nodes >= 1,
-                        ValueError, "Gauss-Legendre with less than one node doesn't make any sense.",
-                        self)
+                         ValueError, message="Gauss-Legendre with less than one node doesn't make any sense.",
+                         checking_obj=self)
         self._num_nodes = n_nodes
 
     def _compute_nodes(self):

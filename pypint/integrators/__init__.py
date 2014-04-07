@@ -26,9 +26,9 @@ Examples
 
 
 INTEGRATOR_PRESETS["Gauss-Lobatto"] = {
-    "nodes_type": GaussLobattoNodes(),
+    "nodes_type": GaussLobattoNodes,
     "weights_function": {
-        "class": PolynomialWeightFunction(),
+        "class": PolynomialWeightFunction,
         "coeffs": [1.0]
     },
     "num_nodes": 3
@@ -36,9 +36,9 @@ INTEGRATOR_PRESETS["Gauss-Lobatto"] = {
 
 
 INTEGRATOR_PRESETS["Gauss-Legendre"] = {
-    "nodes_type": GaussLegendreNodes(),
+    "nodes_type": GaussLegendreNodes,
     "weights_function": {
-        "class": PolynomialWeightFunction(),
+        "class": PolynomialWeightFunction,
         "coeffs": [1.0]
     },
     "num_nodes": 3

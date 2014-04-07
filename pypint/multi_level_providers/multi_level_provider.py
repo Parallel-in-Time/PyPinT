@@ -3,11 +3,10 @@
 
 .. moduleauthor:: Torbjörn Klatt <t.klatt@fz-juelich.de>
 """
-
 from pypint.integrators.integrator_base import IntegratorBase
 from pypint.multi_level_providers.level_transition_providers.i_level_transition_provider \
     import ILevelTransitionProvider
-from pypint.utilities import assert_condition
+from pypint.utilities import assert_condition, assert_is_instance
 
 
 class MultiLevelProvider(object):
@@ -116,9 +115,7 @@ class MultiLevelProvider(object):
         ValueError
             If ``integrator`` is not an :py:class:`.IntegratorBase`.
         """
-        assert_condition(isinstance(integrator, IntegratorBase),
-                         ValueError, "Integrator is of invalid type: {:s}".format(type(integrator)),
-                         self)
+        assert_is_instance(integrator, IntegratorBase, descriptor="Integrator", checking_obj=self)
         self._num_levels += 1
         self._level_integrators.insert(top_level, integrator)
 
@@ -141,9 +138,7 @@ class MultiLevelProvider(object):
         ValueError
             if ``transitioner`` is not an :py:class:`.ILevelTransitionProvider`
         """
-        assert_condition(isinstance(transitioner, ILevelTransitionProvider),
-                         ValueError, "Level transitioner is of invalid type: {:s}".format(type(transitioner)),
-                         self)
+        assert_is_instance(transitioner, ILevelTransitionProvider, descriptor="Level Transitioner", checking_obj=self)
 
         # extend/initialize level_transition_provider map if necessary
         if coarse_level not in self._level_transitioners:
@@ -188,17 +183,17 @@ class MultiLevelProvider(object):
             * if ``coarse_level`` is :py:class:`None` and ``fine_level`` is the coarsest one
         """
         assert_condition(coarse_level is not None or fine_level is not None,
-                         ValueError, "Either coarse or fine level index must be given", self)
+                         ValueError, message="Either coarse or fine level index must be given", checking_obj=self)
         if fine_level is None:
             fine_level = coarse_level - 1
         if coarse_level is None:
             coarse_level = fine_level + 1
-        assert_condition(fine_level >= 0,
-                         ValueError, "There is no finer level than given coarse one: {:d}".format(coarse_level),
-                         self)
-        assert_condition(coarse_level < self.num_levels,
-                         ValueError, "There is no coarser level than given fine one: {:d}".format(fine_level),
-                         self)
+        assert_condition(fine_level >= 0, ValueError,
+                         message="There is no finer level than given coarse one: {:d}".format(coarse_level),
+                         checking_obj=self)
+        assert_condition(coarse_level < self.num_levels, ValueError,
+                         message="There is no coarser level than given fine one: {:d}".format(fine_level),
+                         checking_obj=self)
 
         if coarse_level in self._level_transitioners \
                 and fine_level in self._level_transitioners[coarse_level]:

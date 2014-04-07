@@ -19,19 +19,19 @@ class PolynomialWeightFunction(IWeightFunction):
 
     Examples
     --------
-        >>> import numpy
-        >>> nodes = numpy.array([-1.0, 0.0, 1.0])
-        >>> # To compute the integration weights for a given set of nodes based
-        >>> # on the constant weight function 1.0 use:
-        >>> # create an instance
-        >>> polyWeights = PolynomialWeightFunction()
-        >>> # set the coefficients of the polynom
-        >>> polyWeights.init([1.0])
-        >>> # compute the weights
-        >>> polyWeights.evaluate(nodes)
-        >>> # access the weights
-        >>> polyWeights.weights
-        array([ 0.33333333,  1.33333333,  0.33333333])
+    >>> import numpy
+    >>> nodes = numpy.array([-1.0, 0.0, 1.0])
+    >>> # To compute the integration weights for a given set of nodes based
+    >>> # on the constant weight function 1.0 use:
+    >>> # create an instance
+    >>> polyWeights = PolynomialWeightFunction()
+    >>> # set the coefficients of the polynom
+    >>> polyWeights.init([1.0])
+    >>> # compute the weights
+    >>> polyWeights.evaluate(nodes)
+    >>> # access the weights
+    >>> polyWeights.weights
+    array([ 0.33333333,  1.33333333,  0.33333333])
     """
 
     def __init__(self):
@@ -45,7 +45,6 @@ class PolynomialWeightFunction(IWeightFunction):
         ----------
         coeffs : :py:class:`numpy.ndarray` or :py:class:`list`
             Array of coefficients of the polynomial.
-
         func : :py:class:`str`
             Of format ``c0 + c1 x^1 + c2 x^2...``
             String representation of the polynomial.
@@ -68,6 +67,7 @@ class PolynomialWeightFunction(IWeightFunction):
         """Computes weights for stored polynomial and given nodes.
 
         The weights are calculated with help of the Lagrange polynomials
+
         .. math::
 
             \\alpha_i = \\int_a^b\\omega (x) \\prod_{j=1,j \\neq i}^{n} \\frac{x-x_j}{x_i-x_j} \\mathrm{d}x
@@ -113,7 +113,6 @@ class PolynomialWeightFunction(IWeightFunction):
         ----------
         coefficient : :py:class:`float`
             Coefficient :math:`c` of :math:`cx^p`.
-
         power : :py:class:`int`
              Power :math:`p` of :math:`cx^p`.
 
@@ -125,8 +124,9 @@ class PolynomialWeightFunction(IWeightFunction):
         >>> # Similar, to set the constant coefficient 42, e.i. 42*x^0, use:
         >>> polyWeights.add_coefficient(42, 0)
         """
-        assert_is_instance(power, int, "Power must be an integer.", checking_obj=self)
-        assert_condition(power >= 0, ValueError, "Power must be zero or positive: {:d}".format(power), self)
+        assert_is_instance(power, int, descriptor="Power", checking_obj=self)
+        assert_condition(power >= 0, ValueError,
+                         message="Power must be zero or positive: {:d}".format(power), checking_obj=self)
 
         if self._coefficients.size <= power + 1:
             self._coefficients = np.resize(self._coefficients, (power + 1))
@@ -158,5 +158,10 @@ class PolynomialWeightFunction(IWeightFunction):
 
     @coefficients.setter
     def coefficients(self, coefficients):
-        assert_is_instance(coefficients, np.ndarray, "Coefficients need to be a numpy.ndarray", self)
+        assert_is_instance(coefficients, np.ndarray, descriptor="Coefficients", checking_obj=self)
         self._coefficients = coefficients
+
+    def print_lines_for_log(self):
+        _lines = super(PolynomialWeightFunction, self).print_lines_for_log()
+        _lines['Coefficients'] = "{}".format(self.coefficients)
+        return _lines

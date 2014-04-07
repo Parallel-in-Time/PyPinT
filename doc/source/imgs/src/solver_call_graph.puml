@@ -1,0 +1,59 @@
+@startuml
+
+(*)-right-> "<color:#blue><b>P</b></color>roblem, Integrator, <color:#green><b>C</b></color>ommunicator\nhave been set"
+
+-right-> "run(Core, <b>dt</b>)"
+
+note left
+    prev_flag = none
+    <color:#orange>flag</color> = none
+end note
+
+partition "Work Loop" {
+    -->[enter loop] "msg = <color:#green><b>C</b></color>.receive" as work_loop_start
+
+    if msg.flag == failed then
+        -left->[yes] "<color:#orange>flag</color> = failed"
+        --> "<color:#green><b>C</b></color>.send(value, <color:#red>time</color>, <color:#orange>flag</color>)" as send
+    else
+        -->[no] if msg.flag then
+            partition "Adjust Interval Width" {
+                -->[== time_adjusted] "adjust <b>dt</b>"
+                -up->[start over] work_loop_start
+            }
+        else
+            if prev_flag then
+                partition "New Interval" {
+                    -->[in (none, converged, finished)] _init_state()
+                    --> _init_interval()
+                    note right
+                        computes <color:#red>time</color> as
+                        msg.time + <b>dt</b>
+                    end note
+                    --> ===NI_END===
+                }
+
+                partition "Main Solver Loop" {
+                    --> "for all time steps" as main_loop
+                    -left-> "for all nodes"
+                    main_loop -right->[on done] "update <color:#orange>flag</color>"
+                    -right-> ===MSL_END===
+                }
+            else
+                -right->[is iterating] main_loop
+            endif
+
+            ===MSL_END=== -right-> send
+        endif
+    endif
+
+    if <color:#orange>flag</color> != failed then
+        -right->[yes] "next work iteration"
+        -up-> work_loop_start
+    else
+        -left->[no] ===END===
+}
+
+===END=== -->(*)
+
+@enduml

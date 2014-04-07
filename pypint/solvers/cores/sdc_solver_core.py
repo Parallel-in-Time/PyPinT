@@ -4,8 +4,9 @@
 """
 from pypint.solvers.cores.i_solver_core import ISolverCore
 from pypint.problems.has_exact_solution_mixin import problem_has_exact_solution
+from pypint.problems import IProblem
 from pypint.solvers.diagnosis import Error, Residual
-from pypint.utilities import assert_is_key
+from pypint.utilities import assert_named_argument
 
 
 class SdcSolverCore(ISolverCore):
@@ -36,10 +37,11 @@ class SdcSolverCore(ISolverCore):
     def compute_residual(self, state, **kwargs):
         # LOG.debug("computing residual")
         super(SdcSolverCore, self).compute_residual(state, **kwargs)
-        state.current_step.solution.residual = Residual(
+        _step = kwargs['step'] if 'step' in kwargs else state.current_step
+        _step.solution.residual = Residual(
             abs(state.current_time_step.initial.solution.value
                 + state.delta_interval * kwargs['integral']
-                - state.current_step.solution.value)
+                - _step.solution.value)
         )
         # LOG.debug("Residual: {: .4f} = | {: .4f} + {: .4f} * {: .4f} - {: .4f} |"
         #           .format(state.current_step.solution.residual.value[0],
@@ -50,9 +52,8 @@ class SdcSolverCore(ISolverCore):
     def compute_error(self, state, **kwargs):
         super(SdcSolverCore, self).compute_error(state, **kwargs)
 
-        assert_is_key(kwargs, 'problem',
-                      "The problem is required as a proxy to the implicit space solver.",
-                      self)
+        assert_named_argument('problem', kwargs, types=IProblem, descriptor="Problem", checking_obj=self)
+
         _problem = kwargs['problem']
 
         if problem_has_exact_solution(_problem, self):

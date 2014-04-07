@@ -26,9 +26,7 @@ class ISolverCore(object):
         state : :py:class:`.ISolverState`
             Current state of the solver.
         """
-        assert_is_instance(state, ISolverState,
-                           "The solver's state must be given: NOT {}".format(state.__class__.__name__),
-                           self)
+        assert_is_instance(state, ISolverState, descriptor="Solver's State", checking_obj=self)
 
     def compute_residual(self, state, **kwargs):
         """Computes the residual of the current state
@@ -38,9 +36,7 @@ class ISolverCore(object):
         state : :py:class:`.ISolverState`
             Current state of the solver.
         """
-        assert_is_instance(state, ISolverState,
-                           "The solver's state must be given: NOT {}".format(state.__class__.__name__),
-                           self)
+        assert_is_instance(state, ISolverState, descriptor="Solver's State", checking_obj=self)
 
     def compute_error(self, state, **kwargs):
         """Computes the error of the current state
@@ -50,9 +46,7 @@ class ISolverCore(object):
         state : :py:class:`.ISolverState`
             Current state of the solver.
         """
-        assert_is_instance(state, ISolverState,
-                           "The solver's state must be given: NOT {}".format(state.__class__.__name__),
-                           self)
+        assert_is_instance(state, ISolverState, descriptor="Solver's State", checking_obj=self)
 
 
 __all__ = ['ISolverCore']

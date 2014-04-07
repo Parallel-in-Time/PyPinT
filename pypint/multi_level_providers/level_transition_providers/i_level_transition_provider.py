@@ -3,9 +3,9 @@
 
 .. moduleauthor:: Torbjörn Klatt <t.klatt@fz-juelich.de>
 """
-
 import numpy as np
-from pypint.utilities import assert_condition
+
+from pypint.utilities import assert_is_instance, assert_condition
 
 
 class ILevelTransitionProvider(object):
@@ -46,12 +46,10 @@ class ILevelTransitionProvider(object):
             * if ``coarse_data`` is not a :py:class:`numpy.ndarray`
             * if ``coarse_data`` has more or less entries than :py:attr:`.num_coarse_points`
         """
-        assert_condition(isinstance(coarse_data, np.ndarray),
-                        ValueError, "Given coarse data is not a numpy.ndarray: {:s}".format(type(coarse_data)),
-                        self)
+        assert_is_instance(coarse_data, np.ndarray, descriptor="Coarse Data", checking_obj=self)
         assert_condition(coarse_data.size == self.num_coarse_points,
-                        ValueError, "Given coarse data is of wrong size: {:d}".format(coarse_data.size),
-                        self)
+                         ValueError, message="Coarse Data is of wrong size: {:d}".format(coarse_data.size),
+                         checking_obj=self)
 
     def restringate(self, fine_data):
         """Restringates given data from the fine to the coarse level.
@@ -73,12 +71,10 @@ class ILevelTransitionProvider(object):
             * if ``fine_data`` is not a `:py:class:`numpy.ndarray`
             * if ``fine_data`` has more or less entries than :py:attr:`.num_fine_points`
         """
-        assert_condition(isinstance(fine_data, np.ndarray),
-                        ValueError, "Given fine data is not a numpy.ndarray: {:s}".format(type(fine_data)),
-                        self)
+        assert_is_instance(fine_data, np.ndarray, descriptor="Fine Data", checking_obj=self)
         assert_condition(fine_data.size == self.num_fine_points,
-                        ValueError, "Given fine data is of wrong size: {:d}".format(fine_data.size),
-                        self)
+                         ValueError, message="Fine Data is of wrong size: {:d}".format(fine_data.size),
+                         checking_obj=self)
 
     @property
     def prolongation_operator(self):

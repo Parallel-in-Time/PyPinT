@@ -9,11 +9,9 @@ from pypint.solutions.data_storage import TrajectorySolutionData
 
 
 class SdcStepState(IStepState):
-    """
+    """Step States for SDC Solver
     """
     def __init__(self, **kwargs):
-        """
-        """
         super(SdcStepState, self).__init__(**kwargs)
         self._integral = 0.0
 
@@ -29,13 +27,14 @@ class SdcStepState(IStepState):
             (no consistency checks are done)
         """
         return self._integral
+    
     @integral.setter
     def integral(self, integral):
         self._integral = integral
 
 
 class SdcTimeStepState(ITimeStepState):
-    """
+    """Time Step States for SDC Solver
     """
     def __init__(self, **kwargs):
         """
@@ -53,7 +52,7 @@ class SdcTimeStepState(ITimeStepState):
 
 
 class SdcIterationState(IIterationState):
-    """
+    """Iteration States for SDC Solver
     """
     def __init__(self, **kwargs):
         """
@@ -71,7 +70,7 @@ class SdcIterationState(IIterationState):
 
 
 class SdcSolverState(ISolverState):
-    """
+    """Solver States for SDC Solver
     """
     def __init__(self, **kwargs):
         """

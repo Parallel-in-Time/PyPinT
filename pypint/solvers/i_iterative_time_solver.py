@@ -37,11 +37,11 @@ class IIterativeTimeSolver(object):
             see :py:attr:`.threshold`
         """
         self._problem = problem
-        self._integrator = integrator
+        self._integrator = integrator()
         if "threshold" in kwargs and isinstance(kwargs["threshold"], ThresholdCheck):
             self.threshold = kwargs["threshold"]
 
-    def run(self, core):
+    def run(self, core, **kwargs):
         """Applies this solver.
 
         Parameters
@@ -57,8 +57,9 @@ class IIterativeTimeSolver(object):
             The solution of the problem.
         """
         assert_condition(issubclass(core, ISolverCore),
-                         ValueError, "The given solver core class must be valid: NOT {:s}".format(core.__name__),
-                         self)
+                         ValueError, message="The given solver core class must be valid: NOT {:s}"
+                                             .format(core.__name__),
+                         checking_obj=self)
         self._core = core()
 
     @property
@@ -74,10 +75,26 @@ class IIterativeTimeSolver(object):
 
     @property
     def state(self):
+        """Read-only accessor for the sovler's state
+
+        Returns
+        -------
+        state : :py:class:`.ISolverState`
+        """
         return self._state
 
     @property
     def timer(self):
+        """Accessor for the timer
+
+        Parameters
+        ----------
+        timer : :py:class:`.TimerBase`
+
+        Returns
+        -------
+        timer : :py:class:`.TimerBase`
+        """
         return self._timer
 
     @timer.setter
@@ -108,7 +125,20 @@ class IIterativeTimeSolver(object):
 
     @property
     def integrator(self):
+        """Read-only accessor for the used integrator
+
+        Returns
+        -------
+        integrator : :py:class:`.IntegratorBase`
+        """
         return self._integrator
+
+    def print_lines_for_log(self):
+        _lines = {
+            'Integrator': self.integrator.print_lines_for_log(),
+            'Thresholds': self.threshold.print_lines_for_log()
+        }
+        return _lines
 
     def _print_header(self):
         pass
