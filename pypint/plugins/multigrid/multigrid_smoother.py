@@ -172,7 +172,7 @@ class WeightedJacobiSmoother(Smoother):
                     my_sum += self.stencil.arr[tuple(st_pos + self.stencil.center)] * \
                                 self.lvl_view[coords]
 
-                tmp[flat_iter.coords] = my_sum * self.omega / self.center_value
+                tmp[flat_iter.coords] = -my_sum * self.omega / self.center_value
                 # print(self.lvl_view[flat_iter.coords])
             next(flat_iter)
         self.lvl_view.reshape(-1)[:] = tmp.reshape(-1)[:]
@@ -194,6 +194,6 @@ class WeightedJacobiSmoother(Smoother):
         """
 
         self.level.mid.reshape(-1)[:] = \
-            self.stencil.eval_convolve(self.lvl_view) \
+            - self.stencil.eval_convolve(self.lvl_view) \
                 * self.omega / self.center_value
 
