@@ -126,7 +126,7 @@ class WeightedJacobiSmoother(Smoother):
 
         elif computational_strategy_flag == "convolve":
             # define a new stencil
-            self.tmp = A_stencil.arr
+            self.tmp = A_stencil.arr.copy()
             self.tmp[tuple(A_stencil.center)] *= (1.0 + 1.0/self.omega)
             self.stencil = Stencil(self.tmp, A_stencil.center)
             self.relax = self._relax_convolve
@@ -155,20 +155,26 @@ class WeightedJacobiSmoother(Smoother):
         """
 
         flat_iter = self.lvl_view.flat
+        print("Stencil :", self.stencil.arr)
+        print("LevelView:", self.lvl_view)
+        print("relative Posistions :", self.stencil.relative_positions)
+        print("Size of lvl_view: ", self.lvl_view.size)
         for i in range(self.lvl_view.size):
             if not self.is_on_border(flat_iter.coords):
                 # apply L_minus on u
+                print("The coords ",flat_iter.coords, "are not on the border")
                 my_sum = self.center_value * \
                         (1.0-1.0/self.omega) * self.lvl_view[flat_iter.coords]
-
-                for st_pos in self.stencil.relative_positions[1:]:
-                    coords = tuple(np.asarray(flat_iter.coords) + \
-                                   np.asarray(st_pos))
+                print("And the relative coordinates used are:")
+                for st_pos in self.stencil.relative_positions:
+                    coords = tuple(np.asarray(flat_iter.coords) + np.asarray(st_pos))
+                    print("relative_coords", coords)
                     my_sum += self.stencil.arr[st_pos + self.stencil.center] * \
                                 self.lvl_view[coords]
 
                 self.lvl_view[flat_iter.coords] = my_sum * self.omega \
                                                    / self.center_value
+                print(self.lvl_view[flat_iter.coords])
             next(flat_iter)
 
     def _relax_matrix(self, n=1):

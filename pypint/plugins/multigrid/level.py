@@ -189,14 +189,13 @@ class MultiGridLevel1D(MultiGridLevel):
 
     def border_function_generator(self, stencil):
         """Generates a function which returns true if the index of the
-           evaluable view is on the border
+           evaluable view is on the border, attention just works if evaluable view was generated!
 
         """
 
         def is_on_border(indice):
             for i in range(self.dim):
-                if indice[0] < stencil.b[0][0] or indice[0] > \
-                                self.mid.shape[0]+stencil.b[0][0]:
+                if indice[0] < stencil.b[0][0] or indice[0] >= self.mid.shape[0]+stencil.b[0][0]:
                     return True
         return is_on_border
 

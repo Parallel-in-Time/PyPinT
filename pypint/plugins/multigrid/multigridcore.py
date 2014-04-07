@@ -244,6 +244,10 @@ if __name__ == '__main__':
     print("the space_tensor of the last level")
     print(low_level.space_tensor)
     print(*mg_problem.act_grid_distances)
+    print("test the is on border function")
+    is_on_border = low_level.border_function_generator(laplace_stencil)
+    border_truth = [is_on_border((i,)) for i in range(low_level.evaluable_view(laplace_stencil).size)]
+    print(border_truth)
     # define the smoother from the split smoother class on each level,
     # where the last level is solved directly
     l_plus = np.asarray([0, -2, 0])
@@ -287,7 +291,7 @@ if __name__ == '__main__':
     print(low_level.arr)
     low_level.mid[:] = 105.0
     low_level.pad()
-
+    # print("Wurde hier der stencil veraendert?", laplace_stencil.arr)
     print("Now we do a jacobi step using simple loops:")
     jacobi_loop.relax()
     print(low_level.arr)

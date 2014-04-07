@@ -354,7 +354,7 @@ class InterpolationStencil(object):
     """ Empty super class for instance checking
 
     """
-    def __init__(self):
+    def __init__(self, *args, **kwargs):
         pass
 
 
@@ -363,7 +363,7 @@ class InterpolationStencil1D(InterpolationStencil):
 
     """
 
-    def __init__(self, stencil_list, center=None):
+    def __init__(self, stencil_list, center=None, *args, **kwargs):
         """init
 
         """
@@ -396,6 +396,7 @@ class InterpolationStencil1D(InterpolationStencil):
             self.eval = self.eval_list
         else:
             raise RuntimeError("Something went terribly wrong")
+        super().__init__(*args, **kwargs)
 
     def eval_own(self, arrays_in, arrays_out):
         """Evaluation function if just one stencil is given
