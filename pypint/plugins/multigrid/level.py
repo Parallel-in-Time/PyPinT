@@ -9,7 +9,6 @@ from pypint.utilities import assert_is_callable, assert_is_instance, \
 from pypint.plugins.multigrid.multigridproblem import MultiGridProblem
 from pypint.plugins.multigrid.stencil import Stencil
 
-# TODO : Das Slicing muss gemacht werden, besser keine subclasse von ndarray
 
 class MultiGridLevel(object):
     """ Empty super class, for instance checking
@@ -39,6 +38,9 @@ class MultiGridLevel1D(MultiGridLevel):
         takes the physical MultiGridProblem and initialises with help of
         max_borders, and n_points an appropriate array
         """
+        # the level should know its geometrical information, because it differs from level to level
+        self.space_tensor = None
+
         if isinstance(shape, int):
             if isinstance(max_borders, np.ndarray) and max_borders.size >= 2:
                 forward_shape = shape + max_borders[0] + max_borders[1]

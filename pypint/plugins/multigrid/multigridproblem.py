@@ -196,6 +196,13 @@ class MultiGridProblem(object):
             self._act_grid_distances = np.asarray(self._act_grid_distances)
         return space_tensor
 
+    def fill_rhs(self, level):
+        """
+        Fills the rhs of an level
+        """
+
+        level.rhs[:] = self.eval_f(level.mid)
+
     def eval_f(self, u=None, function=None):
         """
         Summary
@@ -222,7 +229,6 @@ class MultiGridProblem(object):
                 assert_condition(u.shape == self._act_space_tensor[1].shape,
                                  "u has the wrong shape", self)
                 return function(u, self._act_space_tensor)
-
 
 
     def pad_for_stencil(self, u, up=None, stencil=None):

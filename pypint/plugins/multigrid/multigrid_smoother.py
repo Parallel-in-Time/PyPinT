@@ -111,16 +111,24 @@ class WeightedJacobiSmoother(Smoother):
         self.level = level
         self.omega = omega
         self.center_value = A_stencil.arr[tuple(A_stencil.center)]
+        self.lvl_view = level.evaluable_view(A_stencil)
 
         if computational_strategy_flag == "matrix":
             # this branch needs the matrix R_w = (1 - w)I +wR_j
             # with R_j = D^-1 * (L+U)
             A = A_stencil.to_sparse_matrix(level.mid.shape)
-            L = sprs.tril(A, -1)
-            U = sprs.triu(A, 1)
+            L = sprs.tril(-A, -1)
+            U = sprs.triu(-A, 1)
             I = sprs.eye(level.mid.size, level.mid.size, 0, np.float64, "lil")
-            D = self.center_value
-            self.R_w =(1-omega) * I + omega * (L + U) / D
+            self.D = self.center_value
+            print("Matrices of the weighted Jacobian class: ")
+            print("A :\n", A.todense())
+            print("L :\n", L.todense())
+            print("U :\n", U.todense())
+            print("I :\n", I.todense())
+            print("D :\n", self.D)
+
+            self.R_w = (1.0-omega) * I + omega * (L + U) / self.D
             self.R_w = self.R_w.tocsc()
             self.relax = self._relax_matrix
 
@@ -130,11 +138,9 @@ class WeightedJacobiSmoother(Smoother):
             self.tmp[tuple(A_stencil.center)] *= (1.0 - 1.0/self.omega)
             self.stencil = Stencil(self.tmp, A_stencil.center)
             self.relax = self._relax_convolve
-            self.lvl_view = level.evaluable_view(A_stencil)
 
         elif computational_strategy_flag == "loop":
             self.stencil = A_stencil
-            self.lvl_view = level.evaluable_view(A_stencil)
             self.is_on_border = level.border_function_generator(A_stencil)
             self.relax = self._relax_loop
             # construct the stencil positions
@@ -181,10 +187,10 @@ class WeightedJacobiSmoother(Smoother):
         """ Using sparse matrix for the iteration steps
 
         """
+
         for i in range(n):
-            self.lvl.mid.reshape(-1)[:] = \
-                self.R_w.dot(self.level.mid.reshape(-1)) \
-                + self.omega * self.level.rhs
+            self.level.mid.reshape(-1)[:] = self.R_w.dot(self.level.mid.reshape(-1)) \
+                                            + self.omega * self.level.rhs / self.D
 
 
     def _relax_convolve(self, n=1):

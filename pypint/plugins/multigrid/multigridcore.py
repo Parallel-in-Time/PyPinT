@@ -302,6 +302,7 @@ if __name__ == '__main__':
     low_level.pad()
 
     print("Now we do a jacobi step using sparse matrix algorithms:")
+
     jacobi_matrix.relax()
     print(low_level.arr)
 
