@@ -201,6 +201,7 @@ if __name__ == '__main__':
         print(laplace_stencil.arr[i])
 
     print("stencil.relative_position :", laplace_stencil.relative_positions)
+    print("stencil.relative_position_woc :", laplace_stencil.relative_positions_woc)
     # geometry is a 1 dimensional line
     geo = np.asarray([[0, 1]])
     print(geo.shape)
@@ -218,6 +219,7 @@ if __name__ == '__main__':
     # test some of the methods of mg_problem
 
     print("Mid of stencil method", mg_problem.mid_of_stencil(laplace_stencil))
+    print("Eval_Convolve ([100,105,105,105,110])", laplace_stencil.eval_convolve(np.asarray([100, 105, 105, 105, 110])))
     print("===== MultiGridProblemTest =====")
     print("Constructed SpaceTensor", mg_problem.construct_space_tensor(12))
     print("Checked if the grid distances are right",
@@ -248,6 +250,7 @@ if __name__ == '__main__':
     is_on_border = low_level.border_function_generator(laplace_stencil)
     border_truth = [is_on_border((i,)) for i in range(low_level.evaluable_view(laplace_stencil).size)]
     print(border_truth)
+
     # define the smoother from the split smoother class on each level,
     # where the last level is solved directly
     l_plus = np.asarray([0, -2, 0])

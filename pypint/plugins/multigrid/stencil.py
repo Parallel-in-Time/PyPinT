@@ -49,6 +49,7 @@ class Stencil(object):
         # construct stencil positions and relative stencil positions
         self.positions = []
         self.relative_positions = []
+        self.relative_positions_woc = []
         flat_iter = self.arr.flat
 
         # dear future me this hack does not need to be refactored
@@ -58,10 +59,11 @@ class Stencil(object):
 
         for i in range(self.arr.size):
             self.positions.append(flat_iter.coords)
-            self.relative_positions.append(
-                    tuple(np.asarray(flat_iter.coords) - self.center))
+            self.relative_positions.append(tuple(np.asarray(flat_iter.coords) - self.center))
+            if not (self.center == np.asarray(flat_iter.coords)).all():
+                self.relative_positions_woc.append(tuple(np.asarray(flat_iter.coords) - self.center))
             next(flat_iter)
-
+        # relative positions without center
         # construct sparse matrix
         self.sp_matrix = self.to_sparse_matrix(self._grid)
         # check which solver should be used

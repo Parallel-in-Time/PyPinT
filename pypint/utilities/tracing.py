@@ -5,12 +5,6 @@
 """
 import inspect
 
-#TODO:  Form des inputs und outputs einer funktion testen, waere sicher praktisch
-def func_input(func,input_form):
-    pass
-def func_output(func,output_form):
-    pass
-
 
 def func_name(obj=None, *args, **kwargs):
     """Formats the calling functions name.
