@@ -200,10 +200,11 @@ class MultiGridProblem(object):
         """
         Fills the rhs of an level
         """
+        if level.space_tensor is None:
+            level.space_tensor = self.construct_space_tensor(list(level.mid.shape))
+        level.rhs[:] = self._function(level.mid, level.space_tensor)
 
-        level.rhs[:] = self.eval_f(level.mid)
-
-    def eval_f(self, u=None, function=None):
+    def eval_f(self, u=None, function=None, space_tensor = None):
         """
         Summary
         -------
@@ -212,6 +213,7 @@ class MultiGridProblem(object):
         """
         assert_condition(self._act_space_tensor is not None,
                          "A current space tensor is needed", self)
+
         if function is None:
             if u is None:
                 return self._function(self._act_space_tensor)

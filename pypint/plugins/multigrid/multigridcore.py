@@ -210,9 +210,13 @@ if __name__ == '__main__':
     left_f = lambda x: 100.0
     right_f = lambda x: 110.0
     boundary_functions = [[left_f, right_f]]
+
+    def stupid_f(*args, **kwargs):
+        return 0.0
+
     rhs_function = lambda x: 0.0
     mg_problem = MultiGridProblem(laplace_stencil,
-                                  rhs_function,
+                                  stupid_f,
                                   boundary_functions=boundary_functions,
                                   boundaries=boundary_type,
                                   geometry=geo)
@@ -302,7 +306,12 @@ if __name__ == '__main__':
     low_level.pad()
 
     print("Now we do a jacobi step using sparse matrix algorithms:")
-
+    print("But just before one needs to fill the rhs")
+    print("rhs at the beginning: \n", low_level.rhs)
+    mg_problem.fill_rhs(low_level)
+    print("rhs after filling it: \n", low_level.rhs)
+    laplace_stencil.modify_rhs(low_level)
+    print("rhs after modification: \n", low_level.rhs)
     jacobi_matrix.relax()
     print(low_level.arr)
 
