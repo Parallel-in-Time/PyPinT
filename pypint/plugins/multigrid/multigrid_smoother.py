@@ -6,6 +6,7 @@ from pypint.utilities import assert_is_callable, assert_is_instance, assert_cond
 from pypint.plugins.multigrid.stencil import Stencil, InterpolationStencil1D, RestrictionStencil
 from pypint.plugins.multigrid.level import MultiGridLevel1D, MultiGridLevel
 import scipy.signal as sig
+import scipy.sparse as sprs
 
 class Smoother(object):
     """Smoother Root Class for Multigrid
@@ -90,10 +91,102 @@ class SplitSmoother(Smoother):
         """
 
         for i in range(n):
-            self.lvl_view_inner = \
-                self.l_plus.solver(
-                    -self.l_minus.eval_convolve(
+            self.lvl_view_inner.reshape(-1)[:] = \
+                self.st_plus.solver(self.lvl.rhs
+                    - self.st_minus.eval_convolve(
                         self.lvl_view_outer).reshape(-1)).reshape(
                             self.lvl_view_inner.shape)
 
             self.lvl.pad()
+
+class WeightedJacobiSmoother(Smoother):
+    """Implement a simple JaocbiSmoother , to test the SplitSmoother
+
+    """
+
+    def __init__(self, A_stencil, level, omega=0.5, computational_strategy_flag="matrix",**kwargs):
+        """init
+
+        """
+        self.level = level
+        self.omega = omega
+        self.center_value = A_stencil.arr[tuple(A_stencil.center)]
+
+        if computational_strategy_flag == "matrix":
+            # this branch needs the matrix R_w = (1 - w)I +wR_j
+            # with R_j = D^-1 * (L+U)
+            A = A_stencil.to_sparse_matrix(level.mid.shape)
+            L = sprs.tril(A, -1)
+            U = sprs.triu(A, 1)
+            I = sprs.eye(level.mid.size, level.mid.size, 0, np.float64, "lil")
+            D = self.center_value
+            self.R_w =(1-omega) * I + omega * (L + U) / D
+            self.R_w = self.R_w.tocsc()
+            self.relax = self._relax_matrix
+
+        elif computational_strategy_flag == "convolve":
+            # define a new stencil
+            self.tmp = A_stencil.arr
+            self.tmp[tuple(A_stencil.center)] *= (1.0 + 1.0/self.omega)
+            self.stencil = Stencil(self.tmp, A_stencil.center)
+            self.relax = self._relax_convolve
+            self.lvl_view = level.evaluable_view(A_stencil)
+
+        elif computational_strategy_flag == "loop":
+            self.stencil = A_stencil
+            self.lvl_view = level.evaluable_view(A_stencil)
+            self.is_on_border = level.border_function_generator(A_stencil)
+            self.relax = self._relax_loop
+            # construct the stencil positions
+        else:
+            raise ValueError("Not a vaild flag, don't know how to compute")
+
+        super().__init__(level.dim, **kwargs)
+
+
+
+    def _relax_loop(self, n=1):
+        """Does the jacobi relaxation step n times
+            this function is meant to be compared with the other two
+            implementations in order to check the implementation
+
+            this implementation is really really slow, should just be used for
+            tests
+        """
+
+        flat_iter = self.lvl_view.flat
+        for i in range(self.lvl_view.size):
+            if not self.is_on_border(flat_iter.coords):
+                # apply L_minus on u
+                my_sum = self.center_value * \
+                        (1.0-1.0/self.omega) * self.lvl_view[flat_iter.coords]
+
+                for st_pos in self.stencil.relative_positions[1:]:
+                    coords = tuple(np.asarray(flat_iter.coords) + \
+                                   np.asarray(st_pos))
+                    my_sum += self.stencil.arr[st_pos + self.stencil.center] * \
+                                self.lvl_view[coords]
+
+                self.lvl_view[flat_iter.coords] = my_sum * self.omega \
+                                                   / self.center_value
+            next(flat_iter)
+
+    def _relax_matrix(self, n=1):
+        """ Using sparse matrix for the iteration steps
+
+        """
+        for i in range(n):
+            self.lvl.mid.reshape(-1)[:] = \
+                self.R_w.dot(self.level.mid.reshape(-1)) \
+                + self.omega * self.level.rhs
+
+
+    def _relax_convolve(self, n=1):
+        """Why bother, using simple convolution by defining a new stencil
+           and use its convolution method.
+
+        """
+        self.level.mid.reshape(-1)[:] = \
+            self.stencil.eval_convolve(self.lvl_view) \
+                * self.omega / self.center_value
+

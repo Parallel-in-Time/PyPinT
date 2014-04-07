@@ -46,6 +46,21 @@ class Stencil(object):
             self._grid = tuple(kwargs['grid'])
         else:
             self._grid = tuple([3]*self.dim)
+        # construct stencil positions and relative stencil positions
+        self.positions = []
+        self.relative_positions = []
+        flat_iter = self.arr.flat
+
+        # dear future me this hack does not need to be refactored
+        # because next(flat_iterator) is called to early
+        # and flat_iterator.coords does not work properly hence next is called
+        # manually
+
+        for i in range(self.arr.size):
+            self.positions.append(flat_iter.coords)
+            self.relative_positions.append(
+                    tuple(np.asarray(flat_iter.coords) - self.center))
+            next(flat_iter)
 
         # construct sparse matrix
         self.sp_matrix = self.to_sparse_matrix(self._grid)

@@ -4,7 +4,7 @@ from pypint.plugins.multigrid.multigridproblem import MultiGridProblem
 from pypint.plugins.multigrid.multigridlevelprovider import MultiGridLevelProvider
 from pypint.plugins.multigrid.multigridsolution import MultiGridSolution
 from pypint.plugins.multigrid.level import MultiGridLevel1D
-from pypint.plugins.multigrid.multigrid_smoother import SplitSmoother, DirectSolverSmoother
+from pypint.plugins.multigrid.multigrid_smoother import SplitSmoother, DirectSolverSmoother, WeightedJacobiSmoother
 from pypint.utilities import assert_is_callable, assert_is_instance, assert_condition
 from pypint.plugins.multigrid.stencil import Stencil
 import networkx as nx
@@ -194,8 +194,13 @@ if __name__ == '__main__':
     laplace_stencil = Stencil(np.asarray([1, -2, 1]))
     # test stencil to some extend
     print("===== Stencil tests =====")
-    print("stencil.b:", laplace_stencil.b)
+    print("stencil.b :", laplace_stencil.b)
+    print("stencil.positions :", laplace_stencil.positions)
 
+    for i in laplace_stencil.positions:
+        print(laplace_stencil.arr[i])
+
+    print("stencil.relative_position :", laplace_stencil.relative_positions)
     # geometry is a 1 dimensional line
     geo = np.asarray([[0, 1]])
     print(geo.shape)
@@ -263,7 +268,39 @@ if __name__ == '__main__':
     low_level.pad()
     # Lets test the SplitSmoother by using the jacobi smoother
     # but for this case we need an initial guess
+    print("===== JacobiSmoother Test =====")
+    # define the 3 different JacobiSmoother Implementations
+    jacobi_loop = WeightedJacobiSmoother(laplace_stencil,
+                                         low_level, 0.5, "loop")
+    jacobi_matrix = WeightedJacobiSmoother(laplace_stencil,
+                                           low_level, 0.5, "matrix")
+    jacobi_convolve = WeightedJacobiSmoother(laplace_stencil,
+                                            low_level, 0.5, "convolve")
 
-    # mid_level.mid[:] =
+    low_level.mid[:] = 105.0
+    low_level.pad()
+    print("We start with this initial condition:")
+    print(low_level.arr)
+    print("Now we do a jacobi step using the convolve of stencil:")
+    # funktioniert beinahe ist nur falsch rum
+    jacobi_convolve.relax()
+    print(low_level.arr)
+    low_level.mid[:] = 105.0
+    low_level.pad()
+
+    print("Now we do a jacobi step using simple loops:")
+    jacobi_loop.relax()
+    print(low_level.arr)
+    low_level.mid[:] = 105.0
+    low_level.pad()
+
+    print("Now we do a jacobi step using sparse matrix algorithms:")
+    jacobi_matrix.relax()
+    print(low_level.arr)
+
+
+    #mid_level.mid[:] = 105
+    #mid_jacobi_smoother.relax(5)
+    #print(mid_level.mid[:])
 
 

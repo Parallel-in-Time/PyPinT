@@ -174,14 +174,31 @@ class MultiGridLevel1D(MultiGridLevel):
         """gives the right view of the array
 
         """
-        if isinstance(stencil, Stencil):
-            l = self.borders[0]-stencil.b[0][0]
-            r = -(self.borders[1]-stencil.b[0][1])
-        else:
-            l = self.borders[0]-stencil[0][0]
-            r = -(self.borders[1]-stencil[0][1])
+        if self.dim == 1:
+            if isinstance(stencil, Stencil):
 
-        return self.arr[l:r]
+                l = self.borders[0]-stencil.b[0][0]
+                r = -(self.borders[1]-stencil.b[0][1])
+            else:
+                l = self.borders[0]-stencil[0][0]
+                r = -(self.borders[1]-stencil[0][1])
+            return self.arr[l:r]
+        else:
+            raise NotImplementedError("Another dimension than one "
+                                      "is not supplied")
+
+    def border_function_generator(self, stencil):
+        """Generates a function which returns true if the index of the
+           evaluable view is on the border
+
+        """
+
+        def is_on_border(indice):
+            for i in range(self.dim):
+                if indice[0] < stencil.b[0][0] or indice[0] > \
+                                self.mid.shape[0]+stencil.b[0][0]:
+                    return True
+        return is_on_border
 
     # def __copy__(self):
     #     copy = self.__class__.__new__(self.__class__)
