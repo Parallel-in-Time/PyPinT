@@ -11,20 +11,22 @@ from pypint.utilities import assert_is_instance, assert_condition
 class ILevelTransitionProvider(object):
     """Interface for level transition providers.
     """
-    def __init__(self, num_fine_points=-1, num_coarse_points=-1):
+    def __init__(self, *args, **kwargs):
         """
         Parameters
         ----------
         num_fine_points : :py:class:`int`
+            *(optional)*
             Number of points of the fine level.
 
         num_coarse_points : :py:class:`int`
+            *(optional)*
             Number of points of the coarse level.
         """
         self._prolongation_operator = None
         self._restringation_operator = None
-        self._n_fine_points = int(num_fine_points)
-        self._n_coarse_points = int(num_coarse_points)
+        self._n_fine_points = int(kwargs['num_fine_points']) if 'num_fine_points' in kwargs else -1
+        self._n_coarse_points = int(kwargs['num_coarse_points']) if 'num_coarse_points' in kwargs else -1
 
     def prolongate(self, coarse_data):
         """Prolongates given data from the coarse to the fine level.
@@ -47,8 +49,8 @@ class ILevelTransitionProvider(object):
             * if ``coarse_data`` has more or less entries than :py:attr:`.num_coarse_points`
         """
         assert_is_instance(coarse_data, np.ndarray, descriptor="Coarse Data", checking_obj=self)
-        assert_condition(coarse_data.size == self.num_coarse_points,
-                         ValueError, message="Coarse Data is of wrong size: {:d}".format(coarse_data.size),
+        assert_condition(coarse_data.shape[0] == self.num_coarse_points,
+                         ValueError, message="Coarse Data is of wrong size: NOT %s" % coarse_data.shape,
                          checking_obj=self)
 
     def restringate(self, fine_data):
@@ -72,8 +74,8 @@ class ILevelTransitionProvider(object):
             * if ``fine_data`` has more or less entries than :py:attr:`.num_fine_points`
         """
         assert_is_instance(fine_data, np.ndarray, descriptor="Fine Data", checking_obj=self)
-        assert_condition(fine_data.size == self.num_fine_points,
-                         ValueError, message="Fine Data is of wrong size: {:d}".format(fine_data.size),
+        assert_condition(fine_data.shape[0] == self.num_fine_points,
+                         ValueError, message="Fine Data is of wrong size: NOT %s" % fine_data.shape,
                          checking_obj=self)
 
     @property
