@@ -28,12 +28,12 @@ class TimeTransitionProvider(ILevelTransitionProvider):
         """
         super(TimeTransitionProvider, self).__init__(*args, **kwargs)
         assert_named_argument('fine_nodes', kwargs, np.ndarray, descriptor='Fine Nodes', checking_obj=self)
-        assert_condition(len(kwargs['fine_nodes'].shape) == 0, ValueError,
+        assert_condition(len(kwargs['fine_nodes'].shape) == 1, ValueError,
                          message="Fine Nodes must have a single dimension: NOT %s" % kwargs['fine_nodes'].shape,
                          checking_obj=self)
 
         assert_named_argument('coarse_nodes', kwargs, np.ndarray, descriptor='Coarse Nodes', checking_obj=self)
-        assert_condition(len(kwargs['coarse_nodes'].shape) == 0, ValueError,
+        assert_condition(len(kwargs['coarse_nodes'].shape) == 1, ValueError,
                          message="Coarse Nodes must have a single dimension: NOT %s" % kwargs['coarse_nodes'].shape,
                          checking_obj=self)
 
