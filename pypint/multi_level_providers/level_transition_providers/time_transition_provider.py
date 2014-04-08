@@ -5,6 +5,7 @@
 import numpy as np
 
 from pypint.multi_level_providers.level_transition_providers.i_level_transition_provider import ILevelTransitionProvider
+from pypint.utilities.math import lagrange_polynome
 from pypint.utilities import assert_named_argument, assert_condition
 
 
@@ -64,7 +65,7 @@ class TimeTransitionProvider(ILevelTransitionProvider):
         self._prolongation_operator = np.zeros((self.num_fine_points, self.num_coarse_points), dtype=float)
         for k in range(0, self.num_fine_points):
             for j in range(0, self.num_coarse_points):
-                self._prolongation_operator[k][j] = self._lagrange_polynome(j, self._coarse_nodes, self._fine_nodes[k])
+                self._prolongation_operator[k][j] = lagrange_polynome(j, self._coarse_nodes, self._fine_nodes[k])
         #     self._prolongation_operator[k] = self._scaled_interpolation_weights(from_points=self._coarse_nodes,
         #                                                                         to_points=self._fine_nodes,
         #                                                                         index=k)
@@ -73,40 +74,10 @@ class TimeTransitionProvider(ILevelTransitionProvider):
         self._restringation_operator = np.zeros((self.num_coarse_points, self.num_fine_points), dtype=float)
         for k in range(0, self.num_coarse_points):
             for j in range(0, self.num_fine_points):
-                self._restringation_operator[k][j] = self._lagrange_polynome(j, self._fine_nodes, self._coarse_nodes[k])
+                self._restringation_operator[k][j] = lagrange_polynome(j, self._fine_nodes, self._coarse_nodes[k])
         #     self._restringation_operator[k] = self._scaled_interpolation_weights(from_points=self._fine_nodes,
         #                                                                          to_points=self._coarse_nodes,
         #                                                                          index=k)
-
-    @staticmethod
-    def _lagrange_polynome(j, base_points, x):
-        """Evaluates :math:`j`th Lagrange polynomial based on ``base_points`` at :math:`x`
-
-        For a given set of :math:`n` nodes :math:`\\vec{b}` (``base_points``) the :math:`j`th Lagrange polynomial is
-        constructed and evaluated at the given point :math:`x`.
-
-        .. math::
-
-            P_j(x) = \\prod_{m=1, m \\neq j}^{n} \frac{x - b_m}{b_j - b_m}
-
-        Parameters
-        ----------
-        j : :py:class:`int`
-        base_points : :py:class:`numpy.ndarray` of :math:`n` :py:class:`float`
-            points to construct the Lagrange polynome on
-        x : :py:class:`float`
-            point to evaluate the Lagrange polynome at
-
-        Returns
-        -------
-        value : :py:class:`float`
-            value of the specified Lagrange polynome
-        """
-        _val = 1.0
-        for m in range(0, base_points.size):
-            if m != j:
-                _val *= (x - base_points[m]) / (base_points[j] - base_points[m])
-        return _val
 
     def _scaled_interpolation_weights(self, from_points, to_points, index):
         _weights = np.zeros(from_points.size, dtype=float)
