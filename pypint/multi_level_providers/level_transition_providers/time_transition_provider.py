@@ -80,13 +80,47 @@ class TimeTransitionProvider(ILevelTransitionProvider):
         #                                                                          index=k)
 
     def _scaled_interpolation_weights(self, from_points, to_points, index):
+        """non-proofen custom integration method
+
+        This computes the integration weights based on their relative distance.
+        The distance contributes squared to weaken nodes further away in contrast to nodes close by.
+
+        For two given sets of nodes :math:`\\vec{x}^C \\in \\mathbb{R}^n` and :math:`\\vec{x}^F \\in \\mathbb{R}^N`
+        with :math:`n < N` the interpolation weights for the interpolation from :math:`\\vec{x}^C` onto
+        :math:`\\vec{x}^F` at a target node :math:`x^F \\in \\vec{x}^F`:
+
+        .. math::
+
+            \\tilde{\\omega}_i = \\left( 1 - \\frac{|x^F - x_i^C|}{|x_0 - x_N|} \\right) ^ 2
+
+        To counter unwanted scaling effects, the computed weights are scaled to sum up to :math:`1`:
+
+        .. math::
+
+            \\vec{\\omega} = \\frac{\\tilde{\\omega}}{\\sum_{i=1}^n \\tilde{\\omega}_i}
+
+        Parameters
+        ----------
+        from_points : :py:class:`numpy.ndarray` of :math:`n` :py:class:`float`
+            nodes to interpolate from; the Lagrange polynome is based on these
+        to_points : :py:class:`numpy.ndarray` of :math:`N` :py:class:`float`
+            nodes to interpolate onto; the Lagrange polynome is evaluated at one of these
+        index : :py:class:`float`
+            index of the target node to evaluate the Lagrange polynome at
+
+        Returns
+        -------
+        value : :py:class:`float`
+            interpolation weight for given nodes
+
+        Notes
+        -----
+        Please be aware, that this method has not been mathematically or numerically tested and validated.
+        """
         _weights = np.zeros(from_points.size, dtype=float)
-        if to_points[index] in from_points:
-            _weights[from_points.tolist().index(to_points[index])] = 1.0
-        else:
-            _width = abs(to_points[-1] - to_points[0])
-            for j in range(0, from_points.size):
-                _weights[j] = pow(1 - abs(to_points[index] - from_points[j]) / _width, self._weight_scale)
-            _weights /= np.sum(_weights)
+        _width = abs(to_points[-1] - to_points[0])
+        for j in range(0, from_points.size):
+            _weights[j] = pow(1 - abs(to_points[index] - from_points[j]) / _width, self._weight_scale)
+        _weights /= np.sum(_weights)
 
         return _weights
