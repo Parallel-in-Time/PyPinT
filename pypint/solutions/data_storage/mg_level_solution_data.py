@@ -13,7 +13,7 @@ class MGLevelFullIterativeSolution(IterativeSolution):
         self.iterative_list = []
 
     def add_solution(self, level, *args, **kwargs ):
-        """Adds a new solution storage object from a MultiGridLevel object
+        """Adds a new solution storage object from a IMultigridLevel object
 
         """
         self.iterative_list.append(copy.copy(level.mid))

@@ -4,20 +4,15 @@
 
 import numpy as np
 import scipy.signal as sig
+
 from pypint.utilities import assert_is_callable, assert_is_instance, \
                                      assert_condition
-from pypint.plugins.multigrid.multigridproblem import MultiGridProblem
+from pypint.plugins.multigrid.multigrid_problem import MultiGridProblem
 from pypint.plugins.multigrid.stencil import Stencil
+from pypint.plugins.multigrid.i_multigrid_level import IMultigridLevel
 
 
-class MultiGridLevel(object):
-    """ Empty super class, for instance checking
-    """
-    def __init__(self):
-        raise NotImplementedError("I am not done yet sorry")
-
-
-class MultiGridLevel1D(MultiGridLevel):
+class MultigridLevel1D(IMultigridLevel):
     """
     Summary
     -------
@@ -55,7 +50,7 @@ class MultiGridLevel1D(MultiGridLevel):
                 self._mg_problem = mg_problem
             else:
                 raise ValueError("Please provide a MultiGridProblem")
-        elif isinstance(shape, MultiGridLevel1D):
+        elif isinstance(shape, MultigridLevel1D):
             # now we have a fallback solution if the borders are chosen wrong
             forward_shape = shape.size - shape.borders[0] - shape.borders[1]
             if isinstance(max_borders, np.ndarray) and max_borders.size >= 2:
@@ -101,7 +96,7 @@ class MultiGridLevel1D(MultiGridLevel):
         self.borders = max_borders
         # gives view to the padded regions and the middle
         # here it is important to use __array__, because
-        # the different parts are just ndarrays and not another MultiGridLevel1D objects
+        # the different parts are just ndarrays and not another MultigridLevel1D objects
         self.left = self.arr.__array__()[:self.borders[0]]
         self.right = self.arr.__array__()[-self.borders[1]:]
         self.mid = self.arr.__array__()[self.borders[0]:-self.borders[1]]
@@ -217,7 +212,7 @@ class MultiGridLevel1D(MultiGridLevel):
 # stencil = Stencil(3)
 # stencil[:] = np.asarray([1, -2, 1])
 # mg_prob = MultiGridProblem(stencil, lambda x: 5.)
-# lvl = MultiGridLevel1D(5, mg_prob, np.asarray([3, 3]))
+# lvl = MultigridLevel1D(5, mg_prob, np.asarray([3, 3]))
 # print(type(lvl))
 # print(lvl)
 # # fuellen von werten
@@ -228,8 +223,8 @@ class MultiGridLevel1D(MultiGridLevel):
 # print(lvl.left)
 # print(lvl.mid)
 # print(lvl.right)
-# print(isinstance(lvl, MultiGridLevel1D))
-#lvl2 = MultiGridLevel1D(lvl, None, np.asarray([1, 1]))
+# print(isinstance(lvl, MultigridLevel1D))
+#lvl2 = MultigridLevel1D(lvl, None, np.asarray([1, 1]))
 # a = lvl[1:3]
 # print(type(a))
 # print(a.left)
@@ -244,7 +239,7 @@ class MultiGridLevel1D(MultiGridLevel):
 # print(type(lvl.mid))
 #print(lvl2)
 
-#lvl2 = MultiGridLevel1D(lvl)
+#lvl2 = MultigridLevel1D(lvl)
 #print(lvl2)
 
 #lvl.embed(np.arange(5))

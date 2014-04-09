@@ -1,12 +1,17 @@
 # coding=utf-8
 import numpy as np
-from pypint.plugins.multigrid.multigridproblem import MultiGridProblem
-from pypint.plugins.multigrid.multigridlevelprovider import MultiGridLevelProvider
-from pypint.plugins.multigrid.multigridsolution import MultiGridSolution
-from pypint.plugins.multigrid.level import MultiGridLevel1D
+import sys
+print(sys.path)
+from pypint.plugins.multigrid.multigrid_problem import MultiGridProblem
+from pypint.plugins.multigrid.multigrid_level_provider import MultiGridLevelProvider
+from pypint.plugins.multigrid.multigrid_solution import MultiGridSolution
+from pypint.plugins.multigrid.level import MultigridLevel1D
 from pypint.plugins.multigrid.multigrid_smoother import SplitSmoother, DirectSolverSmoother, WeightedJacobiSmoother
 from pypint.utilities import assert_is_callable, assert_is_instance, assert_condition
 from pypint.plugins.multigrid.stencil import Stencil
+from pypint.plugins.multigrid.interpolation import InterpolationByStencilListIn1D
+from pypint.plugins.multigrid.restriction import RestrictionStencilPure, RestrictionByStencilForLevels
+
 import networkx as nx
 
 class MultiGridControl(object):
@@ -233,16 +238,16 @@ if __name__ == '__main__':
     # lets define the different levels lets try 3
     borders = np.asarray([3, 3])
 
-    top_level = MultiGridLevel1D(512, mg_problem=mg_problem,
+    top_level = MultigridLevel1D(512, mg_problem=mg_problem,
                                  max_borders=borders)
 
-    mid_level = MultiGridLevel1D(256, mg_problem=mg_problem,
+    mid_level = MultigridLevel1D(256, mg_problem=mg_problem,
                                  max_borders=borders)
 
-    low_level = MultiGridLevel1D(64, mg_problem=mg_problem,
+    low_level = MultigridLevel1D(64, mg_problem=mg_problem,
                                  max_borders=borders)
     # check if the distance between points is calculated right
-    print("===== MultiGridLevel Test =====")
+    print("===== IMultigridLevel Test =====")
     print("3 different GridDistances from top to low level:")
     print(top_level.h)
     print(mid_level.h)
@@ -324,6 +329,34 @@ if __name__ == '__main__':
     low_level.pad()
     low_jacobi_smoother.relax()
     print(low_level.arr)
+
+    print("===== Restriction and Interpolation =====")
+    # generate restriction stencil
+    rst_inject = RestrictionStencilPure(np.asarray([1.0]), 2)
+    rst_fw = RestrictionStencilPure(np.asarray([0.25, 0.5, 0.25]), 2)
+    # try it with just some simple arrays
+    x_in = np.arange(9) ** 2
+    x_out = np.zeros(5)
+    print("test injection,\n x_in :", x_in)
+    print(" x_out :", x_out)
+    rst_inject.eval(x_in, x_out)
+    print("inject,\n x_out :", x_out)
+    # full weighting restriction needs another interpretation because
+    # the stencil needs also the values on the boundary, this men
+    x_out = np.zeros(4)
+    print("full weighting needs another interpretation, so the x_out needs another size\n x_out", x_out)
+    rst_fw.eval(x_in, x_out)
+    print("After restriction,\n x_out:", x_out)
+
+
+    # initialize top level
+    top_level.arr[:] = 105.0
+    top_level.pad()
+    mg_problem.fill_rhs(top_level)
+    # we smooth in order to have something to restrict
+    top_jacobi_smoother.relax(5)
+    # print("TopLevel after smoothing: \n", top_level.arr)
+
 
 
 

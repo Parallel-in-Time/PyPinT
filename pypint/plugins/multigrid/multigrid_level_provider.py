@@ -6,10 +6,12 @@ import numpy as np
 from pypint.multi_level_providers.multi_level_provider import MultiLevelProvider
 from pypint.utilities import assert_is_callable, assert_is_instance\
     , assert_condition
-from pypint.plugins.multigrid.stencil import Stencil, InterpolationStencil \
-    , InterpolationStencil1D, RestrictionStencil
-from pypint.plugins.multigrid.level import MultiGridLevel1D, MultiGridLevel
-from pypint.plugins.multigrid.multigrid_smoother import Smoother, SplitSmoother
+from pypint.plugins.multigrid.i_interpolation import IInterpolation
+from pypint.plugins.multigrid.interpolation import InterpolationByStencilListIn1D
+from pypint.plugins.multigrid.restriction import RestrictionStencilPure
+from pypint.plugins.multigrid.stencil import Stencil
+from pypint.plugins.multigrid.level import MultigridLevel1D, IMultigridLevel
+from pypint.plugins.multigrid.multigrid_smoother import IMultigridSmoother, SplitSmoother
 import scipy.signal as sig
 
 
@@ -21,14 +23,14 @@ class StencilBasedLevelTransitionProvider1D(object):
     with the according interpolation and restriction functions
     """
     def __init__(self, fine_level, coarse_level, rst_stencil, ipl_stencil):
-        assert_is_instance(fine_level, MultiGridLevel1D, "Not an MultiGridLevel1D")
-        assert_is_instance(coarse_level, MultiGridLevel1D, "Not an MultiGridLevel1D")
+        assert_is_instance(fine_level, MultigridLevel1D, "Not an MultigridLevel1D")
+        assert_is_instance(coarse_level, MultigridLevel1D, "Not an MultigridLevel1D")
 
         self.fl = fine_level
         self.cl = coarse_level
 
-        assert_is_instance(ipl_stencil, InterpolationStencil1D)
-        assert_is_instance(rst_stencil, RestrictionStencil)
+        assert_is_instance(ipl_stencil, InterpolationByStencilListIn1D)
+        assert_is_instance(rst_stencil, RestrictionStencilPure)
         assert_condition(rst_stencil.ndim == 1,
                          ValueError, "Restriction Stencil"
                          + "has not the dimension 1")
@@ -69,7 +71,7 @@ class MultiGridLevelProvider(object):
     """Contains the needed LevelTransition Provider
 
     Different cycles are provided, like the full multigrid cycle through the
-    use of a char list. Note that the Smoother can also be a simple solver if
+    use of a char list. Note that the IMultigridSmoother can also be a simple solver if
     the grid is coarse enough. Hence the MultigridLevelProvider is the big
     toolbox of the MultiGrid Plugin one need to a proper labeling, which is
     described in the __init__ method
@@ -97,19 +99,19 @@ class MultiGridLevelProvider(object):
         """
 
         for k, v in levels.iteritems():
-            assert_is_instance(v, MultiGridLevel,
-                               "Not an MultiGridLevel1D object")
+            assert_is_instance(v, IMultigridLevel,
+                               "Not an MultigridLevel1D object")
         for k, v in ipl_dict.iteritems():
             assert_is_instance(k, tuple, "Keys should be a tuple.")
-            assert_is_instance(v, InterpolationStencil,
+            assert_is_instance(v, IInterpolation,
                                k+" is not an interpolation stencil.")
         for k, v in rst_dict.iteritems():
             assert_is_instance(k, tuple, "Keys should be a tuple")
-            assert_is_instance(v, RestrictionStencil,
+            assert_is_instance(v, RestrictionStencilPure,
                                k+" is not a restriction stencil!")
         for k, v in smth_dict.iteritems():
             assert_is_instance(k, tuple, "Keys should be a tuple")
-            assert_is_instance(v, Smoother,
+            assert_is_instance(v, IMultigridSmoother,
                                k+" is not a smoother!")
 
         self.smth_dict = smth_dict

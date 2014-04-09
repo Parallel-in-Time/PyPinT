@@ -1,4 +1,4 @@
-    # coding=utf-8
+# coding=utf-8
 """
 MultigridProblem
 """
@@ -446,3 +446,4 @@ class MultiGridProblem(object):
         # and now we may use for example the convolve operator
         #    return sig.convolve(u_pad, A, 'valid')
 
+__all__ = ['MultiGridProblem']

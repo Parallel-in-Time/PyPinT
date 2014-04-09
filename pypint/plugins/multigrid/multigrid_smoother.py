@@ -2,27 +2,15 @@
 
 import numpy as np
 from pypint.multi_level_providers.multi_level_provider import MultiLevelProvider
-from pypint.utilities import assert_is_callable, assert_is_instance, assert_condition
-from pypint.plugins.multigrid.stencil import Stencil, InterpolationStencil1D, RestrictionStencil
-from pypint.plugins.multigrid.level import MultiGridLevel1D, MultiGridLevel
+from pypint.utilities import assert_is_instance, assert_condition
+from pypint.plugins.multigrid.stencil import Stencil
+from pypint.plugins.multigrid.level import IMultigridLevel
 import scipy.signal as sig
 import scipy.sparse as sprs
+from pypint.plugins.multigrid.i_multigrid_smoother import IMultigridSmoother
 
-class Smoother(object):
-    """Smoother Root Class for Multigrid
 
-    """
-
-    def __init__(self, dimension=1,*args ,**kwds):
-        self.dim = dimension
-        if "smoothing_function" not in kwds:
-            def smoothing_function():
-                assert not hasattr(super(), 'smoothing_function')
-            self.smoothing_function = None
-        else:
-            self.smoothing_function = kwds["smoothing_function"]
-
-class DirectSolverSmoother(Smoother):
+class DirectSolverSmoother(IMultigridSmoother):
     """Takes the stencil and wraps the solver of stencil class, so that ist may
     may be used in the MultiGridProvider and put it into the level
 
@@ -30,7 +18,7 @@ class DirectSolverSmoother(Smoother):
     def __init__(self, stencil, level, mod_rhs=False):
         """__init__ method"""
         assert_is_instance(stencil, Stencil, "A Stencil object is needed")
-        assert_is_instance(level, MultiGridLevel, "Level should be "
+        assert_is_instance(level, IMultigridLevel, "Level should be "
                                                   "level instance")
         self.level = level
         self.solver = stencil.generate_direct_solver(level.mid.shape)
@@ -45,7 +33,7 @@ class DirectSolverSmoother(Smoother):
         # print("kakao:", self.level.mid)
 
 
-class SplitSmoother(Smoother):
+class SplitSmoother(IMultigridSmoother):
     """ A general Smoothing class which arises from splitting the main stencil
 
     This class of smoothers is easy to derive and really broad,
@@ -63,7 +51,7 @@ class SplitSmoother(Smoother):
                          "It is not an splitting")
         # check the level !has to be improved! inheritance must exist for
         # level class
-        assert_is_instance(level, MultiGridLevel, "Not the right level")
+        assert_is_instance(level, IMultigridLevel, "Not the right level")
         #
         self.lvl = level
         self.l_plus = l_plus
@@ -103,7 +91,7 @@ class SplitSmoother(Smoother):
 
 
 
-class WeightedJacobiSmoother(Smoother):
+class WeightedJacobiSmoother(IMultigridSmoother):
     """Implement a simple JaocbiSmoother , to test the SplitSmoother
 
     """
