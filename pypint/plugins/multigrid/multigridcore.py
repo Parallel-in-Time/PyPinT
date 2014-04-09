@@ -257,15 +257,18 @@ if __name__ == '__main__':
 
     # define the smoother from the split smoother class on each level,
     # where the last level is solved directly
-    l_plus = np.asarray([0, -2, 0])
-    l_minus = np.asarray([1, 0, 1])
     omega = 0.5
-    top_jacobi_smoother = SplitSmoother(l_plus / top_level.h / omega,
-                                        l_minus / top_level.h * (1 - 1 / omega),
+    l_plus = np.asarray([0, -2.0/omega, 0])
+    l_minus = np.asarray([1.0, -2.0*(1.0 - 1.0/omega), 1.0])
+    top_jacobi_smoother = SplitSmoother(l_plus / top_level.h**2,
+                                        l_minus / top_level.h**2,
                                         top_level)
-    mid_jacobi_smoother = SplitSmoother(l_plus / mid_level.h / omega,
-                                        l_minus / mid_level.h * (1 - 1 / omega),
+    mid_jacobi_smoother = SplitSmoother(l_plus / mid_level.h**2,
+                                        l_minus / mid_level.h**2,
                                         mid_level)
+    low_jacobi_smoother = SplitSmoother(l_plus / low_level.h**2,
+                                        l_minus / low_level.h**2,
+                                        low_level)
     low_direct_smoother = DirectSolverSmoother(laplace_stencil, low_level)
     # time to test the relaxation methods
     print("===== DirectSolverSmoother Test =====")
@@ -315,9 +318,12 @@ if __name__ == '__main__':
     jacobi_matrix.relax()
     print(low_level.arr)
 
+    print("Now we check if the more general SplitSmootherClass :")
+    mg_problem.fill_rhs(low_level)
+    low_level.mid[:] = 105.0
+    low_level.pad()
+    low_jacobi_smoother.relax()
+    print(low_level.arr)
 
-    #mid_level.mid[:] = 105
-    #mid_jacobi_smoother.relax(5)
-    #print(mid_level.mid[:])
 
 

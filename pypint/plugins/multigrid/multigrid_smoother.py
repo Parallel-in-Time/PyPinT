@@ -13,7 +13,7 @@ class Smoother(object):
 
     """
 
-    def __init__(self, dimension=1, **kwds):
+    def __init__(self, dimension=1,*args ,**kwds):
         self.dim = dimension
         if "smoothing_function" not in kwds:
             def smoothing_function():
@@ -52,7 +52,7 @@ class SplitSmoother(Smoother):
     it is statically linked to a certain level.
     """
 
-    def __init__(self, l_plus, l_minus, level, **kwargs):
+    def __init__(self, l_plus, l_minus, level, *args, **kwargs):
         """init method of the split smoother
 
         l_plus and l_minus have to be centralized
@@ -64,18 +64,20 @@ class SplitSmoother(Smoother):
         # check the level !has to be improved! inheritance must exist for
         # level class
         assert_is_instance(level, MultiGridLevel, "Not the right level")
-
+        #
         self.lvl = level
         self.l_plus = l_plus
         self.l_minus = l_minus
         self.st_minus = Stencil(l_minus)
-        self.lvl_view_inner = level.evaluable_view(self.st_minus)
-        self.lvl_view_outer = level.evaluable_view(self.st_minus.b*2)
+        self.st_plus = Stencil(l_plus)
+        self.evaluable_view = level.evaluable_view(self.st_minus)
+        self.l_plus_solver = self.st_plus.generate_direct_solver(self.lvl.mid.shape)
+        # self.lvl_view_outer = level.evaluable_view(self.st_minus.b*2)
+        #
+        # grid = self.lvl_view_inner.shape
+        # self.st_plus = Stencil(l_plus, grid=grid, solver="factorize")
 
-        grid = self.lvl_view_inner.shape
-        self.st_plus = Stencil(l_plus, grid=grid, solver="factorize")
-
-        super().__init__(l_plus.ndim, **kwargs)
+        super().__init__(l_plus.ndim, *args, **kwargs)
 
     def relax(self, n=1):
         """Does the relaxation step several times on the lvl
@@ -91,13 +93,15 @@ class SplitSmoother(Smoother):
         """
 
         for i in range(n):
-            self.lvl_view_inner.reshape(-1)[:] = \
-                self.st_plus.solver(self.lvl.rhs
-                    - self.st_minus.eval_convolve(
-                        self.lvl_view_outer).reshape(-1)).reshape(
-                            self.lvl_view_inner.shape)
+            self.lvl.mid.reshape(-1)[:] = self.l_plus_solver(self.lvl.rhs -
+                                                             self.st_minus.eval_convolve(self.evaluable_view))
+            # self.lvl.mid.reshape(-1)[:] = \
+            #     self.st_plus.solver(self.lvl.rhs
+            #         - self.st_minus.eval_convolve(
+            #             self.lvl_view_outer).reshape(-1)).reshape(
+            #                 self.lvl_view_inner.shape)
 
-            self.lvl.pad()
+
 
 class WeightedJacobiSmoother(Smoother):
     """Implement a simple JaocbiSmoother , to test the SplitSmoother
@@ -191,7 +195,6 @@ class WeightedJacobiSmoother(Smoother):
         for i in range(n):
             self.level.mid.reshape(-1)[:] = self.R_w.dot(self.level.mid.reshape(-1)) \
                                             + self.omega * self.level.rhs / self.D
-
 
     def _relax_convolve(self, n=1):
         """Why bother, using simple convolution by defining a new stencil
