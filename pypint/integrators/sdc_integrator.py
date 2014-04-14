@@ -66,8 +66,9 @@ class SdcIntegrator(IntegratorBase):
         Parameters
         ----------
         target_node : :py:class:`int`
-            *(required)*
+            *(optional)*
             (1-based) index of the last node to integrate.
+            In case it is not given, an integral over the full interval is assumed.
 
         from_node : :py:class:`int`
             *(optional)*
@@ -85,8 +86,10 @@ class SdcIntegrator(IntegratorBase):
         --------
         :py:meth:`.IntegratorBase.evaluate` : overridden method
         """
-        assert_named_argument('target_node', kwargs, types=int, descriptor="Target Node Index", checking_obj=self)
-        _target_index = kwargs["target_node"]
+        _target_index = self._qmat.shape[0] - 1
+        if 'target_node' in kwargs:
+            assert_is_instance(kwargs['target_node'], int, descriptor="Target Node Index", checking_obj=self)
+            _target_index = kwargs["target_node"]
 
         _from_index = 0
         if 'from_node' in kwargs:
@@ -113,7 +116,7 @@ class SdcIntegrator(IntegratorBase):
                              ValueError, message="Target Node Index {:d} too large. Must be within [{:d}, {:d}]"
                                                  .format(_target_index, 1, self._qmat.shape[0]),
                              checking_obj=self)
-            LOG.debug("Integrating to node {:d} with Q-Mat row {:d} on interval {}."
+            LOG.debug("Integrating up to node {:d} with Q-Mat row {:d} on interval {}."
                       .format(_target_index, _target_index, self.nodes_type.interval))
             return np.dot(self._qmat[_target_index], data)
 
