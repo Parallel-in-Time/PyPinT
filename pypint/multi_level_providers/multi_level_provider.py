@@ -10,8 +10,7 @@ from pypint.utilities import assert_condition, assert_is_instance
 
 
 class MultiLevelProvider(object):
-    def __init__(self, num_levels=0, default_integrator=None,
-                 default_transitioner=None):
+    def __init__(self, num_levels=0, default_integrator=None, default_transitioner=None):
         """
         Parameters
         ----------
