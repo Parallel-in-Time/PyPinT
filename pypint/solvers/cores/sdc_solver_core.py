@@ -61,7 +61,7 @@ class SdcSolverCore(ISolverCore):
             #                                               state.current_step.solution.value,
             #                                               _problem.exact(state.current_step.time_point)))
             state.current_step.solution.error = Error(
-                abs(state.current_step.solution.value - _problem.exact(state.current_step.time_point))
+                abs(state.current_step.value - _problem.exact(state.current_step.time_point))
             )
         else:
             # we need the exact solution for that

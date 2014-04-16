@@ -21,6 +21,8 @@ class IStepState(object):
     def __init__(self, **kwargs):
         self._solution = StepSolutionData()
         self._delta_tau = 0.0
+        self._rhs = None
+        self._rhs_evaluated = False
 
     def done(self):
         """Finalize this state and its included solution
@@ -38,10 +40,36 @@ class IStepState(object):
         return self._solution
 
     @property
+    def value(self):
+        """Proxy for the solution value
+
+        On setting, the right hand side evaluation (:py:attr:`.rhs`) gets reset.
+        """
+        return self._solution.value
+
+    @value.setter
+    def value(self, value):
+        self._solution.value = value
+        self._rhs_evaluated = False
+
+    @property
     def time_point(self):
         """Proxy for :py:attr:`.StepSolutionData.time_point`
         """
         return self._solution.time_point
+
+    @property
+    def rhs_evaluated(self):
+        return self._rhs_evaluated
+
+    @property
+    def rhs(self):
+        return self._rhs if self.rhs_evaluated else None
+
+    @rhs.setter
+    def rhs(self, rhs):
+        self._rhs = rhs
+        self._rhs_evaluated = True
 
     @property
     def delta_tau(self):
@@ -157,6 +185,14 @@ class IStateIterator(object):
         self.solution.finalize()
         self._current_index = 0
         self._finalized = True
+
+    def definalize(self):
+        if self._finalized:
+            self._solution = self.solution.__class__()
+            self._finalized = False
+            self._current_index = 0
+        else:
+            LOG.debug("This {} wasn't finalized.".format(class_name(self)))
 
     @property
     def finalized(self):
@@ -554,7 +590,6 @@ class IIterationState(IStaticStateIterator):
         value is set as a reference to the previous time step's last step.
         """
         super(IIterationState, self).proceed()  # -> current_index += 1
-        LOG.debug(func_name(self))
         # link initial step of this time step to the previous' last step
         self.current_time_step.initial = self.previous_time_step.last_step
 
