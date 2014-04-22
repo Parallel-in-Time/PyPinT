@@ -6,8 +6,10 @@ from pypint.plugins.multigrid.i_interpolation import IInterpolation
 from pypint.plugins.multigrid.stencil import Stencil
 from pypint.utilities import assert_is_instance
 
+
+
 class InterpolationByStencilListIn1D(IInterpolation):
-    """1D Stencil for Interpolation
+    """1D Class for Interpolation
 
     """
 

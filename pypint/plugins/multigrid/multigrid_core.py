@@ -241,10 +241,10 @@ if __name__ == '__main__':
     top_level = MultigridLevel1D(512, mg_problem=mg_problem,
                                  max_borders=borders)
 
-    mid_level = MultigridLevel1D(256, mg_problem=mg_problem,
+    mid_level = MultigridLevel1D(257, mg_problem=mg_problem,
                                  max_borders=borders)
 
-    low_level = MultigridLevel1D(64, mg_problem=mg_problem,
+    low_level = MultigridLevel1D(65, mg_problem=mg_problem,
                                  max_borders=borders)
     # check if the distance between points is calculated right
     print("===== IMultigridLevel Test =====")
@@ -348,7 +348,16 @@ if __name__ == '__main__':
     rst_fw.eval(x_in, x_out)
     print("After restriction,\n x_out:", x_out)
 
+    # next we try the RestrictionStencilForLevels
 
+    rst_lvl = RestrictionByStencilForLevels(Stencil(np.asarray([0.25, 0.5, 0.25])), mid_level, low_level)
+    mid_level.mid[:] = np.arange(257)
+    print("mid level with borders before restriction : \n", mid_level)
+    print("low level before restriction : \n", low_level.mid)
+    rst_lvl.restrict()
+    print("low level after restriction : \n", low_level.mid)
+
+    
     # initialize top level
     top_level.arr[:] = 105.0
     top_level.pad()

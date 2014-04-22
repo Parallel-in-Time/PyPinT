@@ -15,6 +15,10 @@ class RestrictionByStencilForLevels(IRestriction):
     """Restriction Stencil class which binds two level to each other, takes a
         Stencil object, and checks if they are compatible. If there is a possibility for restriction
         which is not standard it warns you about it.
+        This Restrictionclass implicitly assumes the following structure
+         B_._._._._._._._._._._._B     <- Level in
+       B_ _,_ _,_ _,_ _,_ _,_ _,_ _B    <- Level out
+
     """
     def __init__(self, rst_stencil, level_in, level_out, *args, **kwargs):
         assert_is_instance(rst_stencil, Stencil, "Not a Stencil")
@@ -26,17 +30,20 @@ class RestrictionByStencilForLevels(IRestriction):
         # check if the number of points per level matches
         self.dip = []
         for i in range(rst_stencil.dim):
-            self.dip.append((level_in[i]-1)/(level_out[i]-1) - 1)
+            self.dip.append((level_in.mid.shape[i]-1)/(level_out.mid.shape[i]-1) - 1)
+            print("in.shape[", i, "]: ", level_in.mid.shape[i])
+            print("out.shape[", i, "]: ", level_out.mid.shape[i])
+            print("dip[", i, "]: ", self.dip[-1])
             if (self.dip[-1] % 1) != 0:
-                raise ValueError("The Level do not match in direction" + str(i))
+                raise ValueError("The Level do not match in direction " + str(i))
 
         # now just construct a slice tuple and the evaluable view from the finer grid
         self.evaluable_view = level_in.evaluable_view(rst_stencil)
         self.slices = []
         for i in range(rst_stencil.dim):
-            self.slices.append(slice(None, None, self.dip[i]))
+            self.slices.append(slice(None, None, self.dip[i]+1))
 
-    def eval(self):
+    def restrict(self):
         """Uses an unefficient algorithm in order to compute the restriction,
            because the convolution is computed on each node of the fine grid instead on every second or third
         """
