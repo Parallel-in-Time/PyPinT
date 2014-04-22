@@ -31,9 +31,9 @@ class RestrictionByStencilForLevels(IRestriction):
         self.dip = []
         for i in range(rst_stencil.dim):
             self.dip.append((level_in.mid.shape[i]-1)/(level_out.mid.shape[i]-1) - 1)
-            print("in.shape[", i, "]: ", level_in.mid.shape[i])
-            print("out.shape[", i, "]: ", level_out.mid.shape[i])
-            print("dip[", i, "]: ", self.dip[-1])
+            # print("in.shape[", i, "]: ", level_in.mid.shape[i])
+            # print("out.shape[", i, "]: ", level_out.mid.shape[i])
+            # print("dip[", i, "]: ", self.dip[-1])
             if (self.dip[-1] % 1) != 0:
                 raise ValueError("The Level do not match in direction " + str(i))
 

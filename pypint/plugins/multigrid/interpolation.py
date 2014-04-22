@@ -4,7 +4,55 @@ import numpy as np
 import scipy.signal as sig
 from pypint.plugins.multigrid.i_interpolation import IInterpolation
 from pypint.plugins.multigrid.stencil import Stencil
-from pypint.utilities import assert_is_instance
+from pypint.utilities import assert_is_callable, assert_is_instance, assert_condition
+from pypint.plugins.multigrid.i_multigrid_level import IMultigridLevel
+import itertools as it
+
+class InterpolationByStencilForLevels(IInterpolation):
+    """1D class for Interpolation which binds two levels
+        This Interpolationclass implicitly assumes the following structure
+       B_ _,_ _,_ _,_ _,_ _,_ _,_ _B    <- Level in
+         B_._._._._._._._._._._._B     <- Level out
+
+        It also checks if under this assumption the interpolation is possible.
+
+        The format of stencil matrix is the following
+        stencil_matrix= [ (Stencil 1, Position 1),(Stencil 2, Position 2), . . .]
+    """
+    def __init__(self, stencil_list, level_in, level_out, *args, **kwargs):
+        """init
+        """
+        # check if all parameters are fitting
+        assert_is_instance(stencil_list, list)
+
+        for st in stencil_list:
+            assert_is_instance(st[0], Stencil, "that is not a stencil")
+        assert_is_instance(level_in, IMultigridLevel, "Not a IMultigridLevel")
+        assert_is_instance(level_out, IMultigridLevel, "Not a IMultigridLevel")
+        # increase in points for each direction
+        self.iip = []
+        for i in range(level_in.mid.ndim):
+            self.iip.append((level_out.mid.shape[i]-1)/(level_in.mid.shape[i]-1) - 1)
+            # print("in.shape[", i, "]: ", level_in.mid.shape[i])
+            # print("out.shape[", i, "]: ", level_out.mid.shape[i])
+            # print("iip[", i, "]: ", self.iip[-1])
+            if (self.iip[-1] % 1) != 0:
+                raise ValueError("The Levels do not match in direction " + str(i))
+        # compute evaluable views with the positions
+        self.evaluable_views_slices = []
+        for st, pos in stencil_list:
+            sl = []
+            for i in range(st.dim):
+                sl.append()
+            self.evaluable_views.append((level_in.evaluable_view(st), ))
+
+
+        super().__init__(*args, **kwargs)
+
+    def eval(self):
+        """ for each stencil at a certain position the convolution is computed
+
+        """
 
 
 

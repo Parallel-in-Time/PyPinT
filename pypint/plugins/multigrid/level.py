@@ -167,7 +167,7 @@ class MultigridLevel1D(IMultigridLevel):
             #  right side
             self.right[:] = fr(r_f_b)
 
-    def evaluable_view(self, stencil):
+    def evaluable_view(self, stencil, offset = 0):
         """gives the right view of the array
 
         """
@@ -179,7 +179,7 @@ class MultigridLevel1D(IMultigridLevel):
             else:
                 l = self.borders[0]-stencil[0][0]
                 r = -(self.borders[1]-stencil[0][1])
-            return self.arr[l:r]
+            return self.arr[l+offset: r+offset]
         else:
             raise NotImplementedError("Another dimension than one "
                                       "is not supplied")
