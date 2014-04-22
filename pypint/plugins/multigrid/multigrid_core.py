@@ -356,8 +356,13 @@ if __name__ == '__main__':
     print("low level before restriction : \n", low_level.mid)
     rst_lvl.restrict()
     print("low level after restriction : \n", low_level.mid)
+    print("it works horray, now the interpolation, first the 4 interpolation stencils which are nedded:")
+    ipl_stencil_list = [(Stencil(np.asarray([1])), (0,)),
+                        (Stencil(np.asarray([0.75, 0.25],)), (1,)),
+                        (Stencil(np.asarray([0.5, 0.5],)), (2,)),
+                        (Stencil(np.asarray([0.25, 0.75],)), (3,))]
 
-    
+
     # initialize top level
     top_level.arr[:] = 105.0
     top_level.pad()

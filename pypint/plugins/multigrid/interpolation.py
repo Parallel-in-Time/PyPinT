@@ -27,8 +27,11 @@ class InterpolationByStencilForLevels(IInterpolation):
 
         for st in stencil_list:
             assert_is_instance(st[0], Stencil, "that is not a stencil")
+        self.stencil_list = stencil_list
         assert_is_instance(level_in, IMultigridLevel, "Not a IMultigridLevel")
         assert_is_instance(level_out, IMultigridLevel, "Not a IMultigridLevel")
+        self.level_in = level_in
+        self.level_out = level_out
         # increase in points for each direction
         self.iip = []
         for i in range(level_in.mid.ndim):
@@ -39,13 +42,14 @@ class InterpolationByStencilForLevels(IInterpolation):
             if (self.iip[-1] % 1) != 0:
                 raise ValueError("The Levels do not match in direction " + str(i))
         # compute evaluable views with the positions
-        self.evaluable_views_slices = []
+        self.evaluable_views = []
+        self.slices = []
         for st, pos in stencil_list:
             sl = []
             for i in range(st.dim):
-                sl.append()
-            self.evaluable_views.append((level_in.evaluable_view(st), ))
-
+                sl.append(slice(pos[i], None, self.iip[i]))
+            self.evaluable_views.append(level_in.evaluable_view(st))
+            self.slices.append(tuple(sl.copy()))
 
         super().__init__(*args, **kwargs)
 
@@ -53,7 +57,9 @@ class InterpolationByStencilForLevels(IInterpolation):
         """ for each stencil at a certain position the convolution is computed
 
         """
-
+        for i in range(len(self.stencil_list)):
+            self.level_out.mid[self.slices[i]] = \
+                sig.convolve(self.evaluable_views[i], self.stencil_list[i][0], 'valid')
 
 
 class InterpolationByStencilListIn1D(IInterpolation):
