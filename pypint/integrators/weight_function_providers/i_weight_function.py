@@ -72,6 +72,9 @@ class IWeightFunction(object):
         }
         return _lines
 
+    def __str__(self):
+        return "IWeightFunction<0x%x>(weights=%s)" % (id(self), self.weights)
+
     def __copy__(self):
         copy = self.__class__.__new__(self.__class__)
         copy.__dict__.update(self.__dict__)

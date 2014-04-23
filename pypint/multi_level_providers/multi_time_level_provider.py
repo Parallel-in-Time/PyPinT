@@ -49,5 +49,8 @@ class MultiTimeLevelProvider(MultiLevelProvider):
 
         self._level_transitioners[coarse_level][fine_level] = transitioner
 
+    def __str__(self):
+        return "MultiTimeLevelProvider<0x%x>(num_level=%d)" % (id(self), self.num_levels)
+
 
 __all__ = ['MultiTimeLevelProvider']

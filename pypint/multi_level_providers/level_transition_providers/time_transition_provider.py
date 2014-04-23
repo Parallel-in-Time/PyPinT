@@ -124,3 +124,7 @@ class TimeTransitionProvider(ILevelTransitionProvider):
         _weights /= np.sum(_weights)
 
         return _weights
+
+    def __str__(self):
+        return "TimeTransitionProvider<0x%x>(fine_nodes=%d, coarse_nodes=%d)" \
+               % (id(self), self._n_fine_points, self._n_coarse_points)

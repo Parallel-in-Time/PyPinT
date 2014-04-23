@@ -50,7 +50,7 @@ class ILevelTransitionProvider(object):
         """
         assert_is_instance(coarse_data, np.ndarray, descriptor="Coarse Data", checking_obj=self)
         assert_condition(coarse_data.shape[0] == self.num_coarse_points,
-                         ValueError, message="Coarse Data is of wrong size: NOT %s" % coarse_data.shape,
+                         ValueError, message="Coarse Data is of wrong size: NOT {}".format(coarse_data.shape),
                          checking_obj=self)
 
     def restringate(self, fine_data):
@@ -75,7 +75,7 @@ class ILevelTransitionProvider(object):
         """
         assert_is_instance(fine_data, np.ndarray, descriptor="Fine Data", checking_obj=self)
         assert_condition(fine_data.shape[0] == self.num_fine_points,
-                         ValueError, message="Fine Data is of wrong size: NOT %s" % fine_data.shape,
+                         ValueError, message="Fine Data is of wrong size: NOT {}".format(fine_data.shape),
                          checking_obj=self)
 
     @property
@@ -141,3 +141,7 @@ class ILevelTransitionProvider(object):
             Number of points on the fine level.
         """
         return self._n_coarse_points
+
+    def __str__(self):
+        return "ITransitionProvider<0x%x>(fine_nodes=%d, coarse_nodes=%d)" \
+               % (id(self), self._n_fine_points, self._n_coarse_points)

@@ -100,3 +100,6 @@ class GaussLegendreNodes(INodes):
         nodes = eig_vals[indizes]
 
         self._nodes = nodes.real
+
+    def __str__(self):
+        return "GaussLegendreNodes<0x%x>(n=%d, nodes=%s)" % (id(self), self.num_nodes, self.nodes)

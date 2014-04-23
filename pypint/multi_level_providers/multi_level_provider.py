@@ -198,3 +198,6 @@ class MultiLevelProvider(object):
             return self._level_transitioners[coarse_level][fine_level]
         else:
             return self._default_transitioner
+
+    def __str__(self):
+        return "MultiLevelProvider<0x%x>(num_level=%d)" % (id(self), self.num_levels)
