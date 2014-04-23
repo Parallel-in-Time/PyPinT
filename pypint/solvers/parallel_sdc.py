@@ -149,7 +149,7 @@ class ParallelSdc(IIterativeTimeSolver, IParallelSolver):
                                              % integrator.__mro__[-2].__name__,
                          checking_obj=self)
 
-        super(ParallelSdc, self).init(problem, integrator, **kwargs)
+        super(ParallelSdc, self).init(problem, integrator=integrator, **kwargs)
 
         if 'num_time_steps' in kwargs:
             self._num_time_steps = kwargs['num_time_steps']
