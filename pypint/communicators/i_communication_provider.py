@@ -27,13 +27,13 @@ class ICommunicationProvider(object):
         ValueError
             if ``buffer`` is not a :py:class:`.Message`
         """
-        self._buffer = None
+        self._buffer = {}
 
         if 'buffer' in kwargs:
             assert_is_instance(kwargs['buffer'], Message, descriptor="Buffer", checking_obj=self)
-            self._buffer = kwargs['buffer']
+            self._buffer[None] = kwargs['buffer']
         else:
-            self._buffer = Message()
+            self._buffer[None] = Message()
 
     def send(self, *args, **kwargs):
         """Sending data to a specified communicator
@@ -62,7 +62,7 @@ class ICommunicationProvider(object):
         """
         pass
 
-    def write_buffer(self, *args, **kwargs):
+    def write_buffer(self, tag=None, **kwargs):
         """Writes data into this communicator's buffer
 
         Parameters
@@ -81,21 +81,29 @@ class ICommunicationProvider(object):
             * if no arguments are given
             * if ``time_point`` is not a :py:class:`float`
         """
-        assert_condition(len(args) > 0 or len(kwargs) > 0,
-                         ValueError, "At least one argument must be given: NOT %d (args) or %d (kwargs)"
-                                     % (len(args), len(kwargs)),
+        assert_condition(len(kwargs) > 0,
+                         ValueError, "At least one argument must be given.",
                          self)
 
+        if tag not in self._buffer:
+            self._buffer[tag] = Message()
+            self.write_buffer(tag=tag, **kwargs)
+
         if 'value' in kwargs:
-            self._buffer.value = deepcopy(kwargs['value'])
+            self._buffer[tag].value = deepcopy(kwargs['value'])
 
         if 'time_point' in kwargs:
             assert_is_instance(kwargs['time_point'], float, descriptor="Time Point", checking_obj=self)
-            self._buffer.time_point = deepcopy(kwargs['time_point'])
+            self._buffer[tag].time_point = deepcopy(kwargs['time_point'])
 
         if 'flag' in kwargs:
-            self._buffer.flag = deepcopy(kwargs['flag'])
+            self._buffer[tag].flag = deepcopy(kwargs['flag'])
 
+    def tagged_buffer(self, tag):
+        if tag in self._buffer:
+            return self._buffer[tag]
+        else:
+            return None
     @property
     def buffer(self):
         """Read-only accessor for this communicator's buffer
@@ -104,4 +112,4 @@ class ICommunicationProvider(object):
         -------
         buffer : :py:class:`.Message`
         """
-        return self._buffer
+        return self._buffer[None]
