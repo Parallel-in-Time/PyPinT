@@ -137,7 +137,7 @@ class MlSdc(IIterativeTimeSolver, IParallelSolver):
             _current_flag = Message.SolverFlag.none
 
             # receive dedicated message
-            _msg = self._communicator.receive()
+            _msg = self._communicator.receive(tag=(self.ml_provider.num_levels - 1))
 
             if _msg.flag == Message.SolverFlag.failed:
                 # previous solver failed
@@ -319,6 +319,7 @@ class MlSdc(IIterativeTimeSolver, IParallelSolver):
 
         # set width of current interval
         self.state.initial.solution.time_point = start
+        self.state.initial.value = self.problem.initial_value.copy()
         self.state.delta_interval = self._dt
 
         self.__time_points = np.zeros(self.ml_provider.num_levels, dtype=np.object)
@@ -354,14 +355,12 @@ class MlSdc(IIterativeTimeSolver, IParallelSolver):
                              RuntimeError, "Number of Steps on Level %d not correct (%d)"
                                            % (len(_level), self.ml_provider.integrator(_level_index).num_nodes - 1),
                              checking_obj=self)
-            _level.initial.value = self.problem.initial_value.copy()
-            _level.broadcast(self.problem.initial_value)
+            _level.initial = deepcopy(self.state.initial)
+            _level.broadcast(_level.initial.value)
 
             for _step_index in range(0, len(_level)):
                 _level[_step_index].delta_tau = self.__deltas[_level_index][_step_index + 1]
                 _level[_step_index].solution.time_point = self.__time_points[_level_index][_step_index + 1]
-
-            _level.initial.solution.time_point = self.__time_points[_level_index][0]
 
         assert_condition(len(self.state.current_iteration) == self.ml_provider.num_levels,
                          RuntimeError, "Number of levels in current state not correct."
@@ -369,8 +368,8 @@ class MlSdc(IIterativeTimeSolver, IParallelSolver):
                          checking_obj=self)
 
         # copy problem's initial value to finest level
-        _current_state.finest_level.initial.value = self.problem.initial_value.copy()
-        _current_state.finest_level.broadcast(self.problem.initial_value)
+        # _current_state.finest_level.initial.value = self.problem.initial_value.copy()
+        # _current_state.finest_level.broadcast(self.problem.initial_value)
 
     def _adjust_interval_width(self):
         """Adjust width of time interval
@@ -487,7 +486,11 @@ class MlSdc(IIterativeTimeSolver, IParallelSolver):
             return Message.SolverFlag.converged
 
     def _finest_level(self):
-        # TODO: receive new initial values from previous process
+        _msg = self.comm.receive(tag=self.state.current_level_index)
+        if _msg.time_point == self.state.initial.time_point:
+            self.state.current_level.initial.definalize()
+            self.state.current_level.initial.value = _msg.value
+            self.state.current_level.initial.done()
 
         self._print_level_header()
 
@@ -525,7 +528,9 @@ class MlSdc(IIterativeTimeSolver, IParallelSolver):
 
         self._compute_residual(finalize=True)
 
-        # TODO: send new solution value
+        self.comm.send(tag=self.state.current_level_index,
+                       value=self.state.current_level.final_step.value,
+                       time_point=self.state.current_level.final_step.time_point)
 
         self._print_level_end()
 
@@ -536,7 +541,11 @@ class MlSdc(IIterativeTimeSolver, IParallelSolver):
         """
         Warning: This method is called recursively on each level but the finest
         """
-        # TODO: receive new initial values from previous process
+        _msg = self.comm.receive(tag=self.state.current_level_index)
+        if _msg and _msg.time_point == self.state.current_level.initial.time_point:
+            self.state.current_level.initial.definalize()
+            self.state.current_level.initial.value = _msg.value
+            self.state.current_level.initial.done()
 
         _current_level = self.state.current_iteration.current_level
         _finer_level = self.state.current_iteration.finer_level
@@ -616,7 +625,9 @@ class MlSdc(IIterativeTimeSolver, IParallelSolver):
 
         self._compute_residual(finalize=True)
 
-        # TODO: send new solution value
+        self.comm.send(tag=self.state.current_level_index,
+                       value=self.state.current_level.final_step.value,
+                       time_point=self.state.current_level.final_step.time_point)
 
         self._print_level_end()
 
