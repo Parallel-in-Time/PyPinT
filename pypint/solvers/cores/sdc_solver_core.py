@@ -39,15 +39,15 @@ class SdcSolverCore(ISolverCore):
         super(SdcSolverCore, self).compute_residual(state, **kwargs)
         _step = kwargs['step'] if 'step' in kwargs else state.current_step
         _step.solution.residual = Residual(
-            abs(state.current_time_step.initial.solution.value
+            abs(state.current_time_step.initial.value
                 + state.delta_interval * kwargs['integral']
-                - _step.solution.value)
+                - _step.value)
         )
         # LOG.debug("Residual: {: .4f} = | {: .4f} + {: .4f} * {: .4f} - {: .4f} |"
         #           .format(state.current_step.solution.residual.value[0],
-        #                   state.current_time_step.initial.solution.value[0],
+        #                   state.current_time_step.initial.value[0],
         #                   state.delta_interval, kwargs['integral'][0],
-        #                   state.current_step.solution.value[0]))
+        #                   state.current_step.value[0]))
 
     def compute_error(self, state, **kwargs):
         super(SdcSolverCore, self).compute_error(state, **kwargs)
@@ -58,7 +58,7 @@ class SdcSolverCore(ISolverCore):
 
         if problem_has_exact_solution(_problem, self):
             # LOG.debug("Error for t={:.3f}: {} - {}".format(state.current_step.time_point,
-            #                                               state.current_step.solution.value,
+            #                                               state.current_step.value,
             #                                               _problem.exact(state.current_step.time_point)))
             state.current_step.solution.error = Error(
                 abs(state.current_step.value - _problem.exact(state.current_step.time_point))
