@@ -29,6 +29,9 @@ class IStepState(object):
         """
         self.solution.finalize()
 
+    def definalize(self):
+        self.solution.definalize()
+
     @property
     def solution(self):
         """Proxy to the included solution of the state
