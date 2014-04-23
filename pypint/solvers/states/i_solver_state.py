@@ -321,7 +321,6 @@ class IStaticStateIterator(IStateIterator):
         RuntimeError
             if this sequence has already been finalized via :py:meth:`.IStateIterator.finalize`
         """
-        LOG.debug(func_name(self))
         assert_condition(not self.finalized, RuntimeError,
                          message="This {} is already done.".format(class_name(self)),
                          checking_obj=self)
@@ -329,6 +328,10 @@ class IStaticStateIterator(IStateIterator):
             self._current_index += 1
         else:
             raise StopIteration("No further states available.")
+
+    def broadcast(self, value):
+        for _step in self:
+            _step.value = value.copy()
 
     @property
     def next(self):
@@ -759,7 +762,6 @@ class ISolverState(IStateIterator):
         Extends the sequence of :py:class:`.IIterationState` by appending a new instance with the set
         :py:attr:`.num_time_steps` and :py:attr:`.num_nodes`.
         """
-        LOG.debug(func_name(self))
         self._add_iteration()
         self._current_index = len(self) - 1
         self.current_iteration.initial = deepcopy(self.initial)
@@ -791,6 +793,10 @@ class ISolverState(IStateIterator):
         """Read-only accessor for the number of time steps per iteration.
         """
         return self._num_time_steps
+
+    @property
+    def interval(self):
+        return np.array([self.initial.time_point, self.initial.time_point + self.delta_interval], dtype=np.float)
 
     @property
     def delta_interval(self):
@@ -978,7 +984,7 @@ class ISolverState(IStateIterator):
     def _add_iteration(self):
         assert_condition(self.num_time_steps > 0 and self.num_nodes > 0,
                          ValueError, message="Number of time steps and nodes per time step must be larger 0: NOT {}, {}"
-                                             .format(self.num_time_steps, self.num_nodes),
+                         .format(self.num_time_steps, self.num_nodes),
                          checking_obj=self)
         self._states.append(self._element_type(num_states=self.num_nodes,
                                                num_time_steps=self.num_time_steps))

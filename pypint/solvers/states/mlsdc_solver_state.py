@@ -2,9 +2,12 @@
 """
 .. moduleauthor:: Torbjörn Klatt <t.klatt@fz-juelich.de>
 """
+from warnings import warn
+from copy import deepcopy
+
 import numpy as np
 
-from pypint.solvers.states.i_solver_state import IStepState, ITimeStepState, IIterationState, ISolverState, IStaticStateIterator
+from pypint.solvers.states.i_solver_state import IStepState, ISolverState, IStaticStateIterator
 from pypint.solutions.iterative_solution import IterativeSolution
 from pypint.solutions.data_storage.trajectory_solution_data import TrajectorySolutionData
 from pypint.utilities import assert_condition
@@ -13,14 +16,16 @@ from pypint.utilities import assert_condition
 class MlSdcStepState(IStepState):
     def __init__(self, **kwargs):
         super(MlSdcStepState, self).__init__(**kwargs)
-        self._integral = 0.0
-        self._fas_correction = 0.0
+        self._integral = None
+        self._fas_correction = None
+        self._coarse_correction = None
+
+    # def done(self):
+    #     pass
 
     @property
     def integral(self):
         """Accessor for an integral value
-
-        Defaults to :math:`0.0` if not set.
 
         Parameters
         ----------
@@ -32,6 +37,14 @@ class MlSdcStepState(IStepState):
     @integral.setter
     def integral(self, integral):
         self._integral = integral
+
+    @property
+    def coarse_correction(self):
+        return self._coarse_correction
+
+    @coarse_correction.setter
+    def coarse_correction(self, coarse_correction):
+        self._coarse_correction = coarse_correction
 
     @property
     def fas_correction(self):
@@ -49,6 +62,7 @@ class MlSdcLevelState(IStaticStateIterator):
         super(MlSdcLevelState, self).__init__(**kwargs)
 
         self._initial = MlSdcStepState()
+        self._integral = 0.0
 
     @property
     def initial(self):
@@ -61,10 +75,55 @@ class MlSdcLevelState(IStaticStateIterator):
         self._initial = initial
 
     @property
+    def integral(self):
+        return self._integral
+
+    @integral.setter
+    def integral(self, integral):
+        self._integral = integral
+
+    @property
     def time_points(self):
         """Read-only accessor for the list of time points of this time step
         """
         return np.array([step.time_point for step in self], dtype=float)
+
+    @property
+    def values(self):
+        return np.append([self.initial.value.copy()], [step.value.copy() for step in self], axis=0)
+
+    @property
+    def rhs(self):
+        if self.initial.rhs_evaluated and np.all([step.rhs_evaluated for step in self]):
+            return np.append([self.initial.rhs], [step.rhs for step in self], axis=0)
+        else:
+            return None
+
+    @values.setter
+    def values(self, values):
+        assert_condition(values.shape[0] == (len(self) + 1), ValueError,
+                         "Number of values does not match number of nodes: %d != %d"
+                         % (values.shape[0], (len(self) + 1)),
+                         checking_obj=self)
+        for _step in range(0, len(self)):
+            self[_step].value = values[_step + 1].copy()
+
+    @property
+    def fas_correction(self):
+        return np.append([np.zeros(self[0].fas_correction.shap)], [step.fas_correction for step in self], axis=0)
+
+    @fas_correction.setter
+    def fas_correction(self, fas_correction):
+        assert_condition(fas_correction.shape[0] == (len(self) + 1), ValueError,
+                         "Number of FAS Corrections does not match number of nodes: %d != %d"
+                         % (fas_correction.shape[0], (len(self) + 1)),
+                         checking_obj=self)
+        for _step in range(0, len(self)):
+            self[_step].fas_correction = fas_correction[_step + 1].copy()
+
+    @property
+    def coarse_corrections(self):
+        return np.append([np.zeros(self[0].coarse_correction.shape)], [step.coarse_correction for step in self], axis=0)
 
     @property
     def current_time_point(self):
@@ -141,86 +200,73 @@ class MlSdcLevelState(IStaticStateIterator):
         return self.next_index
 
     @property
-    def last_step(self):
+    def final_step(self):
         """Proxy for :py:attr:`.last`
         """
         return self.last
 
     @property
-    def last_step_index(self):
+    def final_step_index(self):
         """Proxy for :py:attr:`.last_index`
         """
         return self.last_index
 
 
-class MlSdcTimeStepState(IStaticStateIterator):
-    """
-
-    The finer the level, the higher the index number.
-    The coarsest level has index 0.
-    """
-
+class MlSdcIterationState(IStaticStateIterator):
     def __init__(self, **kwargs):
         kwargs['solution_class'] = TrajectorySolutionData
         kwargs['element_type'] = MlSdcLevelState
-        super(MlSdcTimeStepState, self).__init__(**kwargs)
+        if 'num_states' in kwargs:
+            warn("Levels must be initialized separately.")
+            del kwargs['num_states']
+        super(MlSdcIterationState, self).__init__(**kwargs)
+        self._initial = None
 
-        self._delta_time_step = 0.0
-        self._initial = MlSdcStepState()
+    def add_finer_level(self, num_nodes):
+        self._states.append(self._element_type(num_states=num_nodes))
+        self._current_index = len(self) - 1
 
-    # there is no context as proceeding; only step-up and step-down
-    proceed = None
+    def add_coarser_level(self, num_nodes):
+        self._states.insert(0, self._element_type(num_states=num_nodes))
+        self._current_index = len(self) - 1
 
-    @property
-    def delta_time_step(self):
-        """Accessor for the width of the time step
+    def proceed(self):
+        raise RuntimeError("'proceed' is not defined in the context of different levels.")
 
-        Parameters
-        ----------
-        delta_time_step : :py:class:`float`
-
-        Returns
-        -------
-        width_of_time_step : :py:class:`float`
-
-        Raises
-        ------
-        ValueError
-            *(only setter)*
-            if ``delta_time_step`` is not a non-zero positive :py:class:`float`
-        """
-        return self._delta_time_step
-
-    @delta_time_step.setter
-    def delta_time_step(self, delta_time_step):
-        assert_condition(delta_time_step > 0.0, ValueError,
-                         message="Delta interval must be non-zero positive: NOT {}".format(delta_time_step),
-                         checking_obj=self)
-        self._delta_time_step = delta_time_step
-
-    @property
-    def initial(self):
-        """Accessor for the initial value of this time step
-        """
-        return self._initial
-
-    @initial.setter
-    def initial(self, initial):
-        self._initial = initial
+    def finalize(self):
+        pass
 
     def step_up(self):
         """Get to next finer level
         """
-        if self.current_level_index < len(self) - 1:
+        if self.next_index:
+            # print("Stepping up to level %d" % (self._current_index + 1))
             self._current_index += 1
         else:
             raise StopIteration("There is no finer level available.")
 
     def step_down(self):
         if not self.on_base_level:
+            # print("Stepping down to level %d" % (self._current_index - 1))
             self._current_index -= 1
         else:
             raise StopIteration("There is no finer level available.")
+
+    @property
+    def time_points(self):
+        """Read-only accessor for the list of time points of this time step
+        """
+        return np.array([step.time_point for step in self], dtype=float)
+
+    @property
+    def initial(self):
+        """Accessor to the initial value of this iteration
+        """
+        return self._initial
+
+    @initial.setter
+    def initial(self, initial):
+        self._initial = initial
 
     @property
     def current_level(self):
@@ -270,21 +316,33 @@ class MlSdcTimeStepState(IStaticStateIterator):
     def on_base_level(self):
         return self.current_level_index == 0
 
+    @property
+    def on_finest_level(self):
+        return self.current_level_index == len(self) - 1
 
-class MlSdcIterationState(IIterationState):
-    def __init__(self, **kwargs):
-        kwargs['solution_class'] = TrajectorySolutionData
-        kwargs['element_type'] = MlSdcTimeStepState
-        super(MlSdcIterationState, self).__init__(**kwargs)
-
+    @property
+    def final_step(self):
+        return self.finest_level.final_step \
+            if self.finest_level else None
 
 class MlSdcSolverState(ISolverState):
     def __init__(self, **kwargs):
         kwargs['solution_class'] = IterativeSolution
         kwargs['element_type'] = MlSdcIterationState
         super(MlSdcSolverState, self).__init__(**kwargs)
+        del self._num_time_steps
         self._num_level = kwargs['num_level'] if 'num_level' in kwargs else 0
-        self._initial_state = MlSdcStepState()
+        self._initial = MlSdcStepState()
+
+    def proceed(self):
+        """Proceeds to the next iteration
+
+        Extends the sequence of :py:class:`.IIterationState` by appending a new instance with the set
+        :py:attr:`.num_time_steps` and :py:attr:`.num_nodes`.
+        """
+        self._add_iteration()
+        self._current_index = len(self) - 1
+        self.current_iteration.initial = deepcopy(self.initial)
 
     @property
     def num_level(self):
@@ -296,16 +354,69 @@ class MlSdcSolverState(ISolverState):
         """
         return self._num_level
 
+    @property
+    def current_level(self):
+        return self.current_iteration.current_level \
+            if self.current_iteration else None
+
+    @property
+    def current_level_index(self):
+        return self.current_iteration.current_level_index \
+            if self.current_iteration else None
+
+    @property
+    def current_step(self):
+        return self.current_iteration.current_level.current_step \
+            if self.current_iteration and self.current_iteration.current_level else None
+
+    @property
+    def current_step_index(self):
+        return self.current_iteration.current_level.current_step_index \
+            if self.current_iteration and self.current_iteration.current_level else None
+
+    @property
+    def next_step(self):
+        return self.current_iteration.current_level.next_step \
+            if self.current_iteration and self.current_iteration.current_level else None
+
+    @property
+    def previous_step(self):
+        return self.current_iteration.current_level.previous_step \
+            if self.current_iteration and self.current_iteration.current_level else None
+
+    @property
+    def previous_step_index(self):
+        return self.current_iteration.current_level.previous_step_index \
+            if self.current_iteration and self.current_iteration.current_level else None
+
+    @property
+    def num_time_steps(self):
+        return 1 if self.current_iteration else None
+
+    @property
+    def current_time_step(self):
+        return self.current_iteration.current_level \
+            if self.current_iteration else None
+
+    @property
+    def current_time_step_index(self):
+        return self.current_iteration.current_level_index if self.current_iteration else None
+
+    @property
+    def next_time_step(self):
+        return 0 if self.current_iteration else None
+
+    @property
+    def previous_time_step(self):
+        return 0 if self.current_iteration else None
+
     def _add_iteration(self):
-        assert_condition(self.num_time_steps > 0 and self.num_nodes > 0 and self.num_level > 0,
+        assert_condition(self.num_level > 0,
                          ValueError,
-                         message="Number of time steps, number of levels and nodes per time step must be larger 0:"
-                                 "NOT {}, {}, {}"
-                                 .format(self.num_time_steps, self.num_level, self.num_nodes),
+                         message="Number of number of levels and nodes per level must be larger 0: NOT {}"
+                                 .format(self.num_level),
                          checking_obj=self)
-        self._states.append(self._element_type(num_states=self.num_nodes,
-                                               num_level=self.num_level,
-                                               num_time_steps=self.num_time_steps))
+        self._states.append(self._element_type(num_level=self.num_level))
 
 
 __all__ = ['MlSdcStepState', 'MlSdcLevelState', 'MlSdcTimeStepState', 'MlSdcIterationState', 'MlSdcSolverState']
