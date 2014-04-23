@@ -89,9 +89,9 @@ def this_got_called(obj, *args, add_log_msg="", **kwargs):
             _c += 1
 
     if obj:
-        LOG.debug("%s<0x%x>.%s(%s): " % (checking_obj_name(obj), id(obj), inspect.stack()[2][3], _params) + add_log_msg)
+        LOG.debug("%s<0x%x>.%s(%s): " % (checking_obj_name(obj), id(obj), inspect.stack()[1][3], _params) + add_log_msg)
     else:
-        LOG.debug("unknown<>.%s(%s): " % (inspect.stack()[2][3], _params) + add_log_msg)
+        LOG.debug("unknown<>.%s(%s): " % (inspect.stack()[1][3], _params) + add_log_msg)
 
 
 __all__ = [
