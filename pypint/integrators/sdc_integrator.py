@@ -101,23 +101,28 @@ class SdcIntegrator(IntegratorBase):
                          message="Integration must cover at least two nodes: %d !< %d" % (_from_index, _target_index),
                          checking_obj=self)
 
-        super(SdcIntegrator, self).evaluate(data, time_start=self.nodes[_from_index],
+        super(SdcIntegrator, self).evaluate(data,
+                                            time_start=self.nodes[_from_index],
                                             time_end=self.nodes[_target_index])
         if _from_index != 0:
             assert_condition(_target_index <= self._smat.shape[0],
                              ValueError, message="Target Node Index {:d} too large. Must be within [{:d},{:d})"
                                                  .format(_target_index, 1, self._smat.shape[0]),
                              checking_obj=self)
-            LOG.debug("Integrating from node {:d} to {:d} with S-Mat row {:d} on interval {}."
-                      .format(_from_index, _target_index, _target_index - 1, self.nodes_type.interval))
+            # LOG.debug("Integrating from node {:d} to {:d} with S-Mat row {:d} on interval {}."
+            #           .format(_from_index, _target_index, _target_index - 1, self.nodes_type.interval))
+            # print("  data: %s" % data)
+            # print("  weights: %s" % self._qmat[_target_index])
             return np.dot(self._smat[_target_index - 1], data)
         else:
             assert_condition(_target_index < self._qmat.shape[0],
                              ValueError, message="Target Node Index {:d} too large. Must be within [{:d}, {:d}]"
                                                  .format(_target_index, 1, self._qmat.shape[0]),
                              checking_obj=self)
-            LOG.debug("Integrating up to node {:d} with Q-Mat row {:d} on interval {}."
-                      .format(_target_index, _target_index, self.nodes_type.interval))
+            # LOG.debug("Integrating up to node {:d} with Q-Mat row {:d} on interval {}."
+            #           .format(_target_index, _target_index, self.nodes_type.interval))
+            # print("  data: %s" % data)
+            # print("  weights: %s" % self._qmat[_target_index])
             return np.dot(self._qmat[_target_index], data)
 
     def transform_interval(self, interval):
@@ -128,13 +133,16 @@ class SdcIntegrator(IntegratorBase):
         :py:meth:`.IntegratorBase.transform_interval` : overridden method
         """
         if interval is not None:
-            if interval[0] - interval[-1] != self.nodes[0] - self.nodes[-1]:
+            if interval[1] - interval[0] != self.nodes[-1] - self.nodes[0]:
                 LOG.debug("Size of interval changed. Recalculating weights.")
                 super(SdcIntegrator, self).transform_interval(interval)
                 self._construct_s_matrix()
+            else:
+                super(SdcIntegrator, self).transform_interval(interval)
+                LOG.debug("Size of interval did not change. Don't need to recompute S and Q matrices")
         else:
-            # LOG.info("Cannot transform interval to None. Skipping.")
-            pass
+            LOG.debug("Cannot transform interval to None. Skipping.")
+
         # LOG.info("S-Matrix for interval {:s}:\n{:s}".format(interval, self._smat))
         # LOG.info("Q-Matrix for interval {:s}:\n{:s}".format(interval, self._qmat))
 
@@ -165,6 +173,9 @@ class SdcIntegrator(IntegratorBase):
         self._qmat = np.zeros((self.nodes.size, self.nodes.size), dtype=float)
         for i in range(0, self._smat.shape[0]):
             self._qmat[i + 1] = self._qmat[i] + self._smat[i]
+
+    def __str__(self):
+        return "SdcIntegrator<0x%x>(nodes=%s, weights=%s)" % (id(self), self.nodes_type, self.weights_function)
 
     def __copy__(self):
         copy = self.__class__.__new__(self.__class__)

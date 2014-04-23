@@ -127,7 +127,7 @@ class IntegratorBase(object):
         :py:meth:`.INodes.transform` : method called for node transformation
         """
         if interval is not None:
-            self._nodes.transform(interval)
+            self._nodes.interval = interval
         self._weights_function.evaluate(self._nodes.nodes)
 
     @property
@@ -162,6 +162,10 @@ class IntegratorBase(object):
         return self._nodes
 
     @property
+    def num_nodes(self):
+        return self._nodes.num_nodes
+
+    @property
     def weights_function(self):
         """Read-only accessor for the weights function
 
@@ -180,3 +184,6 @@ class IntegratorBase(object):
         if self._weights_function is not None:
             _lines['Weight Function'] = self._weights_function.print_lines_for_log()
         return _lines
+
+    def __str__(self):
+        return "IntegratorBase<0x%x>(nodes=%s, weights=%s)" % (id(self), self.nodes_type, self.weights_function)
