@@ -41,15 +41,25 @@ class InterpolationByStencilForLevels(IInterpolation):
             # print("iip[", i, "]: ", self.iip[-1])
             if (self.iip[-1] % 1) != 0:
                 raise ValueError("The Levels do not match in direction " + str(i))
-        # compute evaluable views with the positions
+        # compute evaluable views with the positions and slices
         self.evaluable_views = []
-        self.slices = []
+        self.slices_out = []
+        self.slices_in = []
         for st, pos in stencil_list:
-            sl = []
+            sl_out = []
+            sl_in = []
             for i in range(st.dim):
-                sl.append(slice(pos[i], None, self.iip[i]))
+                sl_out.append(slice(pos[i], None, self.iip[i]+1))
+                if pos[i] == 0:
+                    sl_in.append(slice(None, None))
+                else:
+                    sl_in.append(slice(0, -1))
+            print("Stencilcenter : ", st.center)
+            print("Stencilborder :", st.b)
             self.evaluable_views.append(level_in.evaluable_view(st))
-            self.slices.append(tuple(sl.copy()))
+            print("The view: \n", self.evaluable_views[-1])
+            self.slices_out.append(tuple(sl_out.copy()))
+            self.slices_in.append(tuple(sl_in.copy()))
 
         super().__init__(*args, **kwargs)
 
@@ -58,8 +68,10 @@ class InterpolationByStencilForLevels(IInterpolation):
 
         """
         for i in range(len(self.stencil_list)):
-            self.level_out.mid[self.slices[i]] = \
-                sig.convolve(self.evaluable_views[i], self.stencil_list[i][0], 'valid')
+            # sigs = sig.convolve(self.evaluable_views[i], self.stencil_list[i][0].arr, 'valid')
+            # print(i, self.level_out.mid[self.slices[i]].shape, self.evaluable_views[i].shape, sigs.shape)
+            self.level_out.mid[self.slices_out[i]] = \
+                sig.convolve(self.evaluable_views[i], self.stencil_list[i][0].arr, 'valid')[self.slices_in[i]]
 
 
 class InterpolationByStencilListIn1D(IInterpolation):

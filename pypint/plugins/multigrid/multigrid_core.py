@@ -9,7 +9,7 @@ from pypint.plugins.multigrid.level import MultigridLevel1D
 from pypint.plugins.multigrid.multigrid_smoother import SplitSmoother, DirectSolverSmoother, WeightedJacobiSmoother
 from pypint.utilities import assert_is_callable, assert_is_instance, assert_condition
 from pypint.plugins.multigrid.stencil import Stencil
-from pypint.plugins.multigrid.interpolation import InterpolationByStencilListIn1D
+from pypint.plugins.multigrid.interpolation import InterpolationByStencilListIn1D, InterpolationByStencilForLevels
 from pypint.plugins.multigrid.restriction import RestrictionStencilPure, RestrictionByStencilForLevels
 
 import networkx as nx
@@ -357,11 +357,17 @@ if __name__ == '__main__':
     rst_lvl.restrict()
     print("low level after restriction : \n", low_level.mid)
     print("it works horray, now the interpolation, first the 4 interpolation stencils which are nedded:")
-    ipl_stencil_list = [(Stencil(np.asarray([1])), (0,)),
-                        (Stencil(np.asarray([0.75, 0.25],)), (1,)),
-                        (Stencil(np.asarray([0.5, 0.5],)), (2,)),
-                        (Stencil(np.asarray([0.25, 0.75],)), (3,))]
-
+    center = np.asarray([0])
+    ipl_stencil_list = [(Stencil(np.asarray([1]), center), (0,)),
+                        (Stencil(np.asarray([0.75, 0.25]), center), (1,)),
+                        (Stencil(np.asarray([0.5, 0.5]), center), (2,)),
+                        (Stencil(np.asarray([0.25, 0.75]), center), (3,))]
+    print(ipl_stencil_list)
+    mid_level.mid[:] = 0.0
+    print("midlevel before interpolation : \n", mid_level.mid)
+    ipl_by_stencil = InterpolationByStencilForLevels(ipl_stencil_list, low_level, mid_level)
+    ipl_by_stencil.eval()
+    print("midlevel after interpolation : \n", mid_level.mid)
 
     # initialize top level
     top_level.arr[:] = 105.0

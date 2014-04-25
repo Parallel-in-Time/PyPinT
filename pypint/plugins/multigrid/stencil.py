@@ -38,7 +38,7 @@ class Stencil(object):
         for i in range(self.dim):
             left = arr.shape[i] - self.center[i] - 1
             right = arr.shape[i] - left - 1
-            self.b[self.dim - i - 1] = [left, right]
+            self.b[self.dim - i - 1] = [right, left]
         self.b = np.asarray(self.b)
         # check if a grid is given
         self._grid = None
