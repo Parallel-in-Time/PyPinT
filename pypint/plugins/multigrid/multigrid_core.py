@@ -238,7 +238,7 @@ if __name__ == '__main__':
     # lets define the different levels lets try 3
     borders = np.asarray([3, 3])
 
-    top_level = MultigridLevel1D(512, mg_problem=mg_problem,
+    top_level = MultigridLevel1D(513, mg_problem=mg_problem,
                                  max_borders=borders)
 
     mid_level = MultigridLevel1D(257, mg_problem=mg_problem,
@@ -369,6 +369,25 @@ if __name__ == '__main__':
     ipl_by_stencil.eval()
     print("midlevel after interpolation : \n", mid_level.mid)
 
+    print("========= Now we watch how the parts work together ==============")
+    # we define the Restriction operator
+    rst_stencil = Stencil(np.asarray([0.25, 0.5, 0.25]))
+    rst_top_to_mid = RestrictionByStencilForLevels(rst_stencil, top_level, mid_level)
+    rst_mid_to_low = RestrictionByStencilForLevels(rst_stencil, mid_level, low_level)
+
+    # and the interpolation operator
+    ipl_stencil_list_mid_to_top = [(Stencil(np.asarray([1]), center), (0,)),
+                                   (Stencil(np.asarray([0.75, 0.25]), center), (1,))]
+    ipl_mid_to_top = InterpolationByStencilForLevels(ipl_stencil_list_mid_to_top,
+                                                     mid_level, top_level)
+
+    ipl_stencil_list_low_to_mid = [(Stencil(np.asarray([1]), center), (0,)),
+                        (Stencil(np.asarray([0.75, 0.25]), center), (1,)),
+                        (Stencil(np.asarray([0.5, 0.5]), center), (2,)),
+                        (Stencil(np.asarray([0.25, 0.75]), center), (3,))]
+    ipl_low_to_mid = InterpolationByStencilForLevels(ipl_stencil_list_low_to_mid,
+                                                     mid_level, top_level)
+
     # initialize top level
     top_level.arr[:] = 105.0
     top_level.pad()
@@ -376,7 +395,9 @@ if __name__ == '__main__':
     # we smooth in order to have something to restrict
     top_jacobi_smoother.relax(5)
     # print("TopLevel after smoothing: \n", top_level.arr)
-
-
-
+    print("**TopLevel after 5 jacob iterations **\n", top_level.mid)
+    # compute residuum
+    res_top = top_level.rhs - laplace_stencil.eval_convolve(top_level.evaluable_view(laplace_stencil))
+    print("** residuum on top level **\n", res_top)
+    #
 
