@@ -47,7 +47,7 @@ class RestrictionByStencilForLevels(IRestriction):
         """Uses an unefficient algorithm in order to compute the restriction,
            because the convolution is computed on each node of the fine grid instead on every second or third
         """
-        self.l_out.mid[:] = sig.convolve(self.evaluable_view, self.rst_stencil.arr, "valid")[self.slices]
+        self.l_out.mid[:] = sig.convolve(self.evaluable_view, self.rst_stencil.arr[::-1], "valid")[self.slices]
 
 class RestrictionStencilPure(IRestriction):
     """Restriction stencil class just for nd arrays
@@ -80,15 +80,15 @@ class RestrictionStencilPure(IRestriction):
                                       "are not implemented")
 
     def evalA_1D(self, array_in, array_out):
-        array_out[:] = sig.convolve(array_in, self.rst_stencil.arr, "valid")[::self.dip[0]]
+        array_out[:] = sig.convolve(array_in, self.rst_stencil.arr[::-1], "valid")[::self.dip[0]]
 
     def evalA_2D(self, array_in, array_out):
         array_out[:] = \
-            sig.convolve(array_in, self.rst_stencil.arr)[::self.dip[0], ::self.dip[1]]
+            sig.convolve(array_in, self.rst_stencil.arr[::-1])[::self.dip[0], ::self.dip[1]]
 
     def evalA_3D(self, array_in, array_out):
         array_out[:] = \
-            sig.convolve(array_in, self.rst_stencil.arr)[::self.dip[0], ::self.dip[1], ::self.dip[2]]
+            sig.convolve(array_in, self.rst_stencil.arr[::-1])[::self.dip[0], ::self.dip[1], ::self.dip[2]]
 
 # TODO: a more effective evaluation strategy is needed
 #       for example by writing a rst_stencil to sparse matrix function,

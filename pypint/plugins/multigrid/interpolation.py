@@ -54,10 +54,10 @@ class InterpolationByStencilForLevels(IInterpolation):
                     sl_in.append(slice(None, None))
                 else:
                     sl_in.append(slice(0, -1))
-            print("Stencilcenter : ", st.center)
-            print("Stencilborder :", st.b)
+            # print("Stencilcenter : ", st.center)
+            # print("Stencilborder :", st.b)
             self.evaluable_views.append(level_in.evaluable_view(st))
-            print("The view: \n", self.evaluable_views[-1])
+            # print("The view: \n", self.evaluable_views[-1])
             self.slices_out.append(tuple(sl_out.copy()))
             self.slices_in.append(tuple(sl_in.copy()))
 
@@ -69,9 +69,16 @@ class InterpolationByStencilForLevels(IInterpolation):
         """
         for i in range(len(self.stencil_list)):
             # sigs = sig.convolve(self.evaluable_views[i], self.stencil_list[i][0].arr, 'valid')
-            # print(i, self.level_out.mid[self.slices[i]].shape, self.evaluable_views[i].shape, sigs.shape)
+            # print(i, self.level_out.mid[self.slices_out[i]].shape, self.evaluable_views[i].shape)
+            # print("slice_out :\n", self.slices_out[i])
+            # print("Stencil_arr: \n", self.stencil_list[i][0].arr)
+            # print("eval_view: \n", self.evaluable_views[i])
+            # print("sig: \n", sig.convolve(self.evaluable_views[i], self.stencil_list[i][0].arr[::-1], 'valid')[self.slices_in[i]])
+
+            # here i learned that the convolution has to reverse the stencil array in order to work like a stencil
+
             self.level_out.mid[self.slices_out[i]] = \
-                sig.convolve(self.evaluable_views[i], self.stencil_list[i][0].arr, 'valid')[self.slices_in[i]]
+                sig.convolve(self.evaluable_views[i], self.stencil_list[i][0].arr[::-1], 'valid')[self.slices_in[i]]
 
 
 class InterpolationByStencilListIn1D(IInterpolation):
@@ -121,7 +128,7 @@ class InterpolationByStencilListIn1D(IInterpolation):
         of the multilevel provider.
         """
         arrays_out[0][::2] = arrays_in
-        arrays_out[0][1::2] = sig.convolve(arrays_out[0], self.stencil[0])[::2]
+        arrays_out[0][1::2] = sig.convolve(arrays_out[0], self.stencil[0][::-1])[::2]
 
     def eval_list(self, arrays_in, arrays_out):
         """Evaluation function if more than one stencil is given
@@ -132,5 +139,5 @@ class InterpolationByStencilListIn1D(IInterpolation):
         j = 0
         for stencil in self.stencil_list:
             arrays_out[j][j::self.increase_of_points] = \
-                sig.convolve(arrays_in[j], stencil, 'valid')
+                sig.convolve(arrays_in[j], stencil[::-1], 'valid')
             j = j+1

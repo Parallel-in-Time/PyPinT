@@ -154,7 +154,7 @@ class Stencil(object):
         array_out : ndarray
             array to storage the result
         """
-        return sig.convolve(array_in, self.arr, 'valid')
+        return sig.convolve(array_in, self.arr[::-1], 'valid')
 
     def eval_sparse(self, array_in, array_out):
         """Evaluate via the sparse matrix
@@ -162,7 +162,7 @@ class Stencil(object):
         Parameters
         ----------
         array_in : ndarray
-            array to convolve
+            array to apply to
         array_out : ndarray
             array to storage the result
         """
@@ -210,10 +210,10 @@ class Stencil(object):
             sparse matrix format to return , e.g. "csr", "coo", etc.
         """
         S = self.centered_stencil()
-        print("grid :")
+        # print("grid :")
 
         grid = tuple(grid)
-        print(grid)
+        # print(grid)
         if not (np.asarray(S.shape) % 2 == 1).all():
             raise ValueError('all stencil dimensions must be odd')
 
