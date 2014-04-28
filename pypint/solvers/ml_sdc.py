@@ -284,11 +284,11 @@ class MlSdc(IIterativeTimeSolver, IParallelSolver):
         The previous state, if applicable, is stored in a stack.
         """
         if self.state:
-            print("Finished a State")
+            # print("Finished a State")
             # finalize the current state
             self.state.finalize()
 
-        print("Stating a new state")
+        # print("Stating a new state")
         # initialize solver state
         self._states.append(MlSdcSolverState(num_level=self.ml_provider.num_levels))
 
@@ -331,7 +331,7 @@ class MlSdc(IIterativeTimeSolver, IParallelSolver):
 
             _integrator.transform_interval(self.state.interval)
 
-            print("nodes: %s" % _integrator.nodes)
+            # print("nodes: %s" % _integrator.nodes)
 
             self.__time_points[_level] = np.zeros(_integrator.num_nodes, dtype=np.float)
             self.__deltas[_level] = np.zeros(_integrator.num_nodes, dtype=np.float)
@@ -340,7 +340,7 @@ class MlSdc(IIterativeTimeSolver, IParallelSolver):
                 self.__time_points[_level] = deepcopy(_integrator.nodes)
                 self.__deltas[_level][_node + 1] = _integrator.nodes[_node + 1] - _integrator.nodes[_node]
 
-        print("Time Points: %s" % self.__time_points)
+        # print("Time Points: %s" % self.__time_points)
 
         return True
 
@@ -392,6 +392,8 @@ class MlSdc(IIterativeTimeSolver, IParallelSolver):
 
         # 2. compute difference (todo: with respect to interval length !?)
         self.state.current_iteration.current_level.fas_correction = q_rhs_coarse - _restringated_fine
+        # LOG.debug("FAS Correction: %s = %s - %s"
+        #           % (self.state.current_iteration.current_level.fas_correction, q_rhs_coarse, _restringated_fine))
 
     def _recompute_rhs_for_level(self, level):
         if level.rhs is None:
@@ -406,10 +408,14 @@ class MlSdc(IIterativeTimeSolver, IParallelSolver):
                          supremum_norm(self.state.current_level.initial.value),
                          None, None)
 
+        _full_integral = 0.0
+
         for _step_index in range(0, len(self.state.current_level)):
             _step = self.state.current_level[_step_index]
 
-            self._core.compute_residual(self.state, step=_step, integral=self.state.current_level.integral)
+            _full_integral += _step.integral
+
+            self._core.compute_residual(self.state, step=_step, integral=_full_integral)
 
             if finalize:
                 # finalize this step (i.e. StepSolutionData.finalize())
@@ -448,7 +454,7 @@ class MlSdc(IIterativeTimeSolver, IParallelSolver):
 
         # iterate on time steps
         _iter_timer.start()
-        self._finest_level()
+        self._level()
         _iter_timer.stop()
 
         # check termination criteria
@@ -485,156 +491,109 @@ class MlSdc(IIterativeTimeSolver, IParallelSolver):
             # LOG.debug("solver main loop done: other")
             return Message.SolverFlag.converged
 
-    def _finest_level(self):
-        _msg = self.comm.receive(tag=self.state.current_level_index)
-        if _msg.time_point == self.state.initial.time_point:
-            self.state.current_level.initial.definalize()
-            self.state.current_level.initial.value = _msg.value
-            self.state.current_level.initial.done()
-
-        self._print_level_header()
-
-        assert_condition(self.state.current_iteration.current_level == self.state.current_iteration.finest_level,
-                         RuntimeError, "Current Level is not the Finest; but it must be.", checking_obj=self)
-
-        self._recompute_rhs_for_level(self.state.current_iteration.current_level)
-
-        # pre-sweep
-        LOG.debug("doing one SDC sweep on finest level")
-        self._sdc_sweep(with_residual=True)
-
-        # restrict
-        self.state.current_iteration.coarser_level.values = \
-            self.ml_provider.restringate(self.state.current_iteration.current_level.values,
-                                         fine_level=self.state.current_iteration.current_level_index,
-                                         coarse_level=self.state.current_iteration.coarser_level_index)
-
-        # step through the levels in case there are more than the finest one
-        if self.ml_provider.num_levels > 1:
-            # call next coarser level
-            self.state.current_iteration.step_down()
-            self._other_level()
-
-        assert_condition(self.state.current_iteration.current_level == self.state.current_iteration.finest_level,
-                         RuntimeError, "Current Level is not the Finest; but it must be.", checking_obj=self)
-
-        # correct
-        # TODO: correct RHS evaluations; not values
-        self.state.current_iteration.current_level.values += \
-            self.ml_provider\
-                .prolongate(self.state.current_iteration.coarser_level.coarse_corrections,
-                            fine_level=self.state.current_iteration.current_level_index,
-                            coarse_level=self.state.current_iteration.coarser_level_index)
-
-        self._compute_residual(finalize=True)
-
-        self.comm.send(tag=self.state.current_level_index,
-                       value=self.state.current_level.final_step.value,
-                       time_point=self.state.current_level.final_step.time_point)
-
-        self._print_level_end()
-
-        assert_condition(self.state.current_iteration.current_level == self.state.current_iteration.finest_level,
-                         RuntimeError, "Current Level is not the Finest; but it must be.", checking_obj=self)
-
-    def _other_level(self):
-        """
-        Warning: This method is called recursively on each level but the finest
-        """
-        _msg = self.comm.receive(tag=self.state.current_level_index)
-        if _msg and _msg.time_point == self.state.current_level.initial.time_point:
-            self.state.current_level.initial.definalize()
-            self.state.current_level.initial.value = _msg.value
-            self.state.current_level.initial.done()
-
+    def _level(self):
         _current_level = self.state.current_iteration.current_level
         _finer_level = self.state.current_iteration.finer_level
+        _coarser_level = self.state.current_iteration.coarser_level
+
+        _msg = self.comm.receive(tag=self.state.current_level_index)
+        if _msg and _msg.time_point == self.state.initial.time_point:
+            _current_level.initial.definalize()
+            _current_level.initial.value = _msg.value
+            _current_level.initial.done()
 
         self._print_level_header()
 
-        self._recompute_rhs_for_level(self.state.current_iteration.current_level)
+        self._recompute_rhs_for_level(_current_level)
 
-        # compute FAS for each step independently
-        LOG.debug("Computing FAS correction on level %d" % self.state.current_level_index)
+        if not self.state.current_iteration.on_finest_level:
+            # compute FAS Correction
+            # LOG.debug("Computing FAS Correction")
+            _q_rhs_coarse = np.append(np.array([0.0], dtype=self.problem.numeric_type),
+                                      np.array(
+                                          [
+                                              self.ml_provider
+                                                  .integrator(self.state.current_iteration.current_level_index)
+                                                  .evaluate(_current_level.rhs, target_node=_step_i+1)
+                                              for _step_i in range(0, len(_current_level))
+                                          ], dtype=self.problem.numeric_type))
+            self._recompute_rhs_for_level(_finer_level)
+            _q_rhs_fine = np.append(np.array([0.0], dtype=self.problem.numeric_type),
+                                    np.array(
+                                        [
+                                            self.ml_provider
+                                                .integrator(self.state.current_iteration.finer_level_index)
+                                                .evaluate(_finer_level.rhs, target_node=_step_i+1)
+                                            for _step_i in range(0, len(_finer_level))
+                                        ], dtype=self.problem.numeric_type))
 
-        _q_rhs_coarse = np.append(np.array([0.0], dtype=self.problem.numeric_type),
-                                  np.array(
-                                      [
-                                          self.ml_provider
-                                              .integrator(self.state.current_iteration.current_level_index)
-                                              .evaluate(_current_level.rhs, target_node=_step_i+1)
-                                          for _step_i in range(0, len(_current_level))
-                                      ], dtype=self.problem.numeric_type))
+            self._compute_fas_correction(_q_rhs_fine, _q_rhs_coarse,
+                                         fine_lvl=self.state.current_iteration.finer_level_index)
 
-        self._recompute_rhs_for_level(self.state.current_iteration.finer_level)
+        # pre-sweep / base-sweep
+        # LOG.debug("doing one SDC sweep")
+        self._sdc_sweep(copy=self.state.current_iteration.on_finest_level,
+                        with_residual=(not self.state.current_iteration.on_base_level))
 
-        _q_rhs_fine = np.append(np.array([0.0], dtype=self.problem.numeric_type),
-                                np.array(
-                                    [
-                                        self.ml_provider
-                                            .integrator(self.state.current_iteration.finer_level_index)
-                                            .evaluate(_finer_level.rhs, target_node=_step_i+1)
-                                        for _step_i in range(0, len(_finer_level))
-                                    ], dtype=self.problem.numeric_type))
-
-        self._compute_fas_correction(_q_rhs_fine, _q_rhs_coarse,
-                                     fine_lvl=self.state.current_iteration.finer_level_index)
-
-        if self.state.current_iteration.on_base_level:
-            # sweep
-            LOG.debug("doing one SDC sweep on level %d" % self.state.current_level_index)
-            self._sdc_sweep()
-            LOG.debug("Base Level reached. Stepping up again.")
-        else:
-            # pre-sweep
-            LOG.debug("doing one SDC sweep on level %d" % self.state.current_level_index)
-            self._sdc_sweep(with_residual=True)
-
+        if not self.state.current_iteration.on_base_level:
             # restrict
-            self.state.current_iteration.coarser_level.values = \
-                self.ml_provider.restringate(self.state.current_iteration.current_level.values,
+            _coarser_level.values = \
+                self.ml_provider.restringate(_current_level.values,
                                              fine_level=self.state.current_iteration.current_level_index,
                                              coarse_level=self.state.current_iteration.coarser_level_index)
-
             # call next coarser level
             self.state.current_iteration.step_down()
-            self._other_level()
+            #  RECURSION HERE!
+            self._level()
             # -> coarser level is done; coming up again
 
-            # correct
+            # coarse correction
             # TODO: correct RHS evaluations; not values
-            self.state.current_iteration.current_level.values += \
-                self.ml_provider\
-                    .prolongate(self.state.current_iteration.coarser_level.coarse_corrections,
-                                fine_level=self.state.current_iteration.current_level_index,
-                                coarse_level=self.state.current_iteration.coarser_level_index)
+            # LOG.debug("Apply Coarse Correction")
+            _prolongated_coarse_correction = \
+                self.ml_provider.prolongate(_coarser_level.coarse_corrections,
+                                            fine_level=self.state.current_iteration.current_level_index,
+                                            coarse_level=self.state.current_iteration.coarser_level_index)
+            # LOG.debug("  ==> %s = %s + %s"
+            #           % (_current_level.values + _prolongated_coarse_correction,
+            #              _current_level.values, _prolongated_coarse_correction))
+            _current_level.values += _prolongated_coarse_correction
 
+            # LOG.debug("Recompute Errors")
+            for _step_index in range(0, len(_current_level)):
+                self._core.compute_error(self.state, step_index=_step_index, problem=self.problem)
+
+        if not self.state.current_iteration.on_finest_level:
             # post-sweep
-            self._sdc_sweep()
+            self._sdc_sweep(copy=False)
 
-        # compute coarse correction
-        _restringated_values = \
-            self.ml_provider\
-                .restringate(self.state.current_iteration[self.state.current_iteration.finer_level_index].values,
-                             self.state.current_iteration.finer_level_index,
-                             self.state.current_iteration.current_level_index)
-        for _step_index in range(0, len(self.state.current_iteration.current_level)):
-            _step = self.state.current_iteration.current_level[_step_index]
-            _step.coarse_correction = \
-                _step.value - _restringated_values[_step_index + 1]
+            # compute coarse correction
+            # LOG.debug("Computing Coarse Correction")
+            _restringated_values = \
+                self.ml_provider\
+                    .restringate(self.state.current_iteration[self.state.current_iteration.finer_level_index].values,
+                                 self.state.current_iteration.finer_level_index,
+                                 self.state.current_iteration.current_level_index)
+            for _step_index in range(0, len(_current_level)):
+                _step = _current_level[_step_index]
+                _step.coarse_correction = _step.value - _restringated_values[_step_index + 1]
+                # LOG.debug("    %d: %s = %s - %s"
+                #           % (_step_index, _step.coarse_correction, _step.value, _restringated_values[_step_index + 1]))
 
         self._compute_residual(finalize=True)
 
         self.comm.send(tag=self.state.current_level_index,
-                       value=self.state.current_level.final_step.value,
-                       time_point=self.state.current_level.final_step.time_point)
+                       value=_current_level.final_step.value,
+                       time_point=_current_level.final_step.time_point)
 
         self._print_level_end()
 
-        # pass on to next finer level
-        self.state.current_iteration.step_up()
+        if not self.state.current_iteration.on_finest_level:
+            # pass on to next finer level
+            self.state.current_iteration.step_up()
 
-    def _sdc_sweep(self, with_residual=False):
+    def _sdc_sweep(self, copy=True, with_residual=False):
+        LOG.debug("Sweeping ...")
         _integrator = self.ml_provider.integrator(self.state.current_iteration.current_level_index)
         _num_nodes = _integrator.num_nodes
 
@@ -650,16 +609,31 @@ class MlSdc(IIterativeTimeSolver, IParallelSolver):
                                      dtype=self.problem.numeric_type)
 
         for _step_index in range(0, len(self.state.current_iteration.current_level)):
-            if self.state.is_first_iteration:
+            if self.state.current_iteration.on_finest_level and self.state.is_first_iteration:
+                # LOG.debug("On First Iteration on Finest Level. Taking breadcasted initial value.")
                 _integrate_values = \
                     np.append(_integrate_values,
                               np.array([self.state.current_iteration.current_level.initial.rhs],
                                        dtype=self.problem.numeric_type),
                               axis=0)
+
+            elif not self.state.current_iteration.on_finest_level:
+                # LOG.debug("Not on Finest Level. Taking current (intermediate) values.")
+                _step = self.state.current_iteration.current_level[_step_index]
+                if not _step.rhs_evaluated:
+                    _step.rhs = self.problem.evaluate(_step.time_point, _step.value)
+
+                _integrate_values = \
+                    np.append(_integrate_values,
+                              np.array([_step.rhs], dtype=self.problem.numeric_type),
+                              axis=0)
+
             else:
+                # LOG.debug("On Finest Level. Taking previous iteration's values.")
                 _step = self.state.previous_iteration[self.state.current_iteration.current_level_index][_step_index]
                 if not _step.rhs_evaluated:
                     _step.rhs = self.problem.evaluate(_step.time_point, _step.value)
+
                 _integrate_values = \
                     np.append(_integrate_values,
                               np.array([_step.rhs], dtype=self.problem.numeric_type),
@@ -670,31 +644,43 @@ class MlSdc(IIterativeTimeSolver, IParallelSolver):
                                              % (_integrate_values.size, _num_nodes),
                          checking_obj=self)
 
+        # LOG.debug("Values Before: %s" % self.state.current_iteration.current_level.values)
+        # LOG.debug("Integration Values: %s" % _integrate_values)
+
         # do the actual SDC steps of this SDC sweep
         for _step_index in range(0, len(self.state.current_iteration.current_level)):
+            # LOG.debug("Step %d:" % _step_index)
             _current_step = self.state.current_iteration.current_level[_step_index]
             _current_step.integral = _integrator.evaluate(_integrate_values,
                                                           from_node=_step_index, target_node=_step_index + 1)
-            # we successively compute the full integral, which is used for the residual at the end
+
+            # we successively compute the full integral
+            # LOG.debug("  Full Integral up to %d: %s = %s + %s"
+            #           % (_step_index + 1, self.state.current_iteration.current_level.integral + _current_step.integral,
+            #              self.state.current_iteration.current_level.integral, _current_step.integral))
             self.state.current_iteration.current_level.integral += _current_step.integral
+
             # do the SDC step of this sweep
-            self._sdc_step()
+            self._sdc_step(copy)
 
             if self.state.current_level.current_step != self.state.current_level.final_step:
                 self.state.current_level.proceed()
 
         del _integrate_values
 
+        # LOG.debug("Values After: %s" % self.state.current_iteration.current_level.values)
+
         if with_residual:
             self._compute_residual()
 
-    def _sdc_step(self):
-        # copy solution of previous iteration to this one
-        if self.state.is_first_iteration:
-            self.state.current_step.value = self.state.current_level.initial.value.copy()
-        else:
-            self.state.current_step.value = \
-                self.state.previous_iteration[self.state.current_level_index][self.state.current_step_index].value.copy()
+    def _sdc_step(self, copy):
+        if copy:
+            # copy solution of previous iteration to this one
+            if self.state.is_first_iteration:
+                self.state.current_step.value = self.state.current_level.initial.value.copy()
+            else:
+                self.state.current_step.value = \
+                    self.state.previous_iteration[self.state.current_level_index][self.state.current_step_index].value.copy()
 
         # compute step
         self._core.run(self.state, problem=self.problem)
