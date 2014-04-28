@@ -37,8 +37,8 @@ class TimeTransitionProvider(ILevelTransitionProvider):
                          message="Coarse Nodes must have a single dimension: NOT %s" % kwargs['coarse_nodes'].shape,
                          checking_obj=self)
 
-        assert_condition(kwargs['fine_nodes'].size > kwargs['coarse_nodes'].size, ValueError,
-                         message="There must be more Fine Nodes than Coarse Nodes: NOT %d <= %d"
+        assert_condition(kwargs['fine_nodes'].size >= kwargs['coarse_nodes'].size, ValueError,
+                         message="There must be more or at least as many Fine Nodes than Coarse Nodes: NOT %d < %d"
                                  % (kwargs['fine_nodes'].size, kwargs['coarse_nodes'].size),
                          checking_obj=self)
 
