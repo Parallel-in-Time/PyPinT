@@ -8,9 +8,11 @@ from pypint.problems import IInitialValueProblem, HasExactSolutionMixin, HasDire
 from pypint.utilities import assert_condition, assert_is_instance, class_name, assert_named_argument
 from pypint.solvers.cores.implicit_sdc_core import ImplicitSdcCore
 from pypint.solvers.cores.implicit_mlsdc_core import ImplicitMlSdcCore
+from pypint.utilities.logging import LOG
 
 
 class LambdaU(IInitialValueProblem, HasExactSolutionMixin, HasDirectImplicitMixin):
+# class LambdaU(IInitialValueProblem, HasExactSolutionMixin):
     """:math:`u'(t, \\phi_t) = \\lambda u(t, \\phi_t)`
 
     Describes the following first-order ODE initial value problem:
@@ -43,7 +45,8 @@ class LambdaU(IInitialValueProblem, HasExactSolutionMixin, HasDirectImplicitMixi
         if self.time_end is None:
             self.time_end = 1.0
         if self.initial_value is None:
-            self.initial_value = complex(1.0, 0.0) * np.ones(self.dim)
+            # self.initial_value = complex(1.0, 0.0) * np.ones(self.dim)
+            self.initial_value = 1.0 * np.ones(self.dim)
 
         if "lmbda" not in kwargs:
             kwargs["lmbda"] = 1.0
@@ -70,11 +73,6 @@ class LambdaU(IInitialValueProblem, HasExactSolutionMixin, HasDirectImplicitMixi
     def direct_implicit(self, *args, **kwargs):
         """Direct Implicit Formula for :math:`u'(t, \\phi_t) &= \\lambda u(t, \\phi_t)`
         """
-        assert_is_instance(self.lmbda, complex,
-                           message="Direct implicit formula only valid for imaginay lambda: NOT %s"
-                                   % class_name(self.lmbda),
-                           checking_obj=self)
-
         assert_named_argument('phis_of_time', kwargs, checking_obj=self)
         assert_named_argument('delta_node', kwargs, checking_obj=self)
         assert_named_argument('integral', kwargs, checking_obj=self)
@@ -95,10 +93,17 @@ class LambdaU(IInitialValueProblem, HasExactSolutionMixin, HasDirectImplicitMixi
                          self)
         _int = kwargs["integral"]
 
+        _fas = kwargs['fas'] \
+            if 'fas' in kwargs and kwargs['fas'] is not None else 0.0
+
         if 'core' in kwargs and isinstance(kwargs['core'], (ImplicitSdcCore, ImplicitMlSdcCore)):
-            # print("(%s - %s * %s * %s + %s) / (1 - %s * %s)" % (_phis[2], _dn, self.lmbda, _phis[1], _int, self.lmbda, _dn))
-            return (_phis[2] - _dn * self.lmbda * _phis[1] + _int) / (1 - self.lmbda * _dn)
+            LOG.debug("(%s - %s * %s * %s + %s + %s) / (1 - %s * %s)" % (_phis[2], _dn, self.lmbda, _phis[1], _fas, _int, self.lmbda, _dn))
+            return (_phis[2] - _dn * self.lmbda * _phis[1] + _fas + _int) / (1 - self.lmbda * _dn)
         else:
+            assert_is_instance(self.lmbda, complex,
+                               message="Direct implicit formula only valid for imaginay lambda: NOT %s"
+                                       % class_name(self.lmbda),
+                               checking_obj=self)
             return \
                 (_phis[2]
                  + _dn * (complex(0, self.lmbda.imag) * (_phis[2] - _phis[0]) - self.lmbda.real * _phis[1])
