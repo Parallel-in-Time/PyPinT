@@ -11,6 +11,7 @@ from pypint.solvers.states.i_solver_state import IStepState, ISolverState, IStat
 from pypint.solutions.iterative_solution import IterativeSolution
 from pypint.solutions.data_storage.trajectory_solution_data import TrajectorySolutionData
 from pypint.utilities import assert_condition
+from pypint.utilities.logging import LOG
 
 
 class MlSdcStepState(IStepState):
@@ -20,8 +21,8 @@ class MlSdcStepState(IStepState):
         self._fas_correction = None
         self._coarse_correction = None
 
-    # def done(self):
-    #     pass
+    def has_fas_correction(self):
+        return self._fas_correction is not None
 
     @property
     def integral(self):
@@ -52,6 +53,9 @@ class MlSdcStepState(IStepState):
 
     @fas_correction.setter
     def fas_correction(self, fas_correction):
+        if not isinstance(fas_correction, np.ndarray):
+            # LOG.debug("FAS Correction not given as Array. Converting it to one.")
+            fas_correction = np.array([fas_correction])
         self._fas_correction = fas_correction
 
 
@@ -110,7 +114,18 @@ class MlSdcLevelState(IStaticStateIterator):
 
     @property
     def fas_correction(self):
-        return np.append([np.zeros(self[0].fas_correction.shap)], [step.fas_correction for step in self], axis=0)
+        _fas = np.empty(len(self) + 1, dtype=np.object)
+        _fas_shape = ()
+        for step_i in range(0, len(self)):
+            if self[step_i].has_fas_correction():
+                _fas_shape = self[step_i].fas_correction.shape
+                _fas[step_i + 1] = self[step_i].fas_correction.copy()
+
+        if len(_fas_shape) > 0:
+            _fas[0] = np.zeros(_fas_shape)
+            return _fas
+        else:
+            return None
 
     @fas_correction.setter
     def fas_correction(self, fas_correction):
@@ -240,14 +255,14 @@ class MlSdcIterationState(IStaticStateIterator):
         """Get to next finer level
         """
         if self.next_index:
-            # print("Stepping up to level %d" % (self._current_index + 1))
+            LOG.debug("Stepping up to level %d" % (self._current_index + 1))
             self._current_index += 1
         else:
             raise StopIteration("There is no finer level available.")
 
     def step_down(self):
         if not self.on_base_level:
-            # print("Stepping down to level %d" % (self._current_index - 1))
+            LOG.debug("Stepping down to level %d" % (self._current_index - 1))
             self._current_index -= 1
         else:
             raise StopIteration("There is no finer level available.")
