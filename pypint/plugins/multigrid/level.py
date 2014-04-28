@@ -4,7 +4,6 @@
 
 import numpy as np
 import scipy.signal as sig
-
 from pypint.utilities import assert_is_callable, assert_is_instance, \
                                      assert_condition
 from pypint.plugins.multigrid.multigrid_problem import MultiGridProblem
@@ -26,7 +25,7 @@ class MultigridLevel1D(IMultigridLevel):
 
     """
     def __init__(self, shape, mg_problem=None, max_borders=None,
-                dtype=float):
+                dtype=float, role="Fl"):
         """
         Summary
         -------
@@ -111,9 +110,33 @@ class MultigridLevel1D(IMultigridLevel):
         self.space_tensor = np.linspace(start, stop, self.arr.size)
         self._mid_points = self.mid.size
         self.dim = 1
-    # def __init__(self, obj):
-    #     self = np.ndarray(obj)
-    #     return self
+
+        # set the interpolation and restriction ports according to the level which is used
+        self.role = role
+        # some place to store the residuum
+        self.res = np.zeros(self.arr)
+
+        if role is "FL":
+            # here we define the ports for the finest level
+            self.interpolate_out = None
+            self.interpolate_in = self.mid
+            self.restrict_in = None
+            self.restrict_out = self.res
+        elif role is "ML":
+            # here we define the ports for the mid level
+            self.interpolate_out = self.arr
+            self.interpolate_in = self.mid
+            self.restrict_in = self.rhs
+            self.restrict_out = self.res
+        elif role is "CL":
+            # here we define the ports for the coarsest level
+            self.interpolate_out = self.arr
+            self.interpolate_in = None
+            self.restrict_in = self.rhs
+            self.restrict_out = None
+        else:
+            raise ValueError("MultiLevel has no role "+self.role)
+
 
     def adjust_references(self):
         self.left = self.arr.__array__()[:self.borders[0]]
@@ -167,7 +190,7 @@ class MultigridLevel1D(IMultigridLevel):
             #  right side
             self.right[:] = fr(r_f_b)
 
-    def evaluable_view(self, stencil, offset = 0):
+    def _evaluable_view(self, stencil, arr, offset=0):
         """gives the right view of the array
 
         """
@@ -179,10 +202,23 @@ class MultigridLevel1D(IMultigridLevel):
             else:
                 l = self.borders[0]-stencil[0][0]
                 r = -(self.borders[1]-stencil[0][1])
-            return self.arr[l+offset: r+offset]
+            return arr[l+offset: r+offset]
         else:
             raise NotImplementedError("Another dimension than one "
                                       "is not supplied")
+
+    def evaluable_view(self, stencil, offset=0):
+        """gives the right view of the array
+
+        """
+        return self._evaluable_view(stencil, self.arr, offset)
+
+    def evaluable_interpolation_view(self, stencil):
+        return self._evaluable_view(stencil, self.interpolate_out)
+
+    def evaluable_restriction_view(self, stencil):
+        return self._evaluable_view(stencil, self.restrict_out)
+
 
     def border_function_generator(self, stencil):
         """Generates a function which returns true if the index of the
@@ -207,6 +243,7 @@ class MultigridLevel1D(IMultigridLevel):
     #     for item, value in self.__dict__.items():
     #         setattr(copy, item, deepcopy(value, memo))
     #     return copy
+
 
 
 # stencil = Stencil(3)

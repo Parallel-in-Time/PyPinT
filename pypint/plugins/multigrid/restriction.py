@@ -20,7 +20,15 @@ class RestrictionByStencilForLevels(IRestriction):
        B_ _,_ _,_ _,_ _,_ _,_ _,_ _B    <- Level out
 
     """
-    def __init__(self, rst_stencil, level_in, level_out, *args, **kwargs):
+    def __init__(self, rst_stencil, level_in, level_out, *args, pre_assign=None, **kwargs):
+        super(RestrictionByStencilForLevels, self).__init__(*args, **kwargs)
+        if pre_assign is None:
+            # no pre assignment function
+            self.pre_assign = lambda a, b: b
+        else:
+            assert_is_callable(pre_assign, "Pre assignment function is not callable")
+            self.pre_assign = pre_assign
+
         assert_is_instance(rst_stencil, Stencil, "Not a Stencil")
         assert_is_instance(level_in, IMultigridLevel, "Not a IMultigridLevel")
         assert_is_instance(level_out, IMultigridLevel, "Not a IMultigridLevel")
@@ -38,16 +46,20 @@ class RestrictionByStencilForLevels(IRestriction):
                 raise ValueError("The Level do not match in direction " + str(i))
 
         # now just construct a slice tuple and the evaluable view from the finer grid
-        self.evaluable_view = level_in.evaluable_view(rst_stencil)
+        self.evaluable_view = level_in.evaluable_restriction_view(rst_stencil)
         self.slices = []
         for i in range(rst_stencil.dim):
             self.slices.append(slice(None, None, self.dip[i]+1))
+
 
     def restrict(self):
         """Uses an unefficient algorithm in order to compute the restriction,
            because the convolution is computed on each node of the fine grid instead on every second or third
         """
-        self.l_out.mid[:] = sig.convolve(self.evaluable_view, self.rst_stencil.arr[::-1], "valid")[self.slices]
+        self.l_out.restriction_in[:] = self.pre_assign(self.l_out.restriction_in[:],
+                                                       sig.convolve(self.evaluable_view,
+                                                                    self.rst_stencil.arr[::-1],
+                                                                    "valid")[self.slices])
 
 class RestrictionStencilPure(IRestriction):
     """Restriction stencil class just for nd arrays

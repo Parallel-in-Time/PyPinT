@@ -19,9 +19,18 @@ class InterpolationByStencilForLevels(IInterpolation):
         The format of stencil matrix is the following
         stencil_matrix= [ (Stencil 1, Position 1),(Stencil 2, Position 2), . . .]
     """
-    def __init__(self, stencil_list, level_in, level_out, *args, **kwargs):
+    def __init__(self, stencil_list, level_in, level_out, *args, pre_assign=None, **kwargs):
         """init
         """
+        super(InterpolationByStencilForLevels, self).__init__(*args, **kwargs)
+
+        if pre_assign is None:
+            # no pre assignment function
+            self.pre_assign = lambda a, b: b
+        else:
+            assert_is_callable(pre_assign, "Pre assignment function is not callable")
+            self.pre_assign = pre_assign
+
         # check if all parameters are fitting
         assert_is_instance(stencil_list, list)
 
@@ -56,12 +65,12 @@ class InterpolationByStencilForLevels(IInterpolation):
                     sl_in.append(slice(0, -1))
             # print("Stencilcenter : ", st.center)
             # print("Stencilborder :", st.b)
-            self.evaluable_views.append(level_in.evaluable_view(st))
+            self.evaluable_views.append(level_in.evaluable_interpolation_view(st))
             # print("The view: \n", self.evaluable_views[-1])
             self.slices_out.append(tuple(sl_out.copy()))
             self.slices_in.append(tuple(sl_in.copy()))
 
-        super().__init__(*args, **kwargs)
+
 
     def eval(self):
         """ for each stencil at a certain position the convolution is computed
@@ -77,8 +86,11 @@ class InterpolationByStencilForLevels(IInterpolation):
 
             # here i learned that the convolution has to reverse the stencil array in order to work like a stencil
 
-            self.level_out.mid[self.slices_out[i]] = \
-                sig.convolve(self.evaluable_views[i], self.stencil_list[i][0].arr[::-1], 'valid')[self.slices_in[i]]
+            self.level_out.interpolate_in[self.slices_out[i]] = \
+                self.pre_assign(
+                    self.level_out.interpolate_in[self.slices_out[i]],
+                    sig.convolve(self.evaluable_views[i],
+                                 self.stencil_list[i][0].arr[::-1], 'valid')[self.slices_in[i]])
 
 
 class InterpolationByStencilListIn1D(IInterpolation):
