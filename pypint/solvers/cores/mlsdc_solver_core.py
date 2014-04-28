@@ -8,6 +8,7 @@ from pypint.problems.has_exact_solution_mixin import problem_has_exact_solution
 from pypint.problems import IProblem
 from pypint.solvers.diagnosis import Error, Residual
 from pypint.utilities import assert_named_argument, assert_is_instance
+from pypint.utilities.logging import LOG
 
 
 class MlSdcSolverCore(ISolverCore):
@@ -38,26 +39,31 @@ class MlSdcSolverCore(ISolverCore):
     def compute_residual(self, state, **kwargs):
         # LOG.debug("computing residual")
         super(MlSdcSolverCore, self).compute_residual(state, **kwargs)
-        _step = kwargs['step'] if 'step' in kwargs else state.current_step
-        if _step.fas_correction is None:
-            _step.solution.residual = Residual(
-                abs(state.current_level.initial.value
-                    + state.delta_interval * kwargs['integral']
-                    - _step.value)
-            )
-        else:
+        _step = kwargs['step'] if 'step' in kwargs else state.current_level.current_step
+        if _step.has_fas_correction():
             _step.solution.residual = Residual(
                 abs(state.current_level.initial.value
                     + state.delta_interval * kwargs['integral']
                     - _step.value + _step.fas_correction)
             )
-        # LOG.debug("Residual: {: .4f} = | {: .4f} + {: .4f} * {: .4f} - {: .4f} |"
-        #           .format(state.current_step.solution.residual.value[0],
-        #                   state.current_time_step.initial.value[0],
-        #                   state.delta_interval, kwargs['integral'][0],
-        #                   state.current_step.value[0]))
+            # LOG.debug("Residual: %s = | %s + %s * %s - %s + %s |"
+            #           % (_step.solution.residual.value,
+            #              state.current_level.initial.value,
+            #              state.delta_interval, kwargs['integral'],
+            #              _step.value, _step.fas_correction))
+        else:
+            _step.solution.residual = Residual(
+                abs(state.current_level.initial.value
+                    + state.delta_interval * kwargs['integral']
+                    - _step.value)
+            )
+            # LOG.debug("Residual with FAS: %s = | %s + %s * %s - %s |"
+            #           % (_step.solution.residual.value,
+            #              state.current_level.initial.value,
+            #              state.delta_interval, kwargs['integral'],
+            #              _step.value))
 
-    def compute_error(self, state, **kwargs):
+    def compute_error(self, state, step_index=None, **kwargs):
         super(MlSdcSolverCore, self).compute_error(state, **kwargs)
 
         assert_named_argument('problem', kwargs, types=IProblem, descriptor="Problem", checking_obj=self)
@@ -68,9 +74,15 @@ class MlSdcSolverCore(ISolverCore):
             # LOG.debug("Error for t={:.3f}: {} - {}".format(state.current_step.time_point,
             #                                               state.current_step.value,
             #                                               _problem.exact(state.current_step.time_point)))
-            state.current_step.solution.error = Error(
-                abs(state.current_step.value - _problem.exact(state.current_step.time_point))
-            )
+            if step_index is not None:
+                state.current_level[step_index].solution.error = Error(
+                    abs(state.current_level[step_index].value
+                        - _problem.exact(state.current_level[step_index].time_point))
+                )
+            else:
+                state.current_step.solution.error = Error(
+                    abs(state.current_step.value - _problem.exact(state.current_step.time_point))
+                )
         else:
             # we need the exact solution for that
             #  (unless we find an error approximation method)
