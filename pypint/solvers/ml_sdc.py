@@ -377,11 +377,12 @@ class MlSdc(IIterativeTimeSolver, IParallelSolver):
         raise NotImplementedError("Time Adaptivity not yet implemented.")
         # return Message.SolverFlag.time_adjusted
 
-    def _compute_fas_correction(self, q_rhs_fine, q_rhs_coarse, fine_lvl):
-        # required fine provisional rhs and coarse computed rhs
+    def _compute_fas_correction(self, q_rhs_fine, fas_fine, q_rhs_coarse, fine_lvl):
+        # add fas correction of finer level if available
+        _fine_data = q_rhs_fine + fas_fine if fas_fine is not None else q_rhs_fine
 
         # 1. restringate fine data
-        _restringated_fine = self.ml_provider.restringate(q_rhs_fine, fine_lvl)
+        _restringated_fine = self.ml_provider.restringate(_fine_data, fine_lvl)
         # print("R x (Q_fine x F_fine): %s" % _restringated_fine)
 
         assert_condition(q_rhs_coarse.shape == _restringated_fine.shape,
@@ -391,9 +392,9 @@ class MlSdc(IIterativeTimeSolver, IParallelSolver):
                          checking_obj=self)
 
         # 2. compute difference (todo: with respect to interval length !?)
-        self.state.current_iteration.current_level.fas_correction = q_rhs_coarse - _restringated_fine
+        self.state.current_iteration.current_level.fas_correction = _restringated_fine - q_rhs_coarse
         # LOG.debug("FAS Correction: %s = %s - %s"
-        #           % (self.state.current_iteration.current_level.fas_correction, q_rhs_coarse, _restringated_fine))
+        #           % (self.state.current_iteration.current_level.fas_correction, _restringated_fine, q_rhs_coarse))
 
     def _recompute_rhs_for_level(self, level):
         if level.rhs is None:
@@ -404,15 +405,23 @@ class MlSdc(IIterativeTimeSolver, IParallelSolver):
                     step.rhs = self.problem.evaluate(step.time_point, step.value)
 
     def _compute_residual(self, finalize=False):
+        # LOG.debug("Computing Residual")
         self._print_step(1, None, self.state.current_level.initial.time_point,
                          supremum_norm(self.state.current_level.initial.value),
                          None, None)
 
         _full_integral = 0.0
 
+        self._recompute_rhs_for_level(self.state.current_level)
+
         for _step_index in range(0, len(self.state.current_level)):
             _step = self.state.current_level[_step_index]
 
+            if not _step.integral_available:
+                _step.integral = \
+                    self.ml_provider\
+                        .integrator(self.state.current_level_index)\
+                        .evaluate(self.state.current_level.rhs, from_node=_step_index, target_node=_step_index + 1)
             _full_integral += _step.integral
 
             self._core.compute_residual(self.state, step=_step, integral=_full_integral)
@@ -527,7 +536,7 @@ class MlSdc(IIterativeTimeSolver, IParallelSolver):
                                             for _step_i in range(0, len(_finer_level))
                                         ], dtype=self.problem.numeric_type))
 
-            self._compute_fas_correction(_q_rhs_fine, _q_rhs_coarse,
+            self._compute_fas_correction(_q_rhs_fine, _finer_level.fas_correction, _q_rhs_coarse,
                                          fine_lvl=self.state.current_iteration.finer_level_index)
 
         # pre-sweep / base-sweep
@@ -565,7 +574,7 @@ class MlSdc(IIterativeTimeSolver, IParallelSolver):
 
         if not self.state.current_iteration.on_finest_level:
             # post-sweep
-            self._sdc_sweep(copy=False)
+            self._sdc_sweep(copy=False, with_residual=False)
 
             # compute coarse correction
             # LOG.debug("Computing Coarse Correction")
@@ -593,7 +602,16 @@ class MlSdc(IIterativeTimeSolver, IParallelSolver):
             self.state.current_iteration.step_up()
 
     def _sdc_sweep(self, copy=True, with_residual=False):
-        LOG.debug("Sweeping ...")
+        """
+        Parameters
+        ----------
+        copy : :py:class:`bool`
+            passed on to :py:meth:`._sdc_step`
+        with_residual : :py:class:`bool`
+            whether to compute the residual at the end or not; *note: when the residual is computed, the sweep will be
+            logged*
+        """
+        # LOG.debug("Sweeping ...")
         _integrator = self.ml_provider.integrator(self.state.current_iteration.current_level_index)
         _num_nodes = _integrator.num_nodes
 
@@ -651,8 +669,9 @@ class MlSdc(IIterativeTimeSolver, IParallelSolver):
         for _step_index in range(0, len(self.state.current_iteration.current_level)):
             # LOG.debug("Step %d:" % _step_index)
             _current_step = self.state.current_iteration.current_level[_step_index]
-            _current_step.integral = _integrator.evaluate(_integrate_values,
-                                                          from_node=_step_index, target_node=_step_index + 1)
+            if not _current_step.integral_available:
+                _current_step.integral = _integrator.evaluate(_integrate_values,
+                                                              from_node=_step_index, target_node=_step_index + 1)
 
             # we successively compute the full integral
             # LOG.debug("  Full Integral up to %d: %s = %s + %s"
@@ -674,6 +693,13 @@ class MlSdc(IIterativeTimeSolver, IParallelSolver):
             self._compute_residual()
 
     def _sdc_step(self, copy):
+        """
+        Parameters
+        ----------
+        copy : :py:class:`bool`
+            whether to copy value from previous iteration to this one or just assume the value of the current iteration
+            have been set before
+        """
         if copy:
             # copy solution of previous iteration to this one
             if self.state.is_first_iteration:
