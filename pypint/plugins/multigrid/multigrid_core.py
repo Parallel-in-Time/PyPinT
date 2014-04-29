@@ -11,7 +11,7 @@ from pypint.utilities import assert_is_callable, assert_is_instance, assert_cond
 from pypint.plugins.multigrid.stencil import Stencil
 from pypint.plugins.multigrid.interpolation import InterpolationByStencilListIn1D, InterpolationByStencilForLevels
 from pypint.plugins.multigrid.restriction import RestrictionStencilPure, RestrictionByStencilForLevels
-
+from operator import iadd,add
 import networkx as nx
 
 class MultiGridControl(object):
@@ -351,11 +351,11 @@ if __name__ == '__main__':
     # next we try the RestrictionStencilForLevels
 
     rst_lvl = RestrictionByStencilForLevels(Stencil(np.asarray([0.25, 0.5, 0.25])), mid_level, low_level)
-    mid_level.mid[:] = np.arange(257)
-    print("mid level with borders before restriction : \n", mid_level)
-    print("low level before restriction : \n", low_level.mid)
+    mid_level.restrict_out[:] = np.arange(mid_level.restrict_out.shape[0])
+    print("mid level with borders before restriction : \n", mid_level.restrict_out)
+    print("low level before restriction : \n", low_level.restrict_in)
     rst_lvl.restrict()
-    print("low level after restriction : \n", low_level.mid)
+    print("low level after restriction : \n", low_level.restrict_in)
     print("it works horray, now the interpolation, first the 4 interpolation stencils which are nedded:")
     center = np.asarray([0])
     ipl_stencil_list = [(Stencil(np.asarray([1]), center), (0,)),
@@ -363,13 +363,19 @@ if __name__ == '__main__':
                         (Stencil(np.asarray([0.5, 0.5]), center), (2,)),
                         (Stencil(np.asarray([0.25, 0.75]), center), (3,))]
     print(ipl_stencil_list)
-    mid_level.mid[:] = 0.0
-    print("midlevel before interpolation : \n", mid_level.mid)
+    mid_level.interpolate_in[:] = 0.0
+    low_level.mid[:] = low_level.rhs[:]
+    print("lowlevel before interpolation : \n", low_level.interpolate_out)
+    print("midlevel before interpolation : \n", mid_level.interpolate_in)
     ipl_by_stencil = InterpolationByStencilForLevels(ipl_stencil_list, low_level, mid_level)
     ipl_by_stencil.eval()
-    print("midlevel after interpolation : \n", mid_level.mid)
+    print("midlevel after interpolation : \n", mid_level.interpolate_in)
 
     print("========= Now we watch how the parts work together ==============")
+    # first set initial values for the coarser levels to zero
+    mid_level.arr[:] = 0.0
+    low_level.arr[:] = 0.0
+
     # we define the Restriction operator
     rst_stencil = Stencil(np.asarray([0.25, 0.5, 0.25]))
     rst_top_to_mid = RestrictionByStencilForLevels(rst_stencil, top_level, mid_level)
@@ -379,25 +385,33 @@ if __name__ == '__main__':
     ipl_stencil_list_mid_to_top = [(Stencil(np.asarray([1]), center), (0,)),
                                    (Stencil(np.asarray([0.75, 0.25]), center), (1,))]
     ipl_mid_to_top = InterpolationByStencilForLevels(ipl_stencil_list_mid_to_top,
-                                                     mid_level, top_level)
+                                                     mid_level, top_level, pre_assign=iadd)
 
     ipl_stencil_list_low_to_mid = [(Stencil(np.asarray([1]), center), (0,)),
                         (Stencil(np.asarray([0.75, 0.25]), center), (1,)),
                         (Stencil(np.asarray([0.5, 0.5]), center), (2,)),
                         (Stencil(np.asarray([0.25, 0.75]), center), (3,))]
     ipl_low_to_mid = InterpolationByStencilForLevels(ipl_stencil_list_low_to_mid,
-                                                     mid_level, top_level)
+                                                     mid_level, top_level, pre_assign=iadd)
 
     # initialize top level
     top_level.arr[:] = 105.0
     top_level.pad()
     mg_problem.fill_rhs(top_level)
     # we smooth in order to have something to restrict
-    top_jacobi_smoother.relax(5)
+    top_jacobi_smoother.relax(10)
     # print("TopLevel after smoothing: \n", top_level.arr)
     print("**TopLevel after 5 jacob iterations **\n", top_level.mid)
     # compute residuum
-    res_top = top_level.rhs - laplace_stencil.eval_convolve(top_level.evaluable_view(laplace_stencil))
-    print("** residuum on top level **\n", res_top)
+    top_level.compute_residual(laplace_stencil)
+    print("** residuum on top level **\n", top_level.restrict_out)
+
+    rst_top_to_mid.restrict()
+    print("** restriction onto the mid_level **\n")
+    print("rhs of mid_level : \n", mid_level.restrict_in)
+    mid_jacobi_smoother.relax(5)
+    mid_level.compute_residual(laplace_stencil)
+
+
     #
 
