@@ -56,7 +56,7 @@ class RestrictionByStencilForLevels(IRestriction):
         """Uses an unefficient algorithm in order to compute the restriction,
            because the convolution is computed on each node of the fine grid instead on every second or third
         """
-        self.l_out.restriction_in[:] = self.pre_assign(self.l_out.restriction_in[:],
+        self.l_out.restrict_in[:] = self.pre_assign(self.l_out.restrict_in[:],
                                                        sig.convolve(self.evaluable_view,
                                                                     self.rst_stencil.arr[::-1],
                                                                     "valid")[self.slices])

@@ -239,13 +239,13 @@ if __name__ == '__main__':
     borders = np.asarray([3, 3])
 
     top_level = MultigridLevel1D(513, mg_problem=mg_problem,
-                                 max_borders=borders)
+                                 max_borders=borders, role="FL")
 
     mid_level = MultigridLevel1D(257, mg_problem=mg_problem,
-                                 max_borders=borders)
+                                 max_borders=borders, role="ML")
 
     low_level = MultigridLevel1D(65, mg_problem=mg_problem,
-                                 max_borders=borders)
+                                 max_borders=borders, role="CL")
     # check if the distance between points is calculated right
     print("===== IMultigridLevel Test =====")
     print("3 different GridDistances from top to low level:")

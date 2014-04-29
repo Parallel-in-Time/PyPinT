@@ -20,12 +20,40 @@ class MultigridLevel1D(IMultigridLevel):
     Every calculation is applied to the non-padded version.
     The boundaries are used, whenever a convolution is applied.
 
+    One aspect of this class is the port concept for interpolation and restriction
+
+
+            _________________
+            |               |
+    FL :    | Level         |
+            |               |
+            -----------------
+            ipl_in      rst_out
+
+            ipl_out    rst_in
+            _________________
+            |               |
+    ML :    | Level         |
+            |               |
+            -----------------
+            ipl_in      rst_out
+
+
+            ipl_out    rst_in
+            _________________
+            |               |
+    CL :    | Level         |
+            |               |
+            -----------------
+
+
+
     Examples
     --------
 
     """
     def __init__(self, shape, mg_problem=None, max_borders=None,
-                dtype=float, role="Fl"):
+                dtype=float, role="ML"):
         """
         Summary
         -------
@@ -114,7 +142,7 @@ class MultigridLevel1D(IMultigridLevel):
         # set the interpolation and restriction ports according to the level which is used
         self.role = role
         # some place to store the residuum
-        self.res = np.zeros(self.arr)
+        self.res = np.zeros(self.arr.shape)
 
         if role is "FL":
             # here we define the ports for the finest level
