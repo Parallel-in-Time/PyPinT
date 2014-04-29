@@ -97,7 +97,7 @@ class LambdaU(IInitialValueProblem, HasExactSolutionMixin, HasDirectImplicitMixi
             if 'fas' in kwargs and kwargs['fas'] is not None else 0.0
 
         if 'core' in kwargs and isinstance(kwargs['core'], (ImplicitSdcCore, ImplicitMlSdcCore)):
-            LOG.debug("(%s - %s * %s * %s + %s + %s) / (1 - %s * %s)" % (_phis[2], _dn, self.lmbda, _phis[1], _fas, _int, self.lmbda, _dn))
+            # LOG.debug("(%s - %s * %s * %s + %s + %s) / (1 - %s * %s)" % (_phis[2], _dn, self.lmbda, _phis[1], _fas, _int, self.lmbda, _dn))
             return (_phis[2] - _dn * self.lmbda * _phis[1] + _fas + _int) / (1 - self.lmbda * _dn)
         else:
             assert_is_instance(self.lmbda, complex,
