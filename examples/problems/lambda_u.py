@@ -100,15 +100,16 @@ class LambdaU(IInitialValueProblem, HasExactSolutionMixin, HasDirectImplicitMixi
             # LOG.debug("(%s - %s * %s * %s + %s + %s) / (1 - %s * %s)" % (_phis[2], _dn, self.lmbda, _phis[1], _fas, _int, self.lmbda, _dn))
             return (_phis[2] - _dn * self.lmbda * _phis[1] + _fas + _int) / (1 - self.lmbda * _dn)
         else:
-            assert_is_instance(self.lmbda, complex,
-                               message="Direct implicit formula only valid for imaginay lambda: NOT %s"
-                                       % class_name(self.lmbda),
-                               checking_obj=self)
-            return \
-                (_phis[2]
-                 + _dn * (complex(0, self.lmbda.imag) * (_phis[2] - _phis[0]) - self.lmbda.real * _phis[1])
-                 + _int) \
-                / (1 - self.lmbda.real * _dn)
+            if isinstance(self.lmbda, complex):
+                return \
+                    (_phis[2]
+                     + _dn * (complex(0, self.lmbda.imag) * (_phis[2] - _phis[0]) - self.lmbda.real * _phis[1])
+                     + _int + _fas) \
+                    / (1 - self.lmbda.real * _dn)
+            else:
+                return \
+                    (_phis[2] - _dn * self.lmbda * _phis[1] + _int + _fas) \
+                    / (1 - self.lmbda * _dn)
 
     @property
     def lmbda(self):
