@@ -17,27 +17,11 @@ from pypint.utilities.logging import LOG
 class MlSdcStepState(IStepState):
     def __init__(self, **kwargs):
         super(MlSdcStepState, self).__init__(**kwargs)
-        self._integral = None
         self._fas_correction = None
         self._coarse_correction = None
 
     def has_fas_correction(self):
         return self._fas_correction is not None
-
-    @property
-    def integral(self):
-        """Accessor for an integral value
-
-        Parameters
-        ----------
-        integral : :py:class:`float`
-            (no consistency checks are done)
-        """
-        return self._integral
-
-    @integral.setter
-    def integral(self, integral):
-        self._integral = integral
 
     @property
     def coarse_correction(self):

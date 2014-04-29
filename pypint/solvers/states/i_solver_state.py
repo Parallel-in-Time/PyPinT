@@ -23,6 +23,8 @@ class IStepState(object):
         self._delta_tau = 0.0
         self._rhs = None
         self._rhs_evaluated = False
+        self._integral = None
+        self._integral_available = False
 
     def done(self):
         """Finalize this state and its included solution
@@ -54,6 +56,7 @@ class IStepState(object):
     def value(self, value):
         self._solution.value = value
         self._rhs_evaluated = False
+        self._integral_available = False
 
     @property
     def time_point(self):
@@ -73,6 +76,26 @@ class IStepState(object):
     def rhs(self, rhs):
         self._rhs = rhs
         self._rhs_evaluated = True
+
+    @property
+    def integral_available(self):
+        return self._integral_available
+
+    @property
+    def integral(self):
+        """Accessor for an integral value
+
+        Parameters
+        ----------
+        integral : :py:class:`float`
+            (no consistency checks are done)
+        """
+        return self._integral
+
+    @integral.setter
+    def integral(self, integral):
+        self._integral = integral
+        self._integral_available = True
 
     @property
     def delta_tau(self):
