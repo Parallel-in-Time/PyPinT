@@ -42,8 +42,11 @@ class ExplicitMlSdcCore(MlSdcSolverCore):
         _previous_step = state.previous_step
 
         if not state.current_iteration.on_finest_level:
-            # LOG.debug("   taking previous step of this iteration instead")
-            _previous_iteration_previous_step = state.current_iteration.current_level.previous_step
+            LOG.debug("taking restringated or coarse-corrected value")
+            if state.current_step != state.current_level.first:
+                _previous_iteration_previous_step = state.current_iteration.current_level.previous_step.initial
+            else:
+                _previous_iteration_previous_step = state.current_iteration.current_level.initial
         else:
             _previous_iteration_previous_step = self._previous_iteration_previous_step(state)
 
@@ -66,9 +69,9 @@ class ExplicitMlSdcCore(MlSdcSolverCore):
             (_previous_step.value
              + state.current_step.delta_tau * (_previous_step.rhs - _previous_iteration_previous_step.rhs)
              + state.current_step.integral + _fas)
-        # LOG.debug("%s = %s + %s * (%s - %s) + %s + %s" %
-        #           (state.current_step.value, _previous_step.value, state.current_step.delta_tau, _previous_step.rhs,
-        #            _previous_iteration_previous_step.rhs, state.current_step.integral, _fas))
+        LOG.debug("Explicit SDC: %s = %s + %s * (%s - %s) + %s + %s" %
+                  (state.current_step.value, _previous_step.value, state.current_step.delta_tau, _previous_step.rhs,
+                   _previous_iteration_previous_step.rhs, state.current_step.integral, _fas))
 
 
 __all__ = ['ExplicitMlSdcCore']

@@ -46,22 +46,22 @@ class MlSdcSolverCore(ISolverCore):
                     + state.delta_interval * kwargs['integral']
                     - _step.value + _step.fas_correction)
             )
-            # LOG.debug("Residual with FAS: %s = | %s + %s * %s - %s + %s |"
-            #           % (_step.solution.residual.value,
-            #              state.current_level.initial.value,
-            #              state.delta_interval, kwargs['integral'],
-            #              _step.value, _step.fas_correction))
+            LOG.debug("Residual with FAS: %s = | %s + %s * %s - %s + %s |"
+                      % (_step.solution.residual.value,
+                         state.current_level.initial.value,
+                         state.delta_interval, kwargs['integral'],
+                         _step.value, _step.fas_correction))
         else:
             _step.solution.residual = Residual(
                 abs(state.current_level.initial.value
                     + state.delta_interval * kwargs['integral']
                     - _step.value)
             )
-            # LOG.debug("Residual: %s = | %s + %s * %s - %s |"
-            #           % (_step.solution.residual.value,
-            #              state.current_level.initial.value,
-            #              state.delta_interval, kwargs['integral'],
-            #              _step.value))
+            LOG.debug("Residual: %s = | %s + %s * %s - %s |"
+                      % (_step.solution.residual.value,
+                         state.current_level.initial.value,
+                         state.delta_interval, kwargs['integral'],
+                         _step.value))
 
     def compute_error(self, state, step_index=None, **kwargs):
         super(MlSdcSolverCore, self).compute_error(state, **kwargs)

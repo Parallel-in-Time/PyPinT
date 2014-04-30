@@ -216,9 +216,12 @@ class IStateIterator(object):
         if self._finalized:
             self._solution = self.solution.__class__()
             self._finalized = False
-            self._current_index = 0
+            self.reset_to_start()
         else:
             LOG.debug("This {} wasn't finalized.".format(class_name(self)))
+
+    def reset_to_start(self):
+        self._current_index = 0
 
     @property
     def finalized(self):
