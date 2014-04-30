@@ -147,6 +147,12 @@ class MultigridLevel1D(IMultigridLevel):
         self.res_left = self.res.__array__()[:self.borders[0]]
         self.res_right = self.res.__array__()[-self.borders[1]:]
         self.res_mid = self.res.__array__()[self.borders[0]:-self.borders[1]]
+
+        # it would be nicer to have the slices of the different parts
+        self.mid_slice = slice(self.borders[0], self.borders[1])
+        self.left_slice = slice(None, self.borders[0])
+        self.right_slice = slice(-self.borders[1], None)
+
         if role is "FL":
             # here we define the ports for the finest level
             self.interpolate_out = None
@@ -251,7 +257,7 @@ class MultigridLevel1D(IMultigridLevel):
         return self._evaluable_view(stencil, self.restrict_out)
 
     def compute_residual(self, stencil):
-        self.res_mid[:] = self.rhs - stencil.eval_convolve(self.evaluable_view(stencil))
+        self.res_mid[:] = self.rhs - stencil.eval_convolve(self.evaluable_view(stencil)) / self.h**2
 
     def border_function_generator(self, stencil):
         """Generates a function which returns true if the index of the

@@ -78,7 +78,7 @@ class InterpolationByStencilForLevels(IInterpolation):
         """
         for i in range(len(self.stencil_list)):
             # sigs = sig.convolve(self.evaluable_views[i], self.stencil_list[i][0].arr, 'valid')
-            # print(i, self.level_out.mid[self.slices_out[i]].shape, self.evaluable_views[i].shape)
+            print(i, self.level_out.interpolate_in[self.slices_out[i]].shape, self.evaluable_views[i].shape, self.stencil_list[i][0].arr[::-1].shape)
             # print("slice_out :\n", self.slices_out[i])
             # print("Stencil_arr: \n", self.stencil_list[i][0].arr)
             # print("eval_view: \n", self.evaluable_views[i])

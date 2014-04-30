@@ -375,7 +375,7 @@ if __name__ == '__main__':
     # first set initial values for the coarser levels to zero
     mid_level.arr[:] = 0.0
     low_level.arr[:] = 0.0
-
+    n_jacobi = 100
     # we define the Restriction operator
     rst_stencil = Stencil(np.asarray([0.25, 0.5, 0.25]))
     rst_top_to_mid = RestrictionByStencilForLevels(rst_stencil, top_level, mid_level)
@@ -383,7 +383,8 @@ if __name__ == '__main__':
 
     # and the interpolation operator
     ipl_stencil_list_mid_to_top = [(Stencil(np.asarray([1]), center), (0,)),
-                                   (Stencil(np.asarray([0.75, 0.25]), center), (1,))]
+                                   (Stencil(np.asarray([0.5, 0.5]), center), (1,))]
+
     ipl_mid_to_top = InterpolationByStencilForLevels(ipl_stencil_list_mid_to_top,
                                                      mid_level, top_level, pre_assign=iadd)
 
@@ -392,16 +393,23 @@ if __name__ == '__main__':
                         (Stencil(np.asarray([0.5, 0.5]), center), (2,)),
                         (Stencil(np.asarray([0.25, 0.75]), center), (3,))]
     ipl_low_to_mid = InterpolationByStencilForLevels(ipl_stencil_list_low_to_mid,
-                                                     mid_level, top_level, pre_assign=iadd)
+                                                     low_level, mid_level, pre_assign=iadd)
 
     # initialize top level
     top_level.arr[:] = 105.0
+    top_level.res[:] = 0.0
     top_level.pad()
+    mid_level.arr[:] = 0.0
+    mid_level.res[:] = 0.0
+    mid_level.pad()
+    low_level.arr[:] = 0.0
+    low_level.res[:] = 0.0
+    low_level.pad()
     mg_problem.fill_rhs(top_level)
     # we smooth in order to have something to restrict
-    top_jacobi_smoother.relax(10)
+    top_jacobi_smoother.relax(n_jacobi)
     # print("TopLevel after smoothing: \n", top_level.arr)
-    print("**TopLevel after 5 jacob iterations **\n", top_level.mid)
+    print("**TopLevel after "+str(n_jacobi)+" jacob iterations **\n", top_level.arr)
     # compute residuum
     top_level.compute_residual(laplace_stencil)
     print("** residuum on top level **\n", top_level.restrict_out)
@@ -409,9 +417,25 @@ if __name__ == '__main__':
     rst_top_to_mid.restrict()
     print("** restriction onto the mid_level **\n")
     print("rhs of mid_level : \n", mid_level.restrict_in)
-    mid_jacobi_smoother.relax(5)
+    print("** MidLevel after "+str(n_jacobi)+" jacobi iterations **")
+    mid_jacobi_smoother.relax(n_jacobi)
+    print(mid_level.mid)
+    # print("residual  before computation : \n", mid_level.res)
     mid_level.compute_residual(laplace_stencil)
-
-
-    #
-
+    print("** residual on mid_level **\n", mid_level.res)
+    print("** restriction onto the low_level **")
+    rst_mid_to_low.restrict()
+    print("rhs of low_level : \n", low_level.rhs)
+    low_jacobi_smoother.relax(n_jacobi)
+    print("** LowLevel after"+str(n_jacobi)+"jacobi iterations **\n", low_level.mid)
+    # here we are deep down
+    print("** coarse grid correct the mid_level with the result of the low_level **")
+    ipl_low_to_mid.eval()
+    print("mid_level after correction : \n", mid_level.mid)
+    mid_jacobi_smoother.relax(n_jacobi)
+    print("** mid_level after "+str(n_jacobi)+" Jacob iterations ** \n", mid_level.mid)
+    print("** coarse grid correct the top_level with the result of the mid_level **")
+    ipl_mid_to_top.eval()
+    print("top_level after correction : \n", top_level.mid)
+    top_jacobi_smoother.relax(n_jacobi)
+    print("** top_level after "+str(n_jacobi)+"Jacob iterations ** \n", top_level.mid)
