@@ -545,7 +545,8 @@ class MlSdc(IIterativeTimeSolver, IParallelSolver):
             self._compute_fas_correction(_q_rhs_fine, _finer_level.fas_correction, _q_rhs_coarse,
                                          fine_lvl=self.state.current_iteration.finer_level_index)
 
-        if not self.state.current_iteration.on_base_level:
+        if not self.state.current_iteration.on_base_level and \
+                (self.state.current_iteration.on_finest_level and self.state.is_first_iteration):
             # pre-sweep / base-sweep
             # LOG.debug("doing one SDC sweep")
             self._sdc_sweep(copy=self.state.current_iteration.on_finest_level,
@@ -581,10 +582,10 @@ class MlSdc(IIterativeTimeSolver, IParallelSolver):
             for _step_index in range(0, len(_current_level)):
                 self._core.compute_error(self.state, step_index=_step_index, problem=self.problem)
 
-        if not self.state.current_iteration.on_finest_level:
-            # post-sweep
-            self._sdc_sweep(copy=False, with_residual=False)
+        # post-sweep
+        self._sdc_sweep(copy=False, with_residual=False)
 
+        if not self.state.current_iteration.on_finest_level:
             # compute coarse correction
             LOG.debug("Computing Coarse Correction")
             _restringated_values = \
