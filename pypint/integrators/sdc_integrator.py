@@ -113,7 +113,7 @@ class SdcIntegrator(IntegratorBase):
             #           .format(_from_index, _target_index, _target_index - 1, self.nodes_type.interval))
             # print("  data: %s" % data)
             # print("  weights: %s" % self._qmat[_target_index])
-            return np.dot(self._smat[_target_index - 1], data)
+            return np.tensordot(self._smat[_target_index - 1], data, axes=([0], [0]))
         else:
             assert_condition(_target_index < self._qmat.shape[0],
                              ValueError, message="Target Node Index {:d} too large. Must be within [{:d}, {:d}]"
@@ -123,7 +123,7 @@ class SdcIntegrator(IntegratorBase):
             #           .format(_target_index, _target_index, self.nodes_type.interval))
             # print("  data: %s" % data)
             # print("  weights: %s" % self._qmat[_target_index])
-            return np.dot(self._qmat[_target_index], data)
+            return np.tensordot(self._qmat[_target_index], data, axes=([0], [0]))
 
     def transform_interval(self, interval):
         """Transforms nodes onto new interval

@@ -55,11 +55,11 @@ class TimeTransitionProvider(ILevelTransitionProvider):
 
     def prolongate(self, coarse_data):
         super(TimeTransitionProvider, self).prolongate(coarse_data)
-        return np.dot(self.prolongation_operator, coarse_data)
+        return np.tensordot(self.prolongation_operator, coarse_data, axes=([1], [0]))
 
     def restringate(self, fine_data):
         super(TimeTransitionProvider, self).restringate(fine_data)
-        return np.dot(self.restringation_operator, fine_data)
+        return np.tensordot(self.restringation_operator, fine_data, axes=([1], [0]))
 
     def _compute_prolongation_matrix(self):
         self._prolongation_operator = np.zeros((self.num_fine_points, self.num_coarse_points), dtype=float)
