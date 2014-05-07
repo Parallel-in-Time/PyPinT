@@ -196,7 +196,7 @@ class MultiGridCore(object):
 if __name__ == '__main__':
     print("Lets solve, you guessed it, the heat equation")
     # heat equation needs a stencil
-    laplace_stencil = Stencil(np.asarray([1, -2, 1]))
+    laplace_stencil = Stencil(np.asarray([1, -2, 1]), None, 2)
     # test stencil to some extend
     print("===== Stencil tests =====")
     print("stencil.b :", laplace_stencil.b)
@@ -318,7 +318,7 @@ if __name__ == '__main__':
     print("rhs at the beginning: \n", low_level.rhs)
     mg_problem.fill_rhs(low_level)
     print("rhs after filling it: \n", low_level.rhs)
-    laplace_stencil.modify_rhs(low_level)
+    # laplace_stencil.modify_rhs(low_level)
     print("rhs after modification: \n", low_level.rhs)
     jacobi_matrix.relax()
     print(low_level.arr)
@@ -386,19 +386,20 @@ if __name__ == '__main__':
 
     top_jacobi_smoother = SplitSmoother(l_plus / top_level.h**2,
                                         l_minus / top_level.h**2,
-                                        top_level)
+                                        top_level, order=2)
     mid_jacobi_smoother = SplitSmoother(l_plus / mid_level.h**2,
                                         l_minus / mid_level.h**2,
-                                        mid_level)
+                                        mid_level, order=2)
     low_jacobi_smoother = SplitSmoother(l_plus / low_level.h**2,
                                         l_minus / low_level.h**2,
-                                        low_level)
+                                        low_level, order=2)
     low_direct_smoother = DirectSolverSmoother(laplace_stencil, low_level)
-
+    top_direct_solver = DirectSolverSmoother(laplace_stencil, top_level)
 
     # first set initial values for the coarser levels to zero
 
     n_jacobi = 1
+
     # we define the Restriction operator
     rst_stencil = Stencil(np.asarray([0.25, 0.5, 0.25]))
     rst_top_to_mid = RestrictionByStencilForLevelsClassical(rst_stencil, top_level, mid_level)
@@ -417,6 +418,7 @@ if __name__ == '__main__':
 
     # initialize top level
     top_level.arr[:] = 105.0
+    # top_level.arr[:] = 0.0
     top_level.res[:] = 0.0
     top_level.rhs[:] = 0.0
 
@@ -431,6 +433,8 @@ if __name__ == '__main__':
     low_level.rhs[:] = 0.0
     low_level.pad()
     mg_problem.fill_rhs(top_level)
+    # laplace_stencil.modify_rhs(top_level)
+    print("** rhs of the top level ** \n", top_level.rhs)
     print("**TopLevel before at initial value", top_level.arr)
     # we smooth in order to have something to restrict
     top_jacobi_smoother.relax(n_jacobi)
@@ -452,8 +456,11 @@ if __name__ == '__main__':
     print("** restriction onto the low_level **")
     rst_mid_to_low.restrict()
     print("rhs of low_level : \n", low_level.rhs)
-    low_jacobi_smoother.relax(n_jacobi)
-    print("** LowLevel after"+str(n_jacobi)+"jacobi iterations **\n", low_level.mid)
+    low_direct_smoother.relax()
+    print("** LowLevel after direct solve **\n", low_level.mid)
+    # low_jacobi_smoother.relax(n_jacobi)
+    # print("** LowLevel after"+str(n_jacobi)+"jacobi iterations **\n", low_level.mid)
+
     # here we are deep down
     print("** coarse grid correct the mid_level with the result of the low_level **")
     ipl_low_to_mid.eval()
@@ -465,3 +472,7 @@ if __name__ == '__main__':
     print("top_level after correction : \n", top_level.mid)
     top_jacobi_smoother.relax(n_jacobi)
     print("** top_level after "+str(n_jacobi)+"Jacob iterations ** \n", top_level.mid)
+    laplace_stencil.modify_rhs(top_level)
+    top_direct_solver.relax()
+    print("** rhs of the top level ** \n", top_level.rhs)
+    print("** as a reference the direct solution of TopLevel **\n", top_level.mid)

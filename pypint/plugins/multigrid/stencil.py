@@ -19,7 +19,7 @@ class Stencil(object):
     and with self.b it has the appropriate information for the
     handling of the ghostcells.
     """
-    def __init__(self, arr, center=None, **kwargs):
+    def __init__(self, arr, center=None, order=1, **kwargs):
         assert_is_instance(arr, np.ndarray, "the array is not a numpy array")
         if center is None:
             self.center = np.array(np.floor(np.asarray(arr.shape)*0.5),
@@ -32,7 +32,7 @@ class Stencil(object):
             self.center = np.array(center, dtype=np.int)
         self.arr = arr
         self.dim = arr.ndim
-
+        self.order = order
         # compute borders
         self.b = [[0.0, 0.0]]*self.dim
         for i in range(self.dim):
@@ -140,7 +140,7 @@ class Stencil(object):
             solver = spla.factorized(self.sp_matrix)
         else:
             sp_matrix = self.to_sparse_matrix(grid, "csc")
-            print(sp_matrix.todense())
+            # print("Jahier\n", sp_matrix.todense())
             solver = spla.factorized(sp_matrix)
         return solver
 
@@ -331,20 +331,20 @@ class Stencil(object):
         """
         u = level.evaluable_view(self)
         rhs = level.rhs
-        print("here from modify your right hand side:")
-        print("u", u)
-        print("rhs", rhs)
+        # print("here from modify your right hand side:")
+        # print("u", u)
+        # print("rhs", rhs)
 
         if self.dim == 1:
             # left side
             for i in range(self.center[0]):
                 rhs[i] -= np.dot(self.arr[i:self.center[0]],
-                                 u[0:self.center[0]-i])
+                                 u[0:self.center[0]-i]) / (level.h**self.order)
             # the same for the right side
             til = self.arr.size - self.center[0] - 1
             print(til)
             for i in range(til):
-                rhs[-til] -= np.dot(self.arr[-til + i:], u[-til: u.size - i])
+                rhs[-til] -= np.dot(self.arr[-til + i:], u[-til: u.size - i]) / (level.h**self.order)
 
         elif self.dim == 2:
             raise NotImplementedError("Not done yet")

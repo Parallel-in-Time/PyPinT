@@ -22,14 +22,15 @@ class DirectSolverSmoother(IMultigridSmoother):
                                                   "level instance")
         self.level = level
         self.solver = stencil.generate_direct_solver(level.mid.shape)
+        self.stencil = stencil
         if mod_rhs:
             stencil.modify_rhs(level.evaluable_view(stencil), level.rhs)
+        # print("**ESEL**", stencil.sp_matrix.todense())
 
-
-    def relax(self, n=1):
+    def relax(self):
         """ Just solves it, and puts the solution into self.level.mid
         """
-        self.level.mid.reshape(-1)[:] = self.solver(self.level.rhs)
+        self.level.mid.reshape(-1)[:] = self.solver(self.level.rhs * (self.level.h**self.stencil.order))
         # print("kakao:", self.level.mid)
 
 
@@ -45,6 +46,7 @@ class SplitSmoother(IMultigridSmoother):
 
         l_plus and l_minus have to be centralized
         """
+
         assert_is_instance(l_plus, np.ndarray, "L plus has to be a np array")
         assert_is_instance(l_minus, np.ndarray, "L minus has to be a np array")
         assert_condition(l_plus.shape == l_minus.shape, TypeError,
@@ -52,7 +54,9 @@ class SplitSmoother(IMultigridSmoother):
         # check the level !has to be improved! inheritance must exist for
         # level class
         assert_is_instance(level, IMultigridLevel, "Not the right level")
-        #
+
+        self.order = kwargs.get("order", 0)
+
         self.lvl = level
         self.l_plus = l_plus
         self.l_minus = l_minus
