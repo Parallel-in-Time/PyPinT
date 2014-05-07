@@ -9,6 +9,7 @@ from sys import stdout
 from datetime import datetime
 from collections import OrderedDict
 import inspect
+import numpy
 
 from pypint.utilities.tracing import checking_obj_name
 from pypint.utilities.config import config
@@ -40,6 +41,9 @@ if config()['Logger']['File']['enable']:
                     level=config()['Logger']['File']['level'],
                     format_string=config()['Logger']['File']['format_string'])
     )
+
+numpy.set_printoptions(precision=config()['Logger']['numpy']['precision'],
+                       )
 
 
 VERBOSITY_LVL1 = '!> '
