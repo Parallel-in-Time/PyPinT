@@ -8,6 +8,88 @@ from pypint.utilities import assert_is_callable, assert_is_instance, assert_cond
 from pypint.plugins.multigrid.i_multigrid_level import IMultigridLevel
 import itertools as it
 
+class InterpolationByStencilForLevelsClassical(IInterpolation):
+    """1D class for Interpolation which binds two levels
+        This Interpolation class implicitly assumes the following structure
+       B_ _,_ _,_ _,_ _,_ _,_ _,_ _B    <- Level in
+       B_._._._._._._._._._._._._._B     <- Level out
+
+        It also checks if under this assumption the interpolation is possible.
+
+        The format of stencil matrix is the following
+        Stencil
+    """
+    def __init__(self, stencil_list, level_in, level_out, *args, pre_assign=None, **kwargs):
+        """init
+        """
+        super(InterpolationByStencilForLevelsClassical, self).__init__(*args, **kwargs)
+
+        if pre_assign is None:
+            # no pre assignment function
+            self.pre_assign = lambda a, b: b
+        else:
+            assert_is_callable(pre_assign, "Pre assignment function is not callable")
+            self.pre_assign = pre_assign
+
+        # check if all parameters are fitting
+        assert_is_instance(stencil_list, list)
+
+        for st in stencil_list:
+            assert_is_instance(st[0], Stencil, "that is not a stencil")
+        self.stencil_list = stencil_list
+        assert_is_instance(level_in, IMultigridLevel, "Not a IMultigridLevel")
+        assert_is_instance(level_out, IMultigridLevel, "Not a IMultigridLevel")
+        self.level_in = level_in
+        self.level_out = level_out
+        # increase in points for each direction
+        self.iip = []
+        self.fits = False
+
+        for i in range(level_in.mid.ndim):
+
+            self.iip.append((level_out.mid.shape[i]-1)/(level_in.mid.shape[i]-1) - 1)
+
+            n = level_out.mid.shape[i]
+            m = level_in.mid.shape[i]
+            self.fits = False
+
+            while m <= n:
+                if m == n:
+                    self.fits = True
+                    break
+                else:
+                    m = m*2+1
+
+            if not self.fits:
+                raise ValueError("The Levels do not match in direction " + str(i))
+
+        # compute evaluable views with the positions and slices
+
+        self.slices_out = []
+        for st, pos in stencil_list:
+            sl_out = []
+            for i in range(st.dim):
+                sl_out.append(slice(pos[i], None, self.iip[i]+1))
+            self.slices_out.append(tuple(sl_out.copy()))
+
+
+
+
+    def eval(self):
+        """ for each stencil at a certain position the convolution is computed
+
+        """
+        for i in range(len(self.stencil_list)):
+
+            # print(i, self.level_out.interpolate_in[self.slices_out[i]].shape, self.evaluable_views[i].shape, self.stencil_list[i][0].arr[::-1].shape)
+
+            # the option "full" means that the array is padded with zeros
+
+            self.level_out.interpolate_in[self.slices_out[i]] = \
+                self.pre_assign(
+                    self.level_out.interpolate_in[self.slices_out[i]],
+                    sig.convolve(self.level_in.mid, self.stencil_list[i][0].arr[::-1], "full"))
+
 class InterpolationByStencilForLevels(IInterpolation):
     """1D class for Interpolation which binds two levels
         This Interpolationclass implicitly assumes the following structure

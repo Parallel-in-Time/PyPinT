@@ -9,8 +9,8 @@ from pypint.plugins.multigrid.level import MultigridLevel1D
 from pypint.plugins.multigrid.multigrid_smoother import SplitSmoother, DirectSolverSmoother, WeightedJacobiSmoother
 from pypint.utilities import assert_is_callable, assert_is_instance, assert_condition
 from pypint.plugins.multigrid.stencil import Stencil
-from pypint.plugins.multigrid.interpolation import InterpolationByStencilListIn1D, InterpolationByStencilForLevels
-from pypint.plugins.multigrid.restriction import RestrictionStencilPure, RestrictionByStencilForLevels
+from pypint.plugins.multigrid.interpolation import InterpolationByStencilListIn1D, InterpolationByStencilForLevels, InterpolationByStencilForLevelsClassical
+from pypint.plugins.multigrid.restriction import RestrictionStencilPure, RestrictionByStencilForLevels, RestrictionByStencilForLevelsClassical
 from operator import iadd,add
 import networkx as nx
 
@@ -372,28 +372,55 @@ if __name__ == '__main__':
     print("midlevel after interpolation : \n", mid_level.interpolate_in)
 
     print("========= Now we watch how the parts work together ==============")
+    # because of testing reasons the nodes on each level are chosen different, so the classical interpolation and
+    # restriction is possible
+    top_level = MultigridLevel1D(67, mg_problem=mg_problem,
+                                 max_borders=borders, role="FL")
+
+    mid_level = MultigridLevel1D(33, mg_problem=mg_problem,
+                                 max_borders=borders, role="ML")
+
+    low_level = MultigridLevel1D(16, mg_problem=mg_problem,
+                                 max_borders=borders, role="CL")
+    # hence we need new smoothers
+
+    top_jacobi_smoother = SplitSmoother(l_plus / top_level.h**2,
+                                        l_minus / top_level.h**2,
+                                        top_level)
+    mid_jacobi_smoother = SplitSmoother(l_plus / mid_level.h**2,
+                                        l_minus / mid_level.h**2,
+                                        mid_level)
+    low_jacobi_smoother = SplitSmoother(l_plus / low_level.h**2,
+                                        l_minus / low_level.h**2,
+                                        low_level)
+    low_direct_smoother = DirectSolverSmoother(laplace_stencil, low_level)
+
+
+
     # first set initial values for the coarser levels to zero
     mid_level.arr[:] = 0.0
+    mid_level.rhs[:] = 0.0
     low_level.arr[:] = 0.0
-    n_jacobi = 100
+    low_level.rhs[:] = 0.0
+    n_jacobi = 1
     # we define the Restriction operator
     rst_stencil = Stencil(np.asarray([0.25, 0.5, 0.25]))
-    rst_top_to_mid = RestrictionByStencilForLevels(rst_stencil, top_level, mid_level)
-    rst_mid_to_low = RestrictionByStencilForLevels(rst_stencil, mid_level, low_level)
+    rst_top_to_mid = RestrictionByStencilForLevelsClassical(rst_stencil, top_level, mid_level)
+    rst_mid_to_low = RestrictionByStencilForLevelsClassical(rst_stencil, mid_level, low_level)
 
     # and the interpolation operator
-    ipl_stencil_list_mid_to_top = [(Stencil(np.asarray([1]), center), (0,)),
-                                   (Stencil(np.asarray([0.5, 0.5]), center), (1,))]
+    ipl_stencil_list_mid_to_top = [(Stencil(np.asarray([1]), center), (1,)),
+                                   (Stencil(np.asarray([0.5, 0.5]), center), (0,))]
 
-    ipl_mid_to_top = InterpolationByStencilForLevels(ipl_stencil_list_mid_to_top,
-                                                     mid_level, top_level, pre_assign=iadd)
+    ipl_mid_to_top = InterpolationByStencilForLevelsClassical(ipl_stencil_list_mid_to_top,
+                                                              mid_level, top_level, pre_assign=iadd)
 
     ipl_stencil_list_low_to_mid = [(Stencil(np.asarray([1]), center), (0,)),
                         (Stencil(np.asarray([0.75, 0.25]), center), (1,)),
                         (Stencil(np.asarray([0.5, 0.5]), center), (2,)),
                         (Stencil(np.asarray([0.25, 0.75]), center), (3,))]
-    ipl_low_to_mid = InterpolationByStencilForLevels(ipl_stencil_list_low_to_mid,
-                                                     low_level, mid_level, pre_assign=iadd)
+    ipl_low_to_mid = InterpolationByStencilForLevelsClassical(ipl_stencil_list_low_to_mid,
+                                                              low_level, mid_level, pre_assign=iadd)
 
     # initialize top level
     top_level.arr[:] = 105.0
@@ -406,6 +433,7 @@ if __name__ == '__main__':
     low_level.res[:] = 0.0
     low_level.pad()
     mg_problem.fill_rhs(top_level)
+    print("**TopLevel before at initial value", top_level.arr)
     # we smooth in order to have something to restrict
     top_jacobi_smoother.relax(n_jacobi)
     # print("TopLevel after smoothing: \n", top_level.arr)
