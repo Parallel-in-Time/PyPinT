@@ -18,15 +18,15 @@ class MlSdcStepState(IStepState):
     def __init__(self, **kwargs):
         super(MlSdcStepState, self).__init__(**kwargs)
         self._fas_correction = None
-        self._coarse_correction = None
-        self._initial = IStepState()
+        self._coarse_correction = 0.0
+        self._intermediate = IStepState()
 
     def has_fas_correction(self):
         return self._fas_correction is not None
 
     @property
-    def initial(self):
-        return self._initial
+    def intermediate(self):
+        return self._intermediate
 
     @property
     def coarse_correction(self):
@@ -128,6 +128,15 @@ class MlSdcLevelState(IStaticStateIterator):
     @property
     def coarse_corrections(self):
         return np.append([np.zeros(self[0].coarse_correction.shape)], [step.coarse_correction for step in self], axis=0)
+
+    @coarse_corrections.setter
+    def coarse_corrections(self, coarse_correction):
+        assert_condition(coarse_correction.shape[0] == (len(self) + 1), ValueError,
+                         "Number of Coarse Corrections does not match number of nodes: %d != %d"
+                         % (coarse_correction.shape[0], (len(self) + 1)),
+                         checking_obj=self)
+        for _step in range(0, len(self)):
+            self[_step].coarse_correction = coarse_correction[_step + 1]
 
     @property
     def current_time_point(self):
@@ -254,9 +263,9 @@ class MlSdcIterationState(IStaticStateIterator):
             LOG.debug("Stepping down to level %d" % (self._current_index - 1))
             self._current_index -= 1
             for _step in self.current_level:
-                _step.initial.value = _step.value.copy()
+                _step.intermediate.value = _step.value.copy()
                 if _step.rhs_evaluated:
-                    _step.initial.rhs = _step.rhs.copy()
+                    _step.intermediate.rhs = _step.rhs.copy()
         else:
             raise StopIteration("There is no finer level available.")
 

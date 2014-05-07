@@ -9,6 +9,7 @@ from pypint.solvers.states.mlsdc_solver_state import MlSdcSolverState
 from pypint.problems import IProblem
 from pypint.problems.has_direct_implicit_mixin import problem_has_direct_implicit
 from pypint.utilities import assert_is_instance, assert_named_argument
+from pypint.utilities.logging import LOG
 
 
 class SemiImplicitMlSdcCore(MlSdcSolverCore):
@@ -44,7 +45,12 @@ class SemiImplicitMlSdcCore(MlSdcSolverCore):
         assert_named_argument('problem', kwargs, types=IProblem, descriptor="Problem", checking_obj=self)
         _problem = kwargs['problem']
 
-        if not state.current_iteration.on_finest_level:
+        use_intermediate = kwargs['use_intermediate'] if 'use_intermediate' in kwargs else False
+
+        if use_intermediate:
+            # LOG.debug("using intermediate")
+            _previous_iteration_current_step = state.current_iteration.current_level.current_step.intermediate
+        elif not state.current_iteration.on_finest_level:
             _previous_iteration_current_step = state.current_iteration.current_level.current_step
         else:
             _previous_iteration_current_step = self._previous_iteration_current_step(state)
@@ -64,8 +70,9 @@ class SemiImplicitMlSdcCore(MlSdcSolverCore):
 
         _fas = np.zeros(_previous_iteration_current_step.rhs.shape,
                         dtype=_previous_iteration_current_step.rhs.dtype)
-        if _previous_iteration_current_step.has_fas_correction():
-            # LOG.debug("   previous iteration current step has FAS")
+        if not use_intermediate and _previous_iteration_current_step.has_fas_correction():
+            LOG.debug("   previous iteration current step has FAS: %s"
+                      % _previous_iteration_current_step.fas_correction)
             _fas = _previous_iteration_current_step.fas_correction
 
         if problem_has_direct_implicit(_problem, self):
