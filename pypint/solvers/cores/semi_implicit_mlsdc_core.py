@@ -71,8 +71,8 @@ class SemiImplicitMlSdcCore(MlSdcSolverCore):
         _fas = np.zeros(_previous_iteration_current_step.rhs.shape,
                         dtype=_previous_iteration_current_step.rhs.dtype)
         if not use_intermediate and _previous_iteration_current_step.has_fas_correction():
-            LOG.debug("   previous iteration current step has FAS: %s"
-                      % _previous_iteration_current_step.fas_correction)
+            # LOG.debug("   previous iteration current step has FAS: %s"
+            #           % _previous_iteration_current_step.fas_correction)
             _fas = _previous_iteration_current_step.fas_correction
 
         if problem_has_direct_implicit(_problem, self):
