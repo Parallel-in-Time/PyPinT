@@ -8,18 +8,18 @@ from pypint.integrators.sdc_integrator import SdcIntegrator
 
 base_integrator = SdcIntegrator()
 base_integrator.init(num_nodes=3)
-print(base_integrator)
+# print(base_integrator)
 
 intermediate_integrator = SdcIntegrator()
 intermediate_integrator.init(num_nodes=5)
-print(intermediate_integrator)
+# print(intermediate_integrator)
 
 # fine_integrator = SdcIntegrator()
 # fine_integrator.init(num_nodes=7)
 # print(fine_integrator)
 
 transitioner1 = TimeTransitionProvider(fine_nodes=intermediate_integrator.nodes, coarse_nodes=base_integrator.nodes)
-print(transitioner1)
+# print(transitioner1)
 # transitioner2 = TimeTransitionProvider(fine_nodes=fine_integrator.nodes, coarse_nodes=intermediate_integrator.nodes)
 # print(transitioner2)
 
@@ -35,7 +35,7 @@ print(ml_provider)
 from examples.problems.constant import Constant
 from examples.problems.lambda_u import LambdaU
 # problem = Constant()
-problem = LambdaU(lmbda=-1.0)
+problem = LambdaU(lmbda=complex(-1.0, -1.0))
 print(problem)
 
 
@@ -51,8 +51,7 @@ comm.write_buffer(tag=(ml_provider.num_levels - 1), value=problem.initial_value,
 
 mlsdc.init(problem=problem, ml_provider=ml_provider)
 
-
-from pypint.solvers.cores import ExplicitMlSdcCore, ImplicitMlSdcCore
-mlsdc.run(ImplicitMlSdcCore, dt=1.0)
+from pypint.solvers.cores import ExplicitMlSdcCore, ImplicitMlSdcCore, SemiImplicitMlSdcCore
+mlsdc.run(SemiImplicitMlSdcCore, dt=1.0)
 
 print("RHS Evaluations: %d" % problem.rhs_evaluations)

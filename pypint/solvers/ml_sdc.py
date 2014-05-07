@@ -850,7 +850,7 @@ class MlSdc(IIterativeTimeSolver, IParallelSolver):
     def _output_format(self, value, _type, width=None):
         def _value_to_numeric(val):
             if isinstance(val, np.ndarray):
-                if val.size > 1:
+                if val.size > 1 or val.dtype == np.complex:
                     return supremum_norm(val)
                 else:
                     return val[0]
