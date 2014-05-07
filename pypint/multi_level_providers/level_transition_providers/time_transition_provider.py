@@ -3,10 +3,12 @@
 .. moduleauthor:: Torbjörn Klatt <t.klatt@fz-juelich.de>
 """
 import numpy as np
+from math import fabs
 
 from pypint.multi_level_providers.level_transition_providers.i_level_transition_provider import ILevelTransitionProvider
 from pypint.utilities.math import lagrange_polynome
 from pypint.utilities import assert_named_argument, assert_condition
+from pypint.utilities.logging import LOG
 
 
 class TimeTransitionProvider(ILevelTransitionProvider):
@@ -56,10 +58,12 @@ class TimeTransitionProvider(ILevelTransitionProvider):
     def prolongate(self, coarse_data):
         super(TimeTransitionProvider, self).prolongate(coarse_data)
         return np.tensordot(self.prolongation_operator, coarse_data, axes=([1], [0]))
+        # return np.dot(self.prolongation_operator, coarse_data)
 
     def restringate(self, fine_data):
         super(TimeTransitionProvider, self).restringate(fine_data)
         return np.tensordot(self.restringation_operator, fine_data, axes=([1], [0]))
+        # return np.dot(self.restringation_operator, fine_data)
 
     def _compute_prolongation_matrix(self):
         self._prolongation_operator = np.zeros((self.num_fine_points, self.num_coarse_points), dtype=float)
@@ -69,15 +73,17 @@ class TimeTransitionProvider(ILevelTransitionProvider):
         #     self._prolongation_operator[k] = self._scaled_interpolation_weights(from_points=self._coarse_nodes,
         #                                                                         to_points=self._fine_nodes,
         #                                                                         index=k)
+        # LOG.debug("Prolongation Operator: %s" % self._prolongation_operator)
 
     def _compute_restringation_matrix(self):
         self._restringation_operator = np.zeros((self.num_coarse_points, self.num_fine_points), dtype=float)
         for k in range(0, self.num_coarse_points):
             for j in range(0, self.num_fine_points):
                 self._restringation_operator[k][j] = lagrange_polynome(j, self._fine_nodes, self._coarse_nodes[k])
-        #     self._restringation_operator[k] = self._scaled_interpolation_weights(from_points=self._fine_nodes,
-        #                                                                          to_points=self._coarse_nodes,
-        #                                                                          index=k)
+                #     self._restringation_operator[k] = self._scaled_interpolation_weights(from_points=self._fine_nodes,
+                #                                                                          to_points=self._coarse_nodes,
+                #                                                                          index=k)
+        # LOG.debug("Restringation Operator: %s" % self._restringation_operator)
 
     def _scaled_interpolation_weights(self, from_points, to_points, index):
         """non-proofen custom integration method

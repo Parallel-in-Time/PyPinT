@@ -111,8 +111,8 @@ class SdcIntegrator(IntegratorBase):
                              checking_obj=self)
             # LOG.debug("Integrating from node {:d} to {:d} with S-Mat row {:d} on interval {}."
             #           .format(_from_index, _target_index, _target_index - 1, self.nodes_type.interval))
-            # print("  data: %s" % data)
-            # print("  weights: %s" % self._qmat[_target_index])
+            # LOG.debug("  data:    %s" % data.flatten())
+            # LOG.debug("  weights: %s" % self._smat[_target_index - 1])
             return np.tensordot(self._smat[_target_index - 1], data, axes=([0], [0]))
         else:
             assert_condition(_target_index < self._qmat.shape[0],
@@ -121,8 +121,8 @@ class SdcIntegrator(IntegratorBase):
                              checking_obj=self)
             # LOG.debug("Integrating up to node {:d} with Q-Mat row {:d} on interval {}."
             #           .format(_target_index, _target_index, self.nodes_type.interval))
-            # print("  data: %s" % data)
-            # print("  weights: %s" % self._qmat[_target_index])
+            # LOG.debug("  data:    %s" % data.flatten())
+            # LOG.debug("  weights: %s" % self._qmat[_target_index])
             return np.tensordot(self._qmat[_target_index], data, axes=([0], [0]))
 
     def transform_interval(self, interval):
@@ -143,8 +143,8 @@ class SdcIntegrator(IntegratorBase):
         else:
             LOG.debug("Cannot transform interval to None. Skipping.")
 
-        # LOG.info("S-Matrix for interval {:s}:\n{:s}".format(interval, self._smat))
-        # LOG.info("Q-Matrix for interval {:s}:\n{:s}".format(interval, self._qmat))
+        # LOG.debug("S-Matrix for interval %s:\n%s" % (interval, self._smat))
+        # LOG.debug("Q-Matrix for interval %s:\n%s" % (interval, self._qmat))
 
     def _construct_s_matrix(self):
         """Constructs integration :math:`S`-matrix

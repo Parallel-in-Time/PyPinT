@@ -24,7 +24,7 @@ class ForwardSendingMessaging(ICommunicationProvider):
             for allowed arguments
         """
         super(ForwardSendingMessaging, self).send(*args, **kwargs)
-        this_got_called(self, *args, **kwargs)
+        # this_got_called(self, *args, **kwargs)
         self._next.write_buffer(*args, **kwargs)
 
     def receive(self, *args, **kwargs):
@@ -36,10 +36,10 @@ class ForwardSendingMessaging(ICommunicationProvider):
         """
         super(ForwardSendingMessaging, self).receive(*args, **kwargs)
         if 'tag' in kwargs:
-            this_got_called(self, *args, add_log_msg=str(self.tagged_buffer(tag=kwargs['tag'])), **kwargs)
+            # this_got_called(self, *args, add_log_msg=str(self.tagged_buffer(tag=kwargs['tag'])), **kwargs)
             return self.tagged_buffer(tag=kwargs['tag'])
         else:
-            this_got_called(self, *args, add_log_msg=str(self.buffer), **kwargs)
+            # this_got_called(self, *args, add_log_msg=str(self.buffer), **kwargs)
             return self.buffer
 
     def link_solvers(self, *args, **kwargs):
