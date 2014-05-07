@@ -155,6 +155,9 @@ class INodes(object):
         }
         return _lines
 
+    def __str__(self):
+        return "INodes<0x%x>(n=%d, nodes=%s)" % (id(self), self.num_nodes, self.nodes)
+
     def __copy__(self):
         copy = self.__class__.__new__(self.__class__)
         copy.__dict__.update(self.__dict__)

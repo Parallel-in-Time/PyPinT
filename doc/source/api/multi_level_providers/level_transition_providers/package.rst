@@ -6,5 +6,6 @@ Level Transition Providers (:mod:`level_transition_providers`)
 .. toctree::
 
     i_level_transition_provider
+    time_transition_provider
     injection
     full_weighting

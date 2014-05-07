@@ -61,6 +61,8 @@ class IProblem(object):
             if "rhs" in kwargs["strings"]:
                 self._strings["rhs"] = kwargs["strings"]["rhs"]
 
+        self._count_rhs_eval = 0
+
     def evaluate(self, time, phi_of_time, partial=None):
         """Evaluates given right hand side at given time and with given time-dependent value.
 
@@ -87,6 +89,7 @@ class IProblem(object):
         """
         assert_is_instance(time, float, descriptor="Time Point", checking_obj=self)
         assert_is_instance(phi_of_time, np.ndarray, descriptor="Data Vector", checking_obj=self)
+        self._count_rhs_eval += 1
         return np.zeros(self.dim, dtype=self.numeric_type)
 
     def implicit_solve(self, next_x, func, method="hybr"):
@@ -155,6 +158,14 @@ class IProblem(object):
     def function(self, function):
         assert_is_callable(function, checking_obj=self)
         self._function = function
+
+    @property
+    def rhs_evaluations(self):
+        return self._count_rhs_eval
+
+    @rhs_evaluations.deleter
+    def rhs_evaluations(self):
+        self._count_rhs_eval = 0
 
     @property
     def time_start(self):

@@ -9,6 +9,7 @@ import numpy as np
 
 from pypint.solvers.diagnosis import Error, Residual
 from pypint.utilities import assert_is_instance, assert_condition, class_name
+from pypint.utilities.logging import LOG
 
 
 class StepSolutionData(object):
@@ -96,6 +97,12 @@ class StepSolutionData(object):
         assert_condition(not self.finalized, AttributeError,
                          message="This solution data storage is already finalized.", checking_obj=self)
         self._finalized = True
+
+    def definalize(self):
+        if self.finalized:
+            self._finalized = False
+        else:
+            LOG.warning("This Solution is not finalized.")
 
     @property
     def finalized(self):

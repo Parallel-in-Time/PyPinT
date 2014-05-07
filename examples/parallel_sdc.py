@@ -10,6 +10,7 @@ Run this script from your terminal with::
 
 .. moduleauthor:: Torbjörn Klatt <t.klatt@fz-juelich.de>
 """
+import numpy as np
 from examples.problems.constant import Constant
 from examples.problems.lambda_u import LambdaU
 from pypint.communicators.forward_sending_messaging import ForwardSendingMessaging
@@ -63,6 +64,9 @@ def solve_parallel_two(prob, _core):
 
 for prob in problems:
     for core in [SemiImplicitSdcCore]:
-        solve_with_factory(prob, core, 2, 5)
+        solve_with_factory(prob, core, 1, 1)
+        print("RHS Evaluations: %d" % prob.rhs_evaluations)
+        del prob.rhs_evaluations
         # solve_parallel(prob, core)
         # solve_parallel_two(prob, core)
+
