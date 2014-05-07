@@ -434,8 +434,8 @@ class MlSdc(IIterativeTimeSolver, IParallelSolver):
 
         # 1. restringate fine data
         _restringated_fine = self.ml_provider.restringate(_fine_data, fine_lvl)
-        LOG.debug("R x (Q_fine x F_fine + FAS_fine):\n    %s\n  = R(%s)\n  = R(%s + %s)"
-                  % (_restringated_fine, _fine_data, q_rhs_fine, fas_fine))
+        # LOG.debug("R x (Q_fine x F_fine + FAS_fine):\n    %s\n  = R(%s)\n  = R(%s + %s)"
+        #           % (_restringated_fine, _fine_data, q_rhs_fine, fas_fine))
 
         assert_condition(q_rhs_coarse.shape == _restringated_fine.shape,
                          ValueError,
@@ -443,10 +443,10 @@ class MlSdc(IIterativeTimeSolver, IParallelSolver):
                                  % (q_rhs_coarse.shape, _restringated_fine.shape),
                          checking_obj=self)
 
-        # 2. compute difference (todo: with respect to interval length !?)
+        # 2. compute difference
         self.state.current_iteration.current_level.fas_correction = _restringated_fine - q_rhs_coarse
-        LOG.debug("FAS Correction:\n    %s\n  = %s - %s"
-                  % (self.state.current_iteration.current_level.fas_correction, _restringated_fine, q_rhs_coarse))
+        # LOG.debug("FAS Correction:\n    %s\n  = %s - %s"
+        #           % (self.state.current_iteration.current_level.fas_correction, _restringated_fine, q_rhs_coarse))
 
     def _recompute_rhs_for_level(self, level):
         if level.rhs is None:
@@ -457,7 +457,7 @@ class MlSdc(IIterativeTimeSolver, IParallelSolver):
                     step.rhs = self.problem.evaluate(step.time_point, step.value)
 
     def _compute_residual(self, finalize=False):
-        LOG.debug("Computing Residual")
+        # LOG.debug("Computing Residual")
         self._print_step(1, None, self.state.current_level.initial.time_point,
                          supremum_norm(self.state.current_level.initial.value),
                          None, None)
@@ -489,20 +489,27 @@ class MlSdc(IIterativeTimeSolver, IParallelSolver):
             else:
                 _previous_time = self.state.current_level.initial.time_point
 
+            _fas = _step.fas_correction if not self.state.current_iteration.on_finest_level else None
+            _cc = _step.coarse_correction if not self.state.current_iteration.on_finest_level else None
+
             if problem_has_exact_solution(self.problem, self):
                 self._print_step(_step_index + 2,
                                  _previous_time,
                                  _step.time_point,
                                  supremum_norm(_step.value),
                                  _step.solution.residual,
-                                 _step.solution.error)
+                                 _step.solution.error,
+                                 _fas,
+                                 _cc)
             else:
                 self._print_step(_step_index + 2,
                                  _previous_time,
                                  _step.time_point,
                                  supremum_norm(_step.value),
                                  _step.solution.residual,
-                                 None)
+                                 None,
+                                 _fas,
+                                 _cc)
 
         self._print_sweep_end()
 
@@ -517,19 +524,19 @@ class MlSdc(IIterativeTimeSolver, IParallelSolver):
             _current_level.initial.value = _msg.value
             _current_level.initial.done()
 
-        LOG.debug("Level %d initial values: %s"
-                  % (self.state.current_iteration.current_level_index, _current_level.values.flatten()))
+        # LOG.debug("Level %d initial values: %s"
+        #           % (self.state.current_iteration.current_level_index, _current_level.values.flatten()))
 
         self._print_level_header()
 
         self._recompute_rhs_for_level(_current_level)
 
-        LOG.debug("Level %d RHS values: %s"
-                  % (self.state.current_iteration.current_level_index, _current_level.rhs.flatten()))
+        # LOG.debug("Level %d RHS values: %s"
+        #           % (self.state.current_iteration.current_level_index, _current_level.rhs.flatten()))
 
         if not self.state.current_iteration.on_finest_level:
             # compute FAS Correction
-            LOG.debug("Computing FAS Correction")
+            # LOG.debug("Computing FAS Correction")
             _q_rhs_coarse = np.append(np.array([0.0], dtype=self.problem.numeric_type),
                                       np.array(
                                           [
@@ -554,7 +561,7 @@ class MlSdc(IIterativeTimeSolver, IParallelSolver):
         if (not self.state.current_iteration.on_base_level and not self.state.current_iteration.on_finest_level) or \
                 (self.state.current_iteration.on_finest_level and self.state.is_first_iteration):
             # pre-sweep
-            LOG.debug("pre-sweep")
+            # LOG.debug("pre-sweep")
             self._sdc_sweep(copy=self.state.current_iteration.on_finest_level, with_residual=True)
 
         if not self.state.current_iteration.on_base_level:
@@ -575,28 +582,28 @@ class MlSdc(IIterativeTimeSolver, IParallelSolver):
                 self.ml_provider.prolongate(_coarser_level.coarse_corrections,
                                             fine_level=self.state.current_iteration.current_level_index,
                                             coarse_level=self.state.current_iteration.coarser_level_index)
-            LOG.debug("Apply Coarse Correction\n  ==> %s\n    = %s + %s"
-                      % ((_current_level.values + _prolongated_coarse_correction).flatten(),
-                         _current_level.values.flatten(), _prolongated_coarse_correction.flatten()))
+            # LOG.debug("Apply Coarse Correction\n  ==> %s\n    = %s + %s"
+            #           % ((_current_level.values + _prolongated_coarse_correction).flatten(),
+            #              _current_level.values.flatten(), _prolongated_coarse_correction.flatten()))
             _corrected_values = _current_level.values + _prolongated_coarse_correction
             for _step_index in range(0, len(_current_level)):
                 _current_level[_step_index].intermediate.value = _corrected_values[_step_index + 1]
 
-            LOG.debug("Recompute Errors")
+            # LOG.debug("Recompute Errors")
             for _step_index in range(0, len(_current_level)):
                 self._core.compute_error(self.state, step_index=_step_index, problem=self.problem)
 
             # post-sweep
-            LOG.debug("post-sweep with coarse-corrected intermediate")
+            # LOG.debug("post-sweep with coarse-corrected intermediate")
             self._sdc_sweep(use_intermediate=True, copy=False, with_residual=False)
         else:
             # post-sweep
-            LOG.debug("post-sweep")
+            # LOG.debug("post-sweep")
             self._sdc_sweep(use_intermediate=False, copy=False, with_residual=False)
 
         if not self.state.current_iteration.on_finest_level:
             # compute coarse correction
-            LOG.debug("Computing Coarse Correction")
+            # LOG.debug("Computing Coarse Correction")
             _restringated_values = \
                 self.ml_provider\
                     .restringate(_finer_level.values,
@@ -605,8 +612,8 @@ class MlSdc(IIterativeTimeSolver, IParallelSolver):
             for _step_index in range(0, len(_current_level)):
                 _step = _current_level[_step_index]
                 _step.coarse_correction = _step.value - _restringated_values[_step_index + 1]
-                LOG.debug("    %d: %s = %s - %s"
-                          % (_step_index, _step.coarse_correction, _step.value, _restringated_values[_step_index + 1]))
+                # LOG.debug("    %d: %s = %s - %s"
+                #           % (_step_index, _step.coarse_correction, _step.value, _restringated_values[_step_index + 1]))
 
         self._compute_residual(finalize=True)
 
@@ -616,8 +623,8 @@ class MlSdc(IIterativeTimeSolver, IParallelSolver):
 
         self._print_level_end()
 
-        LOG.debug("Level %d final values: %s"
-                  % (self.state.current_iteration.current_level_index, _current_level.values.flatten()))
+        # LOG.debug("Level %d final values: %s"
+        #           % (self.state.current_iteration.current_level_index, _current_level.values.flatten()))
 
         if not self.state.current_iteration.on_finest_level:
             # pass on to next finer level
@@ -652,7 +659,7 @@ class MlSdc(IIterativeTimeSolver, IParallelSolver):
         for _step_index in range(0, len(self.state.current_iteration.current_level)):
             # TODO: clean up this conditional
             if self.state.current_iteration.on_finest_level and self.state.is_first_iteration and not use_intermediate:
-                LOG.debug("On First Iteration on Finest Level. Taking breadcasted initial value.")
+                # LOG.debug("On First Iteration on Finest Level. Taking breadcasted initial value.")
                 _integrate_values = \
                     np.append(_integrate_values,
                               np.array([self.state.current_iteration.current_level.initial.rhs],
@@ -660,7 +667,7 @@ class MlSdc(IIterativeTimeSolver, IParallelSolver):
                               axis=0)
 
             elif not self.state.current_iteration.on_finest_level:
-                LOG.debug("Not on Finest Level. Taking current intermediate value.")
+                # LOG.debug("Not on Finest Level. Taking current intermediate value.")
                 _step = self.state.current_iteration.current_level[_step_index]
                 if use_intermediate:
                     if not _step.intermediate.rhs_evaluated:
@@ -678,7 +685,7 @@ class MlSdc(IIterativeTimeSolver, IParallelSolver):
                                   axis=0)
 
             elif use_intermediate:
-                LOG.debug("On Finest Level. Using intermediate value.")
+                # LOG.debug("On Finest Level. Using intermediate value.")
                 _step = self.state.current_iteration.current_level[_step_index]
                 if not _step.intermediate.rhs_evaluated:
                     _step.intermediate.rhs = self.problem.evaluate(_step.time_point, _step.intermediate.value)
@@ -688,7 +695,7 @@ class MlSdc(IIterativeTimeSolver, IParallelSolver):
                               axis=0)
 
             else:
-                LOG.debug("On Finest Level. Taking previous iteration's value.")
+                # LOG.debug("On Finest Level. Taking previous iteration's value.")
                 _step = self.state.previous_iteration[self.state.current_iteration.current_level_index][_step_index]
                 if use_intermediate:
                     if not _step.intermediate.rhs_evaluated:
@@ -710,16 +717,16 @@ class MlSdc(IIterativeTimeSolver, IParallelSolver):
                                              % (_integrate_values.size, _num_nodes),
                          checking_obj=self)
 
-        LOG.debug("Integration Values: %s" % _integrate_values.flatten())
-        if use_intermediate:
-            LOG.debug("Values Before (intermediate): %s"
-                      % ([_step.intermediate.value for _step in self.state.current_level]))
-        else:
-            LOG.debug("Values Before: %s" % self.state.current_iteration.current_level.values.flatten())
+        # LOG.debug("Integration Values: %s" % _integrate_values.flatten())
+        # if use_intermediate:
+        #     LOG.debug("Values Before (intermediate): %s"
+        #               % ([_step.intermediate.value for _step in self.state.current_level]))
+        # else:
+        #     LOG.debug("Values Before: %s" % self.state.current_iteration.current_level.values.flatten())
 
         # do the actual SDC steps of this SDC sweep
         for _step_index in range(0, len(self.state.current_iteration.current_level)):
-            LOG.debug("Step %d:" % _step_index)
+            # LOG.debug("Step %d:" % _step_index)
             _current_step = self.state.current_iteration.current_level[_step_index]
             # if not _current_step.integral_available:
             # TODO: fix unneccessary recomputation of integrals
@@ -727,9 +734,9 @@ class MlSdc(IIterativeTimeSolver, IParallelSolver):
                                                           from_node=_step_index, target_node=_step_index + 1)
 
             # we successively compute the full integral
-            LOG.debug("  Full Integral up to %d: %s = %s + %s"
-                      % (_step_index + 1, self.state.current_iteration.current_level.integral + _current_step.integral,
-                         self.state.current_iteration.current_level.integral, _current_step.integral))
+            # LOG.debug("  Full Integral up to %d: %s = %s + %s"
+            #           % (_step_index + 1, self.state.current_iteration.current_level.integral + _current_step.integral,
+            #              self.state.current_iteration.current_level.integral, _current_step.integral))
             self.state.current_iteration.current_level.integral += _current_step.integral
 
             # do the SDC step of this sweep
@@ -740,7 +747,7 @@ class MlSdc(IIterativeTimeSolver, IParallelSolver):
 
         del _integrate_values
 
-        LOG.debug("Values After: %s" % self.state.current_iteration.current_level.values.flatten())
+        # LOG.debug("Values After: %s" % self.state.current_iteration.current_level.values.flatten())
 
         if with_residual:
             self._compute_residual()
@@ -757,19 +764,19 @@ class MlSdc(IIterativeTimeSolver, IParallelSolver):
             # copy solution of previous iteration to this one
             if self.state.is_first_iteration:
                 if use_intermediate:
-                    LOG.debug("Coppying Initial Value to step %d intermediate" % self.state.current_step_index)
+                    # LOG.debug("Coppying Initial Value to step %d intermediate" % self.state.current_step_index)
                     self.state.current_step.intermediate.value = self.state.current_level.initial.value.copy()
                 else:
-                    LOG.debug("Coppying Initial Value to step %d" % self.state.current_step_index)
+                    # LOG.debug("Coppying Initial Value to step %d" % self.state.current_step_index)
                     self.state.current_step.value = self.state.current_level.initial.value.copy()
             else:
                 if use_intermediate:
-                    LOG.debug("Coppying Previous Iteration's Value to step %d intermediate"
-                              % self.state.current_step_index)
+                    # LOG.debug("Coppying Previous Iteration's Value to step %d intermediate"
+                    #           % self.state.current_step_index)
                     self.state.current_step.intermediate.value = \
                         self.state.previous_iteration[self.state.current_level_index][self.state.current_step_index].value.copy()
                 else:
-                    LOG.debug("Coppying Previous Iteration's Value to step %d" % self.state.current_step_index)
+                    # LOG.debug("Coppying Previous Iteration's Value to step %d" % self.state.current_step_index)
                     self.state.current_step.value = \
                         self.state.previous_iteration[self.state.current_level_index][self.state.current_step_index].value.copy()
 
@@ -793,12 +800,12 @@ class MlSdc(IIterativeTimeSolver, IParallelSolver):
 
     def _print_output_tree_header(self):
         LOG.info("%s   iter" % VERBOSITY_LVL1)
-        LOG.info("%s        \\" % VERBOSITY_LVL2)
-        LOG.info("%s         |- level    nodes" % VERBOSITY_LVL2)
-        LOG.info("%s         |     \\" % VERBOSITY_LVL3)
-        LOG.info("%s         |      |- step    t_0      t_1       phi(t_1)    resid       err" % VERBOSITY_LVL3)
-        LOG.info("%s         |      \\_" % VERBOSITY_LVL2)
-        LOG.info("%s         \\_   sol r.red    err r.red      resid       time" % VERBOSITY_LVL1)
+        LOG.info("%s       \\" % VERBOSITY_LVL2)
+        LOG.info("%s        |- level    nodes" % VERBOSITY_LVL2)
+        LOG.info("%s        |     \\" % VERBOSITY_LVL3)
+        LOG.info("%s        |      |- step    t_0      t_1       phi(t_1)    resid        err          fas         coar.corr" % VERBOSITY_LVL3)
+        LOG.info("%s        |      \\_" % VERBOSITY_LVL2)
+        LOG.info("%s        \\_   sol r.red    err r.red      resid       time" % VERBOSITY_LVL1)
 
     def _print_iteration(self, _iter):
         _iter = self._output_format(_iter, 'int', width=4)
@@ -823,16 +830,18 @@ class MlSdc(IIterativeTimeSolver, IParallelSolver):
         _time = self._output_format(time, 'float', width=6.3)
         LOG.info("%s        \\_   %s    %s    %s    %s" % (VERBOSITY_LVL1, _solred, _errred, _resid, _time))
 
-    def _print_step(self, step, t0, t1, phi, resid, err):
+    def _print_step(self, step, t0, t1, phi, resid, err, fas=None, cc=None):
         _step = self._output_format(step, 'int', width=2)
         _t0 = self._output_format(t0, 'float', width=6.3)
         _t1 = self._output_format(t1, 'float', width=6.3)
         _phi = self._output_format(phi, 'float', width=6.3)
         _resid = self._output_format(resid, 'exp')
         _err = self._output_format(err, 'exp')
-        LOG.info("%s        %s|- %s    %s    %s    %s    %s    %s"
+        _fas = self._output_format(fas, 'exp') if fas is not None else self._output_format(None, 'str')
+        _cc = self._output_format(cc, 'exp') if cc is not None else self._output_format(None, 'str')
+        LOG.info("%s        %s|- %s    %s    %s    %s    %s    %s    %s    %s"
                  % (VERBOSITY_LVL3, ('|      ' * (self.ml_provider.num_levels - self.state.current_level_index)),
-                    _step, _t0, _t1, _phi, _resid, _err))
+                    _step, _t0, _t1, _phi, _resid, _err, _fas, _cc))
 
     def _print_sweep_end(self):
         LOG.info("%s        %s|    \\_"
@@ -840,8 +849,16 @@ class MlSdc(IIterativeTimeSolver, IParallelSolver):
 
     def _output_format(self, value, _type, width=None):
         def _value_to_numeric(val):
-            if isinstance(val, (np.ndarray, IDiagnosisValue)):
-                return supremum_norm(val)
+            if isinstance(val, np.ndarray):
+                if val.size > 1:
+                    return supremum_norm(val)
+                else:
+                    return val[0]
+            elif isinstance(val, IDiagnosisValue):
+                if val.value.size > 1:
+                    return supremum_norm(val)
+                else:
+                    return val.value[0]
             else:
                 return val
 
