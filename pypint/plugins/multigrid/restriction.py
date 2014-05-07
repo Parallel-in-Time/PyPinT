@@ -60,7 +60,7 @@ class RestrictionByStencilForLevelsClassical(IRestriction):
         """
         
         self.level_out.restrict_in[:] = self.pre_assign(self.level_out.restrict_in[:],
-                                                       sig.convolve(self.level_in.mid,
+                                                       sig.convolve(self.level_in.restriction_out_mid,
                                                                     self.reversed_stencil,
                                                                     "valid")[self.slices])
 

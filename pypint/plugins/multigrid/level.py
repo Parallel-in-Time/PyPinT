@@ -159,18 +159,29 @@ class MultigridLevel1D(IMultigridLevel):
             self.interpolate_in = self.mid
             self.restrict_in = None
             self.restrict_out = self.res
+            self.restriction_out_mid = self.res_mid
+            # adjus boundary functions
+            self.fl = self._mg_problem.boundary_functions[0][0]
+            self.fr = self._mg_problem.boundary_functions[0][1]
         elif role is "ML":
             # here we define the ports for the mid level
             self.interpolate_out = self.arr
+            self.interpolate_out_mid = self.mid
             self.interpolate_in = self.mid
             self.restrict_in = self.rhs
             self.restrict_out = self.res
+            self.restriction_out_mid = self.res_mid
+            self.fl = lambda x: 0.
+            self.fr = lambda x: 0.
         elif role is "CL":
             # here we define the ports for the coarsest level
             self.interpolate_out = self.arr
+            self.interpolate_out_mid = self.mid
             self.interpolate_in = None
             self.restrict_in = self.rhs
             self.restrict_out = None
+            self.fl = lambda x: 0.
+            self.fr = lambda x: 0.
         else:
             raise ValueError("MultiLevel has no role "+self.role)
 
@@ -216,16 +227,15 @@ class MultigridLevel1D(IMultigridLevel):
             #  right side
             self.right[:] = self.mid[:self.borders[1]]
         elif self._mg_problem.boundaries[0] == 'dirichlet':
-            fl = self._mg_problem.boundary_functions[0][0]
-            fr = self._mg_problem.boundary_functions[0][1]
+
                 # left from border
             l_f_b = self.space_tensor[0:self.borders[0]]
             # right_from_border
             r_f_b = self.space_tensor[-self.borders[1]:]
             #  left side
-            self.left[:] = fl(l_f_b)
+            self.left[:] = self.fl(l_f_b)
             #  right side
-            self.right[:] = fr(r_f_b)
+            self.right[:] = self.fr(r_f_b)
 
     def _evaluable_view(self, stencil, arr, offset=0):
         """gives the right view of the array

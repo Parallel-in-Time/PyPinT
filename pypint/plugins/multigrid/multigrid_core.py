@@ -396,12 +396,8 @@ if __name__ == '__main__':
     low_direct_smoother = DirectSolverSmoother(laplace_stencil, low_level)
 
 
-
     # first set initial values for the coarser levels to zero
-    mid_level.arr[:] = 0.0
-    mid_level.rhs[:] = 0.0
-    low_level.arr[:] = 0.0
-    low_level.rhs[:] = 0.0
+
     n_jacobi = 1
     # we define the Restriction operator
     rst_stencil = Stencil(np.asarray([0.25, 0.5, 0.25]))
@@ -409,28 +405,30 @@ if __name__ == '__main__':
     rst_mid_to_low = RestrictionByStencilForLevelsClassical(rst_stencil, mid_level, low_level)
 
     # and the interpolation operator
-    ipl_stencil_list_mid_to_top = [(Stencil(np.asarray([1]), center), (1,)),
+    ipl_stencil_list_standard = [(Stencil(np.asarray([1]), center), (1,)),
                                    (Stencil(np.asarray([0.5, 0.5]), center), (0,))]
 
-    ipl_mid_to_top = InterpolationByStencilForLevelsClassical(ipl_stencil_list_mid_to_top,
+    ipl_mid_to_top = InterpolationByStencilForLevelsClassical(ipl_stencil_list_standard,
                                                               mid_level, top_level, pre_assign=iadd)
 
-    ipl_stencil_list_low_to_mid = [(Stencil(np.asarray([1]), center), (0,)),
-                        (Stencil(np.asarray([0.75, 0.25]), center), (1,)),
-                        (Stencil(np.asarray([0.5, 0.5]), center), (2,)),
-                        (Stencil(np.asarray([0.25, 0.75]), center), (3,))]
-    ipl_low_to_mid = InterpolationByStencilForLevelsClassical(ipl_stencil_list_low_to_mid,
+
+    ipl_low_to_mid = InterpolationByStencilForLevelsClassical(ipl_stencil_list_standard,
                                                               low_level, mid_level, pre_assign=iadd)
 
     # initialize top level
     top_level.arr[:] = 105.0
     top_level.res[:] = 0.0
+    top_level.rhs[:] = 0.0
+
     top_level.pad()
     mid_level.arr[:] = 0.0
     mid_level.res[:] = 0.0
+    mid_level.rhs[:] = 0.0
+
     mid_level.pad()
     low_level.arr[:] = 0.0
     low_level.res[:] = 0.0
+    low_level.rhs[:] = 0.0
     low_level.pad()
     mg_problem.fill_rhs(top_level)
     print("**TopLevel before at initial value", top_level.arr)

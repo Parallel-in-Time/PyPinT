@@ -88,7 +88,7 @@ class InterpolationByStencilForLevelsClassical(IInterpolation):
             self.level_out.interpolate_in[self.slices_out[i]] = \
                 self.pre_assign(
                     self.level_out.interpolate_in[self.slices_out[i]],
-                    sig.convolve(self.level_in.mid, self.stencil_list[i][0].arr[::-1], "full"))
+                    sig.convolve(self.level_in.interpolation_out_mid, self.stencil_list[i][0].arr[::-1], "full"))
 
 class InterpolationByStencilForLevels(IInterpolation):
     """1D class for Interpolation which binds two levels
