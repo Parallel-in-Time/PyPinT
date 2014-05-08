@@ -34,22 +34,22 @@ if __name__ == '__main__':
     geo = np.asarray([[0, 1], [0, 1]])
     # the boundary conditions, in this case dirichlet boundary conditions
     boundary_type = ["dirichlet"]*2
-    east_f = lambda x: 100.0
-    west_f = lambda x: 110.0
-    north_f = lambda x: 100.0
-    south_f = lambda x: 110.0
+    east_f = lambda x: 2.0
+    west_f = lambda x: 8.0
+    north_f = lambda x: 1.0
+    south_f = lambda x: 4.0
     boundary_functions = [[west_f, east_f], [north_f, south_f]]
     rhs_function = lambda x: 0.0
 
     mg_problem = MultiGridProblem(laplace_stencil,
                                   rhs_function,
                                   boundary_functions=boundary_functions,
-                                  boundaries=boundary_type,
+                                  boundaries="dirichlet",
                                   geometry=geo)
 
     print("Constructed SpaceTensor\n", mg_problem.construct_space_tensor(10))
     print("mg_problem.geometry", mg_problem.geometry)
-
+    print("mg_problem.boundaries", mg_problem.boundaries)
     print("===== MultiGridLevel2d =====")
     level = MultigridLevel2D((8, 8),
                              mg_problem=mg_problem,
@@ -67,3 +67,10 @@ if __name__ == '__main__':
     print("level.mid_tensor \n", level.mid_tensor)
     print("level.south_tensor \n", level.south_tensor)
     print("level.se_tensor \n", level.se_tensor)
+
+    level.pad()
+    print("level.arr after padding\n", level.arr)
+    print("north_east\n", level.ne)
+    print("north_west\n", level.nw)
+    print("south_east\n", level.se)
+    print("south_west\n", level.sw)

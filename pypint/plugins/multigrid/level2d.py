@@ -88,9 +88,9 @@ class MultigridLevel2D(IMultigridLevel):
         self.west = self.arr.__array__()[self.sl_mid_y, self.sl_front_x]
         self.east = self.arr.__array__()[self.sl_mid_y, self.sl_end_x]
         # north_east
-        self.ne = self.arr.__array__()[self.sl_front_y, self.sl_front_x]
+        self.ne = self.arr.__array__()[self.sl_front_y, self.sl_end_x]
         # north_west
-        self.nw = self.arr.__array__()[self.sl_front_y, self.sl_end_x]
+        self.nw = self.arr.__array__()[self.sl_front_y, self.sl_front_x]
         # south_east
         self.se = self.arr.__array__()[self.sl_end_y, self.sl_end_x]
         # south_west
@@ -259,7 +259,7 @@ class MultigridLevel2D(IMultigridLevel):
             self.ne[:] = self.f_north(self.ne) * 0.5 + self.f_east(self.ne) * 0.5
             self.nw[:] = self.f_north(self.nw) * 0.5 + self.f_west(self.nw) * 0.5
             self.se[:] = self.f_south(self.se) * 0.5 + self.f_east(self.se) * 0.5
-            self.sw[:] = self.f_north(self.sw) * 0.5 + self.f_west(self.sw) * 0.5
+            self.sw[:] = self.f_south(self.sw) * 0.5 + self.f_west(self.sw) * 0.5
 
         else:
             raise NotImplementedError("Bis jetzt sind nur Dirichlet Randbedingungen implementiert")
