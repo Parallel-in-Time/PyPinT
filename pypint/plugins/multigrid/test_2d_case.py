@@ -74,3 +74,5 @@ if __name__ == '__main__':
     print("north_west\n", level.nw)
     print("south_east\n", level.se)
     print("south_west\n", level.sw)
+
+    print("evaluable view of stencil\n", level.evaluable_view(laplace_stencil))

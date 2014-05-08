@@ -276,7 +276,7 @@ class MultigridLevel2D(IMultigridLevel):
 
         return self.arr[tuple(slices)]
 
-    def evaluable_view(self, stencil, offset=0):
+    def evaluable_view(self, stencil, offset=[0,0]):
         """gives the right view of the array
 
         """
