@@ -118,7 +118,7 @@ class MultigridLevel2D(IMultigridLevel):
                                     self.h[i] + self.mg_problem.geometry[i][0]
             # self.l_spaces[i][0] =
             # mid : B -> C
-            self.l_spaces[i][1] = np.arange(1, self.mid.shape[i]) * \
+            self.l_spaces[i][1] = np.arange(1, self.mid.shape[i]+1) * \
                                     self.h[i] + self.mg_problem.geometry[i][0]
             # end : C -> D
             self.l_spaces[i][2] = np.linspace(1, self.borders[i][1], self.borders[i][1]) * \
