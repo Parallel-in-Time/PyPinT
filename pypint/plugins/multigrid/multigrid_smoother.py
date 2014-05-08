@@ -47,6 +47,7 @@ class SplitSmoother(IMultigridSmoother):
         l_plus and l_minus have to be centralized
         """
 
+
         assert_is_instance(l_plus, np.ndarray, "L plus has to be a np array")
         assert_is_instance(l_minus, np.ndarray, "L minus has to be a np array")
         assert_condition(l_plus.shape == l_minus.shape, TypeError,
@@ -62,12 +63,19 @@ class SplitSmoother(IMultigridSmoother):
         self.l_minus = l_minus
         self.st_minus = Stencil(l_minus)
         self.st_plus = Stencil(l_plus)
-        self.evaluable_view = level.evaluable_view(self.st_minus)
+
         self.l_plus_solver = self.st_plus.generate_direct_solver(self.lvl.mid.shape)
         # self.lvl_view_outer = level.evaluable_view(self.st_minus.b*2)
         #
         # grid = self.lvl_view_inner.shape
         # self.st_plus = Stencil(l_plus, grid=grid, solver="factorize")
+        if level.modified_rhs is False:
+            self.convolve_control = "valid"
+            self.evaluable_view = level.evaluable_view(self.st_minus)
+        else:
+            print("huhu")
+            self.convolve_control = "same"
+            self.evaluable_view = level.mid
 
         super().__init__(l_plus.ndim, *args, **kwargs)
 
@@ -86,7 +94,8 @@ class SplitSmoother(IMultigridSmoother):
 
         for i in range(n):
             self.lvl.mid.reshape(-1)[:] = self.l_plus_solver(self.lvl.rhs -
-                                                             self.st_minus.eval_convolve(self.evaluable_view))
+                                                             self.st_minus.eval_convolve(self.evaluable_view,
+                                                                                         self.convolve_control))
         # the st_minus stencil contains in opposite to the usual stencil the factor self.h**2
             # self.lvl.mid.reshape(-1)[:] = \
             #     self.st_plus.solver(self.lvl.rhs

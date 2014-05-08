@@ -1,6 +1,4 @@
 # coding=utf-8
-# each dimension should have its own level class in order to
-# simplify programming.
 
 import numpy as np
 import scipy.signal as sig
@@ -11,18 +9,16 @@ from pypint.plugins.multigrid.stencil import Stencil
 from pypint.plugins.multigrid.i_multigrid_level import IMultigridLevel
 
 
-class MultigridLevel1D(IMultigridLevel):
+class MultigridLevel2D(IMultigridLevel):
     """
     Summary
     -------
-    Simple extension of an numpy array, which allows
+    Simple usage of an numpy array, which allows
     the trouble-free use of a padded numpy array.
     Every calculation is applied to the non-padded version.
     The boundaries are used, whenever a convolution is applied.
 
     One aspect of this class is the port concept for interpolation and restriction
-
-
             _________________
             |               |
     FL :    | Level         |
@@ -52,8 +48,7 @@ class MultigridLevel1D(IMultigridLevel):
     --------
 
     """
-    def __init__(self, shape, mg_problem=None, max_borders=None,
-                dtype=float, role="ML"):
+    def __init__(self, shape, mg_problem=None, max_borders=None, dtype=float, role="ML"):
         """
         Summary
         -------
@@ -77,7 +72,7 @@ class MultigridLevel1D(IMultigridLevel):
                 self._mg_problem = mg_problem
             else:
                 raise ValueError("Please provide a MultiGridProblem")
-        elif isinstance(shape, MultigridLevel1D):
+        elif isinstance(shape, MultigridLevel2D):
             # now we have a fallback solution if the borders are chosen wrong
             forward_shape = shape.size - shape.borders[0] - shape.borders[1]
             if isinstance(max_borders, np.ndarray) and max_borders.size >= 2:
@@ -188,6 +183,7 @@ class MultigridLevel1D(IMultigridLevel):
         # in order to know if the rhs was modified
         self.modified_rhs = False
 
+
     def adjust_references(self):
         self.left = self.arr.__array__()[:self.borders[0]]
         self.right = self.arr.__array__()[-self.borders[1]:]
@@ -272,9 +268,7 @@ class MultigridLevel1D(IMultigridLevel):
         if self.modified_rhs is False:
             self.res_mid[:] = self.rhs - stencil.eval_convolve(self.evaluable_view(stencil)) / self.h**2
         else:
-            self.res_mid[:] = self.rhs - stencil.eval_convolve(self.mid, "same") / self.h**2
-
-
+            self.res_mid[:] = self.rhs - stencil.eval_convolve(self.evaluable_view(stencil), "same") / self.h**2
     def border_function_generator(self, stencil):
         """Generates a function which returns true if the index of the
            evaluable view is on the border, attention just works if evaluable view was generated!
@@ -286,6 +280,3 @@ class MultigridLevel1D(IMultigridLevel):
                 if indice[0] < stencil.b[0][0] or indice[0] >= self.mid.shape[0]+stencil.b[0][0]:
                     return True
         return is_on_border
-
-
-
