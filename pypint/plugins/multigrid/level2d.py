@@ -48,7 +48,7 @@ class MultigridLevel2D(IMultigridLevel):
     --------
 
     """
-    def __init__(self, shape, mg_problem, max_borders, dtype=float, role="ML"):
+    def __init__(self, shape, mg_problem=None, max_borders=np.ones((2, 2)), dtype=float, role="ML"):
         """
         Summary
         -------
@@ -62,14 +62,17 @@ class MultigridLevel2D(IMultigridLevel):
         assert_condition(len(shape) == 2, ValueError, "shape has to be of length 2")
         assert_condition(mg_problem.dimension == 2, ValueError, "mg_problem has the wrong dimension")
         assert_is_instance(max_borders, np.ndarray, "max borders has to be a numpy array")
-        assert_condition(max_borders.shape == (2, 2), "max borders has the wrong shape")
+        assert_condition(max_borders.shape == (2, 2), ValueError, "max borders has the wrong shape")
 
         forward_shape = (shape[0] + max_borders[0][1]+max_borders[0][0],
                          shape[1] + max_borders[1][1]+max_borders[1][0])
         self.arr = np.zeros(forward_shape, dtype=dtype)
         self.borders = max_borders
         self.dim = 2
-        self.mg_problem = mg_problem
+        self._mg_problem = mg_problem
+
+
+
         #define the right slices
         self.sl_mid_x = slice(self.borders[0][0], -self.borders[0][1])
         self.sl_mid_y = slice(self.borders[1][0], -self.borders[1][1])
@@ -93,6 +96,16 @@ class MultigridLevel2D(IMultigridLevel):
         # south_west
         self.sw = self.arr.__array__()[self.sl_end_y, self.sl_front_x]
 
+        # the first border points coincides with the geometrical border
+        # that is why self.mid.size+1 is used instead of self.mid.size - 1
+
+        self.h = np.asarray([0., 0.])
+        self.h[0] = (self.mg_problem.geometry[0][1] - self.mg_problem.geometry[0][0]) / (self.mid.shape[0] + 1)
+
+        self.h[1] = (self.mg_problem.geometry[1][1] - self.mg_problem.geometry[1][0]) / (self.mid.shape[1] + 1)
+        # print("diff:", (self.mg_problem.geometry[0][1]
+        #              - self.mg_problem.geometry[0][0]))
+        # print("teiler:", (self.mid.shape[0] + 1))
         # define the tensors for each part
             #begin with the needed linspaces, to simplify the naming
             # l_spaces[axis][{0=front,1=mid,2=end}]
@@ -103,14 +116,19 @@ class MultigridLevel2D(IMultigridLevel):
             # front : A -> B
             self.l_spaces[i][0] = np.linspace(-self.borders[i][0], -1, self.borders[i][0]) * \
                                     self.h[i] + self.mg_problem.geometry[i][0]
+            # self.l_spaces[i][0] =
             # mid : B -> C
             self.l_spaces[i][1] = np.arange(1, self.mid.shape[i]) * \
                                     self.h[i] + self.mg_problem.geometry[i][0]
             # end : C -> D
             self.l_spaces[i][2] = np.linspace(1, self.borders[i][1], self.borders[i][1]) * \
                                     self.h[i] + self.mg_problem.geometry[i][1]
-
+            print("MultigridLevel2D linear spaces in direction "+str(i)+":")
+            print("front :\n", self.l_spaces[i][0])
+            print("mid :\n", self.l_spaces[i][1])
+            print("end :\n", self.l_spaces[i][2])
         # using this linear spaces we define space tensors for different parts
+        self.mid_tensor = np.meshgrid(self.l_spaces[0][1], self.l_spaces[1][1])
 
         self.north_tensor = np.meshgrid(self.l_spaces[0][1], self.l_spaces[1][0])
         self.south_tensor = np.meshgrid(self.l_spaces[0][1], self.l_spaces[1][2])
@@ -127,17 +145,10 @@ class MultigridLevel2D(IMultigridLevel):
         # space for the rhs
         self.rhs = np.copy(self.mid)
 
-        # the first border points coincides with the geometrical border
-        # that is why self.mid.size+1 is used instead of self.mid.size - 1
-        self.h = [0, 0]
-        self.h[0] = (self._mg_problem.geometry[0][1]
-                     - self._mg_problem.geometry[0][0]) / (self.mid.shape[0] + 1)
 
-        self.h[1] = (self._mg_problem.geometry[1][1]
-                     - self._mg_problem.geometry[1][0]) / (self.mid.shape[1] + 1)
 
         lspc = []
-        for i in range(self._dimension):
+        for i in range(self.dim):
             start = self._mg_problem.geometry[i][0] - self.h[i] * (max_borders[i][0] - 1)
             stop = self._mg_problem.geometry[i][1] + self.h[i] * (max_borders[i][1] - 1)
             lspc.append(np.linspace(start, stop, self.arr.shape[i]))
@@ -254,22 +265,16 @@ class MultigridLevel2D(IMultigridLevel):
             raise NotImplementedError("Bis jetzt sind nur Dirichlet Randbedingungen implementiert")
 
 
-    def _evaluable_view(self, stencil, arr, offset=0):
+    def _evaluable_view(self, stencil, arr, offset=[0, 0]):
         """gives the right view of the array
 
         """
-        if self.dim == 1:
-            if isinstance(stencil, Stencil):
+        slices = []
+        for i in range(self.dim):
+            slices.append(slice(self.borders[i][0] - stencil.b[i][0] + offset[0],
+                                -(self.borders[i][1] - stencil.b[i][1]) + offset[1]))
 
-                l = self.borders[0]-stencil.b[0][0]
-                r = -(self.borders[1]-stencil.b[0][1])
-            else:
-                l = self.borders[0]-stencil[0][0]
-                r = -(self.borders[1]-stencil[0][1])
-            return arr[l+offset: r+offset]
-        else:
-            raise NotImplementedError("Another dimension than one "
-                                      "is not supplied")
+        return self.arr[tuple(slices)]
 
     def evaluable_view(self, stencil, offset=0):
         """gives the right view of the array
@@ -287,7 +292,9 @@ class MultigridLevel2D(IMultigridLevel):
         if self.modified_rhs is False:
             self.res_mid[:] = self.rhs - stencil.eval_convolve(self.evaluable_view(stencil)) / self.h**2
         else:
-            self.res_mid[:] = self.rhs - stencil.eval_convolve(self.evaluable_view(stencil), "same") / self.h**2
+            # not sure if this works
+            self.res_mid[:] = self.rhs - stencil.eval_convolve(self.mid, "full") / self.h**2
+
     def border_function_generator(self, stencil):
         """Generates a function which returns true if the index of the
            evaluable view is on the border, attention just works if evaluable view was generated!
@@ -296,6 +303,8 @@ class MultigridLevel2D(IMultigridLevel):
 
         def is_on_border(indice):
             for i in range(self.dim):
-                if indice[0] < stencil.b[0][0] or indice[0] >= self.mid.shape[0]+stencil.b[0][0]:
-                    return True
+                if indice[i] >= stencil.b[i][0] and indice[i]  < self.mid.shape[i]+stencil.b[i][0]:
+                    return False
+            return True
+
         return is_on_border

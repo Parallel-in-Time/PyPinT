@@ -50,6 +50,7 @@ if __name__ == '__main__':
 
     print("Mid of stencil method", mg_problem.mid_of_stencil(laplace_stencil))
     print("Eval_Convolve ([100,105,105,105,110])", laplace_stencil.eval_convolve(np.asarray([100, 105, 105, 105, 110])))
+
     print("===== MultiGridProblemTest =====")
     print("Constructed SpaceTensor", mg_problem.construct_space_tensor(12))
     print("Checked if the grid distances are right",
@@ -68,7 +69,7 @@ if __name__ == '__main__':
     low_level = MultigridLevel1D(65, mg_problem=mg_problem,
                                  max_borders=borders, role="CL")
     # check if the distance between points is calculated right
-    print("===== IMultigridLevel Test =====")
+    print("===== MultigridLevel Test =====")
     print("3 different GridDistances from top to low level:")
     print(top_level.h)
     print(mid_level.h)
