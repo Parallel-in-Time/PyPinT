@@ -48,7 +48,7 @@ class MultigridLevel2D(IMultigridLevel):
     --------
 
     """
-    def __init__(self, shape, mg_problem=None, max_borders=None, dtype=float, role="ML"):
+    def __init__(self, shape, mg_problem, max_borders, dtype=float, role="ML"):
         """
         Summary
         -------
@@ -57,96 +57,96 @@ class MultigridLevel2D(IMultigridLevel):
         """
         # the level should know its geometrical information, because it differs from level to level
         self.space_tensor = None
+        # assertion block for obvious bugs
+        assert_is_instance(shape, tuple, "shape has to be a tuple")
+        assert_condition(len(shape) == 2, ValueError, "shape has to be of length 2")
+        assert_condition(mg_problem.dimension == 2, ValueError, "mg_problem has the wrong dimension")
+        assert_is_instance(max_borders, np.ndarray, "max borders has to be a numpy array")
+        assert_condition(max_borders.shape == (2, 2), "max borders has the wrong shape")
 
-        if isinstance(shape, int):
-            if isinstance(max_borders, np.ndarray) and max_borders.size >= 2:
-                forward_shape = shape + max_borders[0] + max_borders[1]
-            elif max_borders is None:
-                max_borders = np.asarray([0, 0])
-                forward_shape = shape
-            else:
-                raise ValueError("Please provide an ndarray with the size of 2")
-            self.arr = np.zeros(forward_shape, dtype=dtype)
-            if isinstance(mg_problem, MultiGridProblem) \
-                    and mg_problem.dimension == 1:
-                self._mg_problem = mg_problem
-            else:
-                raise ValueError("Please provide a MultiGridProblem")
-        elif isinstance(shape, MultigridLevel2D):
-            # now we have a fallback solution if the borders are chosen wrong
-            forward_shape = shape.size - shape.borders[0] - shape.borders[1]
-            if isinstance(max_borders, np.ndarray) and max_borders.size >= 2:
-                forward_shape = forward_shape + max_borders[0] + max_borders[1]
-            else:
-                max_borders = shape.borders
-                forward_shape = forward_shape + max_borders[0] + max_borders[1]
-
-            self.arr = np.zeros(forward_shape, dtype=dtype)
-
-            self.arr[max_borders[0]:-max_borders[1]] = shape.mid
-
-            if isinstance(mg_problem, MultiGridProblem) \
-                    and mg_problem.dimension == 1:
-                self._mg_problem = mg_problem
-            else:
-                self._mg_problem = shape.mg_problem
-        elif isinstance(shape, np.ndarray):
-            # in this case new memory has to be wasted because we have to
-            # embed this array into a bigger one
-            # but we at least use all properties of the template array
-            shape = shape.flatten()
-            if isinstance(max_borders, np.ndarray) and max_borders.size >= 2:
-                forward_shape = shape.size + max_borders[0] + max_borders[1]
-            elif max_borders is None:
-                max_borders = np.asarray([0, 0])
-                forward_shape = shape.size
-            else:
-                raise ValueError("Please provide an ndarray with the size of 2")
-
-            self.arr = np.zeros(forward_shape, dtype=dtype)
-            self.arr[max_borders[0]:-max_borders[1]] = shape
-
-            if isinstance(mg_problem, MultiGridProblem) \
-                    and mg_problem.dimension == 1:
-                self._mg_problem = mg_problem
-            else:
-                raise ValueError("Please provide a MultiGridProblem")
-
-        else:
-            raise TypeError("shape is in no shape")
-
+        forward_shape = (shape[0] + max_borders[0][1]+max_borders[0][0],
+                         shape[1] + max_borders[1][1]+max_borders[1][0])
+        self.arr = np.zeros(forward_shape, dtype=dtype)
         self.borders = max_borders
-        # gives view to the padded regions and the middle
-        # here it is important to use __array__, because
-        # the different parts are just ndarrays and not another MultigridLevel1D objects
-        self.left = self.arr.__array__()[:self.borders[0]]
-        self.right = self.arr.__array__()[-self.borders[1]:]
-        self.mid = self.arr.__array__()[self.borders[0]:-self.borders[1]]
+        self.dim = 2
+        self.mg_problem = mg_problem
+        #define the right slices
+        self.sl_mid_x = slice(self.borders[0][0], -self.borders[0][1])
+        self.sl_mid_y = slice(self.borders[1][0], -self.borders[1][1])
+        self.sl_front_x = slice(None, self.borders[0][0])
+        self.sl_end_x = slice(-self.borders[0][1], None)
+        self.sl_front_y = slice(None, self.borders[1][0])
+        self.sl_end_y = slice(-self.borders[1][1], None)
+
+        #define the parts
+        self.mid = self.arr.__array__()[self.sl_mid_y, self.sl_mid_x]
+        self.north = self.arr.__array__()[self.sl_front_y, self.sl_mid_x]
+        self.south = self.arr.__array__()[self.sl_end_y, self.sl_mid_x]
+        self.west = self.arr.__array__()[self.sl_mid_y, self.sl_front_x]
+        self.east = self.arr.__array__()[self.sl_mid_y, self.sl_end_x]
+        # north_east
+        self.ne = self.arr.__array__()[self.sl_front_y, self.sl_front_x]
+        # north_west
+        self.nw = self.arr.__array__()[self.sl_front_y, self.sl_end_x]
+        # south_east
+        self.se = self.arr.__array__()[self.sl_end_y, self.sl_end_x]
+        # south_west
+        self.sw = self.arr.__array__()[self.sl_end_y, self.sl_front_x]
+
+        # define the tensors for each part
+            #begin with the needed linspaces, to simplify the naming
+            # l_spaces[axis][{0=front,1=mid,2=end}]
+        self.l_spaces = [[0, 0, 0], [0, 0, 0], [0, 0, 0]]
+        for i in range(self.dim):
+            # A-----B------------C----D
+
+            # front : A -> B
+            self.l_spaces[i][0] = np.linspace(-self.borders[i][0], -1, self.borders[i][0]) * \
+                                    self.h[i] + self.mg_problem.geometry[i][0]
+            # mid : B -> C
+            self.l_spaces[i][1] = np.arange(1, self.mid.shape[i]) * \
+                                    self.h[i] + self.mg_problem.geometry[i][0]
+            # end : C -> D
+            self.l_spaces[i][2] = np.linspace(1, self.borders[i][1], self.borders[i][1]) * \
+                                    self.h[i] + self.mg_problem.geometry[i][1]
+
+        # using this linear spaces we define space tensors for different parts
+
+        self.north_tensor = np.meshgrid(self.l_spaces[0][1], self.l_spaces[1][0])
+        self.south_tensor = np.meshgrid(self.l_spaces[0][1], self.l_spaces[1][2])
+
+        self.east_tensor = np.meshgrid(self.l_spaces[0][2], self.l_spaces[1][1])
+        self.west_tensor = np.meshgrid(self.l_spaces[0][1], self.l_spaces[1][1])
+
+        self.ne_tensor = np.meshgrid(self.l_spaces[0][2], self.l_spaces[1][0])
+        self.nw_tensor = np.meshgrid(self.l_spaces[0][0], self.l_spaces[1][0])
+        self.se_tensor = np.meshgrid(self.l_spaces[0][2], self.l_spaces[1][2])
+        self.sw_tensor = np.meshgrid(self.l_spaces[0][0], self.l_spaces[1][2])
+
+
+        # space for the rhs
         self.rhs = np.copy(self.mid)
 
         # the first border points coincides with the geometrical border
         # that is why self.mid.size+1 is used instead of self.mid.size - 1
-        self.h = (self._mg_problem.geometry[0][1]
-                  - self._mg_problem.geometry[0][0]) / (self.mid.size + 1)
-        start = self._mg_problem.geometry[0][0] - self.h * (max_borders[0] - 1)
-        stop = self._mg_problem.geometry[0][1] + self.h * (max_borders[1] - 1)
-        self.space_tensor = np.linspace(start, stop, self.arr.size)
-        self._mid_points = self.mid.size
-        self.dim = 1
+        self.h = [0, 0]
+        self.h[0] = (self._mg_problem.geometry[0][1]
+                     - self._mg_problem.geometry[0][0]) / (self.mid.shape[0] + 1)
 
+        self.h[1] = (self._mg_problem.geometry[1][1]
+                     - self._mg_problem.geometry[1][0]) / (self.mid.shape[1] + 1)
+
+        lspc = []
+        for i in range(self._dimension):
+            start = self._mg_problem.geometry[i][0] - self.h[i] * (max_borders[i][0] - 1)
+            stop = self._mg_problem.geometry[i][1] + self.h[i] * (max_borders[i][1] - 1)
+            lspc.append(np.linspace(start, stop, self.arr.shape[i]))
+        self.space_tensor = np.asarray(np.meshgrid(*lspc))
         # set the interpolation and restriction ports according to the level which is used
         self.role = role
         # some place to store the residuum
         self.res = np.zeros(self.arr.shape)
-        # some views on the residuum
-        self.res_left = self.res.__array__()[:self.borders[0]]
-        self.res_right = self.res.__array__()[-self.borders[1]:]
-        self.res_mid = self.res.__array__()[self.borders[0]:-self.borders[1]]
-
-        # it would be nicer to have the slices of the different parts
-        self.mid_slice = slice(self.borders[0], self.borders[1])
-        self.left_slice = slice(None, self.borders[0])
-        self.right_slice = slice(-self.borders[1], None)
+        self.res_mid = self.res.__array__()[self.sl_mid_y, self.sl_mid_x]
 
         if role is "FL":
             # here we define the ports for the finest level
@@ -155,9 +155,11 @@ class MultigridLevel2D(IMultigridLevel):
             self.restrict_in = None
             self.restrict_out = self.res
             self.restriction_out_mid = self.res_mid
-            # adjus boundary functions
-            self.fl = self._mg_problem.boundary_functions[0][0]
-            self.fr = self._mg_problem.boundary_functions[0][1]
+            # adjust boundary functions
+            self.f_west = self._mg_problem.boundary_functions[0][0]
+            self.f_east = self._mg_problem.boundary_functions[0][1]
+            self.f_north = self._mg_problem.boundary_functions[1][0]
+            self.f_south = self._mg_problem.boundary_functions[1][1]
         elif role is "ML":
             # here we define the ports for the mid level
             self.interpolate_out = self.arr
@@ -166,8 +168,7 @@ class MultigridLevel2D(IMultigridLevel):
             self.restrict_in = self.rhs
             self.restrict_out = self.res
             self.restriction_out_mid = self.res_mid
-            self.fl = lambda x: 0.
-            self.fr = lambda x: 0.
+
         elif role is "CL":
             # here we define the ports for the coarsest level
             self.interpolate_out = self.arr
@@ -175,20 +176,36 @@ class MultigridLevel2D(IMultigridLevel):
             self.interpolate_in = None
             self.restrict_in = self.rhs
             self.restrict_out = None
-            self.fl = lambda x: 0.
-            self.fr = lambda x: 0.
         else:
             raise ValueError("MultiLevel has no role "+self.role)
+
+        if role is not "FL":
+            self.f_west = lambda x: 0.
+            self.f_east = lambda x: 0.
+            self.f_north = lambda x: 0.
+            self.f_south = lambda x: 0.
 
         # in order to know if the rhs was modified
         self.modified_rhs = False
 
 
     def adjust_references(self):
-        self.left = self.arr.__array__()[:self.borders[0]]
-        self.right = self.arr.__array__()[-self.borders[1]:]
-        self.mid = self.arr.__array__()[self.borders[0]:-self.borders[1]]
-
+        #define the parts
+        self.mid = self.arr.__array__()[self.sl_mid_y, self.sl_mid_x]
+        self.north = self.arr.__array__()[self.sl_front_y, self.sl_mid_x]
+        self.south = self.arr.__array__()[self.sl_end_y, self.sl_mid_x]
+        self.west = self.arr.__array__()[self.sl_mid_y, self.sl_front_x]
+        self.east = self.arr.__array__()[self.sl_mid_y, self.sl_end_x]
+        # north_east
+        self.ne = self.arr.__array__()[self.sl_front_y, self.sl_front_x]
+        # north_west
+        self.nw = self.arr.__array__()[self.sl_front_y, self.sl_end_x]
+        # south_east
+        self.se = self.arr.__array__()[self.sl_end_y, self.sl_end_x]
+        # south_west
+        self.sw = self.arr.__array__()[self.sl_end_y, self.sl_front_x]
+        # and the residuum
+        self.res_mid = self.res.__array__()[self.sl_mid_y, self.sl_mid_x]
 
     @property
     def mg_problem(self):
@@ -208,32 +225,34 @@ class MultigridLevel2D(IMultigridLevel):
         ue : ndarray
             numpy array to embed
         """
-        assert_condition(ue.size == self._mid_points, ValueError,
+        assert_condition(ue.shape == self.mid.shape, ValueError,
                          "Array to embed has the wrong size")
-        self[self.borders[0]:-self.borders[1]] = ue
+        self.mid = ue
 
     def pad(self):
         """
         Summary
         -------
-        Uses the informations in Multigridproblems in order to
+        Uses the information in Multigridproblems in order to
         pad the array.
         """
-        if self._mg_problem.boundaries[0] == 'periodic':
-            #  left side
-            self.left[:] = self.mid[-self.borders[0]:]
-            #  right side
-            self.right[:] = self.mid[:self.borders[1]]
-        elif self._mg_problem.boundaries[0] == 'dirichlet':
 
-                # left from border
-            l_f_b = self.space_tensor[0:self.borders[0]]
-            # right_from_border
-            r_f_b = self.space_tensor[-self.borders[1]:]
-            #  left side
-            self.left[:] = self.fl(l_f_b)
-            #  right side
-            self.right[:] = self.fr(r_f_b)
+        # just dirichlet conditions
+
+        if self.mg_problem.boundaries[0] is 'dirichlet' and self.mg_problem.boundaries[1] is 'dirichlet':
+
+            self.north[:] = self.f_north(self.north_tensor)
+            self.east[:] = self.f_east(self.east_tensor)
+            self.south[:] = self.f_south(self.south_tensor)
+            self.west[:] = self.f_west(self.west_tensor)
+            self.ne[:] = self.f_north(self.ne) * 0.5 + self.f_east(self.ne) * 0.5
+            self.nw[:] = self.f_north(self.nw) * 0.5 + self.f_west(self.nw) * 0.5
+            self.se[:] = self.f_south(self.se) * 0.5 + self.f_east(self.se) * 0.5
+            self.sw[:] = self.f_north(self.sw) * 0.5 + self.f_west(self.sw) * 0.5
+
+        else:
+            raise NotImplementedError("Bis jetzt sind nur Dirichlet Randbedingungen implementiert")
+
 
     def _evaluable_view(self, stencil, arr, offset=0):
         """gives the right view of the array
