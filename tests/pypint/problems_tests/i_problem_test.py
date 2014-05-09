@@ -43,17 +43,17 @@ class IProblemTest(NumpyAwareTestCase):
         self.assertEqual(_test_obj.dim, 3)
 
     def test_provides_evaluation(self):
-        self._default.evaluate(0.0, np.array([1.0]))
-        self.assertRaises(ValueError, self._default.evaluate, complex(1.0, 1.0), np.array([1.0]))
-        self.assertRaises(ValueError, self._default.evaluate, 1.0, 1.0)
+        self._default.evaluate_wrt_time(0.0, np.array([1.0]))
+        self.assertRaises(ValueError, self._default.evaluate_wrt_time, complex(1.0, 1.0), np.array([1.0]))
+        self.assertRaises(ValueError, self._default.evaluate_wrt_time, 1.0, 1.0)
 
     def test_provides_implicit_solver(self):
         _next_x = np.array([1.0])
         _func = lambda x: 1.0 - x
         _x = self._default.implicit_solve(_next_x, _func)
         self.assertNumpyArrayAlmostEqual(_x, _next_x, places=3)
-        self.assertRaises(ValueError, self._default.evaluate, 1.0, _func)
-        self.assertRaises(ValueError, self._default.evaluate, _next_x, "not callable")
+        self.assertRaises(ValueError, self._default.evaluate_wrt_time, 1.0, _func)
+        self.assertRaises(ValueError, self._default.evaluate_wrt_time, _next_x, "not callable")
 
     def test_takes_descriptive_strings(self):
         self.assertRegex(self._default.__str__(), "IProblem")

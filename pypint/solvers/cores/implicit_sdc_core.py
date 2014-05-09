@@ -56,12 +56,11 @@ class ImplicitSdcCore(SdcSolverCore):
             _expl_term = \
                 state.current_time_step.previous_step.value \
                 - state.current_step.delta_tau \
-                * _problem.evaluate(state.current_step.time_point,
-                                    _previous_iteration_current_step.value) \
+                * _problem.evaluate_wrt_time(state.current_step.time_point, _previous_iteration_current_step.value) \
                 + state.current_step.integral
             _func = lambda x_next: \
                 _expl_term \
-                + state.current_step.delta_tau * _problem.evaluate(state.current_step.time_point, x_next) \
+                + state.current_step.delta_tau * _problem.evaluate_wrt_time(state.current_step.time_point, x_next) \
                 - x_next
             _sol = _problem.implicit_solve(state.current_step.value, _func)
 

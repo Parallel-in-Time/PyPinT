@@ -50,8 +50,8 @@ class ImplicitMlSdcCore(MlSdcSolverCore):
             _previous_iteration_current_step = self._previous_iteration_current_step(state)
         if not _previous_iteration_current_step.rhs_evaluated:
             _previous_iteration_current_step.rhs = \
-                _problem.evaluate(_previous_iteration_current_step.time_point,
-                                  _previous_iteration_current_step.value)
+                _problem.evaluate_wrt_time(_previous_iteration_current_step.time_point,
+                                           _previous_iteration_current_step.value)
 
         if not state.current_iteration.on_finest_level:
             _previous_iteration_previous_step = state.current_iteration.current_level.previous_step
@@ -59,8 +59,8 @@ class ImplicitMlSdcCore(MlSdcSolverCore):
             _previous_iteration_previous_step = self._previous_iteration_previous_step(state)
         if not _previous_iteration_previous_step.rhs_evaluated:
             _previous_iteration_previous_step.rhs = \
-                _problem.evaluate(_previous_iteration_previous_step.time_point,
-                                  _previous_iteration_previous_step.value)
+                _problem.evaluate_wrt_time(_previous_iteration_previous_step.time_point,
+                                           _previous_iteration_previous_step.value)
 
         _fas = np.zeros(_previous_iteration_current_step.rhs.shape,
                         dtype=_previous_iteration_current_step.rhs.dtype)
@@ -93,7 +93,7 @@ class ImplicitMlSdcCore(MlSdcSolverCore):
                 + state.current_step.integral + _fas
             _func = lambda x_next: \
                 _expl_term \
-                + state.current_step.delta_tau * _problem.evaluate(state.current_step.time_point, x_next) \
+                + state.current_step.delta_tau * _problem.evaluate_wrt_time(state.current_step.time_point, x_next) \
                 - x_next
             _sol = _problem.implicit_solve(state.current_step.value, _func)
 
