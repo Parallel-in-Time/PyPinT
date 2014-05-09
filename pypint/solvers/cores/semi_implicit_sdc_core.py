@@ -59,20 +59,20 @@ class SemiImplicitSdcCore(SdcSolverCore):
             _expl_term = \
                 state.previous_step.value \
                 + state.current_step.delta_tau \
-                * (_problem.evaluate(state.current_step.time_point,
-                                     state.previous_step.value,
-                                     partial="expl")
-                   - _problem.evaluate(state.previous_step.time_point,
-                                       _previous_iteration_previous_step.value,
-                                       partial="expl")
-                   - _problem.evaluate(state.current_step.time_point,
-                                       _previous_iteration_current_step.value,
-                                       partial="impl")) \
+                * (_problem.evaluate_wrt_time(state.current_step.time_point,
+                                              state.previous_step.value,
+                                              partial="expl")
+                   - _problem.evaluate_wrt_time(state.previous_step.time_point,
+                                                _previous_iteration_previous_step.value,
+                                                partial="expl")
+                   - _problem.evaluate_wrt_time(state.current_step.time_point,
+                                                _previous_iteration_current_step.value,
+                                                partial="impl")) \
                 + state.current_step.integral
             _func = lambda x_next: \
                 _expl_term \
-                + state.current_step.delta_tau * _problem.evaluate(state.current_step.time_point,
-                                                                   x_next, partial="impl") \
+                + state.current_step.delta_tau * _problem.evaluate_wrt_time(state.current_step.time_point,
+                                                                            x_next, partial="impl") \
                 - x_next
             _sol = _problem.implicit_solve(state.current_step.value, _func)
 

@@ -6,10 +6,11 @@
 import numpy as np
 
 from pypint.problems.i_problem import IProblem
+from pypint.problems.transient_problem_mixin import TransientProblemMixin
 from pypint.utilities import assert_condition, assert_is_instance
 
 
-class IInitialValueProblem(IProblem):
+class IInitialValueProblem(IProblem, TransientProblemMixin):
     """Basic interface for initial value problems.
 
     Parameters
@@ -19,10 +20,11 @@ class IInitialValueProblem(IProblem):
     """
     def __init__(self, *args, **kwargs):
         super(IInitialValueProblem, self).__init__(*args, **kwargs)
+        TransientProblemMixin.__init__(self, *args, **kwargs)
 
         self._initial_value = None
-        if "initial_value" in kwargs:
-            self.initial_value = kwargs["initial_value"]
+        if 'initial_value' in kwargs:
+            self.initial_value = kwargs['initial_value']
 
     @property
     def initial_value(self):
@@ -58,11 +60,13 @@ class IInitialValueProblem(IProblem):
 
     def print_lines_for_log(self):
         _lines = super(IInitialValueProblem, self).print_lines_for_log()
+        _lines.update(TransientProblemMixin.print_lines_for_log(self))
         _lines['Initial Value'] = 'u({:.3f}) = {}'.format(self.time_start, self.initial_value)
         return _lines
 
     def __str__(self):
         _out = super(IInitialValueProblem, self).__str__()
+        _out += TransientProblemMixin.__str__(self)
         _out += r", u({:.2f})={}".format(self.time_start, self.initial_value)
         return _out
 

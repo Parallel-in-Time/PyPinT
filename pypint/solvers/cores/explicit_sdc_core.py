@@ -41,10 +41,10 @@ class ExplicitSdcCore(SdcSolverCore):
         _previous_iteration_previous_step = self._previous_iteration_previous_step(state)
 
         if not _previous_step.rhs_evaluated:
-            _previous_step.rhs = _problem.evaluate(state.current_step.time_point, _previous_step.value)
+            _previous_step.rhs = _problem.evaluate_wrt_time(state.current_step.time_point, _previous_step.value)
         if not _previous_iteration_previous_step.rhs_evaluated:
             _previous_iteration_previous_step.rhs = \
-                _problem.evaluate(state.current_step.time_point, _previous_iteration_previous_step.value)
+                _problem.evaluate_wrt_time(state.current_step.time_point, _previous_iteration_previous_step.value)
 
         # using step-wise formula
         # Formula:

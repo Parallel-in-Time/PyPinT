@@ -521,8 +521,8 @@ class ParallelSdc(IIterativeTimeSolver, IParallelSolver):
         if self.classic:
             if not self.state.current_time_step.initial.rhs_evaluated:
                 self.state.current_time_step.initial.rhs = \
-                    self.problem.evaluate(self.state.current_time_step.initial.time_point,
-                                          self.state.current_time_step.initial.value)
+                    self.problem.evaluate_wrt_time(self.state.current_time_step.initial.time_point,
+                                                   self.state.current_time_step.initial.value)
 
             _integrate_values = np.array([self.state.current_time_step.initial.rhs], dtype=self.problem.numeric_type)
             for _step_index in range(0, len(self.state.current_time_step)):
@@ -534,7 +534,7 @@ class ParallelSdc(IIterativeTimeSolver, IParallelSolver):
                 else:
                     _step = self.state.previous_iteration[self.state.current_time_step_index][_step_index]
                     if not _step.rhs_evaluated:
-                        _step.rhs = self.problem.evaluate(_step.time_point, _step.value)
+                        _step.rhs = self.problem.evaluate_wrt_time(_step.time_point, _step.value)
                     _integrate_values = \
                         np.append(_integrate_values,
                                   np.array([_step.rhs], dtype=self.problem.numeric_type),
@@ -615,8 +615,8 @@ class ParallelSdc(IIterativeTimeSolver, IParallelSolver):
         #     #  initial value for this time step
         #     _integrate_values = \
         #         np.array(
-        #             [self.problem.evaluate(self.state.current_time_step.initial.time_point,
-        #                                    self.state.current_time_step.initial.value.copy())
+        #             [self.problem.evaluate_wrt_time(self.state.current_time_step.initial.time_point,
+        #                                             self.state.current_time_step.initial.value.copy())
         #              ], dtype=self.problem.numeric_type)
         #
         #     if _current_step_index > 0:
@@ -626,8 +626,8 @@ class ParallelSdc(IIterativeTimeSolver, IParallelSolver):
         #             _integrate_values = \
         #                 np.append(_integrate_values,
         #                           np.array(
-        #                               [self.problem.evaluate(self.state.current_time_step[_index].solution.time_point,
-        #                                                      self.state.current_time_step[_index].solution.value.copy())
+        #                               [self.problem.evaluate_wrt_time(self.state.current_time_step[_index].solution.time_point,
+        #                                                               self.state.current_time_step[_index].solution.value.copy())
         #                                ], dtype=self.problem.numeric_type
         #                           ), axis=0)
         #
@@ -641,8 +641,8 @@ class ParallelSdc(IIterativeTimeSolver, IParallelSolver):
         #         _integrate_values = \
         #             np.append(_integrate_values,
         #                       np.array(
-        #                           [self.problem.evaluate(self.state.current_time_step[_index].solution.time_point,
-        #                                                  _this_value)
+        #                           [self.problem.evaluate_wrt_time(self.state.current_time_step[_index].solution.time_point,
+        #                                                           _this_value)
         #                            ], dtype=self.problem.numeric_type
         #                       ), axis=0)
         #     assert_condition(_integrate_values.size == self.num_nodes,

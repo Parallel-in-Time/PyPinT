@@ -49,20 +49,18 @@ class LambdaU(IInitialValueProblem, HasExactSolutionMixin, HasDirectImplicitMixi
             self.initial_value = complex(1.0, 0.0) * np.ones(self.dim)
             # self.initial_value = 1.0 * np.ones(self.dim)
 
-        if 'lmbda' not in kwargs:
-            kwargs['lmbda'] = 1.0
-        self.lmbda = kwargs['lmbda']
+        self.lmbda = kwargs.get('lmbda', 1.0)
 
         if isinstance(self.lmbda, complex):
             self.numeric_type = np.complex
 
         self.exact_function = lambda phi_of_time: self.initial_value * np.exp(self.lmbda * phi_of_time)
 
-        self._strings['rhs'] = r"\lambda u(t, \phi(t))"
+        self._strings['rhs_wrt_time'] = r"\lambda u(t, \phi(t))"
         self._strings['exact'] = r"e^{\lambda t}"
 
-    def evaluate(self, time, phi_of_time, partial=None):
-        super(LambdaU, self).evaluate(time, phi_of_time, partial)
+    def evaluate_wrt_time(self, time, phi_of_time, partial=None):
+        super(LambdaU, self).evaluate_wrt_time(time, phi_of_time, partial)
         if partial is not None and isinstance(self.lmbda, complex):
             if isinstance(partial, str) and partial == 'impl':
                 return self.lmbda.imag * phi_of_time
@@ -131,10 +129,10 @@ class LambdaU(IInitialValueProblem, HasExactSolutionMixin, HasDirectImplicitMixi
 
     def print_lines_for_log(self):
         _lines = super(LambdaU, self).print_lines_for_log()
-        _lines['Coefficients'] = '\lambda = {}'.format(self.lmbda)
+        _lines['Coefficients'] = '\lambda = %s' % self.lmbda
         return _lines
 
     def __str__(self):
         str = super(LambdaU, self).__str__()
-        str += r", \lambda={}".format(self.lmbda)
+        str += r", \lambda=%s" % self.lmbda
         return str

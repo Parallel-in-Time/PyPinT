@@ -451,10 +451,10 @@ class MlSdc(IIterativeTimeSolver, IParallelSolver):
     def _recompute_rhs_for_level(self, level):
         if level.rhs is None:
             if not level.initial.rhs_evaluated:
-                level.initial.rhs = self.problem.evaluate(level.initial.time_point, level.initial.value)
+                level.initial.rhs = self.problem.evaluate_wrt_time(level.initial.time_point, level.initial.value)
             for step in level:
                 if not step.rhs_evaluated:
-                    step.rhs = self.problem.evaluate(step.time_point, step.value)
+                    step.rhs = self.problem.evaluate_wrt_time(step.time_point, step.value)
 
     def _compute_residual(self, finalize=False):
         # LOG.debug("Computing Residual")
@@ -650,8 +650,8 @@ class MlSdc(IIterativeTimeSolver, IParallelSolver):
 
         if not self.state.current_iteration.current_level.initial.rhs_evaluated:
             self.state.current_iteration.current_level.initial.rhs = \
-                self.problem.evaluate(self.state.current_iteration.current_level.initial.time_point,
-                                      self.state.current_iteration.current_level.initial.value)
+                self.problem.evaluate_wrt_time(self.state.current_iteration.current_level.initial.time_point,
+                                               self.state.current_iteration.current_level.initial.value)
 
         _integrate_values = np.array([self.state.current_iteration.current_level.initial.rhs],
                                      dtype=self.problem.numeric_type)
@@ -671,14 +671,15 @@ class MlSdc(IIterativeTimeSolver, IParallelSolver):
                 _step = self.state.current_iteration.current_level[_step_index]
                 if use_intermediate:
                     if not _step.intermediate.rhs_evaluated:
-                        _step.intermediate.rhs = self.problem.evaluate(_step.time_point, _step.intermediate.value)
+                        _step.intermediate.rhs = self.problem.evaluate_wrt_time(_step.time_point,
+                                                                                _step.intermediate.value)
                     _integrate_values = \
                         np.append(_integrate_values,
                                   np.array([_step.intermediate.rhs], dtype=self.problem.numeric_type),
                                   axis=0)
                 else:
                     if not _step.rhs_evaluated:
-                        _step.rhs = self.problem.evaluate(_step.time_point, _step.value)
+                        _step.rhs = self.problem.evaluate_wrt_time(_step.time_point, _step.value)
                     _integrate_values = \
                         np.append(_integrate_values,
                                   np.array([_step.rhs], dtype=self.problem.numeric_type),
@@ -688,7 +689,7 @@ class MlSdc(IIterativeTimeSolver, IParallelSolver):
                 # LOG.debug("On Finest Level. Using intermediate value.")
                 _step = self.state.current_iteration.current_level[_step_index]
                 if not _step.intermediate.rhs_evaluated:
-                    _step.intermediate.rhs = self.problem.evaluate(_step.time_point, _step.intermediate.value)
+                    _step.intermediate.rhs = self.problem.evaluate_wrt_time(_step.time_point, _step.intermediate.value)
                 _integrate_values = \
                     np.append(_integrate_values,
                               np.array([_step.intermediate.rhs], dtype=self.problem.numeric_type),
@@ -699,14 +700,15 @@ class MlSdc(IIterativeTimeSolver, IParallelSolver):
                 _step = self.state.previous_iteration[self.state.current_iteration.current_level_index][_step_index]
                 if use_intermediate:
                     if not _step.intermediate.rhs_evaluated:
-                        _step.intermediate.rhs = self.problem.evaluate(_step.time_point, _step.intermediate.value)
+                        _step.intermediate.rhs = self.problem.evaluate_wrt_time(_step.time_point,
+                                                                                _step.intermediate.value)
                     _integrate_values = \
                         np.append(_integrate_values,
                                   np.array([_step.intermediate.rhs], dtype=self.problem.numeric_type),
                                   axis=0)
                 else:
                     if not _step.rhs_evaluated:
-                        _step.rhs = self.problem.evaluate(_step.time_point, _step.value)
+                        _step.rhs = self.problem.evaluate_wrt_time(_step.time_point, _step.value)
                     _integrate_values = \
                         np.append(_integrate_values,
                                   np.array([_step.rhs], dtype=self.problem.numeric_type),
