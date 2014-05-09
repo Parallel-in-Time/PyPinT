@@ -269,12 +269,16 @@ class MultigridLevel2D(IMultigridLevel):
         """gives the right view of the array
 
         """
-        slices = []
-        for i in range(self.dim):
-            slices.append(slice(self.borders[i][0] - stencil.b[i][0] + offset[0],
-                                -(self.borders[i][1] - stencil.b[i][1]) + offset[1]))
+        if (stencil.b == self.borders).all():
+            return self.arr
+        else:
+            slices = []
+            for i in range(self.dim):
+                slices.append(slice(self.borders[i][0] - stencil.b[i][0] + offset[0],
+                                    -(self.borders[i][1] - stencil.b[i][1]) + offset[1]))
 
-        return self.arr[tuple(slices)]
+            return self.arr[tuple(slices)]
+
 
     def evaluable_view(self, stencil, offset=[0,0]):
         """gives the right view of the array
@@ -302,9 +306,12 @@ class MultigridLevel2D(IMultigridLevel):
         """
 
         def is_on_border(indice):
+            in_the_middle = True
+
             for i in range(self.dim):
-                if indice[i] >= stencil.b[i][0] and indice[i]  < self.mid.shape[i]+stencil.b[i][0]:
-                    return False
-            return True
+                in_the_middle = in_the_middle and \
+                               (indice[i] >= stencil.b[i][0] and
+                                indice[i] < (self.mid.shape[i] + stencil.b[i][1]))
+            return not in_the_middle
 
         return is_on_border

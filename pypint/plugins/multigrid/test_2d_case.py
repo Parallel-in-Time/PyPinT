@@ -53,7 +53,7 @@ if __name__ == '__main__':
     print("===== MultiGridLevel2d =====")
     level = MultigridLevel2D((8, 8),
                              mg_problem=mg_problem,
-                             max_borders=np.asarray([[2, 2], [2, 2]]),
+                             max_borders=np.asarray([[1, 1], [1, 1]]),
                              role="FL")
 
     print("level.arr \n", level.arr)
@@ -76,3 +76,6 @@ if __name__ == '__main__':
     print("south_west\n", level.sw)
 
     print("evaluable view of stencil\n", level.evaluable_view(laplace_stencil))
+    is_on_border = level.border_function_generator(laplace_stencil)
+    border_truth = [[is_on_border((i, j)) for j in range(level.arr.shape[1])] for i in range(level.arr.shape[0])]
+    print("border_truth\n", border_truth)

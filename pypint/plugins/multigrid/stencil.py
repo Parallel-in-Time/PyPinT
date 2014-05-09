@@ -363,9 +363,3 @@ class Stencil(object):
                 raise NotImplementedError("No one needs more than 3 dimensions")
 
             level.modified_rhs = True
-
-
-
-
-
-
