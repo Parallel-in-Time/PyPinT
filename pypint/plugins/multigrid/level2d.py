@@ -123,10 +123,10 @@ class MultigridLevel2D(IMultigridLevel):
             # end : C -> D
             self.l_spaces[i][2] = np.linspace(1, self.borders[i][1], self.borders[i][1]) * \
                                     self.h[i] + self.mg_problem.geometry[i][1]
-            print("MultigridLevel2D linear spaces in direction "+str(i)+":")
-            print("front :\n", self.l_spaces[i][0])
-            print("mid :\n", self.l_spaces[i][1])
-            print("end :\n", self.l_spaces[i][2])
+            # print("MultigridLevel2D linear spaces in direction "+str(i)+":")
+            # print("front :\n", self.l_spaces[i][0])
+            # print("mid :\n", self.l_spaces[i][1])
+            # print("end :\n", self.l_spaces[i][2])
         # using this linear spaces we define space tensors for different parts
         self.mid_tensor = np.meshgrid(self.l_spaces[0][1], self.l_spaces[1][1])
 
@@ -141,12 +141,9 @@ class MultigridLevel2D(IMultigridLevel):
         self.se_tensor = np.meshgrid(self.l_spaces[0][2], self.l_spaces[1][2])
         self.sw_tensor = np.meshgrid(self.l_spaces[0][0], self.l_spaces[1][2])
 
-
         # space for the rhs
-        self.rhs = np.copy(self.mid)
-
-
-
+        # self.rhs = np.copy(self.mid)
+        self.rhs = np.zeros(self.mid.shape, dtype=dtype)
         lspc = []
         for i in range(self.dim):
             start = self._mg_problem.geometry[i][0] - self.h[i] * (max_borders[i][0] - 1)
@@ -294,10 +291,10 @@ class MultigridLevel2D(IMultigridLevel):
 
     def compute_residual(self, stencil):
         if self.modified_rhs is False:
-            self.res_mid[:] = self.rhs - stencil.eval_convolve(self.evaluable_view(stencil)) / self.h**2
+            self.res_mid[:] = self.rhs - stencil.eval_convolve(self.evaluable_view(stencil))
         else:
             # not sure if this works
-            self.res_mid[:] = self.rhs - stencil.eval_convolve(self.mid, "full") / self.h**2
+            self.res_mid[:] = self.rhs - stencil.eval_convolve(self.mid, "same")
 
     def border_function_generator(self, stencil):
         """Generates a function which returns true if the index of the

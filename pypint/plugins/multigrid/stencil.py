@@ -361,12 +361,12 @@ class Stencil(object):
                 # left side
                 for i in range(self.center[0]):
                     rhs[i] -= np.dot(self.arr[i:self.center[0]],
-                                     u[0:self.center[0]-i]) / (level.h**self.order)
+                                     u[0:self.center[0]-i])
             # the same for the right side
                 til = self.arr.size - self.center[0] - 1
                 print(til)
                 for i in range(til):
-                    rhs[-til] -= np.dot(self.arr[-til + i:], u[-til: u.size - i]) / (level.h**self.order)
+                    rhs[-til] -= np.dot(self.arr[-til + i:], u[-til: u.size - i])
 
             elif self.dim == 2:
                 temp_arr = np.copy(level.evaluable_view(self))
