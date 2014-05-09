@@ -40,11 +40,11 @@ class Constant(IInitialValueProblem, HasExactSolutionMixin):
         self.time_end = 1.0
         self.initial_value = shift * np.ones(self.dim)
         self.constant = constant
-        self._strings["rhs"] = "C"
+        self._strings['rhs_wrt_time'] = "C"
         self._exact_function = lambda t: self.initial_value + self.constant * t
 
-    def evaluate(self, time, phi_of_time, partial=None):
-        super(Constant, self).evaluate(time, phi_of_time, partial)
+    def evaluate_wrt_time(self, time, phi_of_time, partial=None):
+        super(Constant, self).evaluate_wrt_time(time, phi_of_time, partial)
         return self.constant * np.ones(self.dim)
 
     def print_lines_for_log(self):

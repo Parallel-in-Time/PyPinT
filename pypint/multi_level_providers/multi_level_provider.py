@@ -10,8 +10,7 @@ from pypint.utilities import assert_condition, assert_is_instance
 
 
 class MultiLevelProvider(object):
-    def __init__(self, num_levels=0, default_integrator=None,
-                 default_transitioner=None):
+    def __init__(self, num_levels=0, default_integrator=None, default_transitioner=None):
         """
         Parameters
         ----------
@@ -98,7 +97,7 @@ class MultiLevelProvider(object):
         """
         return self._level_transition(coarse_level=coarse_level, fine_level=fine_level).restringate(fine_data)
 
-    def add_coarse_level(self, integrator, top_level=-1):
+    def add_coarse_level(self, integrator, top_level=0):
         """Adds a coarser level including an integrator and transitioner.
 
         Parameters
@@ -108,7 +107,7 @@ class MultiLevelProvider(object):
 
         top_level : :py:class:`int`
             Next finer level of the new level.
-            ``0`` is the finest level, ``-1`` the currently coarsest.
+            ``-1`` is the finest level, ``0`` the currently coarsest.
 
         Raises
         ------
@@ -185,18 +184,20 @@ class MultiLevelProvider(object):
         assert_condition(coarse_level is not None or fine_level is not None,
                          ValueError, message="Either coarse or fine level index must be given", checking_obj=self)
         if fine_level is None:
-            fine_level = coarse_level - 1
+            fine_level = coarse_level + 1
         if coarse_level is None:
-            coarse_level = fine_level + 1
-        assert_condition(fine_level >= 0, ValueError,
+            coarse_level = fine_level - 1
+        assert_condition(fine_level < self.num_levels, ValueError,
                          message="There is no finer level than given coarse one: {:d}".format(coarse_level),
                          checking_obj=self)
-        assert_condition(coarse_level < self.num_levels, ValueError,
+        assert_condition(coarse_level >= 0, ValueError,
                          message="There is no coarser level than given fine one: {:d}".format(fine_level),
                          checking_obj=self)
 
-        if coarse_level in self._level_transitioners \
-                and fine_level in self._level_transitioners[coarse_level]:
+        if coarse_level in self._level_transitioners and fine_level in self._level_transitioners[coarse_level]:
             return self._level_transitioners[coarse_level][fine_level]
         else:
             return self._default_transitioner
+
+    def __str__(self):
+        return "MultiLevelProvider<0x%x>(num_level=%d)" % (id(self), self.num_levels)

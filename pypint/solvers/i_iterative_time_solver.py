@@ -6,7 +6,7 @@
 from pypint.solvers.states.i_solver_state import ISolverState
 from pypint.solvers.cores.i_solver_core import ISolverCore
 from pypint.utilities.threshold_check import ThresholdCheck
-from pypint.utilities import assert_condition
+from pypint.utilities import assert_condition, assert_is_callable, class_name
 
 
 class IIterativeTimeSolver(object):
@@ -21,7 +21,7 @@ class IIterativeTimeSolver(object):
         self._threshold_check = ThresholdCheck()
         self._state = ISolverState()
 
-    def init(self, problem, integrator, **kwargs):
+    def init(self, problem, **kwargs):
         """Initializes the solver with a given problem and options.
 
         Parameters
@@ -37,7 +37,9 @@ class IIterativeTimeSolver(object):
             see :py:attr:`.threshold`
         """
         self._problem = problem
-        self._integrator = integrator()
+        if 'integrator' in kwargs:
+            assert_is_callable(kwargs['integrator'], message="Integrator must be instantiable.", checking_obj=self)
+            self._integrator = kwargs['integrator']()
         if "threshold" in kwargs and isinstance(kwargs["threshold"], ThresholdCheck):
             self.threshold = kwargs["threshold"]
 
@@ -58,7 +60,7 @@ class IIterativeTimeSolver(object):
         """
         assert_condition(issubclass(core, ISolverCore),
                          ValueError, message="The given solver core class must be valid: NOT {:s}"
-                                             .format(core.__name__),
+                                             .format(class_name(core)),
                          checking_obj=self)
         self._core = core()
 

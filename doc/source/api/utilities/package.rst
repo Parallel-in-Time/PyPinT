@@ -10,6 +10,7 @@ Utilities (:mod:`utilities`)
     assertions
     config
     logging
+    math
     sdc_solver_factory
     threshold_check
     tracing

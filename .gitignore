@@ -55,3 +55,4 @@ pypint/version.py
 /runs
 !/runs/README
 
+.ipynb_checkpoints

@@ -165,3 +165,6 @@ class PolynomialWeightFunction(IWeightFunction):
         _lines = super(PolynomialWeightFunction, self).print_lines_for_log()
         _lines['Coefficients'] = "{}".format(self.coefficients)
         return _lines
+
+    def __str__(self):
+        return "PolynomialWeightFunction<0x%x>(weights=%s)" % (id(self), self.weights)

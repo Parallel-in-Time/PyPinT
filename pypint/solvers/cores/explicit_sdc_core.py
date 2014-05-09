@@ -37,17 +37,22 @@ class ExplicitSdcCore(SdcSolverCore):
 
         _problem = kwargs['problem']
 
-        _previous_step_solution = state.previous_step.solution
-        _previous_iteration_previous_step_solution = self._previous_iteration_previous_step(state).solution
+        _previous_step = state.previous_step
+        _previous_iteration_previous_step = self._previous_iteration_previous_step(state)
+
+        if not _previous_step.rhs_evaluated:
+            _previous_step.rhs = _problem.evaluate_wrt_time(state.current_step.time_point, _previous_step.value)
+        if not _previous_iteration_previous_step.rhs_evaluated:
+            _previous_iteration_previous_step.rhs = \
+                _problem.evaluate_wrt_time(state.current_step.time_point, _previous_iteration_previous_step.value)
 
         # using step-wise formula
         # Formula:
         #   u_{m+1}^{k+1} = u_m^{k+1} + \Delta_\tau [ F(u_m^{k+1}) - F(u_m^k) ] + \Delta_t I_m^{m+1}(F(u^k))
         # Note: \Delta_t is always 1.0 as it's part of the integral
-        state.current_step.solution.value = \
-            (_previous_step_solution.value + state.current_step.delta_tau
-             * (_problem.evaluate(state.current_step.time_point, _previous_step_solution.value)
-                - _problem.evaluate(state.current_step.time_point, _previous_iteration_previous_step_solution.value))
+        state.current_step.value = \
+            (_previous_step.value + state.current_step.delta_tau
+             * (_previous_step.rhs - _previous_iteration_previous_step.rhs)
              + state.current_step.integral)
 
 

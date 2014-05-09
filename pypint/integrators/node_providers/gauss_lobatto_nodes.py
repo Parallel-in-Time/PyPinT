@@ -72,3 +72,6 @@ class GaussLobattoNodes(INodes):
                                                  [1], dtype=np.float64)))
         self._nodes = np.array(np.append([-1.0], np.append(roots, [1.0])),
                                dtype=np.float64)
+
+    def __str__(self):
+        return "GaussLobattoNodes<0x%x>(n=%d, nodes=%s)" % (id(self), self.num_nodes, self.nodes)

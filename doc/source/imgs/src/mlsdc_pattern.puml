@@ -1,0 +1,52 @@
+@startuml
+
+participant L2 as "        finest level        "
+participant L1 as "    intermediate level(s)    "
+participant L0 as "         base level         "
+
+note over L2: U(k,2) -> F(U(k,2))
+
+L2 -> L2: SDC
+note over L2: U(k',2) -> F(U(k',2))
+
+L2 -> L1: restrict
+note over L1: U(k,1) -> F(U(k,1))
+
+L1 -> L1: FAS
+note over L1: tau = Q(1)*F(U(k,1)) - R*Q(2)*F(U(k',2))
+
+L1 -> L1: SDC with FAS
+note over L1: U(k',1) -> F(U(k',1))
+
+L1 -> L0: restrict
+note over L0: U(k,0) -> F(U(k,0))
+
+L0 -> L0: FAS
+note over L0: tau = Q(0)*F(U(k,0)) - R*Q(1)*F(U(k',1))
+
+L0 -> L0: SDC with FAS
+note over L0: U(k+,0) -> F(U(k+,0))
+
+L0 -> L0: coarse correction
+note over L0: c(0) = U(k+,0) - R*U(k',1)
+
+L0 -> L1: prolongate
+
+L1 -> L1: correct
+note over L1: U(k'',1) = U(k',1) + P*c(0)
+
+L1 -> L1: SDC
+note over L1: U(k+,1) -> F(U(k+,1))
+
+L1 -> L1: coarse correction
+note over L1: c(1) = U(k+,1) - R*U(k',2)
+
+L1 -> L2: prolongate
+
+L2 -> L2: correct
+note over L2: U(k'',2) = U(k',2) + P*c(1)
+
+L2 -> L2: SDC
+note over L2: U(k+,2) -> F(U(k+,2))
+
+@enduml
