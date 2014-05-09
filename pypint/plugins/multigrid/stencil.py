@@ -147,8 +147,8 @@ class Stencil(object):
             solver = spla.factorized(self.sp_matrix)
         else:
             sp_matrix = self.to_sparse_matrix(grid, "csc")
-            print("Jahier\n", sp_matrix.todense())
-            print("Jahier.shape\n", sp_matrix.todense().shape)
+            # print("Jahier\n", sp_matrix.todense())
+            # print("Jahier.shape\n", sp_matrix.todense().shape)
             solver = spla.factorized(sp_matrix)
         return solver
 
@@ -161,6 +161,15 @@ class Stencil(object):
             array to convolve
         array_out : ndarray
             array to storage the result
+
+        Examples
+        --------
+        It is possible to use this as just an evaluation funktion like Ax=b
+        otherwise it is also possible to use it as an operator
+        Ax=b:
+        stencil.eval_convolve(level.mid, "same")
+        as operator, where the boundary is taken into account:
+        stencil.eval_convolve(level.evaluate_view(stencil),"valid" )
         """
         return sig.convolve(array_in, self.reversed_arr, convolve_control)
 

@@ -85,9 +85,7 @@ if __name__ == '__main__':
     print("level.rhs after modification\n", level.rhs)
 
     print("==== DirectSolver ====")
-    omega = 0.5
-    l_plus = np.asarray([0, -2.0/omega, 0])
-    l_minus = np.asarray([1.0, -2.0*(1.0 - 1.0/omega), 1.0])
+
     direct_solver = DirectSolverSmoother(laplace_stencil, level)
     laplace_stencil.modify_rhs(level)
     direct_solver.relax()
@@ -98,3 +96,20 @@ if __name__ == '__main__':
     print("test of the solution Ax=b by sparse matrix application \n", rhs_test)
 
     print("==== SplitSmoother ====")
+    omega = 0.5
+    l_plus = np.asarray([[0, 0, 0],
+                         [0, -4.0/omega, 0],
+                         [0, 0, 0]])
+    l_minus = np.asarray([[0, 1.0, 0], [1.0, -4.0*(1.0 - 1.0/omega), 1.0], [0., 1., 0.]])
+
+    jacobi_smoother = SplitSmoother(l_plus, l_minus, level)
+    level.mid[:] = 0
+    jacobi_smoother.relax()
+    print("level.arr after one jacobi step with modified rhs\n", level.arr)
+
+    level.mid[:] = 0.
+    level.modified_rhs = False
+    level.rhs[:] = 0.
+    jacobi_smoother = SplitSmoother(l_plus, l_minus, level)
+    jacobi_smoother.relax()
+    print("level.arr after one jacobi step with unmodified rhs\n", level.arr)

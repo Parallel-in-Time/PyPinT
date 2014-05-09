@@ -90,17 +90,8 @@ class SplitSmoother(IMultigridSmoother):
         """
 
         for i in range(n):
-            self.lvl.mid.reshape(-1)[:] = self.l_plus_solver(self.lvl.rhs -
-                                                             self.st_minus.eval_convolve(self.evaluable_view,
-                                                                                         self.convolve_control))
-        # the st_minus stencil contains in opposite to the usual stencil the factor self.h**2
-            # self.lvl.mid.reshape(-1)[:] = \
-            #     self.st_plus.solver(self.lvl.rhs
-            #         - self.st_minus.eval_convolve(
-            #             self.lvl_view_outer).reshape(-1)).reshape(
-            #                 self.lvl_view_inner.shape)
-
-
+            rhs = self.lvl.rhs - self.st_minus.eval_convolve(self.evaluable_view, self.convolve_control)
+            self.lvl.mid[:] = self.l_plus_solver(rhs.reshape(-1)).reshape(self.lvl.mid.shape)
 
 class WeightedJacobiSmoother(IMultigridSmoother):
     """Implement a simple JaocbiSmoother , to test the SplitSmoother
