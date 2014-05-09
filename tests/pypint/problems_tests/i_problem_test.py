@@ -12,21 +12,21 @@ class IProblemTest(NumpyAwareTestCase):
     def test_takes_a_function(self):
         def _test_func():
             return np.pi
-        _test_obj = IProblem(function=_test_func)
-        self.assertTrue(callable(_test_obj.function))
-        self.assertEqual(_test_obj.function(), np.pi)
+        _test_obj = IProblem(rhs_function_wrt_time=_test_func)
+        self.assertTrue(callable(_test_obj.rhs_function_wrt_time))
+        self.assertEqual(_test_obj.rhs_function_wrt_time(), np.pi)
 
-    def test_specifies_time_interval(self):
-        self.assertEqual(self._default.time_start, 0.0, "Default time start is 0.0")
-        self.assertEqual(self._default.time_end, 1.0, "Default time start is 1.0")
-        self._default.time_start = 1.0
-        self.assertEqual(self._default.time_start, 1.0)
-        self._default.time_end = 2.0
-        self.assertEqual(self._default.time_end, 2.0)
-
-        _test_obj = IProblem(time_start=1.0, time_end=2.0)
-        self.assertEqual(_test_obj.time_start, 1.0)
-        self.assertEqual(_test_obj.time_end, 2.0)
+    # def test_specifies_time_interval(self):
+    #     self.assertEqual(self._default.time_start, 0.0, "Default time start is 0.0")
+    #     self.assertEqual(self._default.time_end, 1.0, "Default time start is 1.0")
+    #     self._default.time_start = 1.0
+    #     self.assertEqual(self._default.time_start, 1.0)
+    #     self._default.time_end = 2.0
+    #     self.assertEqual(self._default.time_end, 2.0)
+    #
+    #     _test_obj = IProblem(time_start=1.0, time_end=2.0)
+    #     self.assertEqual(_test_obj.time_start, 1.0)
+    #     self.assertEqual(_test_obj.time_end, 2.0)
 
     def test_takes_a_numeric_type(self):
         _test_obj = IProblem(numeric_type=np.float)
@@ -58,7 +58,7 @@ class IProblemTest(NumpyAwareTestCase):
     def test_takes_descriptive_strings(self):
         self.assertRegex(self._default.__str__(), "IProblem")
 
-        _test_obj = IProblem(strings={'rhs': "Right-Hand Side Formula"})
+        _test_obj = IProblem(strings={'rhs_wrt_time': "Right-Hand Side Formula"})
         self.assertRegex(_test_obj.__str__(), "Right-Hand Side Formula")
 
 

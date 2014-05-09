@@ -47,7 +47,7 @@ class IProblem(object):
         self._dim = kwargs.get('dim', 1)
 
         self._strings = {
-            'rhs': None,
+            'rhs_wrt_time': None,
             'exact': None
         }
         if 'strings' in kwargs:

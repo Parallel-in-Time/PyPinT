@@ -14,8 +14,8 @@ from pypint.utilities import assert_is_callable, assert_is_instance, assert_cond
 from pypint.utilities.logging import LOG
 
 
-class IsMultiGridProblemMixin(object):
-    """Provides functionality of a problem to be have multigrid as its space solver
+class MultiGridProblemMixin(object):
+    """Provides functionality of a problem to have multigrid as its space solver
 
     Contains every aspect of the Problem that has to be solved, like the stencil from which on may derive :math:`A_h`
     for each level.
@@ -27,13 +27,8 @@ class IsMultiGridProblemMixin(object):
         """
         Parameters
         ----------
-        stencil : :py:class:`.Stencil`
-            multigrid stencil specifying the discretization of the problem
-        function : :py:class:`callable`
-            function returning the space-and-time-dependent values for the right hand side for the space solver
-        stencil_center : :py:class:`numpy.ndarray` or :py:class:`int`
-            *(optional)*
-            defaults to the arithmetic center of given stencil
+        rhs_function_wrt_space : :py:class:`callable`
+            function returning the space-dependent values for the right hand side as used by the space solver
         boundaries : :py:class:`None` or :py:class:`list` of :py:class:`str`
             *(optional)*
             defaults to ``periodic`` for each dimension
@@ -46,36 +41,21 @@ class IsMultiGridProblemMixin(object):
         """
         assert_is_instance(self, IProblem, message="This Mixin is only valid for IProblems.", checking_obj=self)
 
-        assert_named_argument('stencil', kwargs, types=Stencil, descriptor="Stencil", checking_obj=self)
-        assert_named_argument('function', kwargs, types=callable, descriptor="RHS for space solver", checking_obj=self)
+        assert_named_argument('rhs_function_wrt_space', kwargs, types=callable, descriptor="RHS for space solver",
+                              checking_obj=self)
 
-        # the Space tensor which is actually used
-        self._act_space_tensor = None
-        self._act_grid_distances = None
-
-        # the points actually used
-        self._act_npoints = None
-
-        self._function = kwargs['function']
-        self._stencil = kwargs['stencil']
-        self._dim = self.stencil.arr.ndim
-        self._shape = self.stencil.arr.shape
-
-        if kwargs.get('stencil_center') is None:
-            self._stencil_center = self.mid_of_stencil(self.stencil)
-        else:
-            self._stencil_center = kwargs['stencil_center']
+        self._rhs_function_wrt_space = kwargs['rhs_function_wrt_space']
 
         # check if boundary conditions are specified
         if kwargs.get('boundaries') is None:
             self._boundaries = ['periodic'] * self.dim
         elif isinstance(kwargs['boundaries'], str) \
-                and kwargs['boundaries'] in IsMultiGridProblemMixin.valid_boundary_conditions:
+                and kwargs['boundaries'] in MultiGridProblemMixin.valid_boundary_conditions:
             self._boundaries = [kwargs['boundaries']] * self.dim
         elif isinstance(kwargs['boundaries'], list):
             check = 0
             for bc in kwargs['boundaries']:
-                if bc in IsMultiGridProblemMixin.valid_boundary_conditions:
+                if bc in MultiGridProblemMixin.valid_boundary_conditions:
                     check += 1
             if check == self.dim * 2:
                 self._boundaries = kwargs['boundaries']
@@ -117,11 +97,33 @@ class IsMultiGridProblemMixin(object):
                              message="Numpy array has a wrong shape", checking_obj=self)
             self._geometry = kwargs['geometry']
 
-        self._mg_system_matrices = {}
+        self._rhs_space_operators = {}
+
+        # the Space tensor which is actually used
+        self._act_space_tensor = None
+        self._act_grid_distances = None
+        # the points actually used
+        self._act_npoints = None
+
+    def evaluate_wrt_space(self, **kwargs):
+        """
+        Parameters
+        ----------
+        values : :py:class:`numpy.ndarray`
+        """
+        assert_named_argument('values', kwargs, types=np.ndarray, descriptor="Values", checking_obj=self)
+        return self.get_rhs_space_operators('default')\
+                    .dot(kwargs['values'].flatten())\
+                    .reshape(kwargs['values'].shape)
 
     @property
-    def stencil(self):
-        return self._stencil
+    def rhs_function_wrt_space(self):
+        return self._rhs_function_wrt_space
+
+    @rhs_function_wrt_space.setter
+    def rhs_function_wrt_space(self, function):
+        assert_is_callable(function, descriptor="Function of RHS w.r.t. Space", checking_obj=self)
+        self._rhs_function_wrt_space = function
 
     @property
     def boundaries(self):
@@ -136,40 +138,48 @@ class IsMultiGridProblemMixin(object):
         return self._boundary_functions
 
     @property
-    def act_grid_distances(self):
-        """Getter for the current grid distances
-        """
-        return self._act_grid_distances
-
-    @property
     def geometry(self):
         """Getter for the geometry
         """
         return self._geometry
 
-    def mg_system_matrix(self, phi_of_time):
-        _phi_of_time_shape = phi_of_time.shape
-        if self._mg_system_matrices.get(_phi_of_time_shape) is None:
-            LOG.debug("MG System Matrix not found for shape %s. Computing." % _phi_of_time_shape)
-            self.stencil.to_sparse_matrix(_phi_of_time_shape, format='csr')
-        return self._mg_system_matrices[_phi_of_time_shape]
+    def get_rhs_space_operators(self, delta_time):
+        if self._rhs_space_operators.get(delta_time) is None:
+            raise RuntimeError("MG System Matrix not found for delta time %s." % delta_time)
+        return self._rhs_space_operators[delta_time]
+
+    def set_rhs_space_operator(self, delta_time, operator='default'):
+        self._rhs_space_operators[delta_time] = operator
 
     def mg_solve(self, next_x, method='direct', **kwargs):
         """Runs the multigrid solver
 
+        This is where all the magic happens on each call of the space solver from the iterative time solver, i.e. on
+        every iteration for each time-level in each sweep on each step.
+
         Parameters
         ----------
         method : :py:class:`str`
+            defaults to ``direct``
+
             ``mg``
-                for full multigrid cycles; additional keyword arguments passed to the multigrid solver can be given
+                for full multigrid cycles; additional keyword arguments passed to the multigrid solver can be given;
+                additional arguments required:
+
+                    ``mg_level``
+
             ``direct``
                 for using the a predefined multigrid smoother as a direct solver via :py:class:`.DirectSolverSmoother`;
-                defaults to ``direct``
+                additional arguments required:
+
+                    ``mg_level``
+
+                    ``stencil``
 
         Raises
         ------
         ValueError
-            if given ``method`` is not valid
+            if given ``method`` is not one of ``mg`` or ``direct``
 
         Returns
         -------
@@ -181,22 +191,18 @@ class IsMultiGridProblemMixin(object):
             LOG.debug("Using Multigrid as implicit space solver.")
             raise NotImplementedError("Full multigrid solver not yet plugged.")
         elif method == 'direct':
-            assert_named_argument('mg_level', kwargs, types=IMultigridLevel, descriptor="Multigrid Level",
-                                  checking_obj=self)
-            solver = DirectSolverSmoother(self.stencil, kwargs['mg_level'])
+            if kwargs.get('solver') is None:
+                assert_named_argument('mg_level', kwargs, types=IMultigridLevel, descriptor="Multigrid Level",
+                                      checking_obj=self)
+                assert_named_argument('stencil', kwargs, types=Stencil, descriptor="MG Stencil", checking_obj=self)
+                solver = DirectSolverSmoother(kwargs['stencil'], kwargs['mg_level'])
+            else:
+                solver = kwargs['solver']
             return solver.relax()
         else:
             raise ValueError("Unknown method: '%s'" % method)
 
-    def mg_time_evaluate(self, time, phi_of_time, partial=None, **kwargs):
-        """Multigrid implementation for evaluating the right hand side with respect to the time solver
-        """
-        return self.mg_system_matrix(phi_of_time).dot(phi_of_time.flatten()).reshape(phi_of_time.shape)
-
-    def mid_of_stencil(self, stencil):
-        return np.floor(np.asarray(stencil.arr.shape) * 0.5)
-
-    def construct_space_tensor(self, number_of_points_list, set_act=True):
+    def construct_space_tensor(self, number_of_points_list, stencil=None):
         """Constructs the Spacetensor which is important for the evaluation in the case of Dirichlet boundary conditions
 
         Parameters
@@ -205,9 +211,10 @@ class IsMultiGridProblemMixin(object):
             Number of points which will be distributed equiv-spaced on the grid
         """
         if isinstance(number_of_points_list, (int, float, complex)):
+            assert_is_instance(stencil, Stencil, descriptor="Stencil", checking_obj=self)
             npoints = int(number_of_points_list)
             LOG.debug("Your number %s was modified to %s" % (number_of_points_list, npoints))
-            assert_condition(npoints > max(self._shape), ValueError,
+            assert_condition(npoints > max(stencil.arr.shape), ValueError,
                              message="Not enough points for the stencil", checking_obj=self)
             npoints = np.asarray([npoints] * self.dim)
         elif isinstance(number_of_points_list, np.ndarray):
@@ -227,14 +234,6 @@ class IsMultiGridProblemMixin(object):
             space_tensor = np.asarray(np.meshgrid(*lspc))
         else:
             space_tensor = np.linspace(self._geometry[0, 0], self._geometry[0, 1], npoints)
-        if set_act:
-            self._act_space_tensor = space_tensor
-            self._act_grid_distances = []
-            zero_point = tuple([0] * self.dim)
-            for i in range(self.dim):
-                diff_point = tuple([0] * i + [1] + [0] * (self.dim - i - 1))
-                self._act_grid_distances.append(space_tensor[diff_point] - space_tensor[zero_point])
-            self._act_grid_distances = np.asarray(self._act_grid_distances)
 
         return space_tensor
 
@@ -243,7 +242,7 @@ class IsMultiGridProblemMixin(object):
         """
         if level.space_tensor is None:
             level.space_tensor = self.construct_space_tensor(list(level.mid.shape))
-        level.rhs[:] = self._function(level.mid, level.space_tensor)
+        level.rhs[:] = self.rhs_function_wrt_space(level.mid, level.space_tensor)
 
     def eval_f(self, u=None, function=None, space_tensor=None):
         """Evaluates the right hand side with the actual space tensor, and the current :math:`u`.
@@ -253,12 +252,12 @@ class IsMultiGridProblemMixin(object):
 
         if function is None:
             if u is None:
-                return self._function(self._act_space_tensor)
+                return self.rhs_function_wrt_space(self._act_space_tensor)
             else:
                 assert_is_instance(u, np.ndarray, "u is not an numpy array")
                 assert_condition(u.shape == self._act_space_tensor[1].shape,
                                  "u has the wrong shape", self)
-                return self._function(u, self._act_space_tensor)
+                return self.rhs_function_wrt_space(u, self._act_space_tensor)
         else:
             if u is None:
                 assert_is_callable(function, "Function is not callable", self)
@@ -271,13 +270,10 @@ class IsMultiGridProblemMixin(object):
 
 
 def problem_is_multigrid_problem(problem, checking_obj=None):
-    """Checking whether
-
-    """
     assert_is_instance(problem, IProblem,
                        message="It needs to be a problem to be a Multigrid problem.",
                        checking_obj=checking_obj)
-    return isinstance(problem, IsMultiGridProblemMixin)
+    return isinstance(problem, MultiGridProblemMixin)
 
 
 __all__ = ['problem_is_multigrid_problem', 'MultiGridProblem']
