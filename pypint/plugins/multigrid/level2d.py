@@ -198,7 +198,7 @@ class MultigridLevel2D(IMultigridLevel):
 
         # in order to know if the rhs was modified
         self.modified_rhs = False
-
+        self.mid_slice = (self.sl_mid_x, self.sl_mid_y)
 
     def adjust_references(self):
         #define the parts

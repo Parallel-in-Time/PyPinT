@@ -51,7 +51,7 @@ if __name__ == '__main__':
     print("mg_problem.geometry", mg_problem.geometry)
     print("mg_problem.boundaries", mg_problem.boundaries)
     print("===== MultiGridLevel2d =====")
-    level = MultigridLevel2D((8, 8),
+    level = MultigridLevel2D((4, 4),
                              mg_problem=mg_problem,
                              max_borders=np.asarray([[1, 1], [1, 1]]),
                              role="FL")
@@ -78,4 +78,23 @@ if __name__ == '__main__':
     print("evaluable view of stencil\n", level.evaluable_view(laplace_stencil))
     is_on_border = level.border_function_generator(laplace_stencil)
     border_truth = [[is_on_border((i, j)) for j in range(level.arr.shape[1])] for i in range(level.arr.shape[0])]
-    print("border_truth\n", border_truth)
+    print("border_truth\n", np.asarray(border_truth, dtype=np.int))
+
+    level.rhs[:] = 0.0
+    laplace_stencil.modify_rhs(level)
+    print("level.rhs after modification\n", level.rhs)
+
+    print("==== DirectSolver ====")
+    omega = 0.5
+    l_plus = np.asarray([0, -2.0/omega, 0])
+    l_minus = np.asarray([1.0, -2.0*(1.0 - 1.0/omega), 1.0])
+    direct_solver = DirectSolverSmoother(laplace_stencil, level)
+    laplace_stencil.modify_rhs(level)
+    direct_solver.relax()
+    print("level.arr after direct solution\n", level.mid)
+    print("test of the solution Ax=b by convolve\n ", laplace_stencil.eval_convolve(level.mid, "same"))
+    rhs_test = np.zeros(level.rhs.shape)
+    laplace_stencil.eval_sparse(level.mid, rhs_test)
+    print("test of the solution Ax=b by sparse matrix application \n", rhs_test)
+
+    print("==== SplitSmoother ====")

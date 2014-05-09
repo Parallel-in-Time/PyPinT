@@ -147,7 +147,8 @@ class Stencil(object):
             solver = spla.factorized(self.sp_matrix)
         else:
             sp_matrix = self.to_sparse_matrix(grid, "csc")
-            # print("Jahier\n", sp_matrix.todense())
+            print("Jahier\n", sp_matrix.todense())
+            print("Jahier.shape\n", sp_matrix.todense().shape)
             solver = spla.factorized(sp_matrix)
         return solver
 
@@ -163,7 +164,7 @@ class Stencil(object):
         """
         return sig.convolve(array_in, self.reversed_arr, convolve_control)
 
-    def eval_sparse(self, array_in, array_out):
+    def eval_sparse(self, array_in, array_out, sp_matrix=None):
         """Evaluate via the sparse matrix
 
         Parameters
@@ -173,7 +174,10 @@ class Stencil(object):
         array_out : ndarray
             array to storage the result
         """
-        array_out[:] = self.sp_matrix.dot(array_in.flatten())
+        if sp_matrix is None:
+            sp_matrix = self.to_sparse_matrix(array_in.shape, "csc")
+            # print("usually:", sp_matrix.todense())
+        array_out[:] = sp_matrix.dot(array_in.reshape(-1)).reshape(array_out.shape)
 
 
     def centered_stencil(self):
@@ -356,7 +360,10 @@ class Stencil(object):
                     rhs[-til] -= np.dot(self.arr[-til + i:], u[-til: u.size - i]) / (level.h**self.order)
 
             elif self.dim == 2:
-                raise NotImplementedError("Not done yet")
+                temp_arr = np.copy(level.evaluable_view(self))
+                temp_arr[level.mid_slice] = 0.0
+                level.rhs[:] = level.rhs[:] - sig.convolve(temp_arr, self.reversed_arr, 'valid')
+
             elif self.dim == 3:
                 raise NotImplementedError("Sure I will do it , like, really soon")
             else:
