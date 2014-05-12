@@ -1,8 +1,7 @@
 # coding=utf-8
-from unittest.mock import patch
 from nose.tools import *
 
-from tests import NumpyAwareTestCase, assert_numpy_array_almost_equal
+from tests import NumpyAwareTestCase
 from pypint.integrators.sdc_integrator import SdcIntegrator
 from pypint.solvers.parallel_sdc import ParallelSdc
 from pypint.communicators.forward_sending_messaging import ForwardSendingMessaging
@@ -289,12 +288,10 @@ class SdcTest(NumpyAwareTestCase):
     def setUp(self):
         # self._test_obj = ParallelSdc()
         pass
-    #
-    # def test_sdc_solver_initialization(self):
-    #     with patch('pypint.problems.i_initial_value_problem.IInitialValueProblem', spec=True,
-    #                 initial_value=1.0, time_start=0.0, time_end=1.0, numeric_type=numpy.float) as IVP:
-    #         prob = IVP.return_value
-    #         self._test_obj.init(problem=prob, num_nodes=3)
+
+    def test_semi_implicit_with_multi_dimensional(self):
+        problem = Constant(constant=-1.0, shift=1.0, dim=(2, 3, 1))
+        _run_sdc_with_problem(problem, SemiImplicitSdcCore, 1, 1.0, 3, 2, PRECISION)
 
 
 if __name__ == "__main__":

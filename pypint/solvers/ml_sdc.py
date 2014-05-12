@@ -714,9 +714,9 @@ class MlSdc(IIterativeTimeSolver, IParallelSolver):
                                   np.array([_step.rhs], dtype=self.problem.numeric_type),
                                   axis=0)
 
-        assert_condition(_integrate_values.size == _num_nodes,
+        assert_condition(_integrate_values.shape[0] == _num_nodes,
                          ValueError, message="Number of integration values not correct: %d != %d"
-                                             % (_integrate_values.size, _num_nodes),
+                                             % (_integrate_values.shape[0], _num_nodes),
                          checking_obj=self)
 
         # LOG.debug("Integration Values: %s" % _integrate_values.flatten())

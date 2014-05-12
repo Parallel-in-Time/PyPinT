@@ -7,7 +7,7 @@ from pypint.solvers.cores.sdc_solver_core import SdcSolverCore
 from pypint.solvers.states.sdc_solver_state import SdcSolverState
 from pypint.problems import IProblem
 from pypint.problems.has_direct_implicit_mixin import problem_has_direct_implicit
-from pypint.utilities import assert_is_instance, assert_named_argument
+from pypint.utilities import assert_is_instance, assert_named_argument, assert_condition
 
 
 class ImplicitSdcCore(SdcSolverCore):
@@ -54,15 +54,18 @@ class ImplicitSdcCore(SdcSolverCore):
             #     = u_m^{k+1} - \Delta_\tau F(u_m^k) + \Delta_t I_m^{m+1}(F(u^k))
             # Note: \Delta_t is always 1.0 as it's part of the integral
             _expl_term = \
-                state.current_time_step.previous_step.value \
-                - state.current_step.delta_tau \
-                * _problem.evaluate_wrt_time(state.current_step.time_point, _previous_iteration_current_step.value) \
-                + state.current_step.integral
+                (state.current_time_step.previous_step.value
+                 - state.current_step.delta_tau
+                 * _problem.evaluate_wrt_time(state.current_step.time_point,
+                                              _previous_iteration_current_step.value)
+                 + state.current_step.integral).reshape(-1)
             _func = lambda x_next: \
                 _expl_term \
-                + state.current_step.delta_tau * _problem.evaluate_wrt_time(state.current_step.time_point, x_next) \
+                + state.current_step.delta_tau \
+                  * _problem.evaluate_wrt_time(state.current_step.time_point,
+                                               x_next.reshape(_problem.dim_for_time_solver)).reshape(-1) \
                 - x_next
-            _sol = _problem.implicit_solve(state.current_step.value, _func)
+            _sol = _problem.implicit_solve(state.current_step.value.reshape(-1), _func)
 
         if type(state.current_step.value) == type(_sol):
             state.current_step.value = _sol

@@ -57,24 +57,26 @@ class SemiImplicitSdcCore(SdcSolverCore):
         else:
             # Note: \Delta_t is always 1.0 as it's part of the integral
             _expl_term = \
-                state.previous_step.value \
-                + state.current_step.delta_tau \
-                * (_problem.evaluate_wrt_time(state.current_step.time_point,
-                                              state.previous_step.value,
-                                              partial="expl")
-                   - _problem.evaluate_wrt_time(state.previous_step.time_point,
-                                                _previous_iteration_previous_step.value,
-                                                partial="expl")
-                   - _problem.evaluate_wrt_time(state.current_step.time_point,
-                                                _previous_iteration_current_step.value,
-                                                partial="impl")) \
-                + state.current_step.integral
+                (state.previous_step.value
+                 + state.current_step.delta_tau
+                 * (_problem.evaluate_wrt_time(state.current_step.time_point,
+                                               state.previous_step.value,
+                                               partial="expl")
+                    - _problem.evaluate_wrt_time(state.previous_step.time_point,
+                                                 _previous_iteration_previous_step.value,
+                                                 partial="expl")
+                    - _problem.evaluate_wrt_time(state.current_step.time_point,
+                                                 _previous_iteration_current_step.value,
+                                                 partial="impl"))
+                 + state.current_step.integral).reshape(-1)
             _func = lambda x_next: \
                 _expl_term \
-                + state.current_step.delta_tau * _problem.evaluate_wrt_time(state.current_step.time_point,
-                                                                            x_next, partial="impl") \
+                + state.current_step.delta_tau \
+                  * _problem.evaluate_wrt_time(state.current_step.time_point,
+                                               x_next.reshape(_problem.dim_for_time_solver),
+                                               partial="impl").reshape(-1) \
                 - x_next
-            _sol = _problem.implicit_solve(state.current_step.value, _func)
+            _sol = _problem.implicit_solve(state.current_step.value.reshape(-1), _func)
 
         if type(state.current_step.value) == type(_sol):
             state.current_step.value = _sol

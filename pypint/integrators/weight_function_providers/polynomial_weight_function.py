@@ -31,7 +31,7 @@ class PolynomialWeightFunction(IWeightFunction):
     >>> polyWeights.evaluate(nodes)
     >>> # access the weights
     >>> polyWeights.weights
-    array([ 0.33333333,  1.33333333,  0.33333333])
+    array([ 0.3333,  1.3333,  0.3333])
     """
 
     def __init__(self):
