@@ -14,7 +14,7 @@ from pypint.utilities import assert_is_callable, assert_is_instance, assert_cond
 from pypint.utilities.logging import LOG
 
 
-class MultiGridProblemMixin(object):
+class MultigridProblemMixin(object):
     """Provides functionality of a problem to have multigrid as its space solver
 
     Contains every aspect of the Problem that has to be solved, like the stencil from which on may derive :math:`A_h`
@@ -41,38 +41,38 @@ class MultiGridProblemMixin(object):
         """
         assert_is_instance(self, IProblem, message="This Mixin is only valid for IProblems.", checking_obj=self)
 
-        assert_named_argument('rhs_function_wrt_space', kwargs, types=callable, descriptor="RHS for space solver",
-                              checking_obj=self)
+        assert_named_argument('rhs_function_wrt_space', kwargs, descriptor="RHS for space solver", checking_obj=self)
+        assert_is_callable(kwargs['rhs_function_wrt_space'], descriptor="RHS for space solver", checking_obj=self)
 
         self._rhs_function_wrt_space = kwargs['rhs_function_wrt_space']
 
         # check if boundary conditions are specified
         if kwargs.get('boundaries') is None:
-            self._boundaries = ['periodic'] * self.dim
+            self._boundaries = ['periodic'] * len(self.spacial_dim)
         elif isinstance(kwargs['boundaries'], str) \
-                and kwargs['boundaries'] in MultiGridProblemMixin.valid_boundary_conditions:
-            self._boundaries = [kwargs['boundaries']] * self.dim
+                and kwargs['boundaries'] in MultigridProblemMixin.valid_boundary_conditions:
+            self._boundaries = [kwargs['boundaries']] * len(self.spacial_dim)
         elif isinstance(kwargs['boundaries'], list):
             check = 0
             for bc in kwargs['boundaries']:
-                if bc in MultiGridProblemMixin.valid_boundary_conditions:
+                if bc in MultigridProblemMixin.valid_boundary_conditions:
                     check += 1
-            if check == self.dim * 2:
+            if check == len(self.spacial_dim) * 2:
                 self._boundaries = kwargs['boundaries']
             else:
                 LOG.warning('Boundary specifications are not valid, will use periodic boundaries for each dimension.')
-                self._boundaries = ['periodic'] * self.dim
+                self._boundaries = ['periodic'] * len(self.spacial_dim)
         else:
             LOG.warning('Boundary specifications are not valid, will use periodic boundaries for each dimension')
-            self._boundaries = ['periodic'] * self.dim
+            self._boundaries = ['periodic'] * len(self.spacial_dim)
 
         # assign according to the boundary conditions the right functions
         if kwargs.get('boundary_functions') is None:
-            self._boundary_functions = [None] * self.dim
+            self._boundary_functions = [None] * len(self.spacial_dim)
         else:
             assert_is_instance(kwargs['boundary_functions'], list, descriptor="Boundary Functions", checking_obj=self)
             check = 0
-            assert_condition(len(kwargs['boundary_functions']) == self.dim,
+            assert_condition(len(kwargs['boundary_functions']) == len(self.spacial_dim),
                              ValueError, message="Not enough boundary functions given.", checking_obj=self)
 
             for ftpls in kwargs['boundary_functions']:
@@ -87,12 +87,12 @@ class MultiGridProblemMixin(object):
 
         # construct or save the geometry
         if kwargs.get('geometry') is None:
-            self._geometry = np.asarray([[0, 1]] * self.dim)
+            self._geometry = np.asarray([[0, 1]] * len(self.spacial_dim))
         else:
             assert_is_instance(kwargs['geometry'], np.ndarray, descriptor="Geometry", checking_obj=self)
             assert_condition(len(kwargs["geometry"].shape) == 2, ValueError,
                              message="Numpy array has the wrong dimensions", checking_obj=self)
-            assert_condition(kwargs['geometry'].shape[0] == self.dim and kwargs['geometry'].shape[1] == 2,
+            assert_condition(kwargs['geometry'].shape[0] == len(self.spacial_dim) and kwargs['geometry'].shape[1] == 2,
                              ValueError,
                              message="Numpy array has a wrong shape", checking_obj=self)
             self._geometry = kwargs['geometry']
@@ -195,10 +195,11 @@ class MultiGridProblemMixin(object):
                 assert_named_argument('mg_level', kwargs, types=IMultigridLevel, descriptor="Multigrid Level",
                                       checking_obj=self)
                 assert_named_argument('stencil', kwargs, types=Stencil, descriptor="MG Stencil", checking_obj=self)
-                solver = DirectSolverSmoother(kwargs['stencil'], kwargs['mg_level'])
+                solver_function = DirectSolverSmoother(kwargs['stencil'], kwargs['mg_level']).relax
             else:
-                solver = kwargs['solver']
-            return solver.relax()
+                solver_function = kwargs['solver']
+            LOG.debug("next_x.shape: %s" % (next_x.shape))
+            return solver_function(next_x)
         else:
             raise ValueError("Unknown method: '%s'" % method)
 
@@ -216,9 +217,9 @@ class MultiGridProblemMixin(object):
             LOG.debug("Your number %s was modified to %s" % (number_of_points_list, npoints))
             assert_condition(npoints > max(stencil.arr.shape), ValueError,
                              message="Not enough points for the stencil", checking_obj=self)
-            npoints = np.asarray([npoints] * self.dim)
+            npoints = np.asarray([npoints] * len(self.spacial_dim))
         elif isinstance(number_of_points_list, np.ndarray):
-            assert_condition(len(number_of_points_list.shape) == 1 and number_of_points_list.size == self.dim,
+            assert_condition(len(number_of_points_list.shape) == 1 and number_of_points_list.size == len(self.spacial_dim),
                              ValueError, message="The number_of_points list is wrong", checking_obj=self)
             npoints = np.floor(number_of_points_list)
         else:
@@ -228,9 +229,9 @@ class MultiGridProblemMixin(object):
         # spt(npoints,dim)
         self._act_npoints = npoints
         lspc = []
-        for i in range(self.dim):
+        for i in range(len(self.spacial_dim)):
             lspc.append(np.linspace(self._geometry[i, 0], self._geometry[i, 1], npoints[i]))
-        if self.dim > 1:
+        if len(self.spacial_dim) > 1:
             space_tensor = np.asarray(np.meshgrid(*lspc))
         else:
             space_tensor = np.linspace(self._geometry[0, 0], self._geometry[0, 1], npoints)
@@ -273,7 +274,7 @@ def problem_is_multigrid_problem(problem, checking_obj=None):
     assert_is_instance(problem, IProblem,
                        message="It needs to be a problem to be a Multigrid problem.",
                        checking_obj=checking_obj)
-    return isinstance(problem, MultiGridProblemMixin)
+    return isinstance(problem, MultigridProblemMixin)
 
 
-__all__ = ['problem_is_multigrid_problem', 'MultiGridProblem']
+__all__ = ['problem_is_multigrid_problem', 'MultigridProblemMixin']

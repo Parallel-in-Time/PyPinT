@@ -4,7 +4,7 @@ import numpy as np
 from pypint.multi_level_providers.multi_level_provider import MultiLevelProvider
 from pypint.utilities import assert_is_instance, assert_condition
 from pypint.plugins.multigrid.stencil import Stencil
-from pypint.plugins.multigrid.level import IMultigridLevel
+from pypint.plugins.multigrid.i_multigrid_level import IMultigridLevel
 import scipy.signal as sig
 import scipy.sparse as sprs
 from pypint.plugins.multigrid.i_multigrid_smoother import IMultigridSmoother

@@ -105,11 +105,14 @@ class SemiImplicitMlSdcCore(MlSdcSolverCore):
                 + state.current_step.delta_tau * _problem.evaluate_wrt_time(state.current_step.time_point,
                                                                             x_next, partial="impl") \
                 - x_next
-            _sol = _problem.implicit_solve(state.current_step.value, _func)
+            _sol = _problem.implicit_solve(state.current_step.value, _func,
+                                           time_level=state.current_iteration.current_level_index,
+                                           delta_time=state.current_iteration.current_level.current_step.delta_tau)
 
         if type(state.current_step.value) == type(_sol):
             state.current_step.value = _sol
         else:
+            LOG.debug("Solution Type %s but expected %s" % (type(_sol), type(state.current_step.value)))
             state.current_step.value = _sol[0]
 
 

@@ -4,9 +4,8 @@
 
 import numpy as np
 import scipy.signal as sig
-from pypint.utilities import assert_is_callable, assert_is_instance, \
-                                     assert_condition
-from pypint.plugins.multigrid.multigrid_problem import MultiGridProblem
+from pypint.utilities import assert_is_callable, assert_is_instance, assert_condition
+from pypint.plugins.multigrid.multigrid_problem_mixin import problem_is_multigrid_problem
 from pypint.plugins.multigrid.stencil import Stencil
 from pypint.plugins.multigrid.i_multigrid_level import IMultigridLevel
 
@@ -52,8 +51,7 @@ class MultigridLevel1D(IMultigridLevel):
     --------
 
     """
-    def __init__(self, shape, mg_problem=None, max_borders=None,
-                dtype=float, role="ML"):
+    def __init__(self, shape, mg_problem=None, max_borders=None, dtype=float, role="ML"):
         """
         Summary
         -------
@@ -72,8 +70,7 @@ class MultigridLevel1D(IMultigridLevel):
             else:
                 raise ValueError("Please provide an ndarray with the size of 2")
             self.arr = np.zeros(forward_shape, dtype=dtype)
-            if isinstance(mg_problem, MultiGridProblem) \
-                    and mg_problem.dimension == 1:
+            if problem_is_multigrid_problem(mg_problem, checking_obj=self) and len(mg_problem.spacial_dim) == 1:
                 self._mg_problem = mg_problem
             else:
                 raise ValueError("Please provide a MultiGridProblem")
@@ -90,8 +87,7 @@ class MultigridLevel1D(IMultigridLevel):
 
             self.arr[max_borders[0]:-max_borders[1]] = shape.mid
 
-            if isinstance(mg_problem, MultiGridProblem) \
-                    and mg_problem.dimension == 1:
+            if problem_is_multigrid_problem(mg_problem, checking_obj=self) and mg_problem.dim == 1:
                 self._mg_problem = mg_problem
             else:
                 self._mg_problem = shape.mg_problem
@@ -111,8 +107,7 @@ class MultigridLevel1D(IMultigridLevel):
             self.arr = np.zeros(forward_shape, dtype=dtype)
             self.arr[max_borders[0]:-max_borders[1]] = shape
 
-            if isinstance(mg_problem, MultiGridProblem) \
-                    and mg_problem.dimension == 1:
+            if problem_is_multigrid_problem(mg_problem, checking_obj=self) and mg_problem.dim == 1:
                 self._mg_problem = mg_problem
             else:
                 raise ValueError("Please provide a MultiGridProblem")
