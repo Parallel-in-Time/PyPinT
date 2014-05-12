@@ -59,12 +59,12 @@ class LambdaU(IInitialValueProblem, HasExactSolutionMixin, HasDirectImplicitMixi
         self._strings['rhs_wrt_time'] = r"\lambda u(t, \phi(t))"
         self._strings['exact'] = r"e^{\lambda t}"
 
-    def evaluate_wrt_time(self, time, phi_of_time, partial=None):
-        super(LambdaU, self).evaluate_wrt_time(time, phi_of_time, partial)
-        if partial is not None and isinstance(self.lmbda, complex):
-            if isinstance(partial, str) and partial == 'impl':
+    def evaluate_wrt_time(self, time, phi_of_time, **kwargs):
+        super(LambdaU, self).evaluate_wrt_time(time, phi_of_time, **kwargs)
+        if kwargs.get('partial') is not None and isinstance(self.lmbda, complex):
+            if isinstance(kwargs['partial'], str) and kwargs['partial'] == 'impl':
                 return self.lmbda.imag * phi_of_time
-            elif partial == 'expl':
+            elif kwargs['partial'] == 'expl':
                 return self.lmbda.real * phi_of_time
         else:
             return self.lmbda * phi_of_time
@@ -79,6 +79,10 @@ class LambdaU(IInitialValueProblem, HasExactSolutionMixin, HasDirectImplicitMixi
         _phis = kwargs['phis_of_time']
         assert_is_instance(_phis, list, message="Direct implicit formula needs multiple phis.", checking_obj=self)
         assert_condition(len(_phis) == 3, ValueError, message="Need exactly three different phis.", checking_obj=self)
+        for _phi in _phis:
+            assert_condition(_phi.shape == self.dim_for_time_solver, ValueError,
+                             message="Given phi is of wrong shape: %s != %s" % (_phi.shape, self.dim_for_time_solver),
+                             checking_obj=self)
 
         # _phis[0] : previous iteration -> previous step
         # _phis[1] : previous iteration -> current step
@@ -129,10 +133,12 @@ class LambdaU(IInitialValueProblem, HasExactSolutionMixin, HasDirectImplicitMixi
 
     def print_lines_for_log(self):
         _lines = super(LambdaU, self).print_lines_for_log()
+        _lines.update(HasExactSolutionMixin.print_lines_for_log(self))
         _lines['Coefficients'] = '\lambda = %s' % self.lmbda
         return _lines
 
     def __str__(self):
-        str = super(LambdaU, self).__str__()
-        str += r", \lambda=%s" % self.lmbda
-        return str
+        _outstr = super(LambdaU, self).__str__()
+        _outstr += r", \lambda=%s" % self.lmbda
+        _outstr += HasExactSolutionMixin.__str__(self)
+        return _outstr

@@ -153,12 +153,8 @@ class IProblem(object):
             If the implicit solver did not converged, i.e. the solution object's ``success`` is not :py:class:`True`.
         """
         assert_is_instance(next_x, np.ndarray, descriptor="Initial Guess", checking_obj=self)
-        assert_condition(next_x.shape == self.dim_for_time_solver, ValueError,
-                         message="Data values must match problem dimension: %s != %s"
-                                 % (next_x.shape, self.dim_for_time_solver),
-                         checking_obj=self)
         assert_is_callable(func, descriptor="Function of RHS for Implicit Solver", checking_obj=self)
-        sol = find_root(fun=func, x0=next_x, method=method)
+        sol = find_root(fun=func, x0=next_x.reshape(-1), method=method)
         if not sol.success:
             warnings.warn("Implicit solver did not converged.")
             LOG.debug("sol.x: %s" % sol.x)

@@ -7,13 +7,15 @@ from collections import OrderedDict
 import numpy as np
 
 from pypint.problems.i_problem import IProblem
-from pypint.utilities import assert_is_instance, assert_condition
+from pypint.utilities import assert_is_instance, assert_condition, class_name
 
 
 class TransientProblemMixin(object):
     """Concept of a transient problem
     """
     def __init__(self, *args, **kwargs):
+        assert_is_instance(self, IProblem, descriptor="Problem needs to be a IProblem first: NOT %s" % class_name(self),
+                           checking_obj=self)
         self.validate_time_interval(start=kwargs.get('time_start', 0.0), end=kwargs.get('time_end', 1.0))
         self._time_start = kwargs.get('time_start', 0.0)
         self._time_end = kwargs.get('time_end', 1.0)
