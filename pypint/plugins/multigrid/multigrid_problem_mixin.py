@@ -198,7 +198,7 @@ class MultigridProblemMixin(object):
                 solver_function = DirectSolverSmoother(kwargs['stencil'], kwargs['mg_level']).relax
             else:
                 solver_function = kwargs['solver']
-            LOG.debug("next_x.shape: %s" % (next_x.shape))
+            LOG.debug("next_x.shape: {:s}".format(next_x.shape))
             return solver_function(next_x)
         else:
             raise ValueError("Unknown method: '%s'" % method)

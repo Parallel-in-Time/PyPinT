@@ -75,7 +75,7 @@ class ILevelTransitionProvider(object):
         """
         assert_is_instance(fine_data, np.ndarray, descriptor="Fine Data", checking_obj=self)
         assert_condition(fine_data.shape[0] == self.num_fine_points,
-                         ValueError, message="Fine Data is of wrong size: NOT {}".format(fine_data.shape),
+                         ValueError, message="Fine Data is of wrong size: {} != {}".format(fine_data.shape, self.num_fine_points),
                          checking_obj=self)
 
     @property
