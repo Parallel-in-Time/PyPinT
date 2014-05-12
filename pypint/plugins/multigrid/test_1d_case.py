@@ -301,4 +301,4 @@ if __name__ == '__main__':
     top_direct_solver.relax()
     print("** rhs of the top level ** \n", top_level.rhs)
     print("** as a reference the direct solution of TopLevel **\n", top_level.mid)
-    print("** and the difference **\n",temp-top_level.mid)
+    print("** and the difference **\n", temp-top_level.mid)

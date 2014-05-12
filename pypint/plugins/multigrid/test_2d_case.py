@@ -16,6 +16,11 @@ from pypint.plugins.multigrid.interpolation import InterpolationByStencilListIn1
 from pypint.plugins.multigrid.restriction import RestrictionStencilPure, RestrictionByStencilForLevels, RestrictionByStencilForLevelsClassical
 from operator import iadd,add
 
+class VCycle(object):
+    """
+
+    """
+
 if __name__ == '__main__':
     # check if level2d is working properly
     # but first one has to define a proper level
@@ -36,10 +41,14 @@ if __name__ == '__main__':
     geo = np.asarray([[0, 1], [0, 1]])
     # the boundary conditions, in this case dirichlet boundary conditions
     boundary_type = ["dirichlet"]*2
-    east_f = lambda x: 2.0
-    west_f = lambda x: 8.0
-    north_f = lambda x: 1.0
-    south_f = lambda x: 4.0
+    # east_f = lambda x: 2.0
+    # west_f = lambda x: 8.0
+    # north_f = lambda x: 1.0
+    # south_f = lambda x: 4.0
+    east_f = lambda x: np.sin(x[1]*np.pi)
+    west_f = lambda x: np.sin(x[1]*np.pi)
+    north_f = lambda x: np.sin(x[0]*np.pi)
+    south_f = lambda x: np.sin(x[0]*np.pi)
     boundary_functions = [[west_f, east_f], [north_f, south_f]]
     rhs_function = lambda x, y: 0.0
 
@@ -68,7 +77,13 @@ if __name__ == '__main__':
     print("level.space_tensor \n", level.space_tensor)
     print("level.mid_tensor \n", level.mid_tensor)
     print("level.south_tensor \n", level.south_tensor)
+    print("level.north_tensor \n", level.north_tensor)
+    print("level.west_tensor \n", level.west_tensor)
+    print("level.east_tensor \n", level.east_tensor)
     print("level.se_tensor \n", level.se_tensor)
+    print("level.ne_tensor \n", level.ne_tensor)
+    print("level.sw_tensor \n", level.sw_tensor)
+    print("level.nw_tensor \n", level.nw_tensor)
 
     level.pad()
     print("level.arr after padding\n", level.arr)
@@ -98,7 +113,7 @@ if __name__ == '__main__':
     print("test of the solution Ax=b by sparse matrix application \n", rhs_test)
 
     print("==== SplitSmoother ====")
-    omega = 0.5
+    omega = 2.0/3.0
     l_plus = np.asarray([[0, 0, 0],
                          [0, -4.0/omega, 0],
                          [0, 0, 0]])
@@ -118,11 +133,13 @@ if __name__ == '__main__':
 
     # For the test of the level transitioning we define 3 levels
     # with different roles but the same borders
-    n_jacobi_pre = 1
-    n_jacobi_post = 1
+    n_jacobi_pre = 5
+    n_jacobi_post = 5
     borders = np.ones((2, 2))
     top_level = MultigridLevel2D((11, 11), mg_problem=mg_problem,
                                  max_borders=borders, role="FL")
+
+
 
     mid_level = MultigridLevel2D((5, 5), mg_problem=mg_problem,
                                  max_borders=borders, role="ML")
@@ -152,10 +169,22 @@ if __name__ == '__main__':
     low_direct_smoother = DirectSolverSmoother(low_stencil, low_level)
 
     # define the the restriction operators - full weighting
-
     rst_stencil = Stencil(np.asarray([[1.0, 2.0, 1.0], [2.0, 4.0, 2.0], [1.0, 2.0, 1.0]])/16)
     rst_top_to_mid = RestrictionByStencilForLevelsClassical(rst_stencil, top_level, mid_level)
     rst_mid_to_low = RestrictionByStencilForLevelsClassical(rst_stencil, mid_level, low_level)
+
+    # define the interpolation
+    corner_array = np.ones((2., 2.)) * 0.25
+    border_arr_h = np.asarray([[0.5, 0.5]])
+    border_arr_v = np.asarray([[0.5], [0.5]])
+
+    ipl_stencil_list = [(Stencil(np.asarray([[1]])), (1, 1)),
+                        (Stencil(corner_array), (0, 0)),
+                        (Stencil(border_arr_h), (1, 0)),
+                        (Stencil(border_arr_v), (0, 1))]
+
+    ipl_mid_to_top = InterpolationByStencilForLevelsClassical(ipl_stencil_list, mid_level, top_level, pre_assign=iadd)
+    ipl_low_to_mid = InterpolationByStencilForLevelsClassical(ipl_stencil_list, low_level, mid_level, pre_assign=iadd)
 
     print("==== Down The V Cycle ====")
     print("** Initial TopLevel.arr **\n", top_level.arr)
@@ -176,6 +205,32 @@ if __name__ == '__main__':
     print("** LowLevel.rhs before restriction **\n", low_level.rhs)
     rst_mid_to_low.restrict()
     print("** LowLevel.rhs after restriction **\n", low_level.rhs)
-    low_jacobi_smoother.relax(n_jacobi_pre)
-    print("** LowLevel.arr after "+str(n_jacobi_pre)+" jacobi step(s) **\n", low_level.arr)
+    # low_jacobi_smoother.relax(n_jacobi_pre)
+    # print("** LowLevel.arr after "+str(n_jacobi_pre)+" jacobi step(s) **\n", low_level.arr)
+    low_direct_smoother.relax()
+    # low_level.mid[:] = (np.arange(4).reshape((2, 2)) + 1)**2
+    print("** LowLevel.arr after direct solve **\n", low_level.arr)
+    print("** MidLevel.arr before interpolation **\n", mid_level.arr)
+    # mid_level.mid[:] = 0.0
+    ipl_low_to_mid.eval()
+    print("** MidLevel.arr after interpolation **\n", mid_level.arr)
+    mid_jacobi_smoother.relax(n_jacobi_post)
+    print("** MidLevel.arr after "+str(n_jacobi_post)+" jacobi step(s) **\n", mid_level.arr)
+    ipl_mid_to_top.eval()
+    print("** TopLevel.arr after interpolation **\n", top_level.arr)
+    mid_jacobi_smoother.relax(n_jacobi_post)
+    print("** TopLevel.arr after "+str(n_jacobi_post)+" jacobi step(s) **\n", top_level.arr)
 
+    sol_level = MultigridLevel2D((11, 11),
+                             mg_problem=mg_problem,
+                             max_borders=np.asarray([[1, 1], [1, 1]]),
+                             role="FL")
+    sol_level.rhs[:] = 0.0
+    sol_level.pad()
+    sol_stencil = Stencil(laplace_array/sol_level.h[0]**2, None, 2)
+    sol_stencil.modify_rhs(sol_level)
+    # print("I am modified", sol_level.modified_rhs)
+    direct_solver = DirectSolverSmoother(sol_stencil, sol_level)
+    direct_solver.relax()
+    print("** The collocation solution **\n", sol_level.arr)
+    print("** The error **\n", sol_level.mid - top_level.mid)

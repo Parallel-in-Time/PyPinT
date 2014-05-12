@@ -114,14 +114,14 @@ class MultigridLevel2D(IMultigridLevel):
             # A-----B------------C----D
 
             # front : A -> B
-            self.l_spaces[i][0] = np.linspace(-self.borders[i][0], -1, self.borders[i][0]) * \
+            self.l_spaces[i][0] = np.arange(0, self.borders[i][0]) * \
                                     self.h[i] + self.mg_problem.geometry[i][0]
             # self.l_spaces[i][0] =
             # mid : B -> C
             self.l_spaces[i][1] = np.arange(1, self.mid.shape[i]+1) * \
                                     self.h[i] + self.mg_problem.geometry[i][0]
             # end : C -> D
-            self.l_spaces[i][2] = np.linspace(1, self.borders[i][1], self.borders[i][1]) * \
+            self.l_spaces[i][2] = np.linspace(0, self.borders[i][1], self.borders[i][1]) * \
                                     self.h[i] + self.mg_problem.geometry[i][1]
             # print("MultigridLevel2D linear spaces in direction "+str(i)+":")
             # print("front :\n", self.l_spaces[i][0])
@@ -134,7 +134,7 @@ class MultigridLevel2D(IMultigridLevel):
         self.south_tensor = np.meshgrid(self.l_spaces[0][1], self.l_spaces[1][2])
 
         self.east_tensor = np.meshgrid(self.l_spaces[0][2], self.l_spaces[1][1])
-        self.west_tensor = np.meshgrid(self.l_spaces[0][1], self.l_spaces[1][1])
+        self.west_tensor = np.meshgrid(self.l_spaces[0][0], self.l_spaces[1][1])
 
         self.ne_tensor = np.meshgrid(self.l_spaces[0][2], self.l_spaces[1][0])
         self.nw_tensor = np.meshgrid(self.l_spaces[0][0], self.l_spaces[1][0])
@@ -253,10 +253,10 @@ class MultigridLevel2D(IMultigridLevel):
             self.east[:] = self.f_east(self.east_tensor)
             self.south[:] = self.f_south(self.south_tensor)
             self.west[:] = self.f_west(self.west_tensor)
-            self.ne[:] = self.f_north(self.ne) * 0.5 + self.f_east(self.ne) * 0.5
-            self.nw[:] = self.f_north(self.nw) * 0.5 + self.f_west(self.nw) * 0.5
-            self.se[:] = self.f_south(self.se) * 0.5 + self.f_east(self.se) * 0.5
-            self.sw[:] = self.f_south(self.sw) * 0.5 + self.f_west(self.sw) * 0.5
+            self.ne[:] = self.f_north(self.ne_tensor) * 0.5 + self.f_east(self.ne_tensor) * 0.5
+            self.nw[:] = self.f_north(self.nw_tensor) * 0.5 + self.f_west(self.nw_tensor) * 0.5
+            self.se[:] = self.f_south(self.se_tensor) * 0.5 + self.f_east(self.se_tensor) * 0.5
+            self.sw[:] = self.f_south(self.sw_tensor) * 0.5 + self.f_west(self.sw_tensor) * 0.5
 
         else:
             raise NotImplementedError("Bis jetzt sind nur Dirichlet Randbedingungen implementiert")
