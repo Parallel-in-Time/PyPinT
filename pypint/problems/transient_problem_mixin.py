@@ -2,8 +2,9 @@
 """
 .. moduleauthor:: Torbjörn Klatt <t.klatt@fz-juelich.de>
 """
-import numpy as np
 from collections import OrderedDict
+
+import numpy as np
 
 from pypint.problems.i_problem import IProblem
 from pypint.utilities import assert_is_instance, assert_condition
@@ -13,6 +14,7 @@ class TransientProblemMixin(object):
     """Concept of a transient problem
     """
     def __init__(self, *args, **kwargs):
+        self.validate_time_interval(start=kwargs.get('time_start', 0.0), end=kwargs.get('time_end', 1.0))
         self._time_start = kwargs.get('time_start', 0.0)
         self._time_end = kwargs.get('time_end', 1.0)
 
@@ -24,6 +26,7 @@ class TransientProblemMixin(object):
         ----------
         interval_start : :py:class:`float`
             Start point of the time interval.
+            Default=0.0
 
         Returns
         -------
@@ -50,6 +53,7 @@ class TransientProblemMixin(object):
         ----------
         interval_end : :py:class:`float`
             End point of the time interval.
+            Default=1.0
 
         Returns
         -------
@@ -77,16 +81,25 @@ class TransientProblemMixin(object):
         assert_is_instance(value, np.ndarray, descriptor="Time Interval", checking_obj=self)
         assert_condition(value.size == 2, ValueError,
                          message="Time Interval must have two values: NOT %d" % value.size)
-        assert_condition(value[0] < value[1], ValueError,
-                         message="Start Time must be smaller than End Time: NOT %s >= %s" % (value[0], value[1]))
+        self.validate_time_interval(start=value[0], end=value[1])
         self.time_start = value[0]
         self.time_end = value[1]
 
     def print_lines_for_log(self):
         return OrderedDict({'Time Interval': '[{:.3f}, {:.3f}]'.format(self.time_start, self.time_end)})
 
+    def validate_time_interval(self, start=None, end=None):
+        if start is None:
+            start = self.time_start
+        if end is None:
+            end = self.time_end
+        assert_condition(start < end, ValueError,
+                         message="Start Time must be smaller than End Time: NOT %s >= %s" % (start, end),
+                         checking_obj=self)
+        return True
+
     def __str__(self):
-        return r"t \in [{:.2f}, {:.2f}]".format(self.time_start, self.time_end)
+        return r", t in [{:.2f}, {:.2f}]".format(self.time_start, self.time_end)
 
 
 def problem_is_transient(problem, checking_obj=None):
