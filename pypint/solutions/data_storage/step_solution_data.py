@@ -136,7 +136,7 @@ class StepSolutionData(object):
         assert_condition(not self.finalized, AttributeError,
                          message="Cannot change this solution data storage any more.", checking_obj=self)
         assert_is_instance(value, np.ndarray, descriptor="Values", checking_obj=self)
-        self._dim = value.size
+        self._dim = value.shape
         self._numeric_type = value.dtype
         self._data = value
 

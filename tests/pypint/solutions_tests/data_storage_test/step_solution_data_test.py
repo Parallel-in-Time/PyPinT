@@ -19,7 +19,7 @@ class StepSolutionDataTest(NumpyAwareTestCase):
 
         self._default.value = self._value
         self.assertNumpyArrayEqual(self._default.value, self._value)
-        self.assertEqual(self._default.dim, self._value.size)
+        self.assertEqual(self._default.dim, self._value.shape)
         self.assertEqual(self._default.numeric_type, self._value.dtype)
 
         self._default.finalize()
@@ -27,7 +27,7 @@ class StepSolutionDataTest(NumpyAwareTestCase):
             self._default.value = self._value
 
         _test = StepSolutionData(value=self._value)
-        self.assertEqual(_test.dim, self._value.size)
+        self.assertEqual(_test.dim, self._value.shape)
         self.assertEqual(_test.numeric_type, self._value.dtype)
         self.assertNumpyArrayEqual(_test.value, self._value)
 
