@@ -22,16 +22,23 @@ geo = np.asarray([[0, 1]])
 
 LOG.info("%s  Setting Up Boundary Functions" % VERBOSITY_LVL1)
 boundary_types = ['dirichlet'] * 2
-bnd_left_fnc = lambda x: 100.0
-bnd_right_fnc = lambda x: 110.0
+bnd_left_fnc = lambda x: 0.0
+bnd_right_fnc = lambda x: 1.0
 bnd_functions = [[bnd_left_fnc, bnd_right_fnc]]
 
+num_points_mg_levels = OrderedDict()
+num_points_mg_levels['finest'] = 3
+# num_points_mg_levels['mid'] = 5
+# num_points_mg_levels['base'] = 2
+print_logging_message_tree(OrderedDict({'Points on Space Grid': num_points_mg_levels}))
+
 from examples.problems.heat_equation import HeatEquation
-problem = HeatEquation(dim=(19, 1),
+problem = HeatEquation(dim=(num_points_mg_levels['finest'], 1),
                        rhs_function_wrt_space=lambda dof, tensor: 0.0,
                        boundary_functions=bnd_functions,
                        boundaries=boundary_types,
                        geometry=geo)
+LOG.debug(problem.boundaries)
 
 print_logging_message_tree(OrderedDict({'': {'Problem': problem.print_lines_for_log()}}))
 
@@ -40,80 +47,83 @@ LOG.info("%sSetting Up Multigrid Levels" % VERBOSITY_LVL1)
 from pypint.plugins.multigrid.level import MultigridLevel1D
 borders = np.array([3, 3])
 
-fine_mg_level = MultigridLevel1D(19, mg_problem=problem, max_borders=borders, role='FL')
+fine_mg_level = MultigridLevel1D(num_points_mg_levels['finest'], mg_problem=problem, max_borders=borders, role='FL')
 problem._mg_level = fine_mg_level
-mid_mg_level = MultigridLevel1D(9, mg_problem=problem, max_borders=borders, role='ML')
-base_mg_level = MultigridLevel1D(4, mg_problem=problem, max_borders=borders, role='CL')
+problem._mg_stencil = Stencil(np.array([1.0, -2.0, 1.0]) / fine_mg_level.h**2)
+problem._mg_stencil.grid = fine_mg_level.mid.shape
+LOG.debug("Sparse matrix: %s -> %s" % (problem._mg_stencil.sp_matrix.shape,problem._mg_stencil.sp_matrix.todense()))
+# mid_mg_level = MultigridLevel1D(num_points_mg_levels['mid'], mg_problem=problem, max_borders=borders, role='ML')
+# base_mg_level = MultigridLevel1D(num_points_mg_levels['base'], mg_problem=problem, max_borders=borders, role='CL')
 
 LOG.info("%s  Levels" % VERBOSITY_LVL1)
 LOG.info("%s    Top Level" % VERBOSITY_LVL1)
 LOG.info("%s      h: %s" % (VERBOSITY_LVL1, fine_mg_level.h))
-LOG.info("%s    Middle Level" % VERBOSITY_LVL1)
-LOG.info("%s      h: %s" % (VERBOSITY_LVL1, mid_mg_level.h))
-LOG.info("%s    Base Level" % VERBOSITY_LVL1)
-LOG.info("%s      h: %s" % (VERBOSITY_LVL1, base_mg_level.h))
+# LOG.info("%s    Middle Level" % VERBOSITY_LVL1)
+# LOG.info("%s      h: %s" % (VERBOSITY_LVL1, mid_mg_level.h))
+# LOG.info("%s    Base Level" % VERBOSITY_LVL1)
+# LOG.info("%s      h: %s" % (VERBOSITY_LVL1, base_mg_level.h))
 
-LOG.info(SEPARATOR_LVL2)
-LOG.info("%sSetting Up Multigrid Smoothers" % VERBOSITY_LVL1)
-from pypint.plugins.multigrid.multigrid_smoother import SplitSmoother, DirectSolverSmoother
+# LOG.info(SEPARATOR_LVL2)
+# LOG.info("%sSetting Up Multigrid Smoothers" % VERBOSITY_LVL1)
+# from pypint.plugins.multigrid.multigrid_smoother import SplitSmoother, DirectSolverSmoother
 # define the smoother from the split smoother class on each level,
 # where the last level is solved directly
 # omega = 1/np.sqrt(2)
-omega = 0.5
-l_plus = np.asarray([0, -2.0/omega, 0])
-l_minus = np.asarray([1.0, -2.0*(1.0 - 1.0/omega), 1.0])
-top_jacobi_smoother = SplitSmoother(l_plus / fine_mg_level.h**2,
-                                    l_minus / fine_mg_level.h**2,
-                                    fine_mg_level)
-mid_jacobi_smoother = SplitSmoother(l_plus / mid_mg_level.h**2,
-                                    l_minus / mid_mg_level.h**2,
-                                    mid_mg_level)
-low_jacobi_smoother = SplitSmoother(l_plus / base_mg_level.h**2,
-                                    l_minus / base_mg_level.h**2,
-                                    base_mg_level)
-low_direct_smoother = DirectSolverSmoother(laplace_stencil, base_mg_level)
+# omega = 0.5
+# l_plus = np.asarray([0, -2.0/omega, 0])
+# l_minus = np.asarray([1.0, -2.0*(1.0 - 1.0/omega), 1.0])
+# top_jacobi_smoother = SplitSmoother(l_plus / fine_mg_level.h**2,
+#                                     l_minus / fine_mg_level.h**2,
+#                                     fine_mg_level)
+# mid_jacobi_smoother = SplitSmoother(l_plus / mid_mg_level.h**2,
+#                                     l_minus / mid_mg_level.h**2,
+#                                     mid_mg_level)
+# low_jacobi_smoother = SplitSmoother(l_plus / base_mg_level.h**2,
+#                                     l_minus / base_mg_level.h**2,
+#                                     base_mg_level)
+# low_direct_smoother = DirectSolverSmoother(laplace_stencil, base_mg_level)
 
 LOG.info(SEPARATOR_LVL2)
 LOG.info("%sSetting Up Multigrid Level Transitions" % VERBOSITY_LVL1)
-from operator import iadd
-from pypint.plugins.multigrid.restriction import RestrictionByStencilForLevelsClassical
-from pypint.plugins.multigrid.interpolation import InterpolationByStencilForLevelsClassical
-center = np.asarray([0])
+# from operator import iadd
+# from pypint.plugins.multigrid.restriction import RestrictionByStencilForLevelsClassical
+# from pypint.plugins.multigrid.interpolation import InterpolationByStencilForLevelsClassical
+# center = np.asarray([0])
 n_jacobi_pre = 1
 n_jacobi_post = 1
 # we define the Restriction operator
-rst_stencil = Stencil(np.asarray([0.25, 0.5, 0.25]))
-rst_top_to_mid = RestrictionByStencilForLevelsClassical(rst_stencil, fine_mg_level, mid_mg_level)
-rst_mid_to_low = RestrictionByStencilForLevelsClassical(rst_stencil, mid_mg_level, base_mg_level)
+# rst_stencil = Stencil(np.asarray([0.25, 0.5, 0.25]))
+# rst_top_to_mid = RestrictionByStencilForLevelsClassical(rst_stencil, fine_mg_level, mid_mg_level)
+# rst_mid_to_low = RestrictionByStencilForLevelsClassical(rst_stencil, mid_mg_level, base_mg_level)
 
 # and the interpolation operator
-ipl_stencil_list_standard = [(Stencil(np.asarray([1]), center), (1,)),
-                             (Stencil(np.asarray([0.5, 0.5]), center), (0,))]
-
-ipl_mid_to_top = InterpolationByStencilForLevelsClassical(ipl_stencil_list_standard,
-                                                          mid_mg_level, fine_mg_level, pre_assign=iadd)
-
-ipl_low_to_mid = InterpolationByStencilForLevelsClassical(ipl_stencil_list_standard,
-                                                          base_mg_level, mid_mg_level, pre_assign=iadd)
+# ipl_stencil_list_standard = [(Stencil(np.asarray([1]), center), (1,)),
+#                              (Stencil(np.asarray([0.5, 0.5]), center), (0,))]
+#
+# ipl_mid_to_top = InterpolationByStencilForLevelsClassical(ipl_stencil_list_standard,
+#                                                           mid_mg_level, fine_mg_level, pre_assign=iadd)
+#
+# ipl_low_to_mid = InterpolationByStencilForLevelsClassical(ipl_stencil_list_standard,
+#                                                           base_mg_level, mid_mg_level, pre_assign=iadd)
 
 LOG.info(SEPARATOR_LVL2)
 LOG.info("%sSetting Initial Values for MG Levels" % VERBOSITY_LVL1)
 # initialize top level
-fine_mg_level.arr[:] = 105.0
+fine_mg_level.arr[:] = 0.0
 # top_level.arr[:] = 0.0
 fine_mg_level.res[:] = 0.0
 fine_mg_level.rhs[:] = 0.0
 fine_mg_level.pad()
 
-mid_mg_level.arr[:] = 0.0
-mid_mg_level.res[:] = 0.0
-mid_mg_level.rhs[:] = 0.0
-mid_mg_level.pad()
+# mid_mg_level.arr[:] = 0.0
+# mid_mg_level.res[:] = 0.0
+# mid_mg_level.rhs[:] = 0.0
+# mid_mg_level.pad()
 
-base_mg_level.arr[:] = 0.0
-base_mg_level.res[:] = 0.0
-base_mg_level.rhs[:] = 0.0
-base_mg_level.pad()
+# base_mg_level.arr[:] = 0.0
+# base_mg_level.res[:] = 0.0
+# base_mg_level.rhs[:] = 0.0
+# base_mg_level.pad()
 
 problem.fill_rhs(fine_mg_level)
 
@@ -126,15 +136,15 @@ from pypint.integrators.sdc_integrator import SdcIntegrator
 base_mlsdc_level = SdcIntegrator()
 base_mlsdc_level.init(num_nodes=3)
 
-fine_mlsdc_level = SdcIntegrator()
-fine_mlsdc_level.init(num_nodes=5)
+# fine_mlsdc_level = SdcIntegrator()
+# fine_mlsdc_level.init(num_nodes=5)
 
-transitioner = TimeTransitionProvider(fine_nodes=fine_mlsdc_level.nodes, coarse_nodes=base_mlsdc_level.nodes)
+# transitioner = TimeTransitionProvider(fine_nodes=fine_mlsdc_level.nodes, coarse_nodes=base_mlsdc_level.nodes)
 
 ml_provider = MultiTimeLevelProvider()
-ml_provider.add_coarse_level(fine_mlsdc_level)
+# ml_provider.add_coarse_level(fine_mlsdc_level)
 ml_provider.add_coarse_level(base_mlsdc_level)
-ml_provider.add_level_transition(transitioner, 0, 1)
+# ml_provider.add_level_transition(transitioner, 0, 1)
 
 from pypint.communicators import ForwardSendingMessaging
 comm = ForwardSendingMessaging()
