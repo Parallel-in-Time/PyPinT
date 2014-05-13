@@ -8,6 +8,7 @@ from pypint.utilities import assert_is_callable, assert_is_instance, assert_cond
 from pypint.plugins.multigrid.multigrid_problem_mixin import problem_is_multigrid_problem
 from pypint.plugins.multigrid.stencil import Stencil
 from pypint.plugins.multigrid.i_multigrid_level import IMultigridLevel
+from pypint.utilities.logging import LOG
 
 
 class MultigridLevel1D(IMultigridLevel):
@@ -122,7 +123,7 @@ class MultigridLevel1D(IMultigridLevel):
         self.left = self.arr.__array__()[:self.borders[0]]
         self.right = self.arr.__array__()[-self.borders[1]:]
         self.mid = self.arr.__array__()[self.borders[0]:-self.borders[1]]
-        self.rhs = np.copy(self.mid)
+        self._rhs = np.copy(self.mid)
 
         # the first border points coincides with the geometrical border
         # that is why self.mid.size+1 is used instead of self.mid.size - 1
@@ -195,6 +196,15 @@ class MultigridLevel1D(IMultigridLevel):
         return MultiGridProblem
         """
         return self._mg_problem
+
+    @property
+    def rhs(self):
+        return self._rhs
+
+    @rhs.setter
+    def rhs(self, value):
+        self.modified_rhs = False
+        self._rhs[:] = value
 
     def embed(self, ue):
         """
