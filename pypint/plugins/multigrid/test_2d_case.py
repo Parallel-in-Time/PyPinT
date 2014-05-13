@@ -5,7 +5,7 @@
 import numpy as np
 import sys
 print(sys.path)
-from pypint.plugins.multigrid.multigrid_problem import MultiGridProblem
+from pypint.plugins.multigrid.multigrid_problem import MultigridProblem
 from pypint.plugins.multigrid.multigrid_level_provider import MultiGridLevelProvider
 from pypint.plugins.multigrid.multigrid_solution import MultiGridSolution
 from pypint.plugins.multigrid.level2d import MultigridLevel2D
@@ -52,7 +52,7 @@ if __name__ == '__main__':
     boundary_functions = [[west_f, east_f], [north_f, south_f]]
     rhs_function = lambda x, y: 0.0
 
-    mg_problem = MultiGridProblem(laplace_stencil,
+    mg_problem = MultigridProblem(laplace_stencil,
                                   rhs_function,
                                   boundary_functions=boundary_functions,
                                   boundaries="dirichlet",

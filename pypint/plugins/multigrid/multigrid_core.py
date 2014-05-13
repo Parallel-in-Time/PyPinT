@@ -2,7 +2,7 @@
 import numpy as np
 import sys
 print(sys.path)
-from pypint.plugins.multigrid.multigrid_problem import MultiGridProblem
+from pypint.plugins.multigrid.multigrid_problem import MultigridProblem
 from pypint.plugins.multigrid.multigrid_level_provider import MultiGridLevelProvider
 from pypint.plugins.multigrid.multigrid_solution import MultiGridSolution
 from pypint.plugins.multigrid.level import MultigridLevel1D
@@ -162,7 +162,7 @@ class MultiGridCore(object):
 
     def __init__(self, mg_prob, mg_level_prov, mg_solution, mg_control):
         # Check types
-        assert_is_instance(mg_prob, MultiGridProblem,
+        assert_is_instance(mg_prob, MultigridProblem,
                            "not a proper Multigridproblem", self)
         assert_is_instance(mg_level_prov, MultiGridLevelProvider,
                            "not a proper multigridlevelprovider", self)

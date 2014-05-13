@@ -2,7 +2,7 @@
 import numpy as np
 import sys
 print(sys.path)
-from pypint.plugins.multigrid.multigrid_problem import MultiGridProblem
+from pypint.plugins.multigrid.multigrid_problem import MultigridProblem
 from pypint.plugins.multigrid.multigrid_level_provider import MultiGridLevelProvider
 from pypint.plugins.multigrid.multigrid_solution import MultiGridSolution
 from pypint.plugins.multigrid.level import MultigridLevel1D
@@ -41,7 +41,7 @@ if __name__ == '__main__':
         return 0.0
 
     rhs_function = lambda x: 0.0
-    mg_problem = MultiGridProblem(laplace_stencil,
+    mg_problem = MultigridProblem(laplace_stencil,
                                   stupid_f,
                                   boundary_functions=boundary_functions,
                                   boundaries=boundary_type,
@@ -51,7 +51,7 @@ if __name__ == '__main__':
     print("Mid of stencil method", mg_problem.mid_of_stencil(laplace_stencil))
     print("Eval_Convolve ([100,105,105,105,110])", laplace_stencil.eval_convolve(np.asarray([100, 105, 105, 105, 110])))
 
-    print("===== MultiGridProblemTest =====")
+    print("===== MultigridProblemTest =====")
     print("Constructed SpaceTensor", mg_problem.construct_space_tensor(12))
     print("Checked if the grid distances are right",
           mg_problem.act_grid_distances)
