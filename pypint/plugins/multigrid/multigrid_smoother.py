@@ -23,16 +23,14 @@ class DirectSolverSmoother(IMultigridSmoother):
         self.level = level
         self.solver = stencil.generate_direct_solver(level.mid.shape)
         self.stencil = stencil
-        if mod_rhs:
-            stencil.modify_rhs(level.evaluable_view(stencil), level.rhs)
-        # print("**ESEL**", stencil.sp_matrix.todense())
 
     def relax(self):
         """ Just solves it, and puts the solution into self.level.mid
         """
-        self.level.mid.reshape(-1)[:] = self.solver(self.level.rhs * (self.level.h**self.stencil.order))
-        # print("kakao:", self.level.mid)
+        # print("putin", self.level.rhs.reshape(-1)[:])
+        # print("getout", self.solver(self.level.rhs.reshape(-1)))
 
+        self.level.mid[:] = self.solver(self.level.rhs.reshape(-1)).reshape(self.level.mid.shape)
 
 class SplitSmoother(IMultigridSmoother):
     """ A general Smoothing class which arises from splitting the main stencil
@@ -73,7 +71,6 @@ class SplitSmoother(IMultigridSmoother):
             self.convolve_control = "valid"
             self.evaluable_view = level.evaluable_view(self.st_minus)
         else:
-            print("huhu")
             self.convolve_control = "same"
             self.evaluable_view = level.mid
 
@@ -93,17 +90,8 @@ class SplitSmoother(IMultigridSmoother):
         """
 
         for i in range(n):
-            self.lvl.mid.reshape(-1)[:] = self.l_plus_solver(self.lvl.rhs -
-                                                             self.st_minus.eval_convolve(self.evaluable_view,
-                                                                                         self.convolve_control))
-        # the st_minus stencil contains in opposite to the usual stencil the factor self.h**2
-            # self.lvl.mid.reshape(-1)[:] = \
-            #     self.st_plus.solver(self.lvl.rhs
-            #         - self.st_minus.eval_convolve(
-            #             self.lvl_view_outer).reshape(-1)).reshape(
-            #                 self.lvl_view_inner.shape)
-
-
+            rhs = self.lvl.rhs - self.st_minus.eval_convolve(self.evaluable_view, self.convolve_control)
+            self.lvl.mid[:] = self.l_plus_solver(rhs.reshape(-1)).reshape(self.lvl.mid.shape)
 
 class WeightedJacobiSmoother(IMultigridSmoother):
     """Implement a simple JaocbiSmoother , to test the SplitSmoother

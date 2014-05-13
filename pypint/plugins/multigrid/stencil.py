@@ -148,6 +148,7 @@ class Stencil(object):
         else:
             sp_matrix = self.to_sparse_matrix(grid, "csc")
             # print("Jahier\n", sp_matrix.todense())
+            # print("Jahier.shape\n", sp_matrix.todense().shape)
             solver = spla.factorized(sp_matrix)
         return solver
 
@@ -160,10 +161,19 @@ class Stencil(object):
             array to convolve
         array_out : ndarray
             array to storage the result
+
+        Examples
+        --------
+        It is possible to use this as just an evaluation funktion like Ax=b
+        otherwise it is also possible to use it as an operator
+        Ax=b:
+        stencil.eval_convolve(level.mid, "same")
+        as operator, where the boundary is taken into account:
+        stencil.eval_convolve(level.evaluate_view(stencil),"valid" )
         """
         return sig.convolve(array_in, self.reversed_arr, convolve_control)
 
-    def eval_sparse(self, array_in, array_out):
+    def eval_sparse(self, array_in, array_out, sp_matrix=None):
         """Evaluate via the sparse matrix
 
         Parameters
@@ -173,7 +183,10 @@ class Stencil(object):
         array_out : ndarray
             array to storage the result
         """
-        array_out[:] = self.sp_matrix.dot(array_in.flatten())
+        if sp_matrix is None:
+            sp_matrix = self.to_sparse_matrix(array_in.shape, "csc")
+            # print("usually:", sp_matrix.todense())
+        array_out[:] = sp_matrix.dot(array_in.reshape(-1)).reshape(array_out.shape)
 
 
     def centered_stencil(self):
@@ -348,24 +361,21 @@ class Stencil(object):
                 # left side
                 for i in range(self.center[0]):
                     rhs[i] -= np.dot(self.arr[i:self.center[0]],
-                                     u[0:self.center[0]-i]) / (level.h**self.order)
+                                     u[0:self.center[0]-i])
             # the same for the right side
                 til = self.arr.size - self.center[0] - 1
                 print(til)
                 for i in range(til):
-                    rhs[-til] -= np.dot(self.arr[-til + i:], u[-til: u.size - i]) / (level.h**self.order)
+                    rhs[-til] -= np.dot(self.arr[-til + i:], u[-til: u.size - i])
 
             elif self.dim == 2:
-                raise NotImplementedError("Not done yet")
+                temp_arr = np.copy(level.evaluable_view(self))
+                temp_arr[level.mid_slice] = 0.0
+                level.rhs[:] = level.rhs[:] - sig.convolve(temp_arr, self.reversed_arr, 'valid')
+
             elif self.dim == 3:
                 raise NotImplementedError("Sure I will do it , like, really soon")
             else:
                 raise NotImplementedError("No one needs more than 3 dimensions")
 
             level.modified_rhs = True
-
-
-
-
-
-

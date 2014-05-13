@@ -47,7 +47,7 @@ class InterpolationByStencilForLevelsClassical(IInterpolation):
 
         for i in range(level_in.mid.ndim):
 
-            self.iip.append((level_out.mid.shape[i]-1)/(level_in.mid.shape[i]-1) - 1)
+            self.iip.append((level_out.mid.shape[i]-1)/(level_in.mid.shape[i]) - 1)
 
             n = level_out.mid.shape[i]
             m = level_in.mid.shape[i]
@@ -70,6 +70,8 @@ class InterpolationByStencilForLevelsClassical(IInterpolation):
             sl_out = []
             for i in range(st.dim):
                 sl_out.append(slice(pos[i], None, self.iip[i]+1))
+            # print("Initial Position:", pos)
+            # print("Slice", sl_out)
             self.slices_out.append(tuple(sl_out.copy()))
 
 
@@ -80,15 +82,19 @@ class InterpolationByStencilForLevelsClassical(IInterpolation):
 
         """
         for i in range(len(self.stencil_list)):
-
-            # print(i, self.level_out.interpolate_in[self.slices_out[i]].shape, self.evaluable_views[i].shape, self.stencil_list[i][0].arr[::-1].shape)
-
+            # print("\nPosition: ", self.stencil_list[i][1])
+            # print("Out_shape: ", self.level_out.interpolate_in[self.slices_out[i]].shape)
+            # siggy = sig.convolve(self.level_in.interpolate_out_mid, self.stencil_list[i][0].reversed_arr, "full")
+            # print("In_shape:", siggy.shape)
+            # print(siggy)
+            # print("reversed arr_shape:", self.stencil_list[i][0].reversed_arr.shape)
+            # print(self.stencil_list[i][0].reversed_arr)
             # the option "full" means that the array is padded with zeros
 
             self.level_out.interpolate_in[self.slices_out[i]] = \
                 self.pre_assign(
                     self.level_out.interpolate_in[self.slices_out[i]],
-                    sig.convolve(self.level_in.interpolate_out_mid, self.stencil_list[i][0].arr[::-1], "full"))
+                    sig.convolve(self.level_in.interpolate_out_mid, self.stencil_list[i][0].reversed_arr, "full"))
 
 class InterpolationByStencilForLevels(IInterpolation):
     """1D class for Interpolation which binds two levels

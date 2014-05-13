@@ -114,19 +114,19 @@ class MultigridLevel2D(IMultigridLevel):
             # A-----B------------C----D
 
             # front : A -> B
-            self.l_spaces[i][0] = np.linspace(-self.borders[i][0], -1, self.borders[i][0]) * \
+            self.l_spaces[i][0] = np.arange(0, self.borders[i][0]) * \
                                     self.h[i] + self.mg_problem.geometry[i][0]
             # self.l_spaces[i][0] =
             # mid : B -> C
             self.l_spaces[i][1] = np.arange(1, self.mid.shape[i]+1) * \
                                     self.h[i] + self.mg_problem.geometry[i][0]
             # end : C -> D
-            self.l_spaces[i][2] = np.linspace(1, self.borders[i][1], self.borders[i][1]) * \
+            self.l_spaces[i][2] = np.linspace(0, self.borders[i][1], self.borders[i][1]) * \
                                     self.h[i] + self.mg_problem.geometry[i][1]
-            print("MultigridLevel2D linear spaces in direction "+str(i)+":")
-            print("front :\n", self.l_spaces[i][0])
-            print("mid :\n", self.l_spaces[i][1])
-            print("end :\n", self.l_spaces[i][2])
+            # print("MultigridLevel2D linear spaces in direction "+str(i)+":")
+            # print("front :\n", self.l_spaces[i][0])
+            # print("mid :\n", self.l_spaces[i][1])
+            # print("end :\n", self.l_spaces[i][2])
         # using this linear spaces we define space tensors for different parts
         self.mid_tensor = np.meshgrid(self.l_spaces[0][1], self.l_spaces[1][1])
 
@@ -134,19 +134,16 @@ class MultigridLevel2D(IMultigridLevel):
         self.south_tensor = np.meshgrid(self.l_spaces[0][1], self.l_spaces[1][2])
 
         self.east_tensor = np.meshgrid(self.l_spaces[0][2], self.l_spaces[1][1])
-        self.west_tensor = np.meshgrid(self.l_spaces[0][1], self.l_spaces[1][1])
+        self.west_tensor = np.meshgrid(self.l_spaces[0][0], self.l_spaces[1][1])
 
         self.ne_tensor = np.meshgrid(self.l_spaces[0][2], self.l_spaces[1][0])
         self.nw_tensor = np.meshgrid(self.l_spaces[0][0], self.l_spaces[1][0])
         self.se_tensor = np.meshgrid(self.l_spaces[0][2], self.l_spaces[1][2])
         self.sw_tensor = np.meshgrid(self.l_spaces[0][0], self.l_spaces[1][2])
 
-
         # space for the rhs
-        self.rhs = np.copy(self.mid)
-
-
-
+        # self.rhs = np.copy(self.mid)
+        self.rhs = np.zeros(self.mid.shape, dtype=dtype)
         lspc = []
         for i in range(self.dim):
             start = self._mg_problem.geometry[i][0] - self.h[i] * (max_borders[i][0] - 1)
@@ -198,7 +195,7 @@ class MultigridLevel2D(IMultigridLevel):
 
         # in order to know if the rhs was modified
         self.modified_rhs = False
-
+        self.mid_slice = (self.sl_mid_x, self.sl_mid_y)
 
     def adjust_references(self):
         #define the parts
@@ -256,10 +253,10 @@ class MultigridLevel2D(IMultigridLevel):
             self.east[:] = self.f_east(self.east_tensor)
             self.south[:] = self.f_south(self.south_tensor)
             self.west[:] = self.f_west(self.west_tensor)
-            self.ne[:] = self.f_north(self.ne) * 0.5 + self.f_east(self.ne) * 0.5
-            self.nw[:] = self.f_north(self.nw) * 0.5 + self.f_west(self.nw) * 0.5
-            self.se[:] = self.f_south(self.se) * 0.5 + self.f_east(self.se) * 0.5
-            self.sw[:] = self.f_south(self.sw) * 0.5 + self.f_west(self.sw) * 0.5
+            self.ne[:] = self.f_north(self.ne_tensor) * 0.5 + self.f_east(self.ne_tensor) * 0.5
+            self.nw[:] = self.f_north(self.nw_tensor) * 0.5 + self.f_west(self.nw_tensor) * 0.5
+            self.se[:] = self.f_south(self.se_tensor) * 0.5 + self.f_east(self.se_tensor) * 0.5
+            self.sw[:] = self.f_south(self.sw_tensor) * 0.5 + self.f_west(self.sw_tensor) * 0.5
 
         else:
             raise NotImplementedError("Bis jetzt sind nur Dirichlet Randbedingungen implementiert")
@@ -269,12 +266,16 @@ class MultigridLevel2D(IMultigridLevel):
         """gives the right view of the array
 
         """
-        slices = []
-        for i in range(self.dim):
-            slices.append(slice(self.borders[i][0] - stencil.b[i][0] + offset[0],
-                                -(self.borders[i][1] - stencil.b[i][1]) + offset[1]))
+        if (stencil.b == self.borders).all():
+            return self.arr
+        else:
+            slices = []
+            for i in range(self.dim):
+                slices.append(slice(self.borders[i][0] - stencil.b[i][0] + offset[0],
+                                    -(self.borders[i][1] - stencil.b[i][1]) + offset[1]))
 
-        return self.arr[tuple(slices)]
+            return self.arr[tuple(slices)]
+
 
     def evaluable_view(self, stencil, offset=[0,0]):
         """gives the right view of the array
@@ -290,10 +291,10 @@ class MultigridLevel2D(IMultigridLevel):
 
     def compute_residual(self, stencil):
         if self.modified_rhs is False:
-            self.res_mid[:] = self.rhs - stencil.eval_convolve(self.evaluable_view(stencil)) / self.h**2
+            self.res_mid[:] = self.rhs - stencil.eval_convolve(self.evaluable_view(stencil))
         else:
             # not sure if this works
-            self.res_mid[:] = self.rhs - stencil.eval_convolve(self.mid, "full") / self.h**2
+            self.res_mid[:] = self.rhs - stencil.eval_convolve(self.mid, "same")
 
     def border_function_generator(self, stencil):
         """Generates a function which returns true if the index of the
@@ -302,9 +303,12 @@ class MultigridLevel2D(IMultigridLevel):
         """
 
         def is_on_border(indice):
+            in_the_middle = True
+
             for i in range(self.dim):
-                if indice[i] >= stencil.b[i][0] and indice[i]  < self.mid.shape[i]+stencil.b[i][0]:
-                    return False
-            return True
+                in_the_middle = in_the_middle and \
+                               (indice[i] >= stencil.b[i][0] and
+                                indice[i] < (self.mid.shape[i] + stencil.b[i][1]))
+            return not in_the_middle
 
         return is_on_border
