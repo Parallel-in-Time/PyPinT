@@ -28,7 +28,7 @@ class HeatEquation(ITransientMultigridProblem):
 
         # HasExactSolutionMixin.__init__(self, *args, **kwargs)
 
-        self._thermal_diffusivity = kwargs.get('thermal_diffusivity', 1.0)
+        self._thermal_diffusivity = kwargs.get('thermal_diffusivity', -1.0)
 
         if self.time_start is None:
             self.time_start = 0.0
@@ -61,10 +61,31 @@ class HeatEquation(ITransientMultigridProblem):
     def thermal_diffusivity(self, value):
         self._thermal_diffusivity = value
 
+    def evaluate_wrt_time(self, time, phi_of_time, **kwargs):
+        this_got_called(self, time=time, phi_of_time=phi_of_time, **kwargs)
+        if kwargs.get('partial'):
+            if kwargs['partial'] == "impl":
+                self._mg_level.mid[:] = phi_of_time.reshape(-1)
+                _padded_phi = self._mg_level.evaluable_view(self._mg_stencil)
+                LOG.debug("padded phi: %s" % _padded_phi)
+                _out = self._mg_stencil.eval_convolve(_padded_phi)
+                LOG.debug("  ==> %s" % _out.reshape(phi_of_time.shape))
+                return _out.reshape(phi_of_time.shape)
+            else:
+                return np.zeros(phi_of_time.shape)
+        else:
+            self._mg_level.mid[:] = phi_of_time.reshape(-1)
+            _padded_phi = self._mg_level.evaluable_view(self._mg_stencil)
+            LOG.debug("padded phi: %s" % _padded_phi)
+            _out = self._mg_stencil.eval_convolve(_padded_phi)
+            LOG.debug("  ==> %s" % _out.reshape(phi_of_time.shape))
+            return _out.reshape(phi_of_time.shape)
+
     def mg_stencil(self, delta_time, delta_space):
-        return \
-            -1.0 * delta_time * self.thermal_diffusivity * np.array([1.0, -2.0 - (delta_space**2 / delta_time), 1.0]) \
+        _stencil = (-1.0 * delta_time * self.thermal_diffusivity) * np.array([1.0, -2.0 - (delta_space**2 / delta_time), 1.0]) \
             / (delta_space**2)
+        LOG.debug("Stencil for dt=%f, h=%f: %s" % (delta_time, delta_space, _stencil))
+        return _stencil
 
     def initialize_direct_space_solver(self, time_level, delta_time, mg_level=None):
         if mg_level is None:
@@ -78,7 +99,11 @@ class HeatEquation(ITransientMultigridProblem):
             self._direct_solvers[time_level] = {}
         LOG.debug("  Initializing Solver for Time Level '%s' and Delta Node '%s'" % (time_level, delta_time))
         LOG.debug("    shape: %s" % (mg_level.mid.shape))
-        self._direct_solvers[time_level][delta_time] = _stencil.generate_direct_solver(mg_level.mid.shape)
+        self._direct_solvers[time_level][delta_time] = {
+            'mg_level': mg_level,
+            'stencil': _stencil,
+            'solver': _stencil.generate_direct_solver(mg_level.mid.shape)
+        }
 
     def implicit_solve(self, next_x, func, method="direct", **kwargs):
         """Space-Solver for the Heat Equation
@@ -97,8 +122,12 @@ class HeatEquation(ITransientMultigridProblem):
         delta_time : :py:class:`float`
             distance from the previous to currently calculated time node
         """
-        this_got_called(self, **kwargs)
-        assert_named_argument('time_level', kwargs, types=int, descriptor="Time Level", checking_obj=self)
+        this_got_called(self, next_x=next_x, func=func, **kwargs)
+        assert_named_argument('expl_term', kwargs, types=np.ndarray, descriptor="RHS for Space Solver",
+                              checking_obj=self)
+        # assert_named_argument('time_level', kwargs, types=int, descriptor="Time Level", checking_obj=self)
+        if kwargs.get('time_level') is None:
+            kwargs['time_level'] = 0
         time_level = str(kwargs['time_level'])
         assert_named_argument('delta_time', kwargs, types=float, descriptor="Delta Time Node", checking_obj=self)
         delta_time = str(kwargs['delta_time'])
@@ -109,7 +138,14 @@ class HeatEquation(ITransientMultigridProblem):
         #               dict_desc="Direct Solvers for Time Level '%s'" % 'time_level', checking_obj=self)
         if time_level not in self._direct_solvers or delta_time not in self._direct_solvers[time_level]:
             self.initialize_direct_space_solver(kwargs['time_level'], kwargs['delta_time'])
-        return self.mg_solve(next_x, method='direct', solver=self._direct_solvers[time_level][delta_time])
+        _this_set = self._direct_solvers[time_level][delta_time]
+        _this_set['mg_level'].rhs = kwargs['expl_term']
+
+        _this_set['stencil'].modify_rhs(_this_set['mg_level'])
+        LOG.debug("modified RHS: %s" % _this_set['mg_level'].rhs)
+        _sol = self.mg_solve(_this_set['mg_level'].rhs, method='direct', solver=_this_set['solver'])
+        LOG.debug("Implicit Solve => %s" % _sol)
+        return _sol
 
     def print_lines_for_log(self):
         _lines = super(HeatEquation, self).print_lines_for_log()
