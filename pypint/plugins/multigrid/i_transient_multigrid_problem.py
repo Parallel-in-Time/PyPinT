@@ -16,7 +16,7 @@ class ITransientMultigridProblem(IInitialValueProblem, MultigridProblemMixin):
         super(ITransientMultigridProblem, self).__init__(*args, **kwargs)
         MultigridProblemMixin.__init__(self, *args, **kwargs)
 
-    def implicit_solve(self, next_x, func, method="hybr"):
+    def implicit_solve(self, next_x, func, method="hybr", **kwargs):
         # TODO: the real MG-stuff for SDC solver cores goes here
         pass
 
