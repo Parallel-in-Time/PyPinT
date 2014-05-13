@@ -9,13 +9,37 @@ import scipy.signal as sig
 import scipy.sparse as sprs
 from pypint.plugins.multigrid.i_multigrid_smoother import IMultigridSmoother
 
+class ILUSmoother(IMultigridSmoother):
+    """ makes a incomplete LU smoother solver
+
+    """
+    def __init__(self, stencil, level, fill_factor=20, drop_tolerance=1e-6):
+        """__init__ method"""
+        assert_is_instance(stencil, Stencil, "A Stencil object is needed")
+        assert_is_instance(level, IMultigridLevel, "Level should be "
+                                                  "level instance")
+        self.level = level
+        self.sp_matrix = stencil.to_sparse_matrix(level.mid.shape, "csc")
+        self.solver = sprs.linalg.spilu(self.sp_matrix, drop_tol=drop_tolerance, fill_factor=fill_factor).solve
+        self.stencil = stencil
+    def relax(self,n=1):
+        """ Just computes the usual iteration
+                with B^{-1} as the ilu
+                x_{k+1} = x_k - B^{-1}Ax + B^{-1}b
+        """
+        # print("putin", self.level.rhs.reshape(-1)[:])
+        # print("getout", self.solver(self.level.rhs.reshape(-1)))
+        for i in range(n):
+            self.level.mid[:] += (self.solver(self.level.rhs.reshape(-1)) -
+                                  self.solver(self.stencil.eval_convolve(
+                                      self.level.evaluable_view(self.stencil)).reshape(-1))).reshape(self.level.mid.shape)
 
 class DirectSolverSmoother(IMultigridSmoother):
     """Takes the stencil and wraps the solver of stencil class, so that ist may
     may be used in the MultiGridProvider and put it into the level
 
     """
-    def __init__(self, stencil, level, mod_rhs=False):
+    def __init__(self, stencil, level):
         """__init__ method"""
         assert_is_instance(stencil, Stencil, "A Stencil object is needed")
         assert_is_instance(level, IMultigridLevel, "Level should be "

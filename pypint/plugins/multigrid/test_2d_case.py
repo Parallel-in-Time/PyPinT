@@ -9,17 +9,33 @@ from pypint.plugins.multigrid.multigrid_problem import MultiGridProblem
 from pypint.plugins.multigrid.multigrid_level_provider import MultiGridLevelProvider
 from pypint.plugins.multigrid.multigrid_solution import MultiGridSolution
 from pypint.plugins.multigrid.level2d import MultigridLevel2D
-from pypint.plugins.multigrid.multigrid_smoother import SplitSmoother, DirectSolverSmoother, WeightedJacobiSmoother
+from pypint.plugins.multigrid.multigrid_smoother import ILUSmoother, SplitSmoother, DirectSolverSmoother, WeightedJacobiSmoother
 from pypint.utilities import assert_is_callable, assert_is_instance, assert_condition
 from pypint.plugins.multigrid.stencil import Stencil
 from pypint.plugins.multigrid.interpolation import InterpolationByStencilListIn1D, InterpolationByStencilForLevels, InterpolationByStencilForLevelsClassical
 from pypint.plugins.multigrid.restriction import RestrictionStencilPure, RestrictionByStencilForLevels, RestrictionByStencilForLevelsClassical
 from operator import iadd,add
+import matplotlib.pyplot as plt
+from matplotlib.colors import LightSource
 
-class VCycle(object):
-    """
+# class SmootherControl(object):
+#     """
+#
+#     """
+#     def __init__(self, level_list, SmootherTypeList=["wJac"], ):
+#
+#
+
+
+
+class VCycler(object):
+    """ Takes a problem and constructs a level set a stencil set and so on to do v cycles
 
     """
+    def __init__(self, stencil_form, mg_problem, numb_levels=3, coarse_level_shape=(5,)):
+        pass
+
+
 
 if __name__ == '__main__':
     # check if level2d is working properly
@@ -136,15 +152,15 @@ if __name__ == '__main__':
     n_jacobi_pre = 5
     n_jacobi_post = 5
     borders = np.ones((2, 2))
-    top_level = MultigridLevel2D((11, 11), mg_problem=mg_problem,
+    top_level = MultigridLevel2D((259, 259), mg_problem=mg_problem,
                                  max_borders=borders, role="FL")
 
 
 
-    mid_level = MultigridLevel2D((5, 5), mg_problem=mg_problem,
+    mid_level = MultigridLevel2D((129, 129), mg_problem=mg_problem,
                                  max_borders=borders, role="ML")
 
-    low_level = MultigridLevel2D((2, 2), mg_problem=mg_problem,
+    low_level = MultigridLevel2D((64, 64), mg_problem=mg_problem,
                                  max_borders=borders, role="CL")
     mg_problem.fill_rhs(top_level)
     top_level.pad()
@@ -168,6 +184,11 @@ if __name__ == '__main__':
                                         low_level)
     low_direct_smoother = DirectSolverSmoother(low_stencil, low_level)
 
+    # prepare the ilu smoother
+    top_ilu_smoother = ILUSmoother(top_stencil, top_level)
+    mid_ilu_smoother = ILUSmoother(mid_stencil, mid_level)
+    low_ilu_smoother = ILUSmoother(low_stencil, low_level)
+
     # define the the restriction operators - full weighting
     rst_stencil = Stencil(np.asarray([[1.0, 2.0, 1.0], [2.0, 4.0, 2.0], [1.0, 2.0, 1.0]])/16)
     rst_top_to_mid = RestrictionByStencilForLevelsClassical(rst_stencil, top_level, mid_level)
@@ -188,16 +209,25 @@ if __name__ == '__main__':
 
     print("==== Down The V Cycle ====")
     print("** Initial TopLevel.arr **\n", top_level.arr)
-    top_jacobi_smoother.relax(n_jacobi_pre)
-    print("** TopLevel.arr after "+str(n_jacobi_pre)+" jacobi step(s) **\n", top_level.arr)
+    # top_jacobi_smoother.relax(n_jacobi_pre)
+    # print("** TopLevel.arr after "+str(n_jacobi_pre)+" jacobi step(s) **\n", top_level.arr)
+
+    top_ilu_smoother.relax(n_jacobi_pre)
+    print("** TopLevel.arr after "+str(n_jacobi_pre)+" ilu step(s) **\n", top_level.arr)
+
     print("** TopLevel.res before computation **\n", top_level.res)
     top_level.compute_residual(top_stencil)
     print("** TopLevel.res after computation **\n", top_level.res)
     print("** MidLevel.rhs before restriction **\n", mid_level.rhs)
     rst_top_to_mid.restrict()
     print("** MidLevel.rhs after restriction **\n", mid_level.rhs)
-    mid_jacobi_smoother.relax(n_jacobi_pre)
-    print("** MidLevel.arr after "+str(n_jacobi_pre)+" jacobi step(s) **\n", mid_level.arr)
+
+    # mid_jacobi_smoother.relax(n_jacobi_pre)
+    # print("** MidLevel.arr after "+str(n_jacobi_pre)+" jacobi step(s) **\n", mid_level.arr)
+
+    mid_ilu_smoother.relax(n_jacobi_pre)
+    print("** MidLevel.arr after "+str(n_jacobi_pre)+" ilu step(s) **\n", mid_level.arr)
+
     print("** MidLevel.res before computation **\n", mid_level.res)
     mid_level.compute_residual(mid_stencil)
     print("** MidLevel.res after computation **\n", mid_level.res)
@@ -214,14 +244,22 @@ if __name__ == '__main__':
     # mid_level.mid[:] = 0.0
     ipl_low_to_mid.eval()
     print("** MidLevel.arr after interpolation **\n", mid_level.arr)
-    mid_jacobi_smoother.relax(n_jacobi_post)
-    print("** MidLevel.arr after "+str(n_jacobi_post)+" jacobi step(s) **\n", mid_level.arr)
+    # mid_jacobi_smoother.relax(n_jacobi_post)
+    # print("** MidLevel.arr after "+str(n_jacobi_post)+" jacobi step(s) **\n", mid_level.arr)
+
+    mid_ilu_smoother.relax(n_jacobi_post)
+    print("** MidLevel.arr after "+str(n_jacobi_post)+" ilu step(s) **\n", mid_level.arr)
+
     ipl_mid_to_top.eval()
     print("** TopLevel.arr after interpolation **\n", top_level.arr)
-    mid_jacobi_smoother.relax(n_jacobi_post)
-    print("** TopLevel.arr after "+str(n_jacobi_post)+" jacobi step(s) **\n", top_level.arr)
 
-    sol_level = MultigridLevel2D((11, 11),
+    # top_jacobi_smoother.relax(n_jacobi_post)
+    # print("** TopLevel.arr after "+str(n_jacobi_post)+" jacobi step(s) **\n", top_level.arr)
+
+    top_ilu_smoother.relax(n_jacobi_post)
+    print("** TopLevel.arr after "+str(n_jacobi_post)+" ilu step(s) **\n", top_level.arr)
+
+    sol_level = MultigridLevel2D((259, 259),
                              mg_problem=mg_problem,
                              max_borders=np.asarray([[1, 1], [1, 1]]),
                              role="FL")
@@ -234,3 +272,13 @@ if __name__ == '__main__':
     direct_solver.relax()
     print("** The collocation solution **\n", sol_level.arr)
     print("** The error **\n", sol_level.mid - top_level.mid)
+
+    # plot the data
+    # shade data, creating an rgb array.
+    # plot un-shaded and shaded images.
+
+    plt.imshow(top_level.arr, cmap=plt.cm.coolwarm)
+    plt.title('Sinus Randbedingungen')
+    plt.xticks([]); plt.yticks([])
+    plt.colorbar(cmap=plt.cm.coolwarm)
+    plt.show()
