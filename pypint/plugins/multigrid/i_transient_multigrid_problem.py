@@ -32,5 +32,10 @@ class ITransientMultigridProblem(IInitialValueProblem, MultigridProblemMixin):
                     .dot(kwargs['values'].flatten())\
                     .reshape(kwargs['values'].shape)
 
+    def print_lines_for_log(self):
+        _lines = super(ITransientMultigridProblem, self).print_lines_for_log()
+        _lines.update(MultigridProblemMixin.print_lines_for_log(self))
+        return _lines
+
 
 __all__ = ['ITransientMultigridProblem']

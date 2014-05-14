@@ -28,7 +28,7 @@ class HeatEquation(ITransientMultigridProblem):
 
         # HasExactSolutionMixin.__init__(self, *args, **kwargs)
 
-        self._thermal_diffusivity = kwargs.get('thermal_diffusivity', -1.0)
+        self._thermal_diffusivity = kwargs.get('thermal_diffusivity', 1.0)
 
         if self.time_start is None:
             self.time_start = 0.0
@@ -62,29 +62,33 @@ class HeatEquation(ITransientMultigridProblem):
         self._thermal_diffusivity = value
 
     def evaluate_wrt_time(self, time, phi_of_time, **kwargs):
-        this_got_called(self, time=time, phi_of_time=phi_of_time, **kwargs)
+        # this_got_called(self, time=time, phi_of_time=phi_of_time, **kwargs)
+        # LOG.debug(" using Stencil: %s" % self._mg_stencil.arr)
         if kwargs.get('partial'):
             if kwargs['partial'] == "impl":
                 self._mg_level.mid[:] = phi_of_time.reshape(-1)
                 _padded_phi = self._mg_level.evaluable_view(self._mg_stencil)
-                LOG.debug("padded phi: %s" % _padded_phi)
                 _out = self._mg_stencil.eval_convolve(_padded_phi)
-                LOG.debug("  ==> %s" % _out.reshape(phi_of_time.shape))
+                # LOG.debug(" --> %s" % _out.reshape(phi_of_time.shape))
                 return _out.reshape(phi_of_time.shape)
             else:
+                # LOG.debug(" --> zeros")
                 return np.zeros(phi_of_time.shape)
         else:
             self._mg_level.mid[:] = phi_of_time.reshape(-1)
             _padded_phi = self._mg_level.evaluable_view(self._mg_stencil)
-            LOG.debug("padded phi: %s" % _padded_phi)
             _out = self._mg_stencil.eval_convolve(_padded_phi)
-            LOG.debug("  ==> %s" % _out.reshape(phi_of_time.shape))
+            # LOG.debug(" --> %s" % _out.reshape(phi_of_time.shape))
             return _out.reshape(phi_of_time.shape)
 
     def mg_stencil(self, delta_time, delta_space):
-        _stencil = (-1.0 * delta_time * self.thermal_diffusivity) * np.array([1.0, -2.0 - (delta_space**2 / delta_time), 1.0]) \
-            / (delta_space**2)
-        LOG.debug("Stencil for dt=%f, h=%f: %s" % (delta_time, delta_space, _stencil))
+        _stencil = np.array(
+            [
+                -1.0 * delta_time * self.thermal_diffusivity / (delta_space**2),
+                ((2.0 * delta_time * self.thermal_diffusivity) / (delta_space**2)) + 1.0,
+                -1.0 * delta_time * self.thermal_diffusivity / (delta_space**2)
+            ]
+        )
         return _stencil
 
     def initialize_direct_space_solver(self, time_level, delta_time, mg_level=None):
@@ -92,13 +96,14 @@ class HeatEquation(ITransientMultigridProblem):
             mg_level = self._mg_level
         assert_is_instance(mg_level, IMultigridLevel, descriptor="Multigrid Level", checking_obj=self)
         _stencil = Stencil(self.mg_stencil(delta_time, mg_level.h))
+        # LOG.debug("Stencil for dt=%f, h=%f: %s" % (delta_time, mg_level.h, _stencil.arr))
         time_level = str(time_level)
         delta_time = str(delta_time)
         if self._direct_solvers.get(time_level) is None:
-            LOG.debug("Initializing Solvers for Time Level '%s'" % time_level)
+            # LOG.debug("Initializing Solvers for Time Level '%s'" % time_level)
             self._direct_solvers[time_level] = {}
-        LOG.debug("  Initializing Solver for Time Level '%s' and Delta Node '%s'" % (time_level, delta_time))
-        LOG.debug("    shape: %s" % (mg_level.mid.shape))
+        # LOG.debug("  Initializing Solver for Time Level '%s' and Delta Node '%s'" % (time_level, delta_time))
+        # LOG.debug("    shape: %s" % (mg_level.mid.shape))
         self._direct_solvers[time_level][delta_time] = {
             'mg_level': mg_level,
             'stencil': _stencil,
@@ -122,7 +127,7 @@ class HeatEquation(ITransientMultigridProblem):
         delta_time : :py:class:`float`
             distance from the previous to currently calculated time node
         """
-        this_got_called(self, next_x=next_x, func=func, **kwargs)
+        # this_got_called(self, next_x=next_x, func=func, **kwargs)
         assert_named_argument('expl_term', kwargs, types=np.ndarray, descriptor="RHS for Space Solver",
                               checking_obj=self)
         # assert_named_argument('time_level', kwargs, types=int, descriptor="Time Level", checking_obj=self)
@@ -140,11 +145,17 @@ class HeatEquation(ITransientMultigridProblem):
             self.initialize_direct_space_solver(kwargs['time_level'], kwargs['delta_time'])
         _this_set = self._direct_solvers[time_level][delta_time]
         _this_set['mg_level'].rhs = kwargs['expl_term']
-
+        # LOG.debug("initial RHS: %s" % _this_set['mg_level'].rhs)
         _this_set['stencil'].modify_rhs(_this_set['mg_level'])
-        LOG.debug("modified RHS: %s" % _this_set['mg_level'].rhs)
+        # LOG.debug("modified RHS: %s" % _this_set['mg_level'].rhs)
+        # LOG.debug("Stencil: %s" % _this_set['stencil'].arr)
         _sol = self.mg_solve(_this_set['mg_level'].rhs, method='direct', solver=_this_set['solver'])
-        LOG.debug("Implicit Solve => %s" % _sol)
+        # LOG.debug("Implicit Solve => %s" % _sol)
+        _this_set['mg_level'].mid[:] = _sol.reshape(-1)
+        # _padded_sol = _this_set['mg_level'].evaluable_view(_this_set['stencil'])
+        _sp_matrix = _this_set['stencil'].to_sparse_matrix(self.spacial_dim)
+        # LOG.debug("Check with Sparse Matrix %s:" % _sp_matrix.todense())
+        # LOG.debug("  ==> %s" % _sp_matrix.dot(_sol.reshape(-1)).reshape(_sol.shape))
         return _sol
 
     def print_lines_for_log(self):

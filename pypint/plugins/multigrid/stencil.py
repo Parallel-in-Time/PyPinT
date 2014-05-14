@@ -6,6 +6,8 @@ import scipy.sparse.linalg as spla
 import functools as ft
 from pypint.utilities import assert_is_callable, assert_is_instance, assert_condition
 from pypint.plugins.multigrid.i_multigrid_level import IMultigridLevel
+from pypint.utilities.logging import LOG
+from pypint.utilities import func_name
 
 
 class Stencil(object):
@@ -144,9 +146,12 @@ class Stencil(object):
 
         """
         if grid is None:
+            # LOG.debug("Generate Solver for internal Spare Matrix: %s" % self.sp_matrix)
             solver = spla.factorized(self.sp_matrix)
         else:
+            # LOG.debug("Generate Solver for given Grid %s" % (grid,))
             sp_matrix = self.to_sparse_matrix(grid, "csc")
+            # LOG.debug("  with Sparse Matrix: %s" % sp_matrix.todense())
             # print("Jahier\n", sp_matrix.todense())
             # print("Jahier.shape\n", sp_matrix.todense().shape)
             solver = spla.factorized(sp_matrix)
@@ -171,7 +176,10 @@ class Stencil(object):
         as operator, where the boundary is taken into account:
         stencil.eval_convolve(level.evaluate_view(stencil),"valid" )
         """
-        return sig.convolve(array_in, self.reversed_arr, convolve_control)
+        # LOG.debug("%s on %s with stencil %s" % (func_name(self), array_in, self.reversed_arr))
+        _out = sig.convolve(array_in, self.reversed_arr, convolve_control)
+        # LOG.debug("  ==> %s" % _out)
+        return _out
 
     def eval_sparse(self, array_in, array_out, sp_matrix=None):
         """Evaluate via the sparse matrix
@@ -352,19 +360,19 @@ class Stencil(object):
         if level.modified_rhs is False:
             u = level.evaluable_view(self)
             rhs = level.rhs
-        # print("here from modify your right hand side:")
-        # print("u", u)
-        # print("rhs", rhs)
-
+            # print("here from modify your right hand side:")
+            # print("u", u)
+            # print("rhs", rhs)
 
             if self.dim == 1:
+                # LOG.debug("Modifying RHS")
                 # left side
                 for i in range(self.center[0]):
                     rhs[i] -= np.dot(self.arr[i:self.center[0]],
                                      u[0:self.center[0]-i])
-            # the same for the right side
+                # the same for the right side
                 til = self.arr.size - self.center[0] - 1
-                print(til)
+
                 for i in range(til):
                     rhs[-til] -= np.dot(self.arr[-til + i:], u[-til: u.size - i])
 

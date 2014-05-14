@@ -27,20 +27,22 @@ bnd_right_fnc = lambda x: 1.0
 bnd_functions = [[bnd_left_fnc, bnd_right_fnc]]
 
 num_points_mg_levels = OrderedDict()
-num_points_mg_levels['finest'] = 3
+num_points_mg_levels['finest'] = 4
 # num_points_mg_levels['mid'] = 5
 # num_points_mg_levels['base'] = 2
 print_logging_message_tree(OrderedDict({'Points on Space Grid': num_points_mg_levels}))
 
 from examples.problems.heat_equation import HeatEquation
 problem = HeatEquation(dim=(num_points_mg_levels['finest'], 1),
+                       time_end=0.2,
+                       thermal_diffusivity=0.5,
+                       # initial_value=np.array([[0.0], [0.0], [1.0], [0.0], [0.0]]),
                        rhs_function_wrt_space=lambda dof, tensor: 0.0,
                        boundary_functions=bnd_functions,
                        boundaries=boundary_types,
                        geometry=geo)
-LOG.debug(problem.boundaries)
 
-print_logging_message_tree(OrderedDict({'': {'Problem': problem.print_lines_for_log()}}))
+print_logging_message_tree(OrderedDict({'Problem': problem.print_lines_for_log()}))
 
 LOG.info(SEPARATOR_LVL2)
 LOG.info("%sSetting Up Multigrid Levels" % VERBOSITY_LVL1)
@@ -49,9 +51,9 @@ borders = np.array([3, 3])
 
 fine_mg_level = MultigridLevel1D(num_points_mg_levels['finest'], mg_problem=problem, max_borders=borders, role='FL')
 problem._mg_level = fine_mg_level
-problem._mg_stencil = Stencil(np.array([1.0, -2.0, 1.0]) / fine_mg_level.h**2)
+problem._mg_stencil = Stencil(np.array([problem.thermal_diffusivity, -2.0 * problem.thermal_diffusivity, problem.thermal_diffusivity]) / fine_mg_level.h**2)
 problem._mg_stencil.grid = fine_mg_level.mid.shape
-LOG.debug("Sparse matrix: %s -> %s" % (problem._mg_stencil.sp_matrix.shape,problem._mg_stencil.sp_matrix.todense()))
+# LOG.debug("Sparse matrix: %s -> %s" % (problem._mg_stencil.sp_matrix.shape, problem._mg_stencil.sp_matrix.todense()))
 # mid_mg_level = MultigridLevel1D(num_points_mg_levels['mid'], mg_problem=problem, max_borders=borders, role='ML')
 # base_mg_level = MultigridLevel1D(num_points_mg_levels['base'], mg_problem=problem, max_borders=borders, role='CL')
 
@@ -134,17 +136,17 @@ from pypint.multi_level_providers.level_transition_providers.time_transition_pro
 from pypint.integrators.sdc_integrator import SdcIntegrator
 
 base_mlsdc_level = SdcIntegrator()
-base_mlsdc_level.init(num_nodes=3)
+base_mlsdc_level.init(num_nodes=5)
 
-# fine_mlsdc_level = SdcIntegrator()
-# fine_mlsdc_level.init(num_nodes=5)
+fine_mlsdc_level = SdcIntegrator()
+fine_mlsdc_level.init(num_nodes=7)
 
-# transitioner = TimeTransitionProvider(fine_nodes=fine_mlsdc_level.nodes, coarse_nodes=base_mlsdc_level.nodes)
+transitioner = TimeTransitionProvider(fine_nodes=fine_mlsdc_level.nodes, coarse_nodes=base_mlsdc_level.nodes)
 
 ml_provider = MultiTimeLevelProvider()
-# ml_provider.add_coarse_level(fine_mlsdc_level)
+ml_provider.add_coarse_level(fine_mlsdc_level)
 ml_provider.add_coarse_level(base_mlsdc_level)
-# ml_provider.add_level_transition(transitioner, 0, 1)
+ml_provider.add_level_transition(transitioner, 0, 1)
 
 from pypint.communicators import ForwardSendingMessaging
 comm = ForwardSendingMessaging()
@@ -160,17 +162,14 @@ LOG.info(SEPARATOR_LVL1)
 LOG.info("%sInitialize Direct Space Solvers for Time Levels" % VERBOSITY_LVL1)
 for time_level in range(0, ml_provider.num_levels):
     _integrator = ml_provider.integrator(time_level)
-    LOG.debug("  Time Level %d" % time_level)
-    LOG.debug("    Nodes: %s" % _integrator.nodes)
     for time_node in range(0, _integrator.num_nodes - 1):
         problem.initialize_direct_space_solver(time_level,
                                                (_integrator.nodes[time_node + 1] - _integrator.nodes[time_node]),
                                                fine_mg_level)
-LOG.debug("Direct Solvers:\n%s" % problem._direct_solvers)
 
 LOG.info(SEPARATOR_LVL1)
 LOG.info("%sLaunching MLSDC with MG" % VERBOSITY_LVL1)
-from pypint.solvers.cores import SemiImplicitMlSdcCore
-mlsdc.run(SemiImplicitMlSdcCore, dt=1.0)
+from pypint.solvers.cores import SemiImplicitMlSdcCore, ExplicitMlSdcCore
+mlsdc.run(SemiImplicitMlSdcCore, dt=0.2)
 
 print("RHS Evaluations: %d" % problem.rhs_evaluations)

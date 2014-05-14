@@ -101,9 +101,9 @@ class SemiImplicitMlSdcCore(MlSdcSolverCore):
                  + state.current_step.delta_tau
                  * (_Fe_u_cp - _Fe_u_pp - _Fe_u_pc)
                  + state.current_step.integral + _fas).reshape(-1)
-            LOG.debug("EXPL TERM: %s = %s + %f * (%s - %s - %s) + %s + %s"
-                      % (_expl_term, state.previous_step.value, state.current_step.delta_tau, _Fe_u_cp, _Fe_u_pp,
-                         _Fe_u_pc, state.current_step.integral, _fas))
+            # LOG.debug("EXPL TERM: %s = %s + %f * (%s - %s - %s) + %s + %s"
+            #           % (_expl_term, state.previous_step.value, state.current_step.delta_tau, _Fe_u_cp, _Fe_u_pp,
+            #              _Fe_u_pc, state.current_step.integral, _fas))
             _func = lambda x_next: \
                 _expl_term \
                 + state.current_step.delta_tau * _problem.evaluate_wrt_time(state.current_step.time_point,

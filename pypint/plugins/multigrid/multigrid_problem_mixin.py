@@ -4,6 +4,8 @@
 .. moduleauthor:: Dieter Moser <d.moser@fz-juelich.de>
 .. moduleauthor:: Torbjörn Klatt <t.klatt@fz-juelich.de>
 """
+from collections import OrderedDict
+
 import numpy as np
 
 from pypint.problems.i_problem import IProblem
@@ -198,7 +200,7 @@ class MultigridProblemMixin(object):
                 solver_function = DirectSolverSmoother(kwargs['stencil'], kwargs['mg_level']).relax
             else:
                 solver_function = kwargs['solver']
-            LOG.debug("next_x.shape: {:s}".format(next_x.shape))
+            # LOG.debug("next_x.shape: {:s}".format(next_x.shape))
             return solver_function(next_x)
         else:
             raise ValueError("Unknown method: '%s'" % method)
@@ -214,7 +216,7 @@ class MultigridProblemMixin(object):
         if isinstance(number_of_points_list, (int, float, complex)):
             assert_is_instance(stencil, Stencil, descriptor="Stencil", checking_obj=self)
             npoints = int(number_of_points_list)
-            LOG.debug("Your number %s was modified to %s" % (number_of_points_list, npoints))
+            # LOG.debug("Your number %s was modified to %s" % (number_of_points_list, npoints))
             assert_condition(npoints > max(stencil.arr.shape), ValueError,
                              message="Not enough points for the stencil", checking_obj=self)
             npoints = np.asarray([npoints] * len(self.spacial_dim))
@@ -268,6 +270,26 @@ class MultigridProblemMixin(object):
                 assert_condition(u.shape == self._act_space_tensor[1].shape,
                                  "u has the wrong shape", self)
                 return function(u, self._act_space_tensor)
+
+    def print_lines_for_log(self):
+        _lines = OrderedDict()
+        _lines['Boundaries'] = OrderedDict(
+            {
+                'Left': OrderedDict(
+                    {
+                        'Type': self.boundaries[0],
+                        'Initial Value': self.boundary_functions[0][0](0.0)
+                    }
+                ),
+                'Right': OrderedDict(
+                    {
+                        'Type': self.boundaries[1],
+                        'Initial Value': self.boundary_functions[0][1](0.0)
+                    }
+                )
+            }
+        )
+        return _lines
 
 
 def problem_is_multigrid_problem(problem, checking_obj=None):
