@@ -209,20 +209,13 @@ class MultiGridCore(object):
 
             self.stencils.append(Stencil(*stencil_form(self.levels[-1])))
             # append smoother
-            if kwargs["smoothing_type"] is "jacobi" and self.dim == 1:
+            if kwargs["smoothing_type"] is "jacobi":
                 omega = kwargs["smooth_opts"]["omega"]
-                l_plus = np.asarray([0, -2.0/omega, 0])
-                l_minus = np.asarray([1.0, -2.0*(1.0 - 1.0/omega), 1.0])
-                self.smoothers.append(SplitSmoother(l_plus / self.levels[-1].h**2,
-                                                    l_minus / self.levels[-1].h**2, self.levels[-1]))
-            elif kwargs["smoothing_type"] is "jacobi" and self.dim == 2:
-                omega = kwargs["smooth_opts"]["omega"]
-                l_plus = np.asarray([[0, 0, 0],
-                                    [0, -4.0/omega, 0],
-                                    [0, 0, 0]])
-                l_minus = np.asarray([[0, 1.0, 0], [1.0, -4.0*(1.0 - 1.0/omega), 1.0], [0., 1., 0.]])
-                self.smoothers.append(SplitSmoother(l_plus / self.levels[-1].h[0]**2,
-                                                    l_minus / self.levels[-1].h[0]**2, self.levels[-1]))
+                # l_plus = np.asarray([0, -2.0/omega, 0])
+                # l_minus = np.asarray([1.0, -2.0*(1.0 - 1.0/omega), 1.0])
+                l_plus = self.stencils[-1].l_plus_jacobi(omega)
+                l_minus = self.stencils[-1].l_minus_jacobi(omega)
+                self.smoothers.append(SplitSmoother(l_plus, l_minus, self.levels[-1]))
             elif kwargs["smoothing_type"] is "ilu":
                 self.smoothers.append(ILUSmoother(self.stencils[-1], self.levels[-1], **kwargs["smooth_opts"]))
             else:
@@ -356,9 +349,9 @@ if __name__ == '__main__':
     mg_core.fill_rhs(-1)
     mg_core.pad(-1)
     mg_core.modify_rhs(-1)
-    mg_core.v_cycle_verbose()
+    mg_core.v_cycle()
     # mg_core.v_cycle_verbose()
-    print("After 2 V-Cycle\n", mg_core.levels[-1].mid)
+    print("After 1 V-Cycle\n", mg_core.levels[-1].mid)
     # plt.imshow(mg_core.levels[-1].arr, cmap=plt.cm.coolwarm)
     # plt.title('Sinus Randbedingungen')
     # plt.xticks([]); plt.yticks([])
