@@ -382,10 +382,10 @@ class Stencil(object):
 
     def l_plus_jacobi(self, omega):
         l_plus = np.zeros(self.arr.shape)
-        l_plus[self.center] = self.arr[self.center] * omega
+        l_plus[self.center] = self.arr[self.center] / omega
         return l_plus
 
     def l_minus_jacobi(self, omega):
         l_minus = np.copy(self.arr)
-        l_minus[self.center] *= (1-omega)
+        l_minus[self.center] *= (1.0 - 1.0 / omega)
         return l_minus
