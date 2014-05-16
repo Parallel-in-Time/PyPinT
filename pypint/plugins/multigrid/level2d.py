@@ -60,7 +60,7 @@ class MultigridLevel2D(IMultigridLevel):
         # assertion block for obvious bugs
         assert_is_instance(shape, tuple, "shape has to be a tuple")
         assert_condition(len(shape) == 2, ValueError, "shape has to be of length 2")
-        assert_condition(mg_problem.dimension == 2, ValueError, "mg_problem has the wrong dimension")
+        assert_condition(len(mg_problem.spacial_dim) == 2, ValueError, "mg_problem has the wrong dimension")
         assert_is_instance(max_borders, np.ndarray, "max borders has to be a numpy array")
         assert_condition(max_borders.shape == (2, 2), ValueError, "max borders has the wrong shape")
 
@@ -142,8 +142,8 @@ class MultigridLevel2D(IMultigridLevel):
         self.sw_tensor = np.meshgrid(self.l_spaces[0][0], self.l_spaces[1][2])
 
         # space for the rhs
-        # self.rhs = np.copy(self.mid)
-        self.rhs = np.zeros(self.mid.shape, dtype=dtype)
+        # self._rhs = np.copy(self.mid)
+        self._rhs = np.zeros(self.mid.shape, dtype=dtype)
         lspc = []
         for i in range(self.dim):
             start = self._mg_problem.geometry[i][0] - self.h[i] * (max_borders[i][0] - 1)
@@ -221,6 +221,15 @@ class MultigridLevel2D(IMultigridLevel):
         return MultiGridProblem
         """
         return self._mg_problem
+
+    @property
+    def rhs(self):
+        return self._rhs
+
+    @rhs.setter
+    def rhs(self, value):
+        self.modified_rhs = False
+        self._rhs[:] = value
 
     def embed(self, ue):
         """
