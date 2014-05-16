@@ -32,10 +32,10 @@ def left_f(x):
 left_f.__str__ = lambda: "const(0)"
 
 def right_f(x):
-    _s = np.ones(x.shape)
+    _s = np.zeros(x.shape)
     LOG.debug("Right Bnd Fnc: %s -> %s" % (x.reshape(-1), _s.reshape(-1)))
     return _s
-right_f.__str__ = lambda: "const(1)"
+right_f.__str__ = lambda: "const(0)"
 
 bnd_functions = [[left_f, right_f]]
 
@@ -55,14 +55,14 @@ x = np.linspace(dx, 1.0-dx, num=(num_points_mg_levels['finest']))
 
 LOG.debug("x (%s):\n%s" % (x.shape, x))
 
-# iv = initial_value_fnc(x)
-# LOG.debug("Initial Values %s:\n%s" % (iv.shape, iv))
+iv = initial_value_fnc(x)
+LOG.debug("Initial Values %s:\n%s" % (iv.shape, iv))
 
 from examples.problems.heat_equation import HeatEquation
 problem = HeatEquation(dim=(num_points_mg_levels['finest'], 1),
                        time_end=dt,
                        thermal_diffusivity=0.5,
-                       # initial_value=iv.reshape(((num_points_mg_levels['finest'])**2, 1)),
+                       initial_value=iv.reshape((num_points_mg_levels['finest'], 1)),
                        rhs_function_wrt_space=lambda dof, tensor: 0.0,
                        boundary_functions=bnd_functions,
                        boundaries=boundary_types,
@@ -171,17 +171,17 @@ from pypint.multi_level_providers.level_transition_providers.time_transition_pro
 from pypint.integrators.sdc_integrator import SdcIntegrator
 
 base_mlsdc_level = SdcIntegrator()
-base_mlsdc_level.init(num_nodes=7)
+base_mlsdc_level.init(num_nodes=5)
 
-# fine_mlsdc_level = SdcIntegrator()
-# fine_mlsdc_level.init(num_nodes=7)
+fine_mlsdc_level = SdcIntegrator()
+fine_mlsdc_level.init(num_nodes=7)
 
-# transitioner = TimeTransitionProvider(fine_nodes=fine_mlsdc_level.nodes, coarse_nodes=base_mlsdc_level.nodes)
+transitioner = TimeTransitionProvider(fine_nodes=fine_mlsdc_level.nodes, coarse_nodes=base_mlsdc_level.nodes)
 
 ml_provider = MultiTimeLevelProvider()
-# ml_provider.add_coarse_level(fine_mlsdc_level)
+ml_provider.add_coarse_level(fine_mlsdc_level)
 ml_provider.add_coarse_level(base_mlsdc_level)
-# ml_provider.add_level_transition(transitioner, 0, 1)
+ml_provider.add_level_transition(transitioner, 0, 1)
 
 from pypint.communicators import ForwardSendingMessaging
 comm = ForwardSendingMessaging()
@@ -192,7 +192,7 @@ comm.link_solvers(previous=comm, next=comm)
 comm.write_buffer(tag=(ml_provider.num_levels - 1), value=problem.initial_value, time_point=problem.time_start)
 
 from pypint.utilities.threshold_check import ThresholdCheck
-thresh = ThresholdCheck(max_threshold=5, min_threshold=1e-7,
+thresh = ThresholdCheck(max_threshold=3, min_threshold=1e-7,
                         conditions=('solution reduction', 'residual', 'iterations'))
 mlsdc.init(problem=problem, threshold=thresh, ml_provider=ml_provider)
 
