@@ -70,6 +70,9 @@ if __name__ == '__main__':
     mid_stencil = Stencil(laplace_array / mid_level.h**2)
     low_stencil = Stencil(laplace_array / low_level.h**2)
 
+    print("jacobi minus: %s" % top_stencil.l_minus_jacobi(1.))
+    print("jacobi plus: %s" % top_stencil.l_plus_jacobi(1.))
+
     low_direct_smoother = DirectSolverSmoother(low_stencil, low_level)
     center = np.asarray([0])
 
