@@ -2,19 +2,22 @@
 import numpy as np
 import sys
 print(sys.path)
-from pypint.plugins.multigrid.multigrid_problem import MultigridProblem
-from pypint.plugins.multigrid.multigrid_level_provider import MultiGridLevelProvider
-from pypint.plugins.multigrid.multigrid_solution import MultiGridSolution
+# try:
+# from pypint.plugins.multigrid.multigrid_problem_mixin import problem_is_multigrid_problem
+# except ImportError:
+#     problem_is_multigrid_problem = None
+# from pypint.plugins.multigrid.multigrid_level_provider import MultiGridLevelProvider
+# from pypint.plugins.multigrid.multigrid_solution import MultiGridSolution
 from pypint.plugins.multigrid.level import MultigridLevel1D
 from pypint.plugins.multigrid.level2d import MultigridLevel2D
 from pypint.plugins.multigrid.multigrid_smoother import SplitSmoother,ILUSmoother, DirectSolverSmoother, WeightedJacobiSmoother
 from pypint.utilities import assert_is_callable, assert_is_instance, assert_condition
 from pypint.plugins.multigrid.stencil import Stencil
-from pypint.plugins.multigrid.interpolation import InterpolationByStencilListIn1D, InterpolationByStencilForLevels, InterpolationByStencilForLevelsClassical
-from pypint.plugins.multigrid.restriction import RestrictionStencilPure, RestrictionByStencilForLevels, RestrictionByStencilForLevelsClassical
+# from pypint.plugins.multigrid.interpolation import InterpolationByStencilListIn1D, InterpolationByStencilForLevels, InterpolationByStencilForLevelsClassical
+# from pypint.plugins.multigrid.restriction import RestrictionStencilPure, RestrictionByStencilForLevels, RestrictionByStencilForLevelsClassical
 from operator import iadd,add
 from pypint.plugins.multigrid import MG_INTERPOLATION_PRESETS, MG_RESTRICTION_PRESETS, MG_SMOOTHER_PRESETS, MG_LEVEL_PRESETS
-import matplotlib.pyplot as plt
+# import matplotlib.pyplot as plt
 
 class MultiGridControl(object):
     """
@@ -166,7 +169,7 @@ class MultiGridCore(object):
 
         for keys in kwargs.keys():
             print(keys)
-        assert_is_instance(mg_prob, MultigridProblem, "Not a multigrid Problem")
+        # assert_condition(problem_is_multigrid_problem(mg_prob), ValueError, message="Not a multigrid Problem")
         assert_is_callable(stencil_form, "StencilForm has to be a function")
         self.mg_problem = mg_prob
         self.levels = []
@@ -246,6 +249,8 @@ class MultiGridCore(object):
     def v_cycle_verbose(self):
         # start with top_level down the v_cycle
 
+        print("Stencil:\n%s" % self.stencils[-1].arr)
+
         for i in range(1, self.num_levels):
             k = self.num_levels - i + 1
             print("Level %d before smoothing" % k)
@@ -276,7 +281,7 @@ class MultiGridCore(object):
 
             self.ipl_ops[i].eval()
 
-            print("Level %d after residual computation" % (i+1))
+            print("Level %d after interpolation" % (i+1))
             self.levels[i+1].print_all()
 
             self.smoothers[i+1].relax(self.n_post)

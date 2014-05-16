@@ -4,8 +4,8 @@ import numpy as np
 import scipy.signal as sig
 from pypint.utilities import assert_is_callable, assert_is_instance, \
                                      assert_condition
-from pypint.plugins.multigrid.multigrid_problem import MultigridProblem
-from pypint.plugins.multigrid.stencil import Stencil
+# from pypint.plugins.multigrid.multigrid_problem import MultigridProblem
+# from pypint.plugins.multigrid.stencil import Stencil
 from pypint.plugins.multigrid.i_multigrid_level import IMultigridLevel
 
 

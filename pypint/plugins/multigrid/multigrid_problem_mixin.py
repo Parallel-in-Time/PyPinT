@@ -10,7 +10,13 @@ import numpy as np
 
 from pypint.problems.i_problem import IProblem
 from pypint.plugins.multigrid.stencil import Stencil
-from pypint.plugins.multigrid.i_multigrid_level import IMultigridLevel
+from pypint.plugins.multigrid.multigrid_core import MultiGridCore
+from pypint.plugins.multigrid import MG_INTERPOLATION_PRESETS, MG_RESTRICTION_PRESETS, MG_SMOOTHER_PRESETS, MG_LEVEL_PRESETS
+
+# from pypint.plugins.multigrid.i_multigrid_level import IMultigridLevel
+# try:
+# except ImportError:
+#     MultiGridCore = None
 from pypint.plugins.multigrid.multigrid_smoother import DirectSolverSmoother
 from pypint.utilities import assert_is_callable, assert_is_instance, assert_condition, assert_named_argument
 from pypint.utilities.logging import LOG
@@ -101,6 +107,9 @@ class MultigridProblemMixin(object):
 
         self._rhs_space_operators = {}
 
+        self._implicit_solve_method = kwargs.get('implicit_solve_method', 'direct')
+        self._mg_core = None
+
         # the Space tensor which is actually used
         self._act_space_tensor = None
         self._act_grid_distances = None
@@ -117,6 +126,14 @@ class MultigridProblemMixin(object):
         return self.get_rhs_space_operators('default')\
                     .dot(kwargs['values'].flatten())\
                     .reshape(kwargs['values'].shape)
+
+    @property
+    def mg_core(self):
+        return self._mg_core
+
+    @mg_core.setter
+    def mg_core(self, value):
+        self._mg_core = value
 
     @property
     def rhs_function_wrt_space(self):
@@ -188,14 +205,33 @@ class MultigridProblemMixin(object):
         solution
         """
         if method == 'mg':
-            assert_named_argument('mg_level', kwargs, types=IMultigridLevel, descriptor="Multigrid Level",
+            assert_named_argument('stencil_fnc', kwargs, descriptor="Stencil Generation Function",
                                   checking_obj=self)
+            assert_is_callable(kwargs['stencil_fnc'], descriptor="Stencil Generation Function", checking_obj=self)
             LOG.debug("Using Multigrid as implicit space solver.")
-            raise NotImplementedError("Full multigrid solver not yet plugged.")
+
+            mg_core_options = {}
+            mg_core_options.update(MG_SMOOTHER_PRESETS["Jacobi"])
+            mg_core_options.update(MG_LEVEL_PRESETS["Standard-1D"])
+            mg_core_options.update(MG_RESTRICTION_PRESETS["Standard-1D"])
+            mg_core_options.update(MG_INTERPOLATION_PRESETS["Standard-1D"])
+            mg_core_options["shape_coarse"] = 2
+            mg_core_options["n_pre"] = 1
+            mg_core_options["n_post"] = 1
+            self.mg_core = MultiGridCore(self, lambda h: (kwargs['stencil_fnc'](h), np.array([1])), **mg_core_options)
+            self.mg_core.levels[-1].mid[:] = next_x.reshape(self.mg_core.levels[-1].mid.shape)
+            self.mg_core.fill_rhs(-1)
+            self.mg_core.pad(-1)
+            self.mg_core.modify_rhs(-1)
+            self.mg_core.v_cycle_verbose()
+
+            LOG.debug("input: %s --> %s" % (next_x.shape, self._mg_core.levels[-1].mid.shape))
+            return self.mg_core.levels[-1].mid.reshape(next_x.shape)
+
         elif method == 'direct':
             if kwargs.get('solver') is None:
-                assert_named_argument('mg_level', kwargs, types=IMultigridLevel, descriptor="Multigrid Level",
-                                      checking_obj=self)
+                # assert_named_argument('mg_level', kwargs, types=IMultigridLevel, descriptor="Multigrid Level",
+                #                       checking_obj=self)
                 assert_named_argument('stencil', kwargs, types=Stencil, descriptor="MG Stencil", checking_obj=self)
                 solver_function = DirectSolverSmoother(kwargs['stencil'], kwargs['mg_level']).relax
             else:

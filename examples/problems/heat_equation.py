@@ -149,7 +149,12 @@ class HeatEquation(ITransientMultigridProblem):
         _this_set['stencil'].modify_rhs(_this_set['mg_level'])
         # LOG.debug("modified RHS: %s" % _this_set['mg_level'].rhs)
         # LOG.debug("Stencil: %s" % _this_set['stencil'].arr)
-        _sol = self.mg_solve(_this_set['mg_level'].rhs, method='direct', solver=_this_set['solver'])
+
+        _sol = self.mg_solve(_this_set['mg_level'].rhs,
+                             method=self._implicit_solve_method,
+                             solver=_this_set['solver'],
+                             stencil_fnc=lambda level: self.mg_stencil(kwargs['delta_time'], level.h))
+
         # LOG.debug("Implicit Solve => %s" % _sol)
         _this_set['mg_level'].mid[:] = _sol.reshape(-1)
         # _padded_sol = _this_set['mg_level'].evaluable_view(_this_set['stencil'])

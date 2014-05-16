@@ -7,7 +7,7 @@ from collections import OrderedDict
 
 import numpy as np
 
-dt = 0.1
+dt = 0.001
 
 from pypint.utilities.logging import LOG, print_logging_message_tree, VERBOSITY_LVL1, SEPARATOR_LVL1, SEPARATOR_LVL2
 
@@ -40,7 +40,7 @@ right_f.__str__ = lambda: "const(0)"
 bnd_functions = [[left_f, right_f]]
 
 num_points_mg_levels = OrderedDict()
-num_points_mg_levels['finest'] = 18
+num_points_mg_levels['finest'] = 11
 # num_points_mg_levels['mid'] = 5
 # num_points_mg_levels['base'] = 2
 print_logging_message_tree(OrderedDict({'Points on Space Grid': num_points_mg_levels}))
@@ -66,12 +66,13 @@ problem = HeatEquation(dim=(num_points_mg_levels['finest'], 1),
                        rhs_function_wrt_space=lambda dof, tensor: 0.0,
                        boundary_functions=bnd_functions,
                        boundaries=boundary_types,
-                       geometry=geo)
+                       geometry=geo,
+                       implicit_solve_method='mg')
 
 print_logging_message_tree(OrderedDict({'Problem': problem.print_lines_for_log()}))
 
-LOG.info(SEPARATOR_LVL2)
-LOG.info("%sSetting Up Multigrid Levels" % VERBOSITY_LVL1)
+# LOG.info(SEPARATOR_LVL2)
+# LOG.info("%sSetting Up Multigrid Levels" % VERBOSITY_LVL1)
 from pypint.plugins.multigrid.level import MultigridLevel1D
 borders = np.array([2, 2])
 
@@ -92,9 +93,9 @@ problem._mg_stencil.grid = fine_mg_level.mid.shape
 # mid_mg_level = MultigridLevel1D(num_points_mg_levels['mid'], mg_problem=problem, max_borders=borders, role='ML')
 # base_mg_level = MultigridLevel1D(num_points_mg_levels['base'], mg_problem=problem, max_borders=borders, role='CL')
 
-LOG.info("%s  Levels" % VERBOSITY_LVL1)
-LOG.info("%s    Top Level" % VERBOSITY_LVL1)
-LOG.info("%s      h: %s" % (VERBOSITY_LVL1, fine_mg_level.h))
+# LOG.info("%s  Levels" % VERBOSITY_LVL1)
+# LOG.info("%s    Top Level" % VERBOSITY_LVL1)
+# LOG.info("%s      h: %s" % (VERBOSITY_LVL1, fine_mg_level.h))
 # LOG.info("%s    Middle Level" % VERBOSITY_LVL1)
 # LOG.info("%s      h: %s" % (VERBOSITY_LVL1, mid_mg_level.h))
 # LOG.info("%s    Base Level" % VERBOSITY_LVL1)
@@ -120,14 +121,14 @@ LOG.info("%s      h: %s" % (VERBOSITY_LVL1, fine_mg_level.h))
 #                                     base_mg_level)
 # low_direct_smoother = DirectSolverSmoother(laplace_stencil, base_mg_level)
 
-LOG.info(SEPARATOR_LVL2)
-LOG.info("%sSetting Up Multigrid Level Transitions" % VERBOSITY_LVL1)
+# LOG.info(SEPARATOR_LVL2)
+# LOG.info("%sSetting Up Multigrid Level Transitions" % VERBOSITY_LVL1)
 # from operator import iadd
 # from pypint.plugins.multigrid.restriction import RestrictionByStencilForLevelsClassical
 # from pypint.plugins.multigrid.interpolation import InterpolationByStencilForLevelsClassical
 # center = np.asarray([0])
-n_jacobi_pre = 1
-n_jacobi_post = 1
+# n_jacobi_pre = 1
+# n_jacobi_post = 1
 # we define the Restriction operator
 # rst_stencil = Stencil(np.asarray([0.25, 0.5, 0.25]))
 # rst_top_to_mid = RestrictionByStencilForLevelsClassical(rst_stencil, fine_mg_level, mid_mg_level)
@@ -143,14 +144,14 @@ n_jacobi_post = 1
 # ipl_low_to_mid = InterpolationByStencilForLevelsClassical(ipl_stencil_list_standard,
 #                                                           base_mg_level, mid_mg_level, pre_assign=iadd)
 
-LOG.info(SEPARATOR_LVL2)
-LOG.info("%sSetting Initial Values for MG Levels" % VERBOSITY_LVL1)
+# LOG.info(SEPARATOR_LVL2)
+# LOG.info("%sSetting Initial Values for MG Levels" % VERBOSITY_LVL1)
 # initialize top level
-fine_mg_level.arr[:] = 0.0
+# fine_mg_level.arr[:] = 0.0
 # top_level.arr[:] = 0.0
-fine_mg_level.res[:] = 0.0
-fine_mg_level.rhs[:] = 0.0
-fine_mg_level.pad()
+# fine_mg_level.res[:] = 0.0
+# fine_mg_level.rhs[:] = 0.0
+# fine_mg_level.pad()
 
 # mid_mg_level.arr[:] = 0.0
 # mid_mg_level.res[:] = 0.0
@@ -162,7 +163,7 @@ fine_mg_level.pad()
 # base_mg_level.rhs[:] = 0.0
 # base_mg_level.pad()
 
-problem.fill_rhs(fine_mg_level)
+# problem.fill_rhs(fine_mg_level)
 
 LOG.info(SEPARATOR_LVL2)
 LOG.info("%sSetting Up MLSDC Solver" % VERBOSITY_LVL1)
@@ -196,18 +197,18 @@ thresh = ThresholdCheck(max_threshold=3, min_threshold=1e-7,
                         conditions=('solution reduction', 'residual', 'iterations'))
 mlsdc.init(problem=problem, threshold=thresh, ml_provider=ml_provider)
 
-LOG.info(SEPARATOR_LVL1)
-LOG.info("%sInitialize Direct Space Solvers for Time Levels" % VERBOSITY_LVL1)
-for time_level in range(0, ml_provider.num_levels):
-    _integrator = ml_provider.integrator(time_level)
-    for time_node in range(0, _integrator.num_nodes - 1):
-        problem.initialize_direct_space_solver(time_level,
-                                               (_integrator.nodes[time_node + 1] - _integrator.nodes[time_node]),
-                                               fine_mg_level)
+# LOG.info(SEPARATOR_LVL1)
+# LOG.info("%sInitialize Direct Space Solvers for Time Levels" % VERBOSITY_LVL1)
+# for time_level in range(0, ml_provider.num_levels):
+#     _integrator = ml_provider.integrator(time_level)
+#     for time_node in range(0, _integrator.num_nodes - 1):
+#         problem.initialize_direct_space_solver(time_level,
+#                                                (_integrator.nodes[time_node + 1] - _integrator.nodes[time_node]),
+#                                                fine_mg_level)
 
 LOG.info(SEPARATOR_LVL1)
 LOG.info("%sLaunching MLSDC with MG" % VERBOSITY_LVL1)
 from pypint.solvers.cores import SemiImplicitMlSdcCore, ExplicitMlSdcCore
-mlsdc.run(SemiImplicitMlSdcCore, dt=dt/10.0)
+mlsdc.run(SemiImplicitMlSdcCore, dt=dt)
 
 print("RHS Evaluations: %d" % problem.rhs_evaluations)

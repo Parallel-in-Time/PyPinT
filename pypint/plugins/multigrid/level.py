@@ -5,7 +5,7 @@
 import numpy as np
 import scipy.signal as sig
 from pypint.utilities import assert_is_callable, assert_is_instance, assert_condition
-from pypint.plugins.multigrid.multigrid_problem_mixin import problem_is_multigrid_problem
+# from pypint.plugins.multigrid.multigrid_problem_mixin import problem_is_multigrid_problem
 from pypint.plugins.multigrid.stencil import Stencil
 from pypint.plugins.multigrid.i_multigrid_level import IMultigridLevel
 from pypint.utilities.logging import LOG
@@ -71,7 +71,8 @@ class MultigridLevel1D(IMultigridLevel):
             else:
                 raise ValueError("Please provide an ndarray with the size of 2")
             self.arr = np.zeros(forward_shape, dtype=dtype)
-            if problem_is_multigrid_problem(mg_problem, checking_obj=self) and len(mg_problem.spacial_dim) == 1:
+            # if problem_is_multigrid_problem(mg_problem, checking_obj=self) and len(mg_problem.spacial_dim) == 1:
+            if len(mg_problem.spacial_dim) == 1:
                 self._mg_problem = mg_problem
             else:
                 raise ValueError("Please provide a MultiGridProblem")
@@ -88,7 +89,8 @@ class MultigridLevel1D(IMultigridLevel):
 
             self.arr[max_borders[0]:-max_borders[1]] = shape.mid
 
-            if problem_is_multigrid_problem(mg_problem, checking_obj=self) and mg_problem.dim == 1:
+            # if problem_is_multigrid_problem(mg_problem, checking_obj=self) and mg_problem.dim == 1:
+            if mg_problem.dim == 1:
                 self._mg_problem = mg_problem
             else:
                 self._mg_problem = shape.mg_problem
@@ -108,7 +110,8 @@ class MultigridLevel1D(IMultigridLevel):
             self.arr = np.zeros(forward_shape, dtype=dtype)
             self.arr[max_borders[0]:-max_borders[1]] = shape
 
-            if problem_is_multigrid_problem(mg_problem, checking_obj=self) and mg_problem.dim == 1:
+            # if problem_is_multigrid_problem(mg_problem, checking_obj=self) and mg_problem.dim == 1:
+            if len(mg_problem.spacial_dim) == 1:
                 self._mg_problem = mg_problem
             else:
                 raise ValueError("Please provide a MultiGridProblem")
@@ -275,10 +278,10 @@ class MultigridLevel1D(IMultigridLevel):
 
     def compute_residual(self, stencil):
         if self.modified_rhs is False:
-            self.res_mid[:] = self.rhs - stencil.eval_convolve(self.evaluable_view(stencil))
+            self.res_mid[:] = - self.rhs + stencil.eval_convolve(self.evaluable_view(stencil))
         else:
             # self.res_mid[:] = self.rhs - stencil.eval_convolve(self.mid, "full")[stencil.b[0][0]:-stencil.b[0][1]]
-            self.res_mid[:] = self.rhs - stencil.eval_convolve(self.mid, "same")
+            self.res_mid[:] = - self.rhs + stencil.eval_convolve(self.mid, "same")
 
     def border_function_generator(self, stencil):
         """Generates a function which returns true if the index of the
