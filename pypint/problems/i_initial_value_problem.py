@@ -1,6 +1,5 @@
 # coding=utf-8
 """
-
 .. moduleauthor: Torbjörn Klatt <t.klatt@fz-juelich.de>
 """
 import numpy as np
@@ -44,7 +43,7 @@ class IInitialValueProblem(IProblem, TransientProblemMixin):
         ------
         ValueError
 
-            * if ``initial_value`` is not a :py:class:`numpy.ndarray`
+            * if ``initial_value`` is not a :py:class:`numpy.ndarray` with shape of :py:attr:`.IProblem.dim`
             * if ``initial_value``'s size is not equal the number of spacial :py:attr:`.IProblem.dim`
         """
         return self._initial_value
@@ -52,9 +51,9 @@ class IInitialValueProblem(IProblem, TransientProblemMixin):
     @initial_value.setter
     def initial_value(self, initial_value):
         assert_is_instance(initial_value, np.ndarray, descriptor="Initial Value", checking_obj=self)
-        assert_condition(initial_value.size == self.dim, ValueError,
-                         message="Initial value must match spacial dimension: {:d} != {:d}"
-                                 .format(self.dim, initial_value.size),
+        assert_condition(initial_value.shape == self.dim_for_time_solver, ValueError,
+                         message="Initial Values shape must match problem DOFs: %s != %s"
+                                 % (initial_value.shape, self.dim_for_time_solver),
                          checking_obj=self)
         self._initial_value = initial_value
 

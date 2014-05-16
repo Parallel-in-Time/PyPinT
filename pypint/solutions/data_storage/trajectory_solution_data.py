@@ -211,7 +211,7 @@ class TrajectorySolutionData(object):
                                  ValueError,
                                  message=("Spacial dimension of step {:d} does not match global spacial dimension: "
                                           .format(step, self.dim) +
-                                          "{:d} != {:d}".format(self.data[step].dim, self.dim)),
+                                          "{:s} != {:s}".format(self.data[step].dim, self.dim)),
                                  checking_obj=self)
 
     def append(self, p_object):

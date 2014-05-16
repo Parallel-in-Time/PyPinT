@@ -540,9 +540,9 @@ class ParallelSdc(IIterativeTimeSolver, IParallelSolver):
                                   np.array([_step.rhs], dtype=self.problem.numeric_type),
                                   axis=0)
 
-            assert_condition(_integrate_values.size == self.num_nodes,
+            assert_condition(_integrate_values.shape[0] == self.num_nodes,
                              ValueError, message="Number of integration values not correct: {:d} != {:d}"
-                                                 .format(_integrate_values.size, self.num_nodes),
+                                                 .format(_integrate_values.shape[0], self.num_nodes),
                              checking_obj=self)
 
         _full_integral = 0.0
@@ -645,9 +645,9 @@ class ParallelSdc(IIterativeTimeSolver, IParallelSolver):
         #                                                           _this_value)
         #                            ], dtype=self.problem.numeric_type
         #                       ), axis=0)
-        #     assert_condition(_integrate_values.size == self.num_nodes,
+        #     assert_condition(_integrate_values.shape[0] == self.num_nodes,
         #                      ValueError, message="Number of integration values not correct: {:d} != {:d}"
-        #                                          .format(_integrate_values.size, self.num_nodes),
+        #                                          .format(_integrate_values.shape[0], self.num_nodes),
         #                      checking_obj=self)
         #
         #     # integrate
