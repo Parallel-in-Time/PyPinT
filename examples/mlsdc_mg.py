@@ -3,8 +3,11 @@
 .. moduleauthor:: Torbjörn Klatt <t.klatt@fz-juelich.de>
 .. moduleauthor:: Dieter Moser <d.moser@fz-juelich.de>
 """
-import numpy as np
 from collections import OrderedDict
+
+import numpy as np
+
+dt = 0.1
 
 from pypint.utilities.logging import LOG, print_logging_message_tree, VERBOSITY_LVL1, SEPARATOR_LVL1, SEPARATOR_LVL2
 
@@ -22,21 +25,44 @@ geo = np.asarray([[0, 1]])
 
 LOG.info("%s  Setting Up Boundary Functions" % VERBOSITY_LVL1)
 boundary_types = ['dirichlet'] * 2
-bnd_left_fnc = lambda x: 0.0
-bnd_right_fnc = lambda x: 1.0
-bnd_functions = [[bnd_left_fnc, bnd_right_fnc]]
+def left_f(x):
+    _s = np.zeros(x.shape)
+    LOG.debug("Left Bnd Fnc: %s -> %s" % (x.reshape(-1), _s.reshape(-1)))
+    return _s
+left_f.__str__ = lambda: "const(0)"
+
+def right_f(x):
+    _s = np.ones(x.shape)
+    LOG.debug("Right Bnd Fnc: %s -> %s" % (x.reshape(-1), _s.reshape(-1)))
+    return _s
+right_f.__str__ = lambda: "const(1)"
+
+bnd_functions = [[left_f, right_f]]
 
 num_points_mg_levels = OrderedDict()
-num_points_mg_levels['finest'] = 4
+num_points_mg_levels['finest'] = 18
 # num_points_mg_levels['mid'] = 5
 # num_points_mg_levels['base'] = 2
 print_logging_message_tree(OrderedDict({'Points on Space Grid': num_points_mg_levels}))
 
+def initial_value_fnc(x):
+    return np.exp(-100.0 * ((x-0.5)**2))
+
+dx = 1.0 / (num_points_mg_levels['finest'] + 1)
+print("dx: %s" % dx)
+
+x = np.linspace(dx, 1.0-dx, num=(num_points_mg_levels['finest']))
+
+LOG.debug("x (%s):\n%s" % (x.shape, x))
+
+# iv = initial_value_fnc(x)
+# LOG.debug("Initial Values %s:\n%s" % (iv.shape, iv))
+
 from examples.problems.heat_equation import HeatEquation
 problem = HeatEquation(dim=(num_points_mg_levels['finest'], 1),
-                       time_end=0.2,
+                       time_end=dt,
                        thermal_diffusivity=0.5,
-                       # initial_value=np.array([[0.0], [0.0], [1.0], [0.0], [0.0]]),
+                       # initial_value=iv.reshape(((num_points_mg_levels['finest'])**2, 1)),
                        rhs_function_wrt_space=lambda dof, tensor: 0.0,
                        boundary_functions=bnd_functions,
                        boundaries=boundary_types,
@@ -47,11 +73,20 @@ print_logging_message_tree(OrderedDict({'Problem': problem.print_lines_for_log()
 LOG.info(SEPARATOR_LVL2)
 LOG.info("%sSetting Up Multigrid Levels" % VERBOSITY_LVL1)
 from pypint.plugins.multigrid.level import MultigridLevel1D
-borders = np.array([3, 3])
+borders = np.array([2, 2])
 
 fine_mg_level = MultigridLevel1D(num_points_mg_levels['finest'], mg_problem=problem, max_borders=borders, role='FL')
 problem._mg_level = fine_mg_level
-problem._mg_stencil = Stencil(np.array([problem.thermal_diffusivity, -2.0 * problem.thermal_diffusivity, problem.thermal_diffusivity]) / fine_mg_level.h**2)
+problem._mg_stencil = \
+    Stencil(
+        np.array(
+            [
+                problem.thermal_diffusivity,
+                -2.0 * problem.thermal_diffusivity,
+                problem.thermal_diffusivity
+            ]
+        ) / fine_mg_level.h**2
+    )
 problem._mg_stencil.grid = fine_mg_level.mid.shape
 # LOG.debug("Sparse matrix: %s -> %s" % (problem._mg_stencil.sp_matrix.shape, problem._mg_stencil.sp_matrix.todense()))
 # mid_mg_level = MultigridLevel1D(num_points_mg_levels['mid'], mg_problem=problem, max_borders=borders, role='ML')
@@ -136,17 +171,17 @@ from pypint.multi_level_providers.level_transition_providers.time_transition_pro
 from pypint.integrators.sdc_integrator import SdcIntegrator
 
 base_mlsdc_level = SdcIntegrator()
-base_mlsdc_level.init(num_nodes=5)
+base_mlsdc_level.init(num_nodes=7)
 
-fine_mlsdc_level = SdcIntegrator()
-fine_mlsdc_level.init(num_nodes=7)
+# fine_mlsdc_level = SdcIntegrator()
+# fine_mlsdc_level.init(num_nodes=7)
 
-transitioner = TimeTransitionProvider(fine_nodes=fine_mlsdc_level.nodes, coarse_nodes=base_mlsdc_level.nodes)
+# transitioner = TimeTransitionProvider(fine_nodes=fine_mlsdc_level.nodes, coarse_nodes=base_mlsdc_level.nodes)
 
 ml_provider = MultiTimeLevelProvider()
-ml_provider.add_coarse_level(fine_mlsdc_level)
+# ml_provider.add_coarse_level(fine_mlsdc_level)
 ml_provider.add_coarse_level(base_mlsdc_level)
-ml_provider.add_level_transition(transitioner, 0, 1)
+# ml_provider.add_level_transition(transitioner, 0, 1)
 
 from pypint.communicators import ForwardSendingMessaging
 comm = ForwardSendingMessaging()
@@ -156,7 +191,10 @@ mlsdc = MlSdc(communicator=comm)
 comm.link_solvers(previous=comm, next=comm)
 comm.write_buffer(tag=(ml_provider.num_levels - 1), value=problem.initial_value, time_point=problem.time_start)
 
-mlsdc.init(problem=problem, ml_provider=ml_provider)
+from pypint.utilities.threshold_check import ThresholdCheck
+thresh = ThresholdCheck(max_threshold=5, min_threshold=1e-7,
+                        conditions=('solution reduction', 'residual', 'iterations'))
+mlsdc.init(problem=problem, threshold=thresh, ml_provider=ml_provider)
 
 LOG.info(SEPARATOR_LVL1)
 LOG.info("%sInitialize Direct Space Solvers for Time Levels" % VERBOSITY_LVL1)
@@ -170,6 +208,6 @@ for time_level in range(0, ml_provider.num_levels):
 LOG.info(SEPARATOR_LVL1)
 LOG.info("%sLaunching MLSDC with MG" % VERBOSITY_LVL1)
 from pypint.solvers.cores import SemiImplicitMlSdcCore, ExplicitMlSdcCore
-mlsdc.run(SemiImplicitMlSdcCore, dt=0.2)
+mlsdc.run(SemiImplicitMlSdcCore, dt=dt/10.0)
 
 print("RHS Evaluations: %d" % problem.rhs_evaluations)
