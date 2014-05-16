@@ -69,9 +69,9 @@ class ExplicitMlSdcCore(MlSdcSolverCore):
             (_previous_step.value
              + state.current_step.delta_tau * (_previous_step.rhs - _previous_iteration_previous_step.rhs)
              + state.current_step.integral + _fas)
-        LOG.debug("Explicit SDC: %s = %s + %s * (%s - %s) + %s + %s" %
-                  (state.current_step.value, _previous_step.value, state.current_step.delta_tau, _previous_step.rhs,
-                   _previous_iteration_previous_step.rhs, state.current_step.integral, _fas))
+        # LOG.debug("Explicit SDC: %s = %s + %s * (%s - %s) + %s + %s" %
+        #           (state.current_step.value, _previous_step.value, state.current_step.delta_tau, _previous_step.rhs,
+        #            _previous_iteration_previous_step.rhs, state.current_step.integral, _fas))
 
 
 __all__ = ['ExplicitMlSdcCore']

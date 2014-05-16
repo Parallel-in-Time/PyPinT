@@ -43,7 +43,7 @@ if config()['Logger']['File']['enable']:
     )
 
 numpy.set_printoptions(precision=config()['Logger']['numpy']['precision'],
-                       )
+                       linewidth=config()['Logger']['numpy']['linewidth'])
 
 
 VERBOSITY_LVL1 = '!> '

@@ -322,9 +322,15 @@ class MlSdc(IIterativeTimeSolver, IParallelSolver):
             return Message.SolverFlag.iterating
         elif _reason == ['iterations']:
             # LOG.debug("solver main loop done: iterations")
+            _dim = list(self.problem.spacial_dim)
+            _dim.insert(0, self.ml_provider.integrator(self.state.last.current_level_index).num_nodes)
+            LOG.debug("-->\n%s" % (self.state.last.current_level.values.reshape(tuple(_dim)).tolist()))
             return Message.SolverFlag.finished
         else:
             # LOG.debug("solver main loop done: other")
+            _dim = list(self.problem.spacial_dim)
+            _dim.insert(0, self.ml_provider.integrator(self.state.last.current_level_index).num_nodes)
+            LOG.debug("-->\n%s" % (self.state.last.current_level.values.reshape(tuple(_dim)).tolist()))
             return Message.SolverFlag.converged
 
     def _init_new_state(self):
@@ -627,7 +633,7 @@ class MlSdc(IIterativeTimeSolver, IParallelSolver):
 
         self._print_level_end()
 
-        # LOG.debug("Level %d final values: %s"
+        # LOG.debug("Level %d final values:\n%s"
         #           % (self.state.current_iteration.current_level_index, _current_level.values))
 
         if not self.state.current_iteration.on_finest_level:

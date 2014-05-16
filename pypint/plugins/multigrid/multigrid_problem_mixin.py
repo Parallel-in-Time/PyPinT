@@ -278,13 +278,13 @@ class MultigridProblemMixin(object):
                 'Left': OrderedDict(
                     {
                         'Type': self.boundaries[0],
-                        'Initial Value': self.boundary_functions[0][0](0.0)
+                        'Fnc': self.boundary_functions[0][0].__str__()
                     }
                 ),
                 'Right': OrderedDict(
                     {
-                        'Type': self.boundaries[1],
-                        'Initial Value': self.boundary_functions[0][1](0.0)
+                        'Type': self.boundaries[0],
+                        'Fnc': self.boundary_functions[0][1].__str__()
                     }
                 )
             }

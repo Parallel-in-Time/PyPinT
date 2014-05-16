@@ -22,3 +22,4 @@
 
     [[numpy]]
     precision = integer(default=4)
+    linewidth = integer(default=80)
