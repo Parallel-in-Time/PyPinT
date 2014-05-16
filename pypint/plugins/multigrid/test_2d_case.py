@@ -51,7 +51,7 @@ if __name__ == '__main__':
     print("stencil.reversed_arr\n", laplace_stencil.reversed_arr)
     print("stencil.b \n", laplace_stencil.b)
     print("stencil.positions \n", laplace_stencil.positions)
-
+    print("stencil.center \n", laplace_stencil.center)
     print("===== MgProblem =====")
     # define geometry
     geo = np.asarray([[0, 1], [0, 1]])
@@ -191,8 +191,8 @@ if __name__ == '__main__':
 
     # define the the restriction operators - full weighting
     rst_stencil = Stencil(np.asarray([[1.0, 2.0, 1.0], [2.0, 4.0, 2.0], [1.0, 2.0, 1.0]])/16)
-    rst_top_to_mid = RestrictionByStencilForLevelsClassical(rst_stencil, top_level, mid_level)
-    rst_mid_to_low = RestrictionByStencilForLevelsClassical(rst_stencil, mid_level, low_level)
+    rst_top_to_mid = RestrictionByStencilForLevelsClassical(top_level, mid_level, rst_stencil)
+    rst_mid_to_low = RestrictionByStencilForLevelsClassical(mid_level, low_level, rst_stencil)
 
     # define the interpolation
     corner_array = np.ones((2., 2.)) * 0.25
@@ -204,8 +204,8 @@ if __name__ == '__main__':
                         (Stencil(border_arr_h), (1, 0)),
                         (Stencil(border_arr_v), (0, 1))]
 
-    ipl_mid_to_top = InterpolationByStencilForLevelsClassical(ipl_stencil_list, mid_level, top_level, pre_assign=iadd)
-    ipl_low_to_mid = InterpolationByStencilForLevelsClassical(ipl_stencil_list, low_level, mid_level, pre_assign=iadd)
+    ipl_mid_to_top = InterpolationByStencilForLevelsClassical(mid_level, top_level, ipl_stencil_list, pre_assign=iadd)
+    ipl_low_to_mid = InterpolationByStencilForLevelsClassical(low_level, mid_level, ipl_stencil_list, pre_assign=iadd)
 
     print("==== Down The V Cycle ====")
     print("** Initial TopLevel.arr **\n", top_level.arr)
@@ -271,13 +271,14 @@ if __name__ == '__main__':
     direct_solver = DirectSolverSmoother(sol_stencil, sol_level)
     direct_solver.relax()
     print("** The collocation solution **\n", sol_level.arr)
-    print("** The error **\n", sol_level.mid - top_level.mid)
-
+    print("** The error **\n", np.max(np.abs(sol_level.mid - top_level.mid)))
+    print()
+    print("maximum value\n", np.max(top_level.mid))
+    print(np.max(sol_level.mid))
     # plot the data
     # shade data, creating an rgb array.
     # plot un-shaded and shaded images.
-
-    plt.imshow(top_level.arr, cmap=plt.cm.coolwarm)
+    plt.imshow(top_level.mid, cmap=plt.cm.coolwarm)
     plt.title('Sinus Randbedingungen')
     plt.xticks([]); plt.yticks([])
     plt.colorbar(cmap=plt.cm.coolwarm)

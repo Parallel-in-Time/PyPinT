@@ -225,19 +225,20 @@ if __name__ == '__main__':
     n_jacobi_post = 1
     # we define the Restriction operator
     rst_stencil = Stencil(np.asarray([0.25, 0.5, 0.25]))
-    rst_top_to_mid = RestrictionByStencilForLevelsClassical(rst_stencil, top_level, mid_level)
-    rst_mid_to_low = RestrictionByStencilForLevelsClassical(rst_stencil, mid_level, low_level)
+    rst_top_to_mid = RestrictionByStencilForLevelsClassical(top_level, mid_level, rst_stencil)
+    rst_mid_to_low = RestrictionByStencilForLevelsClassical(mid_level, low_level, rst_stencil)
 
     # and the interpolation operator
+
     ipl_stencil_list_standard = [(Stencil(np.asarray([1]), center), (1,)),
                                    (Stencil(np.asarray([0.5, 0.5]), center), (0,))]
 
-    ipl_mid_to_top = InterpolationByStencilForLevelsClassical(ipl_stencil_list_standard,
-                                                              mid_level, top_level, pre_assign=iadd)
+    ipl_mid_to_top = InterpolationByStencilForLevelsClassical(mid_level, top_level, ipl_stencil_list_standard,
+                                                              pre_assign=iadd)
 
 
-    ipl_low_to_mid = InterpolationByStencilForLevelsClassical(ipl_stencil_list_standard,
-                                                              low_level, mid_level, pre_assign=iadd)
+    ipl_low_to_mid = InterpolationByStencilForLevelsClassical(low_level, mid_level, ipl_stencil_list_standard,
+                                                              pre_assign=iadd)
 
     # initialize top level
     top_level.arr[:] = 105.0

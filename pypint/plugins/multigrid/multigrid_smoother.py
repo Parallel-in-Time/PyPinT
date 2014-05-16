@@ -91,12 +91,14 @@ class SplitSmoother(IMultigridSmoother):
         #
         # grid = self.lvl_view_inner.shape
         # self.st_plus = Stencil(l_plus, grid=grid, solver="factorize")
-        if level.modified_rhs is False:
+
+        if level.modified_rhs is False and level.role is not "FL":
             self.convolve_control = "valid"
             self.evaluable_view = level.evaluable_view(self.st_minus)
-        else:
+        elif level.role is "FL": # a little hacky
             self.convolve_control = "same"
             self.evaluable_view = level.mid
+            print("is all the same")
 
         super().__init__(l_plus.ndim, *args, **kwargs)
 

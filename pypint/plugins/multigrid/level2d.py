@@ -257,7 +257,7 @@ class MultigridLevel2D(IMultigridLevel):
             self.nw[:] = self.f_north(self.nw_tensor) * 0.5 + self.f_west(self.nw_tensor) * 0.5
             self.se[:] = self.f_south(self.se_tensor) * 0.5 + self.f_east(self.se_tensor) * 0.5
             self.sw[:] = self.f_south(self.sw_tensor) * 0.5 + self.f_west(self.sw_tensor) * 0.5
-        if self.mg_problem.boundaries[0] is 'periodic' and self.mg_problem.boundaries[1] is 'periodic':
+        elif self.mg_problem.boundaries[0] is 'periodic' and self.mg_problem.boundaries[1] is 'periodic':
             self.east[:] = self.mid[:, self.sl_front_x]
             self.west[:] = self.mid[:, self.sl_end_x]
             self.north[:] = self.mid[self.sl_end_y, :]
