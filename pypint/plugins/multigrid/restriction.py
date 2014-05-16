@@ -19,7 +19,7 @@ class RestrictionByStencilForLevelsClassical(IRestriction):
          B_ _,_ _,_ _,_ _,_ _,_ _B    <- Level out
 
     """
-    def __init__(self, rst_stencil, level_in, level_out, *args, pre_assign=None, **kwargs):
+    def __init__(self, level_in, level_out, rst_stencil, *args, pre_assign=None, **kwargs):
         super(RestrictionByStencilForLevelsClassical, self).__init__(*args, **kwargs)
         if pre_assign is None:
             # no pre assignment function

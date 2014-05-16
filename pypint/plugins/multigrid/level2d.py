@@ -266,7 +266,15 @@ class MultigridLevel2D(IMultigridLevel):
             self.nw[:] = self.f_north(self.nw_tensor) * 0.5 + self.f_west(self.nw_tensor) * 0.5
             self.se[:] = self.f_south(self.se_tensor) * 0.5 + self.f_east(self.se_tensor) * 0.5
             self.sw[:] = self.f_south(self.sw_tensor) * 0.5 + self.f_west(self.sw_tensor) * 0.5
-
+        elif self.mg_problem.boundaries[0] is 'periodic' and self.mg_problem.boundaries[1] is 'periodic':
+            self.east[:] = self.mid[:, self.sl_front_x]
+            self.west[:] = self.mid[:, self.sl_end_x]
+            self.north[:] = self.mid[self.sl_end_y, :]
+            self.south[:] = self.mid[self.sl_front_y, :]
+            self.ne[:] = self.mid[self.sl_end_y, self.sl_front_x]
+            self.nw[:] = self.mid[self.sl_end_y, self.sl_end_x]
+            self.se[:] = self.mid[self.sl_front_y, self.sl_front_x]
+            self.sw[:] = self.mid[self.sl_front_y, self.sl_end_x]
         else:
             raise NotImplementedError("Bis jetzt sind nur Dirichlet Randbedingungen implementiert")
 

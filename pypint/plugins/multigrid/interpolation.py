@@ -19,7 +19,7 @@ class InterpolationByStencilForLevelsClassical(IInterpolation):
         The format of stencil matrix is the following
         Stencil
     """
-    def __init__(self, stencil_list, level_in, level_out, *args, pre_assign=None, **kwargs):
+    def __init__(self, level_in, level_out, stencil_list, *args, pre_assign=None, **kwargs):
         """init
         """
         super(InterpolationByStencilForLevelsClassical, self).__init__(*args, **kwargs)

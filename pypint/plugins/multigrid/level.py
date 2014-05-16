@@ -275,10 +275,10 @@ class MultigridLevel1D(IMultigridLevel):
 
     def compute_residual(self, stencil):
         if self.modified_rhs is False:
-            self.res_mid[:] = self.rhs - stencil.eval_convolve(self.evaluable_view(stencil)) / self.h**2
+            self.res_mid[:] = self.rhs - stencil.eval_convolve(self.evaluable_view(stencil))
         else:
-            self.res_mid[:] = self.rhs - stencil.eval_convolve(self.mid, "same") / self.h**2
-
+            # self.res_mid[:] = self.rhs - stencil.eval_convolve(self.mid, "full")[stencil.b[0][0]:-stencil.b[0][1]]
+            self.res_mid[:] = self.rhs - stencil.eval_convolve(self.mid, "same")
 
     def border_function_generator(self, stencil):
         """Generates a function which returns true if the index of the
@@ -292,5 +292,11 @@ class MultigridLevel1D(IMultigridLevel):
                     return True
         return is_on_border
 
+    def print_all(self):
+        print("*** LevelPrint *** : 0x%x" % id(self), "\t role %s" % self.role)
+        print("\tArr \n", self.arr)
+        print("\tMid \n", self.mid)
+        print("\tRhs \n", self.rhs)
+        print("\tRes \n", self.res)
 
 

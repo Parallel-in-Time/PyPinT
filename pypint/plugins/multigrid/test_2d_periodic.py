@@ -1,11 +1,8 @@
 # coding=utf-8
-
-# using the MultiGridLevel2D class we
-
 import numpy as np
 import sys
 print(sys.path)
-from pypint.plugins.multigrid.multigrid_problem import MultigridProblem
+from pypint.plugins.multigrid.multigrid_problem import MultiGridProblem
 from pypint.plugins.multigrid.multigrid_level_provider import MultiGridLevelProvider
 from pypint.plugins.multigrid.multigrid_solution import MultiGridSolution
 from pypint.plugins.multigrid.level2d import MultigridLevel2D
@@ -16,139 +13,39 @@ from pypint.plugins.multigrid.interpolation import InterpolationByStencilListIn1
 from pypint.plugins.multigrid.restriction import RestrictionStencilPure, RestrictionByStencilForLevels, RestrictionByStencilForLevelsClassical
 from operator import iadd,add
 import matplotlib.pyplot as plt
-from matplotlib.colors import LightSource
-
-# class SmootherControl(object):
-#     """
-#
-#     """
-#     def __init__(self, level_list, SmootherTypeList=["wJac"], ):
-#
-#
-
-
-
-class VCycler(object):
-    """ Takes a problem and constructs a level set a stencil set and so on to do v cycles
-
-    """
-    def __init__(self, stencil_form, mg_problem, numb_levels=3, coarse_level_shape=(5,)):
-        pass
-
-
 
 if __name__ == '__main__':
-    # check if level2d is working properly
-    # but first one has to define a proper level
-    # and for this one needs a useful stencil
 
     np.set_printoptions(precision=4, edgeitems=4, threshold=10)
-
-    print("===== Stencil =====")
     laplace_array = np.asarray([[0.0, 1.0, 0.0], [1.0, -4.0, 1.0], [0.0, 1.0, 0.0]])
     laplace_stencil = Stencil(np.asarray([[0, 1, 0], [1, -4, 1], [0, 1, 0]]), None, 2)
-    print("stencil.arr\n", laplace_stencil.arr)
-    print("stencil.reversed_arr\n", laplace_stencil.reversed_arr)
-    print("stencil.b \n", laplace_stencil.b)
-    print("stencil.positions \n", laplace_stencil.positions)
-    print("stencil.center \n", laplace_stencil.center)
-    print("===== MgProblem =====")
-    # define geometry
-    geo = np.asarray([[0, 1], [0, 1]])
-    # the boundary conditions, in this case dirichlet boundary conditions
-    boundary_type = ["dirichlet"]*2
-    # east_f = lambda x: 2.0
-    # west_f = lambda x: 8.0
-    # north_f = lambda x: 1.0
-    # south_f = lambda x: 4.0
+    geo = np.asarray([[0, np.pi * 2], [0, np.pi * 2]])
+    rhs_function = lambda x, y: 0.0
+
     east_f = lambda x: np.sin(x[1]*np.pi)
     west_f = lambda x: np.sin(x[1]*np.pi)
     north_f = lambda x: np.sin(x[0]*np.pi)
     south_f = lambda x: np.sin(x[0]*np.pi)
-    boundary_functions = [[west_f, east_f], [north_f, south_f]]
-    rhs_function = lambda x, y: 0.0
 
-    mg_problem = MultigridProblem(laplace_stencil,
+    boundary_functions = [[west_f, east_f], [north_f, south_f]]
+
+    mg_problem = MultiGridProblem(laplace_stencil,
                                   rhs_function,
                                   boundary_functions=boundary_functions,
-                                  boundaries="dirichlet",
+                                  boundaries="periodic",
                                   geometry=geo)
 
-    print("Constructed SpaceTensor\n", mg_problem.construct_space_tensor(10))
-    print("mg_problem.geometry", mg_problem.geometry)
-    print("mg_problem.boundaries", mg_problem.boundaries)
-    print("===== MultiGridLevel2d =====")
-    level = MultigridLevel2D((4, 4),
+    level = MultigridLevel2D((10, 10),
                              mg_problem=mg_problem,
                              max_borders=np.asarray([[1, 1], [1, 1]]),
                              role="FL")
 
-    print("level.arr \n", level.arr)
-    print("level.mid \n", level.mid)
-    print("level.south \n", level.south)
-    print("level.se \n", level.se)
-
-    print("level.h\n", level.h)
-
-    print("level.space_tensor \n", level.space_tensor)
-    print("level.mid_tensor \n", level.mid_tensor)
-    print("level.south_tensor \n", level.south_tensor)
-    print("level.north_tensor \n", level.north_tensor)
-    print("level.west_tensor \n", level.west_tensor)
-    print("level.east_tensor \n", level.east_tensor)
-    print("level.se_tensor \n", level.se_tensor)
-    print("level.ne_tensor \n", level.ne_tensor)
-    print("level.sw_tensor \n", level.sw_tensor)
-    print("level.nw_tensor \n", level.nw_tensor)
-
+    level.mid[:] = np.sin(level.mid_tensor[0])*np.cos(level.mid_tensor[1])
+    print("Level.arr before padding\n", level.arr)
     level.pad()
-    print("level.arr after padding\n", level.arr)
-    print("north_east\n", level.ne)
-    print("north_west\n", level.nw)
-    print("south_east\n", level.se)
-    print("south_west\n", level.sw)
+    print("Level.arr after padding\n", level.arr)
+    # periodic padding works, that means the v cycle should work fine
 
-    print("evaluable view of stencil\n", level.evaluable_view(laplace_stencil))
-    is_on_border = level.border_function_generator(laplace_stencil)
-    border_truth = [[is_on_border((i, j)) for j in range(level.arr.shape[1])] for i in range(level.arr.shape[0])]
-    print("border_truth\n", np.asarray(border_truth, dtype=np.int))
-
-    level.rhs[:] = 0.0
-    laplace_stencil.modify_rhs(level)
-    print("level.rhs after modification\n", level.rhs)
-
-    print("==== DirectSolver ====")
-
-    direct_solver = DirectSolverSmoother(laplace_stencil, level)
-    laplace_stencil.modify_rhs(level)
-    direct_solver.relax()
-    print("level.arr after direct solution\n", level.mid)
-    print("test of the solution Ax=b by convolve\n ", laplace_stencil.eval_convolve(level.mid, "same"))
-    rhs_test = np.zeros(level.rhs.shape)
-    laplace_stencil.eval_sparse(level.mid, rhs_test)
-    print("test of the solution Ax=b by sparse matrix application \n", rhs_test)
-
-    print("==== SplitSmoother ====")
-    omega = 2.0/3.0
-    l_plus = np.asarray([[0, 0, 0],
-                         [0, -4.0/omega, 0],
-                         [0, 0, 0]])
-    l_minus = np.asarray([[0, 1.0, 0], [1.0, -4.0*(1.0 - 1.0/omega), 1.0], [0., 1., 0.]])
-
-    jacobi_smoother = SplitSmoother(l_plus, l_minus, level)
-    level.mid[:] = 0
-    jacobi_smoother.relax()
-    print("level.arr after one jacobi step with modified rhs\n", level.arr)
-
-    level.mid[:] = 0.
-    level.modified_rhs = False
-    level.rhs[:] = 0.
-    jacobi_smoother = SplitSmoother(l_plus, l_minus, level)
-    jacobi_smoother.relax()
-    print("level.arr after one jacobi step with unmodified rhs\n", level.arr)
-
-    # For the test of the level transitioning we define 3 levels
-    # with different roles but the same borders
     n_jacobi_pre = 5
     n_jacobi_post = 5
     borders = np.ones((2, 2))
@@ -171,6 +68,12 @@ if __name__ == '__main__':
     mid_stencil = Stencil(laplace_array/mid_level.h[0]**2, None, 2)
     low_stencil = Stencil(laplace_array/low_level.h[0]**2, None, 2)
     top_stencil.modify_rhs(top_level)
+
+    omega = 2.0/3.0
+    l_plus = np.asarray([[0, 0, 0],
+                         [0, -4.0/omega, 0],
+                         [0, 0, 0]])
+    l_minus = np.asarray([[0, 1.0, 0], [1.0, -4.0*(1.0 - 1.0/omega), 1.0], [0., 1., 0.]])
 
     # define the different smoothers on each level, works just for symmetric grids
     top_jacobi_smoother = SplitSmoother(l_plus / top_level.h[0]**2,
@@ -271,15 +174,14 @@ if __name__ == '__main__':
     direct_solver = DirectSolverSmoother(sol_stencil, sol_level)
     direct_solver.relax()
     print("** The collocation solution **\n", sol_level.arr)
-    print("** The error **\n", np.max(np.abs(sol_level.mid - top_level.mid)))
-    print()
-    print("maximum value\n", np.max(top_level.mid))
-    print(np.max(sol_level.mid))
+    print("** The error **\n", sol_level.mid - top_level.mid)
+
     # plot the data
     # shade data, creating an rgb array.
     # plot un-shaded and shaded images.
-    plt.imshow(top_level.mid, cmap=plt.cm.coolwarm)
-    plt.title('Sinus Randbedingungen')
+
+    plt.imshow(top_level.arr, cmap=plt.cm.coolwarm)
+    plt.title('periodische Randbedingungen')
     plt.xticks([]); plt.yticks([])
     plt.colorbar(cmap=plt.cm.coolwarm)
     plt.show()
