@@ -1,0 +1,26 @@
+@startuml
+
+abstract class Nodes
+abstract class WeightFunction
+
+class GaussLegendre
+class GaussLobatto
+
+class Polynomial
+
+class IntegratorBase
+class SdcIntegrator
+
+Nodes --|> GaussLegendre
+Nodes --|> GaussLobatto
+
+WeightFunction --|> Polynomial
+
+Nodes --* IntegratorBase
+WeightFunction --* IntegratorBase
+
+IntegratorBase --|> SdcIntegrator
+GaussLobatto --* SdcIntegrator
+Polynomial --* SdcIntegrator
+
+@enduml

@@ -1,0 +1,10 @@
+@startuml
+
+abstract class CommunicationProvider
+class Message
+class ForwardSending
+
+CommunicationProvider --|> ForwardSending
+Message --* ForwardSending
+
+@enduml

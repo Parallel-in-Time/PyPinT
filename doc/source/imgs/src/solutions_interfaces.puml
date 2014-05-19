@@ -1,0 +1,20 @@
+@startuml
+
+abstract class Solution
+
+class IterativeSolution
+class FinalSolution
+
+class StepSolutionData
+class TrajectorySolutionData
+
+TrajectorySolutionData *-- StepSolutionData
+
+
+Solution --|> IterativeSolution
+IterativeSolution *-- TrajectorySolutionData
+
+Solution --|> FinalSolution
+FinalSolution *-- StepSolutionData
+
+@enduml
