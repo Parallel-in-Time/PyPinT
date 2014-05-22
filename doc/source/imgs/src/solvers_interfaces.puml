@@ -1,0 +1,37 @@
+@startuml
+
+skinparam stereotype {
+    CBackgroundColor #AF5A50
+    ABackgroundColor #7D966E
+    IBackgroundColor #D7AA50
+}
+
+skinparam class {
+	BackgroundColor #E1EAF1
+	ArrowColor #00557C
+	BorderColor #99BAD0
+}
+
+abstract class IterativeTimeSolver
+abstract class MultiLevelSolver
+interface ParallelSolver
+
+class Parareal
+class ParallelSdc
+class Mlsdc
+class Pfasst
+
+IterativeTimeSolver --|> ParallelSdc
+ParallelSolver ..|> ParallelSdc
+
+MultiLevelSolver --|> Parareal
+ParallelSolver ..|> Parareal
+
+Mlsdc --|> Pfasst
+ParallelSolver ..|> Pfasst
+
+IterativeTimeSolver --|> MultiLevelSolver
+MultiLevelSolver --|> Mlsdc
+
+
+@enduml

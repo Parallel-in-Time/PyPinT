@@ -63,9 +63,9 @@ class LambdaU(IInitialValueProblem, HasExactSolutionMixin, HasDirectImplicitMixi
         super(LambdaU, self).evaluate_wrt_time(time, phi_of_time, **kwargs)
         if kwargs.get('partial') is not None and isinstance(self.lmbda, complex):
             if isinstance(kwargs['partial'], str) and kwargs['partial'] == 'impl':
-                return self.lmbda.imag * phi_of_time
-            elif kwargs['partial'] == 'expl':
                 return self.lmbda.real * phi_of_time
+            elif kwargs['partial'] == 'expl':
+                return self.lmbda.imag * phi_of_time
         else:
             return self.lmbda * phi_of_time
 

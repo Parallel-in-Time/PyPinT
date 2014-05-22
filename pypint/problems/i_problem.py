@@ -117,7 +117,7 @@ class IProblem(object):
         self._count_rhs_eval += 1
         return np.zeros(self.dim, dtype=self.numeric_type)
 
-    def implicit_solve(self, next_x, func, method="hybr"):
+    def implicit_solve(self, next_x, func, method="hybr", **kwargs):
         """A solver for implicit equations.
 
         Finds the implicitly defined :math:`x_{i+1}` for the given right hand side function :math:`f(x_{i+1})`, such

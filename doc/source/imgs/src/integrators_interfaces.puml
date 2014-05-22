@@ -1,0 +1,31 @@
+@startuml
+
+skinparam stereotype {
+    CBackgroundColor #AF5A50
+    ABackgroundColor #7D966E
+    IBackgroundColor #D7AA50
+}
+
+skinparam class {
+	BackgroundColor #E1EAF1
+	ArrowColor #00557C
+	BorderColor #99BAD0
+}
+
+abstract class Integrator
+
+class Sdc
+class RungeKutta
+
+class ExplicitSdc
+class ImplicitSdc
+class SemiImplicitSdc
+
+Integrator --|> Sdc
+Integrator --|> RungeKutta
+
+Sdc --|> ExplicitSdc
+Sdc --|> ImplicitSdc
+Sdc --|> SemiImplicitSdc
+
+@enduml

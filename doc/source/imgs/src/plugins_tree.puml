@@ -1,0 +1,64 @@
+@startuml
+
+skinparam stereotype {
+    CBackgroundColor #AF5A50
+    ABackgroundColor #7D966E
+    IBackgroundColor #D7AA50
+}
+
+skinparam class {
+	BackgroundColor #E1EAF1
+	ArrowColor #00557C
+	BorderColor #99BAD0
+}
+
+skinparam note {
+	BackgroundColor #E1EAF1
+	BorderColor #99BAD0
+}
+
+skinparam packageBorderColor #99BAD0
+
+package "analyzers" {
+    note as AnalyzerNote
+        specialized
+        solution
+        analyzers
+    end note
+    abstract class Analyzer
+}
+
+package "plotters" {
+    note as PlottersNote
+        specialized plotters using
+        unified interface for
+        maximum exchangability
+    end note
+    abstract class Plotter
+}
+
+package "timers" {
+    note as TimersNode
+        exchangable timers
+        for measuring runtime
+    end note
+    abstract class TimerBase
+}
+
+package "implicit_solvers" {
+    note as ImplNode
+        implicit space solvers
+        such as root finding
+        algorithms
+    end note
+
+    package "multigrid" {
+        note as MultigridNote
+            too many classes
+            to be displayed here
+        end note
+    }
+}
+
+
+@enduml

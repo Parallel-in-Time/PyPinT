@@ -87,29 +87,45 @@ class SemiImplicitMlSdcCore(MlSdcSolverCore):
 
         else:
             # Note: \Delta_t is always 1.0 as it's part of the integral
+            _Fe_u_cp = _problem.evaluate_wrt_time(state.previous_step.time_point,
+                                               state.previous_step.value,
+                                               partial="expl")
+            _Fe_u_pp = _problem.evaluate_wrt_time(_previous_iteration_previous_step.time_point,
+                                                 _previous_iteration_previous_step.value,
+                                                 partial="expl")
+            _Fe_u_pc = _problem.evaluate_wrt_time(state.current_step.time_point,
+                                                 _previous_iteration_current_step.value,
+                                                 partial="impl")
             _expl_term = \
-                state.previous_step.value \
-                + state.current_step.delta_tau \
-                * (_problem.evaluate_wrt_time(state.current_step.time_point,
-                                              state.previous_step.value,
-                                              partial="expl")
-                   - _problem.evaluate_wrt_time(state.previous_step.time_point,
-                                                _previous_iteration_previous_step.value,
-                                                partial="expl")
-                   - _problem.evaluate_wrt_time(state.current_step.time_point,
-                                                _previous_iteration_current_step.value,
-                                                partial="impl")) \
-                + state.current_step.integral + _fas
+                (state.previous_step.value
+                 + state.current_step.delta_tau
+                 * (_Fe_u_cp - _Fe_u_pp - _Fe_u_pc)
+                 + state.current_step.integral + _fas).reshape(-1)
+            # LOG.debug("EXPL TERM: %s = %s + %f * (%s - %s - %s) + %s + %s"
+            #           % (_expl_term, state.previous_step.value, state.current_step.delta_tau, _Fe_u_cp, _Fe_u_pp,
+            #              _Fe_u_pc, state.current_step.integral, _fas))
             _func = lambda x_next: \
                 _expl_term \
                 + state.current_step.delta_tau * _problem.evaluate_wrt_time(state.current_step.time_point,
-                                                                            x_next, partial="impl") \
+                                                                            x_next.reshape(_problem.dim_for_time_solver),
+                                                                            partial="impl").reshape(-1) \
                 - x_next
-            _sol = _problem.implicit_solve(state.current_step.value, _func)
+            # LOG.debug("shape of value: %s" % (state.current_step.value.shape,))
+            # LOG.debug("shape expl term: %s" % (_expl_term.shape,))
+            # LOG.debug("shape impl func: %s" % (_func(state.current_step.value.reshape(-1)).shape,))
+            _sol = \
+                _problem.implicit_solve(
+                    state.current_step.value.reshape(-1),
+                    _func,
+                    expl_term=_expl_term,
+                    time_level=state.current_iteration.current_level_index,
+                    delta_time=state.current_iteration.current_level.current_step.delta_tau
+                ).reshape(state.current_step.value.shape)
 
         if type(state.current_step.value) == type(_sol):
             state.current_step.value = _sol
         else:
+            LOG.debug("Solution Type %s but expected %s" % (type(_sol), type(state.current_step.value)))
             state.current_step.value = _sol[0]
 
 

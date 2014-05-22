@@ -76,7 +76,10 @@ class SemiImplicitSdcCore(SdcSolverCore):
                                                x_next.reshape(_problem.dim_for_time_solver),
                                                partial="impl").reshape(-1) \
                 - x_next
-            _sol = _problem.implicit_solve(state.current_step.value.reshape(-1), _func)
+            _sol = _problem.implicit_solve(state.current_step.value.reshape(-1), _func,
+                                           expl_term=_expl_term,
+                                           time_level=0,
+                                           delta_time=state.current_step.delta_tau).reshape(state.current_step.value.shape)
 
         if type(state.current_step.value) == type(_sol):
             state.current_step.value = _sol
