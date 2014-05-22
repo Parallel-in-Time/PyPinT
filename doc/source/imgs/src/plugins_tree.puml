@@ -1,5 +1,24 @@
 @startuml
 
+skinparam stereotype {
+    CBackgroundColor #AF5A50
+    ABackgroundColor #7D966E
+    IBackgroundColor #D7AA50
+}
+
+skinparam class {
+	BackgroundColor #E1EAF1
+	ArrowColor #00557C
+	BorderColor #99BAD0
+}
+
+skinparam note {
+	BackgroundColor #E1EAF1
+	BorderColor #99BAD0
+}
+
+skinparam packageBorderColor #99BAD0
+
 package "analyzers" {
     note as AnalyzerNote
         specialized
@@ -32,13 +51,14 @@ package "implicit_solvers" {
         such as root finding
         algorithms
     end note
+
+    package "multigrid" {
+        note as MultigridNote
+            too many classes
+            to be displayed here
+        end note
+    }
 }
 
-package "multigrid" {
-    note as MultigridNote
-        too many classes
-        to be displayed here
-    end note
-}
 
 @enduml
