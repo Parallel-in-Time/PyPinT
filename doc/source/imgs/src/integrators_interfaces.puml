@@ -1,26 +1,31 @@
 @startuml
 
-abstract class Nodes
-abstract class WeightFunction
+skinparam stereotype {
+    CBackgroundColor #AF5A50
+    ABackgroundColor #7D966E
+    IBackgroundColor #D7AA50
+}
 
-class GaussLegendre
-class GaussLobatto
+skinparam class {
+	BackgroundColor #E1EAF1
+	ArrowColor #00557C
+	BorderColor #99BAD0
+}
 
-class Polynomial
+abstract class Integrator
 
-class IntegratorBase
-class SdcIntegrator
+class Sdc
+class RungeKutta
 
-Nodes --|> GaussLegendre
-Nodes --|> GaussLobatto
+class ExplicitSdc
+class ImplicitSdc
+class SemiImplicitSdc
 
-WeightFunction --|> Polynomial
+Integrator --|> Sdc
+Integrator --|> RungeKutta
 
-Nodes --* IntegratorBase
-WeightFunction --* IntegratorBase
-
-IntegratorBase --|> SdcIntegrator
-GaussLobatto --* SdcIntegrator
-Polynomial --* SdcIntegrator
+Sdc --|> ExplicitSdc
+Sdc --|> ImplicitSdc
+Sdc --|> SemiImplicitSdc
 
 @enduml
