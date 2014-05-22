@@ -325,12 +325,14 @@ class MlSdc(IIterativeTimeSolver, IParallelSolver):
             _dim = list(self.problem.spacial_dim)
             _dim.insert(0, self.ml_provider.integrator(self.state.last.current_level_index).num_nodes)
             LOG.debug("-->\n%s" % (self.state.last.current_level.values.reshape(tuple(_dim)).tolist()))
+            self.state.finalize()
             return Message.SolverFlag.finished
         else:
             # LOG.debug("solver main loop done: other")
             _dim = list(self.problem.spacial_dim)
             _dim.insert(0, self.ml_provider.integrator(self.state.last.current_level_index).num_nodes)
             LOG.debug("-->\n%s" % (self.state.last.current_level.values.reshape(tuple(_dim)).tolist()))
+            self.state.finalize()
             return Message.SolverFlag.converged
 
     def _init_new_state(self):
@@ -477,8 +479,8 @@ class MlSdc(IIterativeTimeSolver, IParallelSolver):
 
             if not _step.integral_available:
                 _step.integral = \
-                    self.ml_provider\
-                        .integrator(self.state.current_level_index)\
+                    self.ml_provider \
+                        .integrator(self.state.current_level_index) \
                         .evaluate(self.state.current_level.rhs, from_node=_step_index, target_node=_step_index + 1)
             _full_integral += _step.integral
 
@@ -518,6 +520,10 @@ class MlSdc(IIterativeTimeSolver, IParallelSolver):
                                  _cc)
 
         self._print_sweep_end()
+
+        if finalize:
+            LOG.debug("Finalizing Level %d" % self.state.current_iteration.current_level_index)
+            self.state.current_iteration.current_level.finalize()
 
     def _level(self):
         _current_level = self.state.current_iteration.current_level
