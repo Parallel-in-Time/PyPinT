@@ -208,24 +208,26 @@ class MultigridProblemMixin(object):
             assert_named_argument('stencil_fnc', kwargs, descriptor="Stencil Generation Function",
                                   checking_obj=self)
             assert_is_callable(kwargs['stencil_fnc'], descriptor="Stencil Generation Function", checking_obj=self)
-            LOG.debug("Using Multigrid as implicit space solver.")
+            # LOG.debug("Using Multigrid as implicit space solver.")
 
             mg_core_options = {}
             mg_core_options.update(MG_SMOOTHER_PRESETS["Jacobi"])
             mg_core_options.update(MG_LEVEL_PRESETS["Standard-1D"])
             mg_core_options.update(MG_RESTRICTION_PRESETS["Standard-1D"])
             mg_core_options.update(MG_INTERPOLATION_PRESETS["Standard-1D"])
-            mg_core_options["shape_coarse"] = 2
+            mg_core_options["shape_coarse"] = 4
             mg_core_options["n_pre"] = 1
             mg_core_options["n_post"] = 1
             self.mg_core = MultiGridCore(self, lambda h: (kwargs['stencil_fnc'](h), np.array([1])), **mg_core_options)
             self.mg_core.levels[-1].mid[:] = next_x.reshape(self.mg_core.levels[-1].mid.shape)
-            self.mg_core.fill_rhs(-1)
+            self.mg_core.levels[-1].rhs = kwargs['rhs'].reshape(self.mg_core.levels[-1].rhs.shape)
             self.mg_core.pad(-1)
             self.mg_core.modify_rhs(-1)
-            self.mg_core.v_cycle_verbose()
 
-            LOG.debug("input: %s --> %s" % (next_x.shape, self._mg_core.levels[-1].mid.shape))
+            self.mg_core.v_cycle()
+            self.mg_core.v_cycle()
+
+            # LOG.debug("input: %s --> %s" % (next_x.shape, self._mg_core.levels[-1].mid.shape))
             return self.mg_core.levels[-1].mid.reshape(next_x.shape)
 
         elif method == 'direct':
