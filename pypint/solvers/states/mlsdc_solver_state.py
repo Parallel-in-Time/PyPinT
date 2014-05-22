@@ -10,7 +10,7 @@ import numpy as np
 from pypint.solvers.states.i_solver_state import IStepState, ISolverState, IStaticStateIterator
 from pypint.solutions.iterative_solution import IterativeSolution
 from pypint.solutions.data_storage.trajectory_solution_data import TrajectorySolutionData
-from pypint.utilities import assert_condition
+from pypint.utilities import assert_condition, class_name
 from pypint.utilities.logging import LOG
 
 
@@ -247,7 +247,12 @@ class MlSdcIterationState(IStaticStateIterator):
         raise RuntimeError("'proceed' is not defined in the context of different levels.")
 
     def finalize(self):
-        pass
+        assert_condition(not self.finalized, RuntimeError,
+                         message="This {} is already done.".format(class_name(self)),
+                         checking_obj=self)
+        self._solution = self.finest_level.solution
+        self._current_index = 0
+        self._finalized = True
 
     def step_up(self):
         """Get to next finer level

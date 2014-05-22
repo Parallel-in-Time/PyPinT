@@ -1,0 +1,44 @@
+@startuml
+
+package "analyzers" {
+    note as AnalyzerNote
+        specialized
+        solution
+        analyzers
+    end note
+    abstract class Analyzer
+}
+
+package "plotters" {
+    note as PlottersNote
+        specialized plotters using
+        unified interface for
+        maximum exchangability
+    end note
+    abstract class Plotter
+}
+
+package "timers" {
+    note as TimersNode
+        exchangable timers
+        for measuring runtime
+    end note
+    abstract class TimerBase
+}
+
+package "implicit_solvers" {
+    note as ImplNode
+        implicit space solvers
+        such as root finding
+        algorithms
+    end note
+}
+
+package "multigrid" {
+    note as MultigridNote
+        too many classes
+        to be displayed here
+    end note
+}
+
+@enduml

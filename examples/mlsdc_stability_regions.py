@@ -17,11 +17,14 @@ import time
 import matplotlib.pyplot as plt
 import matplotlib.cm as cm
 
-from pypint.communicators.forward_sending_messaging import ForwardSendingMessaging
 from pypint.integrators.sdc_integrator import SdcIntegrator
-from pypint.solvers.parallel_sdc import ParallelSdc
-from pypint.solvers.cores.semi_implicit_sdc_core import SemiImplicitSdcCore
+from pypint.multi_level_providers.multi_time_level_provider import MultiTimeLevelProvider
+from pypint.multi_level_providers.level_transition_providers.time_transition_provider import TimeTransitionProvider
+from pypint.communicators import ForwardSendingMessaging
+from pypint.solvers.ml_sdc import MlSdc
+from pypint.solvers.cores.semi_implicit_mlsdc_core import SemiImplicitMlSdcCore
 from pypint.utilities.threshold_check import ThresholdCheck
+from pypint.solvers.diagnosis.norms import two_norm
 from examples.problems.lambda_u import LambdaU
 
 
@@ -38,21 +41,43 @@ def run_problem(real, imag, max_iter, num_steps, num_nodes, criteria, task, num_
         print("[ {:6.2f}%] Starting task {:{width}d} of {:{width}d}: \\lambda = {: .3f}{:+.3f}i"
               .format(_percent, task, num_tasks, real, imag, width=_width))
 
+    base_integrator = SdcIntegrator()
+    base_integrator.init(num_nodes=num_nodes)
+
+    intermediate_integrator = SdcIntegrator()
+    intermediate_integrator.init(num_nodes=(2 * num_nodes - 1))
+
+    # fine_integrator = SdcIntegrator()
+    # fine_integrator.init(num_nodes=(num_nodes + 4))
+
+    transitioner1 = TimeTransitionProvider(fine_nodes=intermediate_integrator.nodes, coarse_nodes=base_integrator.nodes)
+    # transitioner2 = TimeTransitionProvider(fine_nodes=fine_integrator.nodes, coarse_nodes=intermediate_integrator.nodes)
+
+    ml_provider = MultiTimeLevelProvider()
+    # ml_provider.add_coarse_level(fine_integrator)
+    ml_provider.add_coarse_level(intermediate_integrator)
+    ml_provider.add_coarse_level(base_integrator)
+    ml_provider.add_level_transition(transitioner1, 0, 1)
+    # ml_provider.add_level_transition(transitioner2, 1, 2)
+
     problem = LambdaU(lmbda=complex(real, imag))
-    check = ThresholdCheck(min_threshold=1e-14, max_threshold=max_iter,
+    check = ThresholdCheck(min_threshold=1e-12, max_threshold=max_iter,
                            conditions=('residual', 'iterations'))
 
     comm = ForwardSendingMessaging()
-    solver = ParallelSdc(communicator=comm)
+    solver = MlSdc(communicator=comm)
     comm.link_solvers(previous=comm, next=comm)
-    comm.write_buffer(value=problem.initial_value, time_point=problem.time_start)
+    comm.write_buffer(tag=(ml_provider.num_levels - 1), value=problem.initial_value, time_point=problem.time_start)
 
-    solver.init(integrator=SdcIntegrator, problem=problem, threshold=check, num_time_steps=num_steps, num_nodes=num_nodes)
+    solver.init(problem=problem, ml_provider=ml_provider, threshold=check)
     try:
-        solution = solver.run(SemiImplicitSdcCore, dt=(problem.time_end - problem.time_start))
+        solution = solver.run(SemiImplicitMlSdcCore, dt=(problem.time_end - problem.time_start))
         return int(solution[-1].used_iterations)
+        # print("####======> %s -> %s" % (solution[-1].error(-1)[-1].value, linalg.norm(solution[-1].error(-1)[-1].value)))
+        # return two_norm(solution[-1].error(-1)[-1].value)
     except RuntimeError:
         return max_iter + 1
+        # return np.inf
 
 
 def sdc_stability_region(num_points, max_iter, num_steps, num_nodes, num_procs, real, imag, criteria):
@@ -78,12 +103,12 @@ def sdc_stability_region(num_points, max_iter, num_steps, num_nodes, num_procs, 
         'real': np.linspace(_test_region['real'][0], _test_region['real'][1], _num_points_per_axis['real']),
         'imag': np.linspace(_test_region['imag'][0], _test_region['imag'][1], _num_points_per_axis['imag'])
     }
-    _results = np.zeros((_num_points_per_axis['imag'], _num_points_per_axis['real']), dtype=np.int)
+    _results = np.zeros((_num_points_per_axis['imag'], _num_points_per_axis['real']), dtype=np.float64)
     _futures = np.zeros((_num_points_per_axis['imag'], _num_points_per_axis['real']), dtype=object)
 
-    _name = "sdc_stability_{:.2f}-{:.2f}_{:.2f}-{:.2f}_p{:d}_maxI{:d}_T{:d}_n{:d}"\
+    _name = "mlsdc_stability_{:.2f}-{:.2f}_{:.2f}-{:.2f}_p{:d}_maxI{:d}_T{:d}_n0{:d}_n1{:d}"\
             .format(_test_region["real"][0], _test_region['real'][1], _test_region['imag'][0], _test_region['imag'][1],
-                    num_points, max_iter, num_steps, num_nodes)
+                    num_points, max_iter, num_steps, num_nodes, (2*num_nodes - 1))
 
     with concurrent.futures.ProcessPoolExecutor(max_workers=num_procs) as pool:
         for a in range(0, _points['real'].size):
@@ -108,10 +133,10 @@ def sdc_stability_region(num_points, max_iter, num_steps, num_nodes, num_procs, 
 
     plt.rc('text', usetex=True)
     plt.hold(True)
-    # plt.title("SDC with {:d} time steps and {:d} nodes each".format(num_steps, num_nodes))
-    C = plt.contour(_points['real'], _points['imag'], _results, colors='k', levels=[4, 8, 16, 32, 64, 128, 256, 512])
-    plt.clabel(C, inline=1, fontsize=10, fmt='%3i')
-    CF = plt.pcolor(_points['real'], _points['imag'], np.log2(_results), cmap=cm.jet, rasterized=True)
+    # plt.title("MLSDC with {:d} time steps and {:d} nodes each".format(num_steps, num_nodes))
+    C = plt.contour(_points['real'], _points['imag'], _results, vmin=0, vmax=1e-7, levels=[1e-7, 1e-6, 1e-5, 1e-4, 1e-3, 1e-2, 1e-1, 0])
+    plt.clabel(C, inline=1, fontsize=10, fmt='%.2e')
+    CF = plt.pcolor(_points['real'], _points['imag'], _results, vmin=0, vmax=1e-2, cmap=cm.jet, rasterized=True)
     plt.xlabel(r'$\Re(\lambda)$')
     plt.ylabel(r'$\Im(\lambda)$')
     plt.grid('off')
@@ -121,7 +146,7 @@ def sdc_stability_region(num_points, max_iter, num_steps, num_nodes, num_procs, 
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Run SDC Stability Anaylsis")
+    parser = argparse.ArgumentParser(description="Run MLSDC Stability Anaylsis")
     parser.add_argument('-p', '--num-pnts', nargs='?', default=10, type=int, help="Number of points on longest axis.")
     parser.add_argument('-i', '--max-iter', nargs='?', default=769, type=int, help="Maximum number of iterations.")
     parser.add_argument('-t', '--num-stps', nargs='?', default=1, type=int, help="Number of time steps.")
@@ -132,7 +157,7 @@ if __name__ == "__main__":
     parser.add_argument('-c', '--criteria', nargs='?', default='error', type=str, help="Termination criteria.")
     args = parser.parse_args()
 
-    print("[        ] Calculating SDC Stability Regions")
+    print("[        ] Calculating MLSDC Stability Regions")
     for key in vars(args):
         print("[{:{fill}{align}8s}] {}".format(key[0:8], vars(args)[key], fill=' ', align='<'))
 

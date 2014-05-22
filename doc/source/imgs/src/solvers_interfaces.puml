@@ -1,0 +1,16 @@
+@startuml
+
+abstract class IterativeTimeSolver
+abstract class MultiLevelSolver
+interface ParallelSolver
+
+class ParallelSdc
+class Mlsdc
+
+IterativeTimeSolver --|> ParallelSdc
+ParallelSolver ..|> ParallelSdc
+
+IterativeTimeSolver --|> MultiLevelSolver
+MultiLevelSolver --|> Mlsdc
+
+@enduml

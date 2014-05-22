@@ -1,0 +1,18 @@
+@startuml
+
+abstract class Problem
+abstract class InitialValueProblem
+interface HasDirectImplicit
+interface HasExactSolution
+interface TransientProblem
+
+class LambdaU
+
+Problem --|> InitialValueProblem
+TransientProblem ..|> InitialValueProblem
+
+InitialValueProblem --|> LambdaU
+HasDirectImplicit ..|> LambdaU
+HasExactSolution ..|> LambdaU
+
+@enduml

@@ -1,0 +1,21 @@
+@startuml
+
+abstract class LevelTranstionProvider
+
+class FullWeighting
+class Injection
+class TimeTransitionProvider
+
+class MultiLevelProvider
+class MultiTimeLevelProvider
+
+LevelTranstionProvider --|> FullWeighting
+LevelTranstionProvider --|> Injection
+LevelTranstionProvider --|> TimeTransitionProvider
+
+LevelTranstionProvider --* MultiLevelProvider
+
+MultiLevelProvider --|> MultiTimeLevelProvider
+TimeTransitionProvider --* MultiTimeLevelProvider
+
+@enduml

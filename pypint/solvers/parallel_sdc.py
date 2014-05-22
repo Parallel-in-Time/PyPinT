@@ -497,9 +497,11 @@ class ParallelSdc(IIterativeTimeSolver, IParallelSolver):
             return Message.SolverFlag.iterating
         elif _reason == ['iterations']:
             # LOG.debug("solver main loop done: iterations")
+            self.state.finalize()
             return Message.SolverFlag.finished
         else:
             # LOG.debug("solver main loop done: other")
+            self.state.finalize()
             return Message.SolverFlag.converged
 
     def _time_step(self):
