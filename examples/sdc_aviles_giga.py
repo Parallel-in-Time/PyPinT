@@ -30,3 +30,8 @@ for prob in problems:
         # solve_parallel(prob, core)
         # solve_parallel_two(prob, core)
 
+solver=solvers[-1]
+first=solvers[0].state.first.initial.value
+plt.imshow(first.reshape(shape))
+plt.colorbar(cmap=plt.cm.coolwarm)
+plt.show()

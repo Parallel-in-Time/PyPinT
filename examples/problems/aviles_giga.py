@@ -1,9 +1,10 @@
 # coding=utf-8
-import numpy as np
 import scipy.fftpack as spfft
+import scipy.optimize as scop
+import numpy as np
+
 from pypint.plugins.multigrid.i_transient_multigrid_problem import IInitialValueProblem
-from pypint.problems.has_direct_implicit_mixin import HasDirectImplicitMixin
-from pypint.utilities import assert_named_argument, assert_is_instance
+from pypint.utilities import assert_is_callable, assert_is_instance
 
 
 class AvilesGiga(IInitialValueProblem):
@@ -28,12 +29,20 @@ class AvilesGiga(IInitialValueProblem):
 
         self._epsilon = kwargs.get('epsilon', 1.0)
 
+        lspc = np.linspace(0, np.pi, self._m)
+        x = np.meshgrid(lspc, lspc)
         if self.time_start is None:
             self.time_start = 0.0
         if self.time_end is None:
             self.time_end = 1.0
         if self.initial_value is None:
-            self.initial_value = np.random.rand(self.dim_for_time_solver)
+            if kwargs.get("initial") is "rand":
+                self.initial_value = np.random.rand(self.dim_for_time_solver) * 1e-3
+            else:
+                self.initial_value = (np.sin(x[1])*np.sin(x[0])).reshape(self.dim_for_time_solver)
+
+
+
 
         if isinstance(self.epsilon, complex):
             self.numeric_type = np.complex
@@ -110,17 +119,36 @@ class AvilesGiga(IInitialValueProblem):
         """RHS ...
         """
         super(AvilesGiga, self).evaluate_wrt_time(time, phi_of_time, **kwargs)
-        self._u.reshape(-1)[:] = phi_of_time
+        self._u.reshape(phi_of_time.shape)[:] = phi_of_time
         self._u_f = self.fft(self._u)
         self.compute_grad()
         if kwargs.get('partial') is not None:
             if isinstance(kwargs['partial'], str) and kwargs['partial'] == 'impl':
-                return (- self.epsilon * self.compute_linear()).flatten()
+                return (- self.epsilon * self.compute_linear()).reshape(phi_of_time.shape)
             elif kwargs['partial'] == 'expl':
-                return (self.compute_non_linear() / self.epsilon).flatten()
+                return (self.compute_non_linear() / self.epsilon).reshape(phi_of_time.shape)
         else:
-            return (self.compute_non_linear() / self.epsilon - self.epsilon * self.compute_linear()).flatten()
+            return (self.compute_non_linear() / self.epsilon - self.epsilon * self.compute_linear()).reshape(phi_of_time.shape)
 
+
+    def angle(self, u):
+        """ returns angles of the vector (u_x, u_y)
+
+        """
+        self._u.reshape(u.shape)[:] = u
+        self.compute_grad()
+        return np.angle(np.complex(0, 1) * self._u_x + self._u_y)
+
+
+    def implicit_solve(self, next_x, func, method="hybr", **kwargs):
+        """A solver for implicit equations.
+        """
+        assert_is_instance(next_x, np.ndarray, descriptor="Initial Guess", checking_obj=self)
+        assert_is_callable(func, descriptor="Function of RHS for Implicit Solver", checking_obj=self)
+        sol = scop.newton_krylov(func, next_x.reshape(-1))
+        assert_is_instance(sol, np.ndarray, descriptor="Solution", checking_obj=self)
+
+        return sol.reshape(self.dim_for_time_solver)
     def print_lines_for_log(self):
         _lines = super(AvilesGiga, self).print_lines_for_log()
         _lines['Formula'] = r"d u(x,t) / dt = -\epsilon \laplace^2 u(x,t) + (\grad \cdot ((|grad u|^2-1)\grad u))"
