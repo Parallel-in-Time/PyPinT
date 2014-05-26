@@ -41,15 +41,9 @@ class AvilesGiga(IInitialValueProblem):
             else:
                 self.initial_value = (np.sin(x[1])*np.sin(x[0])).reshape(self.dim_for_time_solver)
 
-
-
-
         if isinstance(self.epsilon, complex):
             self.numeric_type = np.complex
-
-
         self._u = np.zeros((self._m, self._m), dtype=np.complex128)
-
         # place to work on
         self._u_x = self._u.copy()
         self._u_y = self._u.copy()
@@ -116,7 +110,7 @@ class AvilesGiga(IInitialValueProblem):
         return np.real(self.ifft(self._k_4 * self.fft(self._u)))
 
     def evaluate_wrt_time(self, time, phi_of_time, **kwargs):
-        """RHS ...
+        """Computing the right hand side with respect to time
         """
         super(AvilesGiga, self).evaluate_wrt_time(time, phi_of_time, **kwargs)
         self._u.reshape(phi_of_time.shape)[:] = phi_of_time
@@ -130,6 +124,14 @@ class AvilesGiga(IInitialValueProblem):
         else:
             return (self.compute_non_linear() / self.epsilon - self.epsilon * self.compute_linear()).reshape(phi_of_time.shape)
 
+    def implicit_solve(self, next_x, func, method="unused", **kwargs):
+        """A solver for the implicit equations.
+        """
+        assert_is_instance(next_x, np.ndarray, descriptor="Initial Guess", checking_obj=self)
+        assert_is_callable(func, descriptor="Function of RHS for Implicit Solver", checking_obj=self)
+        sol = scop.newton_krylov(func, next_x.reshape(-1))
+        assert_is_instance(sol, np.ndarray, descriptor="Solution", checking_obj=self)
+        return sol.reshape(self.dim_for_time_solver)
 
     def angle(self, u):
         """ returns angles of the vector (u_x, u_y)
@@ -140,15 +142,9 @@ class AvilesGiga(IInitialValueProblem):
         return np.angle(np.complex(0, 1) * self._u_x + self._u_y)
 
 
-    def implicit_solve(self, next_x, func, method="hybr", **kwargs):
-        """A solver for implicit equations.
-        """
-        assert_is_instance(next_x, np.ndarray, descriptor="Initial Guess", checking_obj=self)
-        assert_is_callable(func, descriptor="Function of RHS for Implicit Solver", checking_obj=self)
-        sol = scop.newton_krylov(func, next_x.reshape(-1))
-        assert_is_instance(sol, np.ndarray, descriptor="Solution", checking_obj=self)
 
-        return sol.reshape(self.dim_for_time_solver)
+
+
     def print_lines_for_log(self):
         _lines = super(AvilesGiga, self).print_lines_for_log()
         _lines['Formula'] = r"d u(x,t) / dt = -\epsilon \laplace^2 u(x,t) + (\grad \cdot ((|grad u|^2-1)\grad u))"
