@@ -9,6 +9,7 @@ from sys import stdout
 from datetime import datetime
 from collections import OrderedDict
 import inspect
+import numpy
 
 from pypint.utilities.tracing import checking_obj_name
 from pypint.utilities.config import config
@@ -40,6 +41,9 @@ if config()['Logger']['File']['enable']:
                     level=config()['Logger']['File']['level'],
                     format_string=config()['Logger']['File']['format_string'])
     )
+
+numpy.set_printoptions(precision=config()['Logger']['numpy']['precision'],
+                       linewidth=config()['Logger']['numpy']['linewidth'])
 
 
 VERBOSITY_LVL1 = '!> '
@@ -89,9 +93,9 @@ def this_got_called(obj, *args, add_log_msg="", **kwargs):
             _c += 1
 
     if obj:
-        LOG.debug("%s<0x%x>.%s(%s): " % (checking_obj_name(obj), id(obj), inspect.stack()[2][3], _params) + add_log_msg)
+        LOG.debug("%s<0x%x>.%s(%s): " % (checking_obj_name(obj), id(obj), inspect.stack()[1][3], _params) + add_log_msg)
     else:
-        LOG.debug("unknown<>.%s(%s): " % (inspect.stack()[2][3], _params) + add_log_msg)
+        LOG.debug("unknown<>.%s(%s): " % (inspect.stack()[1][3], _params) + add_log_msg)
 
 
 __all__ = [

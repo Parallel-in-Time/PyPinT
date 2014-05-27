@@ -76,9 +76,9 @@ def assert_is_callable(obj, message=None, descriptor=None, checking_obj=None):
     if not isinstance(obj, Callable):
         if not message:
             if descriptor:
-                message = "Required a callable: NOT {:s}.".format(class_name(obj))
-            else:
                 message = "{:s} must be callable.".format(descriptor)
+            else:
+                message = "Required a callable: NOT {:s}.".format(class_name(obj))
         LOG.critical(func_name(checking_obj) + message)
         raise ValueError("{:s}.{:s}(): {:s}".format(checking_obj_name(checking_obj), inspect.stack()[2][3], message))
 
@@ -104,6 +104,11 @@ def assert_is_in(element, test_list, message=None, elem_desc=None, list_desc=Non
     ------
     ValueError
         if ``element`` is not in ``test_list``
+
+    Examples
+    --------
+    assert_is_in(True, bool_list, elem_desc='', list_desc='', checking_obj=self)
+
     """
     if element not in test_list:
         if not message:

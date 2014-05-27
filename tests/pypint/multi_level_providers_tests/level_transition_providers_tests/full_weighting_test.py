@@ -4,8 +4,7 @@
 .. moduleauthor: Torbjörn Klatt <t.klatt@fz-juelich.de>
 """
 
-from pypint.multi_level_providers.level_transition_providers.full_weighting \
-    import FullWeighting
+from pypint.multi_level_providers.level_transition_providers.full_weighting import FullWeighting
 import numpy
 import unittest
 from nose.tools import *

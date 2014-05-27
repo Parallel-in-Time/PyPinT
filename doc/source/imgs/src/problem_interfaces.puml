@@ -1,0 +1,30 @@
+@startuml
+
+skinparam stereotype {
+    CBackgroundColor #AF5A50
+    ABackgroundColor #7D966E
+    IBackgroundColor #D7AA50
+}
+
+skinparam class {
+	BackgroundColor #E1EAF1
+	ArrowColor #00557C
+	BorderColor #99BAD0
+}
+
+abstract class Problem
+abstract class InitialValueProblem
+interface HasDirectImplicit
+interface HasExactSolution
+interface TransientProblem
+
+class LambdaU
+
+Problem --|> InitialValueProblem
+TransientProblem ..|> InitialValueProblem
+
+InitialValueProblem --|> LambdaU
+HasDirectImplicit ..|> LambdaU
+HasExactSolution ..|> LambdaU
+
+@enduml

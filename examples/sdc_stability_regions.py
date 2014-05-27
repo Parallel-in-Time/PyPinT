@@ -16,7 +16,10 @@ import numpy as np
 import time
 import matplotlib.pyplot as plt
 import matplotlib.cm as cm
-from pypint.solvers.sdc import Sdc
+
+from pypint.communicators.forward_sending_messaging import ForwardSendingMessaging
+from pypint.integrators.sdc_integrator import SdcIntegrator
+from pypint.solvers.parallel_sdc import ParallelSdc
 from pypint.solvers.cores.semi_implicit_sdc_core import SemiImplicitSdcCore
 from pypint.utilities.threshold_check import ThresholdCheck
 from examples.problems.lambda_u import LambdaU
@@ -36,13 +39,18 @@ def run_problem(real, imag, max_iter, num_steps, num_nodes, criteria, task, num_
               .format(_percent, task, num_tasks, real, imag, width=_width))
 
     problem = LambdaU(lmbda=complex(real, imag))
-    check = ThresholdCheck(min_threshold=1e-7, max_threshold=max_iter,
-                           conditions=(criteria, 'solution reduction', 'error reduction', 'iterations'))
-    solver = Sdc()
-    solver.init(problem=problem, threshold=check, num_time_steps=num_steps, num_nodes=num_nodes)
+    check = ThresholdCheck(min_threshold=1e-14, max_threshold=max_iter,
+                           conditions=('residual', 'iterations'))
+
+    comm = ForwardSendingMessaging()
+    solver = ParallelSdc(communicator=comm)
+    comm.link_solvers(previous=comm, next=comm)
+    comm.write_buffer(value=problem.initial_value, time_point=problem.time_start)
+
+    solver.init(integrator=SdcIntegrator, problem=problem, threshold=check, num_time_steps=num_steps, num_nodes=num_nodes)
     try:
-        solution = solver.run(SemiImplicitSdcCore)
-        return int(solution.used_iterations)
+        solution = solver.run(SemiImplicitSdcCore, dt=(problem.time_end - problem.time_start))
+        return int(solution[-1].used_iterations)
     except RuntimeError:
         return max_iter + 1
 
@@ -73,7 +81,7 @@ def sdc_stability_region(num_points, max_iter, num_steps, num_nodes, num_procs, 
     _results = np.zeros((_num_points_per_axis['imag'], _num_points_per_axis['real']), dtype=np.int)
     _futures = np.zeros((_num_points_per_axis['imag'], _num_points_per_axis['real']), dtype=object)
 
-    _name = "stability_{:.2f}-{:.2f}_{:.2f}-{:.2f}_p{:d}_maxI{:d}_T{:d}_n{:d}"\
+    _name = "sdc_stability_{:.2f}-{:.2f}_{:.2f}-{:.2f}_p{:d}_maxI{:d}_T{:d}_n{:d}"\
             .format(_test_region["real"][0], _test_region['real'][1], _test_region['imag'][0], _test_region['imag'][1],
                     num_points, max_iter, num_steps, num_nodes)
 
@@ -96,14 +104,16 @@ def sdc_stability_region(num_points, max_iter, num_steps, num_nodes, num_procs, 
 
     with open("{:s}.pickle".format(_name), 'wb') as f:
         pickle.dump(_results, f)
+        print("Iteration Data:\n%s" % _results)
 
+    plt.rc('text', usetex=True)
     plt.hold(True)
-    plt.title("SDC with {:d} time steps and {:d} nodes each".format(num_steps, num_nodes))
-    C = plt.contour(_points['real'], _points['imag'], _results, levels=[4, 8, 16, 32, 64, 128, 256, 512])
+    # plt.title("SDC with {:d} time steps and {:d} nodes each".format(num_steps, num_nodes))
+    C = plt.contour(_points['real'], _points['imag'], _results, colors='k', levels=[4, 8, 16, 32, 64, 128, 256, 512])
     plt.clabel(C, inline=1, fontsize=10, fmt='%3i')
     CF = plt.pcolor(_points['real'], _points['imag'], np.log2(_results), cmap=cm.jet, rasterized=True)
-    plt.xlabel('Real part')
-    plt.ylabel('Imaginary part')
+    plt.xlabel(r'$\Re(\lambda)$')
+    plt.ylabel(r'$\Im(\lambda)$')
     plt.grid('off')
     plt.tight_layout()
     fig = plt.gcf()
@@ -117,8 +127,8 @@ if __name__ == "__main__":
     parser.add_argument('-t', '--num-stps', nargs='?', default=1, type=int, help="Number of time steps.")
     parser.add_argument('-n', '--num-ndes', nargs='?', default=5, type=int, help="Number of integration nodes per time step.")
     parser.add_argument('-w', '--num-proc', nargs='?', default=8, type=int, help="Number of concurrent worker processes.")
-    parser.add_argument('--real', nargs=2, default=[-8.0, 2.0], type=float, help="Start and end of real axis.")
-    parser.add_argument('--imag', nargs=2, default=[0.0, 7.0], type=float, help="Start and end of imaginary axis.")
+    parser.add_argument('--real', nargs=2, default=[-6.0, 3.0], type=float, help="Start and end of real axis.")
+    parser.add_argument('--imag', nargs=2, default=[0.0, 8.0], type=float, help="Start and end of imaginary axis.")
     parser.add_argument('-c', '--criteria', nargs='?', default='error', type=str, help="Termination criteria.")
     args = parser.parse_args()
 

@@ -8,6 +8,7 @@ from copy import deepcopy
 import numpy as np
 
 from pypint.utilities import assert_is_instance, assert_condition, class_name
+from pypint.utilities.logging import LOG
 
 
 class INodes(object):
@@ -88,6 +89,7 @@ class INodes(object):
                          message="Newly computed nodes do not match new interval: {} NOT IN {}"
                                  .format(self._nodes, self._interval),
                          checking_obj=self)
+        LOG.debug("Nodes: %s" % self._nodes.tolist())
 
     @property
     def interval(self):
@@ -154,6 +156,9 @@ class INodes(object):
             'Number Nodes': "%d" % self.num_nodes
         }
         return _lines
+
+    def __str__(self):
+        return "INodes<0x%x>(n=%d, nodes=%s)" % (id(self), self.num_nodes, self.nodes)
 
     def __copy__(self):
         copy = self.__class__.__new__(self.__class__)

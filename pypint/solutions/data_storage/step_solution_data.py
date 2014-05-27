@@ -9,6 +9,7 @@ import numpy as np
 
 from pypint.solvers.diagnosis import Error, Residual
 from pypint.utilities import assert_is_instance, assert_condition, class_name
+from pypint.utilities.logging import LOG
 
 
 class StepSolutionData(object):
@@ -97,6 +98,12 @@ class StepSolutionData(object):
                          message="This solution data storage is already finalized.", checking_obj=self)
         self._finalized = True
 
+    def definalize(self):
+        if self.finalized:
+            self._finalized = False
+        else:
+            LOG.warning("This Solution is not finalized.")
+
     @property
     def finalized(self):
         """Accessor for the lock state.
@@ -129,7 +136,7 @@ class StepSolutionData(object):
         assert_condition(not self.finalized, AttributeError,
                          message="Cannot change this solution data storage any more.", checking_obj=self)
         assert_is_instance(value, np.ndarray, descriptor="Values", checking_obj=self)
-        self._dim = value.size
+        self._dim = value.shape
         self._numeric_type = value.dtype
         self._data = value
 

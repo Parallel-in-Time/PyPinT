@@ -21,11 +21,18 @@ class IStepState(object):
     def __init__(self, **kwargs):
         self._solution = StepSolutionData()
         self._delta_tau = 0.0
+        self._rhs = None
+        self._rhs_evaluated = False
+        self._integral = None
+        self._integral_available = False
 
     def done(self):
         """Finalize this state and its included solution
         """
         self.solution.finalize()
+
+    def definalize(self):
+        self.solution.definalize()
 
     @property
     def solution(self):
@@ -38,10 +45,57 @@ class IStepState(object):
         return self._solution
 
     @property
+    def value(self):
+        """Proxy for the solution value
+
+        On setting, the right hand side evaluation (:py:attr:`.rhs`) gets reset.
+        """
+        return self._solution.value
+
+    @value.setter
+    def value(self, value):
+        self._solution.value = value
+        self._rhs_evaluated = False
+        self._integral_available = False
+
+    @property
     def time_point(self):
         """Proxy for :py:attr:`.StepSolutionData.time_point`
         """
         return self._solution.time_point
+
+    @property
+    def rhs_evaluated(self):
+        return self._rhs_evaluated
+
+    @property
+    def rhs(self):
+        return self._rhs if self.rhs_evaluated else None
+
+    @rhs.setter
+    def rhs(self, rhs):
+        self._rhs = rhs
+        self._rhs_evaluated = True
+
+    @property
+    def integral_available(self):
+        return self._integral_available
+
+    @property
+    def integral(self):
+        """Accessor for an integral value
+
+        Parameters
+        ----------
+        integral : :py:class:`float`
+            (no consistency checks are done)
+        """
+        return self._integral
+
+    @integral.setter
+    def integral(self, integral):
+        self._integral = integral
+        self._integral_available = True
 
     @property
     def delta_tau(self):
@@ -157,6 +211,17 @@ class IStateIterator(object):
         self.solution.finalize()
         self._current_index = 0
         self._finalized = True
+
+    def definalize(self):
+        if self._finalized:
+            self._solution = self.solution.__class__()
+            self._finalized = False
+            self.reset_to_start()
+        else:
+            LOG.debug("This {} wasn't finalized.".format(class_name(self)))
+
+    def reset_to_start(self):
+        self._current_index = 0
 
     @property
     def finalized(self):
@@ -285,7 +350,6 @@ class IStaticStateIterator(IStateIterator):
         RuntimeError
             if this sequence has already been finalized via :py:meth:`.IStateIterator.finalize`
         """
-        LOG.debug(func_name(self))
         assert_condition(not self.finalized, RuntimeError,
                          message="This {} is already done.".format(class_name(self)),
                          checking_obj=self)
@@ -293,6 +357,10 @@ class IStaticStateIterator(IStateIterator):
             self._current_index += 1
         else:
             raise StopIteration("No further states available.")
+
+    def broadcast(self, value):
+        for _step in self:
+            _step.value = value.copy()
 
     @property
     def next(self):
@@ -554,7 +622,6 @@ class IIterationState(IStaticStateIterator):
         value is set as a reference to the previous time step's last step.
         """
         super(IIterationState, self).proceed()  # -> current_index += 1
-        LOG.debug(func_name(self))
         # link initial step of this time step to the previous' last step
         self.current_time_step.initial = self.previous_time_step.last_step
 
@@ -724,7 +791,6 @@ class ISolverState(IStateIterator):
         Extends the sequence of :py:class:`.IIterationState` by appending a new instance with the set
         :py:attr:`.num_time_steps` and :py:attr:`.num_nodes`.
         """
-        LOG.debug(func_name(self))
         self._add_iteration()
         self._current_index = len(self) - 1
         self.current_iteration.initial = deepcopy(self.initial)
@@ -741,9 +807,9 @@ class ISolverState(IStateIterator):
                          checking_obj=self)
         for _iter in self:
             self.solution.add_solution(_iter.solution)
-        self.solution.finalize()
+        # self.solution.finalize()
         self._current_index = 0
-        self._finalized = True
+        # self._finalized = True
 
     @property
     def num_nodes(self):
@@ -756,6 +822,10 @@ class ISolverState(IStateIterator):
         """Read-only accessor for the number of time steps per iteration.
         """
         return self._num_time_steps
+
+    @property
+    def interval(self):
+        return np.array([self.initial.time_point, self.initial.time_point + self.delta_interval], dtype=np.float)
 
     @property
     def delta_interval(self):
@@ -943,7 +1013,7 @@ class ISolverState(IStateIterator):
     def _add_iteration(self):
         assert_condition(self.num_time_steps > 0 and self.num_nodes > 0,
                          ValueError, message="Number of time steps and nodes per time step must be larger 0: NOT {}, {}"
-                                             .format(self.num_time_steps, self.num_nodes),
+                         .format(self.num_time_steps, self.num_nodes),
                          checking_obj=self)
         self._states.append(self._element_type(num_states=self.num_nodes,
                                                num_time_steps=self.num_time_steps))

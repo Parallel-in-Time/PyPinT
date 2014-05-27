@@ -3,8 +3,10 @@
 
 .. moduleauthor:: Torbjörn Klatt <t.klatt@fz-juelich.de>
 """
+from collections import OrderedDict
+
 from pypint.problems.i_problem import IProblem
-from pypint.utilities import assert_is_callable, assert_is_instance
+from pypint.utilities import assert_is_callable, assert_is_instance, class_name
 
 
 class HasExactSolutionMixin(object):
@@ -18,9 +20,18 @@ class HasExactSolutionMixin(object):
             *(optional)*
             If given initializes the problem with the exact solution function.
         """
+        assert_is_instance(self, IProblem, descriptor="Problem needs to be a IProblem first: NOT %s" % class_name(self),
+                           checking_obj=self)
         self._exact_function = None
-        if "exact_function" in kwargs:
-            self.exact_function = kwargs["exact_function"]
+        if 'exact_function' in kwargs:
+            self.exact_function = kwargs['exact_function']
+
+        self._strings['exact'] = None
+        if 'strings' in kwargs:
+            if 'exact' in kwargs['strings']:
+                assert_is_instance(kwargs['strings']['exact'], str,
+                                   descriptor="String representation of Exact Function", checking_obj=self)
+                self._strings['exact'] = kwargs['strings']['exact']
 
     def exact(self, time):
         """Evaluates given exact solution function at given time and with given time-dependent data.
@@ -61,6 +72,14 @@ class HasExactSolutionMixin(object):
     def exact_function(self, exact_function):
         assert_is_callable(exact_function, descriptor="Exact Function", checking_obj=self)
         self._exact_function = exact_function
+
+    def print_lines_for_log(self):
+        _lines = OrderedDict()
+        _lines.update({'Exact': self._strings['exact']})
+        return _lines
+
+    def __str__(self):
+        return r", exact: %s" % self._strings['exact']
 
 
 def problem_has_exact_solution(problem, checking_obj=None):

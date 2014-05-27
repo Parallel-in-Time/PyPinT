@@ -31,7 +31,7 @@ class PolynomialWeightFunction(IWeightFunction):
     >>> polyWeights.evaluate(nodes)
     >>> # access the weights
     >>> polyWeights.weights
-    array([ 0.33333333,  1.33333333,  0.33333333])
+    array([ 0.3333,  1.3333,  0.3333])
     """
 
     def __init__(self):
@@ -165,3 +165,6 @@ class PolynomialWeightFunction(IWeightFunction):
         _lines = super(PolynomialWeightFunction, self).print_lines_for_log()
         _lines['Coefficients'] = "{}".format(self.coefficients)
         return _lines
+
+    def __str__(self):
+        return "PolynomialWeightFunction<0x%x>(weights=%s)" % (id(self), self.weights)

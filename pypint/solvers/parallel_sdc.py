@@ -149,7 +149,7 @@ class ParallelSdc(IIterativeTimeSolver, IParallelSolver):
                                              % integrator.__mro__[-2].__name__,
                          checking_obj=self)
 
-        super(ParallelSdc, self).init(problem, integrator, **kwargs)
+        super(ParallelSdc, self).init(problem, integrator=integrator, **kwargs)
 
         if 'num_time_steps' in kwargs:
             self._num_time_steps = kwargs['num_time_steps']
@@ -497,9 +497,11 @@ class ParallelSdc(IIterativeTimeSolver, IParallelSolver):
             return Message.SolverFlag.iterating
         elif _reason == ['iterations']:
             # LOG.debug("solver main loop done: iterations")
+            self.state.finalize()
             return Message.SolverFlag.finished
         else:
             # LOG.debug("solver main loop done: other")
+            self.state.finalize()
             return Message.SolverFlag.converged
 
     def _time_step(self):
@@ -519,27 +521,30 @@ class ParallelSdc(IIterativeTimeSolver, IParallelSolver):
         _integral = 0.0
         _integrate_values = None
         if self.classic:
-            _initial_value_rhs = self.problem.evaluate(self.state.current_time_step.initial.solution.time_point,
-                                                       self.state.current_time_step.initial.solution.value)
-            _integrate_values = np.array([_initial_value_rhs], dtype=self.problem.numeric_type)
+            if not self.state.current_time_step.initial.rhs_evaluated:
+                self.state.current_time_step.initial.rhs = \
+                    self.problem.evaluate_wrt_time(self.state.current_time_step.initial.time_point,
+                                                   self.state.current_time_step.initial.value)
+
+            _integrate_values = np.array([self.state.current_time_step.initial.rhs], dtype=self.problem.numeric_type)
             for _step_index in range(0, len(self.state.current_time_step)):
                 if self.state.is_first_iteration:
                     _integrate_values = \
                         np.append(_integrate_values,
-                                  np.array([_initial_value_rhs], dtype=self.problem.numeric_type),
+                                  np.array([self.state.current_time_step.initial.rhs], dtype=self.problem.numeric_type),
                                   axis=0)
                 else:
                     _step = self.state.previous_iteration[self.state.current_time_step_index][_step_index]
+                    if not _step.rhs_evaluated:
+                        _step.rhs = self.problem.evaluate_wrt_time(_step.time_point, _step.value)
                     _integrate_values = \
                         np.append(_integrate_values,
-                                  np.array([self.problem.evaluate(_step.solution.time_point, _step.solution.value)],
-                                           dtype=self.problem.numeric_type),
+                                  np.array([_step.rhs], dtype=self.problem.numeric_type),
                                   axis=0)
-            del _initial_value_rhs
 
-            assert_condition(_integrate_values.size == self.num_nodes,
+            assert_condition(_integrate_values.shape[0] == self.num_nodes,
                              ValueError, message="Number of integration values not correct: {:d} != {:d}"
-                                                 .format(_integrate_values.size, self.num_nodes),
+                                                 .format(_integrate_values.shape[0], self.num_nodes),
                              checking_obj=self)
 
         _full_integral = 0.0
@@ -578,14 +583,14 @@ class ParallelSdc(IIterativeTimeSolver, IParallelSolver):
                 self._print_step(_step_index + 2,
                                  _previous_time,
                                  _step.time_point,
-                                 supremum_norm(_step.solution.value),
+                                 supremum_norm(_step.value),
                                  _step.solution.residual,
                                  _step.solution.error)
             else:
                 self._print_step(_step_index + 2,
                                  _previous_time,
                                  _step.time_point,
-                                 supremum_norm(_step.solution.value),
+                                 supremum_norm(_step.value),
                                  _step.solution.residual,
                                  None)
 
@@ -601,57 +606,58 @@ class ParallelSdc(IIterativeTimeSolver, IParallelSolver):
 
         # copy solution of previous iteration to this one
         if self.state.is_first_iteration:
-            self.state.current_step.solution.value = self.state.initial.solution.value.copy()
+            self.state.current_step.value = self.state.initial.value.copy()
         else:
-            self.state.current_step.solution.value = \
-                self.state.previous_iteration[_current_time_step_index][_current_step_index].solution.value.copy()
+            self.state.current_step.value = \
+                self.state.previous_iteration[_current_time_step_index][_current_step_index].value.copy()
 
-        if not self.classic:
-            # gather values for integration and evaluate problem at given points
-            #  initial value for this time step
-            _integrate_values = \
-                np.array(
-                    [self.problem.evaluate(self.state.current_time_step.initial.solution.time_point,
-                                           self.state.current_time_step.initial.solution.value.copy())
-                     ], dtype=self.problem.numeric_type)
-
-            if _current_step_index > 0:
-                #  values from this iteration (already calculated)
-                _from_current_iteration_range = range(0, _current_step_index)
-                for _index in _from_current_iteration_range:
-                    _integrate_values = \
-                        np.append(_integrate_values,
-                                  np.array(
-                                      [self.problem.evaluate(self.state.current_time_step[_index].solution.time_point,
-                                                             self.state.current_time_step[_index].solution.value.copy())
-                                       ], dtype=self.problem.numeric_type
-                                  ), axis=0)
-
-            #  values from previous iteration
-            _from_previous_iteration_range = range(_current_step_index, self.num_nodes - 1)
-            for _index in _from_previous_iteration_range:
-                if self.state.is_first_iteration:
-                    _this_value = self.problem.initial_value
-                else:
-                    _this_value = self.state.previous_iteration[_current_time_step_index][_index].solution.value.copy()
-                _integrate_values = \
-                    np.append(_integrate_values,
-                              np.array(
-                                  [self.problem.evaluate(self.state.current_time_step[_index].solution.time_point,
-                                                         _this_value)
-                                   ], dtype=self.problem.numeric_type
-                              ), axis=0)
-            assert_condition(_integrate_values.size == self.num_nodes,
-                             ValueError, message="Number of integration values not correct: {:d} != {:d}"
-                                                 .format(_integrate_values.size, self.num_nodes),
-                             checking_obj=self)
-
-            # integrate
-            self.state.current_step.integral = self._integrator.evaluate(_integrate_values,
-                                                                         from_node=_current_step_index,
-                                                                         target_node=_current_step_index + 1)
-            del _integrate_values
-        # END if not self.classic
+        # TODO: review the custom modification
+        # if not self.classic:
+        #     # gather values for integration and evaluate problem at given points
+        #     #  initial value for this time step
+        #     _integrate_values = \
+        #         np.array(
+        #             [self.problem.evaluate_wrt_time(self.state.current_time_step.initial.time_point,
+        #                                             self.state.current_time_step.initial.value.copy())
+        #              ], dtype=self.problem.numeric_type)
+        #
+        #     if _current_step_index > 0:
+        #         #  values from this iteration (already calculated)
+        #         _from_current_iteration_range = range(0, _current_step_index)
+        #         for _index in _from_current_iteration_range:
+        #             _integrate_values = \
+        #                 np.append(_integrate_values,
+        #                           np.array(
+        #                               [self.problem.evaluate_wrt_time(self.state.current_time_step[_index].solution.time_point,
+        #                                                               self.state.current_time_step[_index].solution.value.copy())
+        #                                ], dtype=self.problem.numeric_type
+        #                           ), axis=0)
+        #
+        #     #  values from previous iteration
+        #     _from_previous_iteration_range = range(_current_step_index, self.num_nodes - 1)
+        #     for _index in _from_previous_iteration_range:
+        #         if self.state.is_first_iteration:
+        #             _this_value = self.problem.initial_value
+        #         else:
+        #             _this_value = self.state.previous_iteration[_current_time_step_index][_index].solution.value.copy()
+        #         _integrate_values = \
+        #             np.append(_integrate_values,
+        #                       np.array(
+        #                           [self.problem.evaluate_wrt_time(self.state.current_time_step[_index].solution.time_point,
+        #                                                           _this_value)
+        #                            ], dtype=self.problem.numeric_type
+        #                       ), axis=0)
+        #     assert_condition(_integrate_values.shape[0] == self.num_nodes,
+        #                      ValueError, message="Number of integration values not correct: {:d} != {:d}"
+        #                                          .format(_integrate_values.shape[0], self.num_nodes),
+        #                      checking_obj=self)
+        #
+        #     # integrate
+        #     self.state.current_step.integral = self._integrator.evaluate(_integrate_values,
+        #                                                                  from_node=_current_step_index,
+        #                                                                  target_node=_current_step_index + 1)
+        #     del _integrate_values
+        # # END if not self.classic
 
         # compute step
         self._core.run(self.state, problem=self.problem)
@@ -668,16 +674,6 @@ class ParallelSdc(IIterativeTimeSolver, IParallelSolver):
         if 'Number Time Steps' not in _lines['Integrator']:
             _lines['Integrator']['Number Time Steps'] = "%d" % self._num_time_steps
         return _lines
-
-    def _print_header(self):
-        # LOG.info("> " + '#' * 78)
-        # LOG.info("{:#<80}".format("> START: {:s} ".format(self._core.name)))
-        # LOG.info(">   Time Steps:             {:d}".format(self.num_time_steps))
-        # LOG.info(">   Integration Nodes:      {:d}".format(self.num_nodes))
-        # LOG.info(">   Termination Conditions: {:s}".format(self.threshold.print_conditions()))
-        # LOG.info(">   Problem:                {:s}".format(self.problem))
-        # LOG.info(">   Classic SDC:            {}".format(self.classic))
-        pass
 
     def _print_interval_header(self):
         LOG.info("%s%s" % (VERBOSITY_LVL1, SEPARATOR_LVL3))
@@ -729,11 +725,6 @@ class ParallelSdc(IIterativeTimeSolver, IParallelSolver):
         _err = self._output_format(err, 'exp')
         LOG.info("%s         |      |- %s    %s    %s    %s    %s    %s"
                  % (VERBOSITY_LVL3, _step, _t0, _t1, _phi, _resid, _err))
-
-    def _print_footer(self):
-        # LOG.info("{:#<80}".format("> FINISHED: {:s} ({:.3f} sec) ".format(self._core.name, self.timer.past())))
-        # LOG.info("> " + '#' * 78)
-        pass
 
     def _output_format(self, value, _type, width=None):
         def _value_to_numeric(val):
