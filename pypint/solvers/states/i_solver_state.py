@@ -807,9 +807,9 @@ class ISolverState(IStateIterator):
                          checking_obj=self)
         for _iter in self:
             self.solution.add_solution(_iter.solution)
-        self.solution.finalize()
+        # self.solution.finalize()
         self._current_index = 0
-        self._finalized = True
+        # self._finalized = True
 
     @property
     def num_nodes(self):
