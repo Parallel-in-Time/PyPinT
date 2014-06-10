@@ -1,0 +1,504 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>pypint.problems.i_problem &mdash; PyPinT 0.0.4-dev-0-g4dad7c2 documentation</title>
+  
+
+  
+  
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+        <link rel="author" title="About these documents"
+              href="../../../about.html"/>
+    <link rel="top" title="PyPinT 0.0.4-dev-0-g4dad7c2 documentation" href="../../../index.html"/>
+        <link rel="up" title="Module code" href="../../index.html"/> 
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-nav-search">
+        <a href="../../../index.html" class="fa fa-home"> PyPinT</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+        
+        
+            <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../about.html">About</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user/rationale.html">Rationale</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../user/rationale.html#objectives">Objectives</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../user/rationale.html#goals">Goals</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../user/rationale.html#scope">Scope</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user/requirements.html">Requirements</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user/basic_usage.html">Basic Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/examples/package.html">Examples</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/examples/problems/package.html">Example Problems (<tt class="docutils literal"><span class="pre">problems</span></tt>)</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user/theory.html">Mathematical Theory</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../user/bibliography.html">Bibliography</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../history.html">History</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../history.html#release-0-0-3-04-04-2014">Release 0.0.3 (04/04/2014)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../history.html#release-0-0-2-04-03-2014">Release 0.0.2 (04/03/2014)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../history.html#release-0-0-1-2013-11-26">Release 0.0.1 (2013-11-26)</a></li>
+</ul>
+</li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../development/coding_style.html">Coding Style</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../development/documentation.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../development/contributing.html">Contributing</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../development/contributing.html#branching-and-tagging-model">Branching and Tagging Model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../development/contributing.html#commit-messages">Commit Messages</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../development/contributing.html#how-to-implement-a-new-feature">How to Implement a New Feature?</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../development/testing.html">Testing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../development/todo.html">ToDos</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../development/todo.html#global">Global</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../development/todo.html#in-source">In Source</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/package.html">API Reference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/package.html#communicators">Communicators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/package.html#integrators">Integrators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/package.html#multi-level-providers">Multi Level Providers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/package.html#plugins">Plugins</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/package.html#problems">Problems</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/package.html#solutions">Solutions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/package.html#solvers">Solvers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/package.html#utilities">Utilities</a></li>
+</ul>
+</li>
+</ul>
+
+        
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../../../index.html">PyPinT</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+      
+    <li>pypint.problems.i_problem</li>
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main">
+            
+  <h1>Source code for pypint.problems.i_problem</h1><div class="highlight"><pre>
+<span class="c"># coding=utf-8</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">.. moduleauthor: Torbjörn Klatt &lt;t.klatt@fz-juelich.de&gt;</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">OrderedDict</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+
+<span class="kn">from</span> <span class="nn">pypint.plugins.implicit_solvers.find_root</span> <span class="kn">import</span> <span class="n">find_root</span>
+<span class="kn">from</span> <span class="nn">pypint.utilities</span> <span class="kn">import</span> <span class="n">assert_is_callable</span><span class="p">,</span> <span class="n">assert_is_instance</span><span class="p">,</span> <span class="n">assert_is_in</span><span class="p">,</span> <span class="n">class_name</span><span class="p">,</span> <span class="n">assert_condition</span>
+<span class="kn">from</span> <span class="nn">pypint.utilities.logging</span> <span class="kn">import</span> <span class="n">LOG</span>
+
+
+<div class="viewcode-block" id="IProblem"><a class="viewcode-back" href="../../../api/problems/i_problem.html#pypint.problems.i_problem.IProblem">[docs]</a><span class="k">class</span> <span class="nc">IProblem</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Basic interface for all problems of type :math:`u&#39;(t,\\phi(t))=F(t,\\phi(t))`</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">valid_numeric_types</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;i&#39;</span><span class="p">,</span> <span class="s">&#39;u&#39;</span><span class="p">,</span> <span class="s">&#39;f&#39;</span><span class="p">,</span> <span class="s">&#39;c&#39;</span><span class="p">]</span>
+
+<div class="viewcode-block" id="IProblem.__init__"><a class="viewcode-back" href="../../../api/problems/i_problem.html#pypint.problems.i_problem.IProblem.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        rhs_function_wrt_time : :py:class:`callable`</span>
+<span class="sd">            Function describing the right hand side of the problem equation.</span>
+<span class="sd">            Two arguments are required, the first being the time point :math:`t` and the second the time-dependent</span>
+<span class="sd">            value :math:`\\phi(t)`.</span>
+<span class="sd">        time_start : :py:class:`float`</span>
+<span class="sd">            Start of the time interval to integrate over.</span>
+<span class="sd">        time_end : :py:class:`float`</span>
+<span class="sd">            End of the time interval to integrate over.</span>
+<span class="sd">        dim : :py:class:`tuple`</span>
+<span class="sd">            Number of spacial dimensions, i.e. number of degrees of freedom including shape of spacial points.</span>
+<span class="sd">            The first elements denote the number of spacial dimensions (default=``1``) and the last the number of</span>
+<span class="sd">            degrees of freedom (variables) at each spacial point.</span>
+<span class="sd">            Defaults to ``(1, 1)``.</span>
+<span class="sd">        strings : :py:class:`dict`</span>
+<span class="sd">            *(optional)*</span>
+<span class="sd">            String representation of problem for logging output.</span>
+
+<span class="sd">            rhs_wrt_time : :py:class:`str`</span>
+<span class="sd">                string representation of the right hand side w.r.t. time</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        &gt;&gt;&gt; # default Problem</span>
+<span class="sd">        &gt;&gt;&gt; prob = IProblem()</span>
+<span class="sd">        &gt;&gt;&gt; prob.dim</span>
+<span class="sd">        (1, 1)</span>
+<span class="sd">        &gt;&gt;&gt; # Problem with two spacial dimensions and one variable at each point</span>
+<span class="sd">        &gt;&gt;&gt; prob = IProblem(dim=(2, 3, 1))</span>
+<span class="sd">        &gt;&gt;&gt; prob.dim</span>
+<span class="sd">        (2, 3, 1)</span>
+<span class="sd">        &gt;&gt;&gt; prob.spacial_dim</span>
+<span class="sd">        (2, 3)</span>
+<span class="sd">        &gt;&gt;&gt; prob.num_spacial_points</span>
+<span class="sd">        6</span>
+<span class="sd">        &gt;&gt;&gt; prob.dofs_per_point</span>
+<span class="sd">        1</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_rhs_function_wrt_time</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="k">if</span> <span class="s">&#39;rhs_function_wrt_time&#39;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">rhs_function_wrt_time</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s">&#39;rhs_function_wrt_time&#39;</span><span class="p">]</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_numeric_type</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">float</span>
+        <span class="k">if</span> <span class="s">&#39;numeric_type&#39;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">numeric_type</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s">&#39;numeric_type&#39;</span><span class="p">]</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_dim</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;dim&#39;</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">assert_is_instance</span><span class="p">(</span><span class="n">kwargs</span><span class="p">[</span><span class="s">&#39;dim&#39;</span><span class="p">],</span> <span class="nb">tuple</span><span class="p">,</span> <span class="n">descriptor</span><span class="o">=</span><span class="s">&quot;Spacial Degrees of Freedom&quot;</span><span class="p">,</span> <span class="n">checking_obj</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">index</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">kwargs</span><span class="p">[</span><span class="s">&#39;dim&#39;</span><span class="p">])</span> <span class="o">-</span> <span class="mi">1</span><span class="p">):</span>
+                <span class="n">assert_is_instance</span><span class="p">(</span><span class="n">kwargs</span><span class="p">[</span><span class="s">&#39;dim&#39;</span><span class="p">][</span><span class="n">index</span><span class="p">],</span> <span class="nb">int</span><span class="p">,</span> <span class="n">descriptor</span><span class="o">=</span><span class="s">&quot;Number of Spacial Points at axis </span><span class="si">%d</span><span class="s">&quot;</span> <span class="o">%</span> <span class="n">index</span><span class="p">,</span>
+                                   <span class="n">checking_obj</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
+            <span class="n">assert_is_instance</span><span class="p">(</span><span class="n">kwargs</span><span class="p">[</span><span class="s">&#39;dim&#39;</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="nb">int</span><span class="p">,</span> <span class="n">descriptor</span><span class="o">=</span><span class="s">&quot;Variables at each Spacial Point&quot;</span><span class="p">,</span> <span class="n">checking_obj</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_dim</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s">&#39;dim&#39;</span><span class="p">]</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_strings</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s">&#39;rhs_wrt_time&#39;</span><span class="p">:</span> <span class="bp">None</span>
+        <span class="p">}</span>
+        <span class="k">if</span> <span class="s">&#39;strings&#39;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+            <span class="k">if</span> <span class="s">&#39;rhs_wrt_time&#39;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">[</span><span class="s">&#39;strings&#39;</span><span class="p">]:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_strings</span><span class="p">[</span><span class="s">&#39;rhs_wrt_time&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s">&#39;strings&#39;</span><span class="p">][</span><span class="s">&#39;rhs_wrt_time&#39;</span><span class="p">]</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_count_rhs_eval</span> <span class="o">=</span> <span class="mi">0</span>
+</div>
+<div class="viewcode-block" id="IProblem.evaluate_wrt_time"><a class="viewcode-back" href="../../../api/problems/i_problem.html#pypint.problems.i_problem.IProblem.evaluate_wrt_time">[docs]</a>    <span class="k">def</span> <span class="nf">evaluate_wrt_time</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">time</span><span class="p">,</span> <span class="n">phi_of_time</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Evaluates given right hand side at given time and with given time-dependent value.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        time : :py:class:`float`</span>
+<span class="sd">            Time point :math:`t`</span>
+<span class="sd">        phi_of_time : :py:class:`numpy.ndarray`</span>
+<span class="sd">            Time-dependent data.</span>
+<span class="sd">        partial : :py:class:`str` or :py:class:`None`</span>
+<span class="sd">            *(optional)*</span>
+<span class="sd">            Specifying whether only a certain part of the problem function should be evaluated.</span>
+<span class="sd">            E.g. useful for semi-implicit SDC where the imaginary part of the function is explicitly evaluated and</span>
+<span class="sd">            the real part of the function implicitly.</span>
+<span class="sd">            Usually it is one of :py:class:`None`, ``impl`` or ``expl``.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        rhs_value : :py:class:`numpy.ndarray`</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        ValueError :</span>
+<span class="sd">            if ``time`` or ``phi_of_time`` are not of correct type.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">assert_is_instance</span><span class="p">(</span><span class="n">time</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="n">descriptor</span><span class="o">=</span><span class="s">&quot;Time Point&quot;</span><span class="p">,</span> <span class="n">checking_obj</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
+        <span class="n">assert_is_instance</span><span class="p">(</span><span class="n">phi_of_time</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">descriptor</span><span class="o">=</span><span class="s">&quot;Data Vector&quot;</span><span class="p">,</span> <span class="n">checking_obj</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;partial&#39;</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">assert_is_instance</span><span class="p">(</span><span class="n">kwargs</span><span class="p">[</span><span class="s">&#39;partial&#39;</span><span class="p">],</span> <span class="nb">str</span><span class="p">,</span> <span class="n">descriptor</span><span class="o">=</span><span class="s">&quot;Partial Descriptor&quot;</span><span class="p">,</span> <span class="n">checking_obj</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_count_rhs_eval</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dim</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">numeric_type</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="IProblem.implicit_solve"><a class="viewcode-back" href="../../../api/problems/i_problem.html#pypint.problems.i_problem.IProblem.implicit_solve">[docs]</a>    <span class="k">def</span> <span class="nf">implicit_solve</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">next_x</span><span class="p">,</span> <span class="n">func</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s">&quot;hybr&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;A solver for implicit equations.</span>
+
+<span class="sd">        Finds the implicitly defined :math:`x_{i+1}` for the given right hand side function :math:`f(x_{i+1})`, such</span>
+<span class="sd">        that :math:`x_{i+1}=f(x_{i+1})`.</span>
+
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        next_x : :py:class:`numpy.ndarray`</span>
+<span class="sd">            A starting guess for the implicitly defined value.</span>
+<span class="sd">        rhs_call : :py:class:`callable`</span>
+<span class="sd">            The right hand side function depending on the implicitly defined new value.</span>
+<span class="sd">        method : :py:class:`str`</span>
+<span class="sd">            *(optional, default=``hybr``)*</span>
+<span class="sd">            Method fo the root finding algorithm. See `scipy.optimize.root</span>
+<span class="sd">            &lt;http://docs.scipy.org/doc/scipy/reference/generated/scipy.optimize.root.html#scipy.optimize.root&gt;` for</span>
+<span class="sd">            details.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        next_x : :py:class:`numpy.ndarray`</span>
+<span class="sd">            The calculated new value.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        ValueError :</span>
+
+<span class="sd">            * if ``next_x`` is not a :py:class:`numpy.ndarray` of shape :py:attr:`.IProblem.dim`</span>
+<span class="sd">            * if ``fun`` is not :py:class:`callable`</span>
+<span class="sd">            * if computed solution is not a `:py:class:`numpy.ndarray`</span>
+
+<span class="sd">        UserWarning :</span>
+<span class="sd">            If the implicit solver did not converged, i.e. the solution object&#39;s ``success`` is not :py:class:`True`.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">assert_is_instance</span><span class="p">(</span><span class="n">next_x</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">descriptor</span><span class="o">=</span><span class="s">&quot;Initial Guess&quot;</span><span class="p">,</span> <span class="n">checking_obj</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
+        <span class="n">assert_is_callable</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">descriptor</span><span class="o">=</span><span class="s">&quot;Function of RHS for Implicit Solver&quot;</span><span class="p">,</span> <span class="n">checking_obj</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
+        <span class="n">sol</span> <span class="o">=</span> <span class="n">find_root</span><span class="p">(</span><span class="n">fun</span><span class="o">=</span><span class="n">func</span><span class="p">,</span> <span class="n">x0</span><span class="o">=</span><span class="n">next_x</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span> <span class="n">method</span><span class="o">=</span><span class="n">method</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">sol</span><span class="o">.</span><span class="n">success</span><span class="p">:</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s">&quot;Implicit solver did not converged.&quot;</span><span class="p">)</span>
+            <span class="n">LOG</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&quot;sol.x: </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="n">sol</span><span class="o">.</span><span class="n">x</span><span class="p">)</span>
+            <span class="n">LOG</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s">&quot;Implicit solver failed: </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="n">sol</span><span class="o">.</span><span class="n">message</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">assert_is_instance</span><span class="p">(</span><span class="n">sol</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">descriptor</span><span class="o">=</span><span class="s">&quot;Solution&quot;</span><span class="p">,</span> <span class="n">checking_obj</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">sol</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dim_for_time_solver</span><span class="p">)</span>
+</div>
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">rhs_function_wrt_time</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Accessor for the right hand side function.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        function : :py:class:`callable`</span>
+<span class="sd">            Function of the right hand side of :math:`u&#39;(t,x)=F(t,\\phi_t)`</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        rhs_function : :py:class:`callable`</span>
+<span class="sd">            Function of the right hand side.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rhs_function_wrt_time</span>
+
+    <span class="nd">@rhs_function_wrt_time.setter</span>
+<div class="viewcode-block" id="IProblem.rhs_function_wrt_time"><a class="viewcode-back" href="../../../api/problems/i_problem.html#pypint.problems.i_problem.IProblem.rhs_function_wrt_time">[docs]</a>    <span class="k">def</span> <span class="nf">rhs_function_wrt_time</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">function</span><span class="p">):</span>
+        <span class="n">assert_is_callable</span><span class="p">(</span><span class="n">function</span><span class="p">,</span> <span class="n">descriptor</span><span class="o">=</span><span class="s">&quot;Function of the RHS w.r.t Time&quot;</span><span class="p">,</span> <span class="n">checking_obj</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_rhs_function_wrt_time</span> <span class="o">=</span> <span class="n">function</span>
+</div>
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">rhs_evaluations</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_count_rhs_eval</span>
+
+    <span class="nd">@rhs_evaluations.deleter</span>
+    <span class="k">def</span> <span class="nf">rhs_evaluations</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_count_rhs_eval</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">numeric_type</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Accessor for the numerical type of the problem values.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        numeric_type : :py:class:`numpy.dtype`</span>
+<span class="sd">            Usually it is :py:class:`numpy.float64` or :py:class:`numpy.complex16`</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        numeric_type : :py:class:`numpy.dtype`</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        ValueError :</span>
+<span class="sd">            If ``numeric_type`` is not a :py:class:`numpy.dtype`.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_numeric_type</span>
+
+    <span class="nd">@numeric_type.setter</span>
+<div class="viewcode-block" id="IProblem.numeric_type"><a class="viewcode-back" href="../../../api/problems/i_problem.html#pypint.problems.i_problem.IProblem.numeric_type">[docs]</a>    <span class="k">def</span> <span class="nf">numeric_type</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">numeric_type</span><span class="p">):</span>
+        <span class="n">numeric_type</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dtype</span><span class="p">(</span><span class="n">numeric_type</span><span class="p">)</span>
+        <span class="n">assert_is_in</span><span class="p">(</span><span class="n">numeric_type</span><span class="o">.</span><span class="n">kind</span><span class="p">,</span> <span class="n">IProblem</span><span class="o">.</span><span class="n">valid_numeric_types</span><span class="p">,</span> <span class="n">elem_desc</span><span class="o">=</span><span class="s">&quot;Numeric Type&quot;</span><span class="p">,</span> <span class="n">list_desc</span><span class="o">=</span><span class="s">&quot;Valid Types&quot;</span><span class="p">,</span>
+                     <span class="n">checking_obj</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_numeric_type</span> <span class="o">=</span> <span class="n">numeric_type</span>
+</div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="IProblem.dim"><a class="viewcode-back" href="../../../api/problems/i_problem.html#pypint.problems.i_problem.IProblem.dim">[docs]</a>    <span class="k">def</span> <span class="nf">dim</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Read-only accessor for the spacial degrees of freedom of the problem</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        dofs : :py:class:`tuple`</span>
+<span class="sd">            First elements denotes shape of spacial points; the last element the number degrees of freedom (i.e.</span>
+<span class="sd">            variables) at each spacial point.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dim</span>
+</div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="IProblem.dim_for_time_solver"><a class="viewcode-back" href="../../../api/problems/i_problem.html#pypint.problems.i_problem.IProblem.dim_for_time_solver">[docs]</a>    <span class="k">def</span> <span class="nf">dim_for_time_solver</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Dimension of array for Time Solvers</span>
+
+<span class="sd">        This shape is used for the arrays of time solvers, which do not need to know the spacial shape of the spacial</span>
+<span class="sd">        points.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        dim_for_time_solver : :py:class:`tuple`</span>
+<span class="sd">            First element is the total number of spacial points (:py:attr:`.num_spacial_points`) and the second element</span>
+<span class="sd">            the number of variables per spacial point (:py:attr:`.dofs_per_point`).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_spacial_points</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dofs_per_point</span>
+</div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="IProblem.spacial_dim"><a class="viewcode-back" href="../../../api/problems/i_problem.html#pypint.problems.i_problem.IProblem.spacial_dim">[docs]</a>    <span class="k">def</span> <span class="nf">spacial_dim</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Shape of spacial points</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        spacial_dim : :py:class:`tuple`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">dim</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+    </div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="IProblem.num_spacial_points"><a class="viewcode-back" href="../../../api/problems/i_problem.html#pypint.problems.i_problem.IProblem.num_spacial_points">[docs]</a>    <span class="k">def</span> <span class="nf">num_spacial_points</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Total number of spacial points</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        num_spacial_points : :py:class:`int`</span>
+<span class="sd">            product of the elements of :py:attr:`.spacial_dim`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">spacial_dim</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int</span><span class="p">)</span><span class="o">.</span><span class="n">prod</span><span class="p">()</span>
+</div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="IProblem.dofs_per_point"><a class="viewcode-back" href="../../../api/problems/i_problem.html#pypint.problems.i_problem.IProblem.dofs_per_point">[docs]</a>    <span class="k">def</span> <span class="nf">dofs_per_point</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Variables / Degrees of Freedom at each spacial point</span>
+
+<span class="sd">        dofs_per_point : :py:class:`int`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">dim</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+</div>
+    <span class="k">def</span> <span class="nf">print_lines_for_log</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">_lines</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_strings</span><span class="p">[</span><span class="s">&#39;rhs_wrt_time&#39;</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">_lines</span><span class="p">[</span><span class="s">&#39;Formula w.r.t. Time&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s">r&quot;u(t, \phi(t)) = </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">_strings</span><span class="p">[</span><span class="s">&#39;rhs_wrt_time&#39;</span><span class="p">]</span>
+        <span class="n">_lines</span><span class="p">[</span><span class="s">&#39;DOFs&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s">&quot;{:s}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dim</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">_lines</span>
+
+    <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_strings</span><span class="p">[</span><span class="s">&#39;rhs_wrt_time&#39;</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">_outstr</span> <span class="o">=</span> <span class="s">r&quot;u&#39;(t,\phi(t))=</span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">_strings</span><span class="p">[</span><span class="s">&#39;rhs_wrt_time&#39;</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">_outstr</span> <span class="o">=</span> <span class="s">r&quot;</span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="n">class_name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="n">_outstr</span> <span class="o">+=</span> <span class="s">r&quot;, DOFs={:s}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dim</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">_outstr</span>
+
+</div>
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;IProblem&#39;</span><span class="p">]</span>
+</pre></div>
+
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+      &copy; 2013-2014,
+        <a href="http://www.fz-juelich.de/ias/jsc/EN/Research/Algorithms/ParallelInTimeIntegration/_node.html">Parallel-in-Time Research Group</a>
+        at the
+        <a href="http://www.fz-juelich.de/ias/jsc/EN/Home/home_node.html">Jülich Supercomputing Centre</a><br />
+    </p>
+  </div>
+
+  <a href="https://github.com/snide/sphinx_rtd_theme">Sphinx theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../',
+            VERSION:'0.0.4-dev-0-g4dad7c2',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../_static/doctools.js"></script>
+      <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

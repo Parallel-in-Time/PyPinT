@@ -1,0 +1,484 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Problem Interface (i_problem) &mdash; PyPinT 0.0.4-dev-0-g4dad7c2 documentation</title>
+  
+
+  
+  
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  
+
+  
+        <link rel="author" title="About these documents"
+              href="../../about.html"/>
+    <link rel="top" title="PyPinT 0.0.4-dev-0-g4dad7c2 documentation" href="../../index.html"/>
+        <link rel="up" title="Problems (problems)" href="package.html"/>
+        <link rel="next" title="Initial Value Problem Interface (i_initial_value_problem)" href="i_initial_value_problem.html"/>
+        <link rel="prev" title="Problems (problems)" href="package.html"/> 
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-nav-search">
+        <a href="../../index.html" class="fa fa-home"> PyPinT</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+        
+        
+            <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../about.html">About</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user/rationale.html">Rationale</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../user/rationale.html#objectives">Objectives</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../user/rationale.html#goals">Goals</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../user/rationale.html#scope">Scope</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../user/requirements.html">Requirements</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user/basic_usage.html">Basic Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/package.html">Examples</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../examples/problems/package.html">Example Problems (<tt class="docutils literal"><span class="pre">problems</span></tt>)</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../user/theory.html">Mathematical Theory</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../user/bibliography.html">Bibliography</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../history.html">History</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../history.html#release-0-0-3-04-04-2014">Release 0.0.3 (04/04/2014)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../history.html#release-0-0-2-04-03-2014">Release 0.0.2 (04/03/2014)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../history.html#release-0-0-1-2013-11-26">Release 0.0.1 (2013-11-26)</a></li>
+</ul>
+</li>
+</ul>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../development/coding_style.html">Coding Style</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../development/documentation.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../development/contributing.html">Contributing</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../development/contributing.html#branching-and-tagging-model">Branching and Tagging Model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../development/contributing.html#commit-messages">Commit Messages</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../development/contributing.html#how-to-implement-a-new-feature">How to Implement a New Feature?</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../development/testing.html">Testing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../development/todo.html">ToDos</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../development/todo.html#global">Global</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../development/todo.html#in-source">In Source</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="reference internal" href="../package.html">API Reference</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../package.html#communicators">Communicators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../package.html#integrators">Integrators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../package.html#multi-level-providers">Multi Level Providers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../package.html#plugins">Plugins</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../package.html#problems">Problems</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../package.html#solutions">Solutions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../package.html#solvers">Solvers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../package.html#utilities">Utilities</a></li>
+</ul>
+</li>
+</ul>
+
+        
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../../index.html">PyPinT</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="../package.html">PyPinT Package</a> &raquo;</li>
+      
+          <li><a href="package.html">Problems (<tt class="docutils literal"><span class="pre">problems</span></tt>)</a> &raquo;</li>
+      
+    <li>Problem Interface (<tt class="docutils literal"><span class="pre">i_problem</span></tt>)</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          <a href="../../_sources/api/problems/i_problem.txt" rel="nofollow"> View page source</a>
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main">
+            
+  <div class="section" id="module-pypint.problems.i_problem">
+<span id="problem-interface-i-problem"></span><h1>Problem Interface (<tt class="xref py py-mod docutils literal"><span class="pre">i_problem</span></tt>)<a class="headerlink" href="#module-pypint.problems.i_problem" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="pypint.problems.i_problem.IProblem">
+<em class="property">class </em><tt class="descclassname">pypint.problems.i_problem.</tt><tt class="descname">IProblem</tt><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pypint/problems/i_problem.html#IProblem"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypint.problems.i_problem.IProblem" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">builtins.object</span></tt></p>
+<p>Basic interface for all problems of type <span class="math">\(u'(t,\phi(t))=F(t,\phi(t))\)</span></p>
+<dl class="method">
+<dt id="pypint.problems.i_problem.IProblem.__init__">
+<tt class="descname">__init__</tt><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pypint/problems/i_problem.html#IProblem.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypint.problems.i_problem.IProblem.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>rhs_function_wrt_time</strong> (<tt class="xref py py-class docutils literal"><span class="pre">callable</span></tt>) &#8211; Function describing the right hand side of the problem equation.
+Two arguments are required, the first being the time point <span class="math">\(t\)</span> and the second the time-dependent
+value <span class="math">\(\phi(t)\)</span>.</li>
+<li><strong>time_start</strong> (<tt class="xref py py-class docutils literal"><span class="pre">float</span></tt>) &#8211; Start of the time interval to integrate over.</li>
+<li><strong>time_end</strong> (<tt class="xref py py-class docutils literal"><span class="pre">float</span></tt>) &#8211; End of the time interval to integrate over.</li>
+<li><strong>dim</strong> (<tt class="xref py py-class docutils literal"><span class="pre">tuple</span></tt>) &#8211; Number of spacial dimensions, i.e. number of degrees of freedom including shape of spacial points.
+The first elements denote the number of spacial dimensions (default=``1``) and the last the number of
+degrees of freedom (variables) at each spacial point.
+Defaults to <tt class="docutils literal"><span class="pre">(1,</span> <span class="pre">1)</span></tt>.</li>
+<li><strong>strings</strong> (<tt class="xref py py-class docutils literal"><span class="pre">dict</span></tt>) &#8211; <p><em>(optional)</em>
+String representation of problem for logging output.</p>
+<dl class="docutils">
+<dt>rhs_wrt_time <span class="classifier-delimiter">:</span> <span class="classifier"><tt class="xref py py-class docutils literal"><span class="pre">str</span></tt></span></dt>
+<dd>string representation of the right hand side w.r.t. time</dd>
+</dl>
+</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition-examples admonition">
+<p class="first admonition-title">Examples</p>
+<div class="last highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="c"># default Problem</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">prob</span> <span class="o">=</span> <span class="n">IProblem</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">prob</span><span class="o">.</span><span class="n">dim</span>
+<span class="go">(1, 1)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c"># Problem with two spacial dimensions and one variable at each point</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">prob</span> <span class="o">=</span> <span class="n">IProblem</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">prob</span><span class="o">.</span><span class="n">dim</span>
+<span class="go">(2, 3, 1)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">prob</span><span class="o">.</span><span class="n">spacial_dim</span>
+<span class="go">(2, 3)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">prob</span><span class="o">.</span><span class="n">num_spacial_points</span>
+<span class="go">6</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">prob</span><span class="o">.</span><span class="n">dofs_per_point</span>
+<span class="go">1</span>
+</pre></div>
+</div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="pypint.problems.i_problem.IProblem.evaluate_wrt_time">
+<tt class="descname">evaluate_wrt_time</tt><span class="sig-paren">(</span><em>time</em>, <em>phi_of_time</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pypint/problems/i_problem.html#IProblem.evaluate_wrt_time"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypint.problems.i_problem.IProblem.evaluate_wrt_time" title="Permalink to this definition">¶</a></dt>
+<dd><p>Evaluates given right hand side at given time and with given time-dependent value.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>time</strong> (<tt class="xref py py-class docutils literal"><span class="pre">float</span></tt>) &#8211; Time point <span class="math">\(t\)</span></li>
+<li><strong>phi_of_time</strong> (<tt class="xref py py-class docutils literal"><span class="pre">numpy.ndarray</span></tt>) &#8211; Time-dependent data.</li>
+<li><strong>partial</strong> (<tt class="xref py py-class docutils literal"><span class="pre">str</span></tt> or <tt class="xref py py-class docutils literal"><span class="pre">None</span></tt>) &#8211; <em>(optional)</em>
+Specifying whether only a certain part of the problem function should be evaluated.
+E.g. useful for semi-implicit SDC where the imaginary part of the function is explicitly evaluated and
+the real part of the function implicitly.
+Usually it is one of <tt class="xref py py-class docutils literal"><span class="pre">None</span></tt>, <tt class="docutils literal"><span class="pre">impl</span></tt> or <tt class="docutils literal"><span class="pre">expl</span></tt>.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>rhs_value</strong></p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first"><tt class="xref py py-class docutils literal"><span class="pre">numpy.ndarray</span></tt></p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><tt class="xref py py-exc docutils literal"><span class="pre">ValueError</span></tt> &#8211; 
+if <tt class="docutils literal"><span class="pre">time</span></tt> or <tt class="docutils literal"><span class="pre">phi_of_time</span></tt> are not of correct type.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="pypint.problems.i_problem.IProblem.implicit_solve">
+<tt class="descname">implicit_solve</tt><span class="sig-paren">(</span><em>next_x</em>, <em>func</em>, <em>method='hybr'</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pypint/problems/i_problem.html#IProblem.implicit_solve"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypint.problems.i_problem.IProblem.implicit_solve" title="Permalink to this definition">¶</a></dt>
+<dd><p>A solver for implicit equations.</p>
+<p>Finds the implicitly defined <span class="math">\(x_{i+1}\)</span> for the given right hand side function <span class="math">\(f(x_{i+1})\)</span>, such
+that <span class="math">\(x_{i+1}=f(x_{i+1})\)</span>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>next_x</strong> (<tt class="xref py py-class docutils literal"><span class="pre">numpy.ndarray</span></tt>) &#8211; A starting guess for the implicitly defined value.</li>
+<li><strong>rhs_call</strong> (<tt class="xref py py-class docutils literal"><span class="pre">callable</span></tt>) &#8211; The right hand side function depending on the implicitly defined new value.</li>
+<li><strong>method</strong> (<tt class="xref py py-class docutils literal"><span class="pre">str</span></tt>) &#8211; <em>(optional, default=``hybr``)</em>
+Method fo the root finding algorithm. See <cite>scipy.optimize.root
+&lt;http://docs.scipy.org/doc/scipy/reference/generated/scipy.optimize.root.html#scipy.optimize.root&gt;</cite> for
+details.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>next_x</strong> &#8211;
+The calculated new value.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first"><tt class="xref py py-class docutils literal"><span class="pre">numpy.ndarray</span></tt></p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><ul class="first last simple">
+<li><tt class="xref py py-exc docutils literal"><span class="pre">ValueError</span></tt> &#8211;<ul>
+<li>if <tt class="docutils literal"><span class="pre">next_x</span></tt> is not a <tt class="xref py py-class docutils literal"><span class="pre">numpy.ndarray</span></tt> of shape <a class="reference internal" href="#pypint.problems.i_problem.IProblem.dim" title="pypint.problems.i_problem.IProblem.dim"><tt class="xref py py-attr docutils literal"><span class="pre">IProblem.dim</span></tt></a></li>
+<li>if <tt class="docutils literal"><span class="pre">fun</span></tt> is not <tt class="xref py py-class docutils literal"><span class="pre">callable</span></tt></li>
+<li>if computed solution is not a <cite>:py:class:`numpy.ndarray</cite></li>
+</ul>
+</li>
+<li><tt class="xref py py-exc docutils literal"><span class="pre">UserWarning</span></tt> &#8211; 
+If the implicit solver did not converged, i.e. the solution object&#8217;s <tt class="docutils literal"><span class="pre">success</span></tt> is not <tt class="xref py py-class docutils literal"><span class="pre">True</span></tt>.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pypint.problems.i_problem.IProblem.__weakref__">
+<tt class="descname">__weakref__</tt><a class="headerlink" href="#pypint.problems.i_problem.IProblem.__weakref__" title="Permalink to this definition">¶</a></dt>
+<dd><p>list of weak references to the object (if defined)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pypint.problems.i_problem.IProblem.dim">
+<tt class="descname">dim</tt><a class="reference internal" href="../../_modules/pypint/problems/i_problem.html#IProblem.dim"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypint.problems.i_problem.IProblem.dim" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read-only accessor for the spacial degrees of freedom of the problem</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>dofs</strong> &#8211;
+First elements denotes shape of spacial points; the last element the number degrees of freedom (i.e.
+variables) at each spacial point.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><tt class="xref py py-class docutils literal"><span class="pre">tuple</span></tt></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pypint.problems.i_problem.IProblem.dim_for_time_solver">
+<tt class="descname">dim_for_time_solver</tt><a class="reference internal" href="../../_modules/pypint/problems/i_problem.html#IProblem.dim_for_time_solver"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypint.problems.i_problem.IProblem.dim_for_time_solver" title="Permalink to this definition">¶</a></dt>
+<dd><p>Dimension of array for Time Solvers</p>
+<p>This shape is used for the arrays of time solvers, which do not need to know the spacial shape of the spacial
+points.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>dim_for_time_solver</strong> &#8211;
+First element is the total number of spacial points (<a class="reference internal" href="#pypint.problems.i_problem.IProblem.num_spacial_points" title="pypint.problems.i_problem.IProblem.num_spacial_points"><tt class="xref py py-attr docutils literal"><span class="pre">num_spacial_points</span></tt></a>) and the second element
+the number of variables per spacial point (<a class="reference internal" href="#pypint.problems.i_problem.IProblem.dofs_per_point" title="pypint.problems.i_problem.IProblem.dofs_per_point"><tt class="xref py py-attr docutils literal"><span class="pre">dofs_per_point</span></tt></a>).</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><tt class="xref py py-class docutils literal"><span class="pre">tuple</span></tt></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pypint.problems.i_problem.IProblem.dofs_per_point">
+<tt class="descname">dofs_per_point</tt><a class="reference internal" href="../../_modules/pypint/problems/i_problem.html#IProblem.dofs_per_point"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypint.problems.i_problem.IProblem.dofs_per_point" title="Permalink to this definition">¶</a></dt>
+<dd><p>Variables / Degrees of Freedom at each spacial point</p>
+<p>dofs_per_point : <tt class="xref py py-class docutils literal"><span class="pre">int</span></tt></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pypint.problems.i_problem.IProblem.num_spacial_points">
+<tt class="descname">num_spacial_points</tt><a class="reference internal" href="../../_modules/pypint/problems/i_problem.html#IProblem.num_spacial_points"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypint.problems.i_problem.IProblem.num_spacial_points" title="Permalink to this definition">¶</a></dt>
+<dd><p>Total number of spacial points</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>num_spacial_points</strong> &#8211;
+product of the elements of <a class="reference internal" href="#pypint.problems.i_problem.IProblem.spacial_dim" title="pypint.problems.i_problem.IProblem.spacial_dim"><tt class="xref py py-attr docutils literal"><span class="pre">spacial_dim</span></tt></a></td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><tt class="xref py py-class docutils literal"><span class="pre">int</span></tt></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pypint.problems.i_problem.IProblem.numeric_type">
+<tt class="descname">numeric_type</tt><a class="reference internal" href="../../_modules/pypint/problems/i_problem.html#IProblem.numeric_type"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypint.problems.i_problem.IProblem.numeric_type" title="Permalink to this definition">¶</a></dt>
+<dd><p>Accessor for the numerical type of the problem values.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>numeric_type</strong> (<tt class="xref py py-class docutils literal"><span class="pre">numpy.dtype</span></tt>) &#8211; Usually it is <tt class="xref py py-class docutils literal"><span class="pre">numpy.float64</span></tt> or <tt class="xref py py-class docutils literal"><span class="pre">numpy.complex16</span></tt></td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>numeric_type</strong></td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><tt class="xref py py-class docutils literal"><span class="pre">numpy.dtype</span></tt></td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><tt class="xref py py-exc docutils literal"><span class="pre">ValueError</span></tt> &#8211; 
+If <tt class="docutils literal"><span class="pre">numeric_type</span></tt> is not a <tt class="xref py py-class docutils literal"><span class="pre">numpy.dtype</span></tt>.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pypint.problems.i_problem.IProblem.rhs_function_wrt_time">
+<tt class="descname">rhs_function_wrt_time</tt><a class="reference internal" href="../../_modules/pypint/problems/i_problem.html#IProblem.rhs_function_wrt_time"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypint.problems.i_problem.IProblem.rhs_function_wrt_time" title="Permalink to this definition">¶</a></dt>
+<dd><p>Accessor for the right hand side function.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>function</strong> (<tt class="xref py py-class docutils literal"><span class="pre">callable</span></tt>) &#8211; Function of the right hand side of <span class="math">\(u'(t,x)=F(t,\phi_t)\)</span></td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>rhs_function</strong> &#8211;
+Function of the right hand side.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><tt class="xref py py-class docutils literal"><span class="pre">callable</span></tt></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pypint.problems.i_problem.IProblem.spacial_dim">
+<tt class="descname">spacial_dim</tt><a class="reference internal" href="../../_modules/pypint/problems/i_problem.html#IProblem.spacial_dim"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypint.problems.i_problem.IProblem.spacial_dim" title="Permalink to this definition">¶</a></dt>
+<dd><p>Shape of spacial points</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>spacial_dim</strong></td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><tt class="xref py py-class docutils literal"><span class="pre">tuple</span></tt></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="i_initial_value_problem.html" class="btn btn-neutral float-right" title="Initial Value Problem Interface (i_initial_value_problem)"/>Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="package.html" class="btn btn-neutral" title="Problems (problems)"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+      &copy; 2013-2014,
+        <a href="http://www.fz-juelich.de/ias/jsc/EN/Research/Algorithms/ParallelInTimeIntegration/_node.html">Parallel-in-Time Research Group</a>
+        at the
+        <a href="http://www.fz-juelich.de/ias/jsc/EN/Home/home_node.html">Jülich Supercomputing Centre</a><br />
+    </p>
+  </div>
+
+  <a href="https://github.com/snide/sphinx_rtd_theme">Sphinx theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../',
+            VERSION:'0.0.4-dev-0-g4dad7c2',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../_static/doctools.js"></script>
+      <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

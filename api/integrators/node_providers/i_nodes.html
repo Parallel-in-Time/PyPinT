@@ -1,0 +1,366 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Integration Nodes Interface (i_nodes) &mdash; PyPinT 0.0.4-dev-0-g4dad7c2 documentation</title>
+  
+
+  
+  
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+        <link rel="author" title="About these documents"
+              href="../../../about.html"/>
+    <link rel="top" title="PyPinT 0.0.4-dev-0-g4dad7c2 documentation" href="../../../index.html"/>
+        <link rel="up" title="Node Providers (node_providers)" href="package.html"/>
+        <link rel="next" title="Gauss-Legendre Nodes (gauss_legendre_nodes)" href="gauss_legendre_nodes.html"/>
+        <link rel="prev" title="Node Providers (node_providers)" href="package.html"/> 
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-nav-search">
+        <a href="../../../index.html" class="fa fa-home"> PyPinT</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+        
+        
+            <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../about.html">About</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user/rationale.html">Rationale</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../user/rationale.html#objectives">Objectives</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../user/rationale.html#goals">Goals</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../user/rationale.html#scope">Scope</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user/requirements.html">Requirements</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user/basic_usage.html">Basic Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../examples/package.html">Examples</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../examples/problems/package.html">Example Problems (<tt class="docutils literal"><span class="pre">problems</span></tt>)</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user/theory.html">Mathematical Theory</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../user/bibliography.html">Bibliography</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../history.html">History</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../history.html#release-0-0-3-04-04-2014">Release 0.0.3 (04/04/2014)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../history.html#release-0-0-2-04-03-2014">Release 0.0.2 (04/03/2014)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../history.html#release-0-0-1-2013-11-26">Release 0.0.1 (2013-11-26)</a></li>
+</ul>
+</li>
+</ul>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../development/coding_style.html">Coding Style</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../development/documentation.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../development/contributing.html">Contributing</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../development/contributing.html#branching-and-tagging-model">Branching and Tagging Model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../development/contributing.html#commit-messages">Commit Messages</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../development/contributing.html#how-to-implement-a-new-feature">How to Implement a New Feature?</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../development/testing.html">Testing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../development/todo.html">ToDos</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../development/todo.html#global">Global</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../development/todo.html#in-source">In Source</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../package.html">API Reference</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../package.html#communicators">Communicators</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../../package.html#integrators">Integrators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../package.html#multi-level-providers">Multi Level Providers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../package.html#plugins">Plugins</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../package.html#problems">Problems</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../package.html#solutions">Solutions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../package.html#solvers">Solvers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../package.html#utilities">Utilities</a></li>
+</ul>
+</li>
+</ul>
+
+        
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../../../index.html">PyPinT</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="../../package.html">PyPinT Package</a> &raquo;</li>
+      
+          <li><a href="../package.html">Integrators (<tt class="docutils literal"><span class="pre">integrators</span></tt>)</a> &raquo;</li>
+      
+          <li><a href="package.html">Node Providers (<tt class="docutils literal"><span class="pre">node_providers</span></tt>)</a> &raquo;</li>
+      
+    <li>Integration Nodes Interface (<tt class="docutils literal"><span class="pre">i_nodes</span></tt>)</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          <a href="../../../_sources/api/integrators/node_providers/i_nodes.txt" rel="nofollow"> View page source</a>
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main">
+            
+  <div class="section" id="module-pypint.integrators.node_providers.i_nodes">
+<span id="integration-nodes-interface-i-nodes"></span><h1>Integration Nodes Interface (<tt class="xref py py-mod docutils literal"><span class="pre">i_nodes</span></tt>)<a class="headerlink" href="#module-pypint.integrators.node_providers.i_nodes" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="pypint.integrators.node_providers.i_nodes.INodes">
+<em class="property">class </em><tt class="descclassname">pypint.integrators.node_providers.i_nodes.</tt><tt class="descname">INodes</tt><a class="reference internal" href="../../../_modules/pypint/integrators/node_providers/i_nodes.html#INodes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypint.integrators.node_providers.i_nodes.INodes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">builtins.object</span></tt></p>
+<p>Provider for integration nodes.</p>
+<p>This is an abstract interface for providers of integration nodes.</p>
+<dl class="method">
+<dt id="pypint.integrators.node_providers.i_nodes.INodes.init">
+<tt class="descname">init</tt><span class="sig-paren">(</span><em>n_nodes</em>, <em>interval=None</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/pypint/integrators/node_providers/i_nodes.html#INodes.init"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypint.integrators.node_providers.i_nodes.INodes.init" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initializes the vector of integration nodes of size <cite>n_nodes</cite>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>n_nodes</strong> (<tt class="xref py py-class docutils literal"><span class="pre">int</span></tt>) &#8211; The number of desired integration nodes.</li>
+<li><strong>interval</strong> (<tt class="xref py py-class docutils literal"><span class="pre">numpy.ndarray(size=2)</span></tt> or <tt class="xref py py-class docutils literal"><span class="pre">None</span></tt>) &#8211; Interval of desired integration nodes.
+If unset (i.e. <tt class="xref py py-class docutils literal"><span class="pre">None</span></tt>), default nodes interval is implementation dependent.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition-notes admonition">
+<p class="first admonition-title">Notes</p>
+<p class="last">The implementation and behaviour must and will be defined by specializations of this interface.</p>
+</div>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><a class="reference internal" href="#pypint.integrators.node_providers.i_nodes.INodes.interval" title="pypint.integrators.node_providers.i_nodes.INodes.interval"><tt class="xref py py-attr docutils literal"><span class="pre">interval</span></tt></a> : Accessor for the interval.</p>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="pypint.integrators.node_providers.i_nodes.INodes.transform">
+<tt class="descname">transform</tt><span class="sig-paren">(</span><em>interval</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/pypint/integrators/node_providers/i_nodes.html#INodes.transform"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypint.integrators.node_providers.i_nodes.INodes.transform" title="Permalink to this definition">¶</a></dt>
+<dd><p>Transforms computed integration nodes to fit a new given interval.</p>
+<p>Based on the old interval the computed integration nodes are transformed fitting the newly given interval using
+standard linear interval scaling.
+In case no interval was previously given, the standard interval of the used nodes method, e.g. <span class="math">\([-1, 1]\)</span>
+for Gauss-Lobatto, is used.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>interval</strong> (<tt class="xref py py-class docutils literal"><span class="pre">numpy.ndarray(size=2)</span></tt>) &#8211; New interval to transform nodes onto.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><tt class="xref py py-exc docutils literal"><span class="pre">ValueError</span></tt> &#8211; 
+If the standard interval is not suited for transformation, i.e. it is not a <tt class="xref py py-class docutils literal"><span class="pre">numpy.ndarray</span></tt> of
+size 2 and not positive.</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition-notes admonition">
+<p class="first admonition-title">Notes</p>
+<p class="last">It may be this transformation is numerically inconvenient because of the loss of significance.</p>
+</div>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pypint.integrators.node_providers.i_nodes.INodes.__weakref__">
+<tt class="descname">__weakref__</tt><a class="headerlink" href="#pypint.integrators.node_providers.i_nodes.INodes.__weakref__" title="Permalink to this definition">¶</a></dt>
+<dd><p>list of weak references to the object (if defined)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pypint.integrators.node_providers.i_nodes.INodes.interval">
+<tt class="descname">interval</tt><a class="reference internal" href="../../../_modules/pypint/integrators/node_providers/i_nodes.html#INodes.interval"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypint.integrators.node_providers.i_nodes.INodes.interval" title="Permalink to this definition">¶</a></dt>
+<dd><p>Accessor for the interval of the integration nodes.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>interval</strong> (<tt class="xref py py-class docutils literal"><span class="pre">numpy.ndarray(size=2)</span></tt>) &#8211; Desired interval of integration nodes.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><tt class="xref py py-exc docutils literal"><span class="pre">ValueError</span></tt> &#8211; 
+If <tt class="docutils literal"><span class="pre">interval</span></tt> is not an <tt class="xref py py-class docutils literal"><span class="pre">numpy.ndarray</span></tt> and not of size 2.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>node_interval</strong> &#8211;
+Interval of the nodes.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><tt class="xref py py-class docutils literal"><span class="pre">numpy.ndarray(size=2)</span></tt></td>
+</tr>
+</tbody>
+</table>
+<div class="admonition-notes admonition">
+<p class="first admonition-title">Notes</p>
+<p class="last">The setter calls <a class="reference internal" href="#pypint.integrators.node_providers.i_nodes.INodes.transform" title="pypint.integrators.node_providers.i_nodes.INodes.transform"><tt class="xref py py-meth docutils literal"><span class="pre">transform()</span></tt></a> with the given interval.</p>
+</div>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pypint.integrators.node_providers.i_nodes.INodes.nodes">
+<tt class="descname">nodes</tt><a class="reference internal" href="../../../_modules/pypint/integrators/node_providers/i_nodes.html#INodes.nodes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypint.integrators.node_providers.i_nodes.INodes.nodes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Accessor for the vector of integration nodes.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>nodes</strong> &#8211;
+Vector of nodes.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><tt class="xref py py-class docutils literal"><span class="pre">numpy.ndarray</span></tt></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pypint.integrators.node_providers.i_nodes.INodes.num_nodes">
+<tt class="descname">num_nodes</tt><a class="reference internal" href="../../../_modules/pypint/integrators/node_providers/i_nodes.html#INodes.num_nodes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypint.integrators.node_providers.i_nodes.INodes.num_nodes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Accessor for the number of desired integration nodes.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>number of nodes</strong> &#8211;
+The number of desired and/or computed integration nodes.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><tt class="xref py py-class docutils literal"><span class="pre">int</span></tt></td>
+</tr>
+</tbody>
+</table>
+<div class="admonition-notes admonition">
+<p class="first admonition-title">Notes</p>
+<p class="last">Specializations of this interface might override this accessor.</p>
+</div>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pypint.integrators.node_providers.i_nodes.INodes.std_interval">
+<tt class="descname">std_interval</tt><em class="property"> = array([ 0.,  0.])</em><a class="headerlink" href="#pypint.integrators.node_providers.i_nodes.INodes.std_interval" title="Permalink to this definition">¶</a></dt>
+<dd><p>Standard interval for this integration nodes.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="gauss_legendre_nodes.html" class="btn btn-neutral float-right" title="Gauss-Legendre Nodes (gauss_legendre_nodes)"/>Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="package.html" class="btn btn-neutral" title="Node Providers (node_providers)"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+      &copy; 2013-2014,
+        <a href="http://www.fz-juelich.de/ias/jsc/EN/Research/Algorithms/ParallelInTimeIntegration/_node.html">Parallel-in-Time Research Group</a>
+        at the
+        <a href="http://www.fz-juelich.de/ias/jsc/EN/Home/home_node.html">Jülich Supercomputing Centre</a><br />
+    </p>
+  </div>
+
+  <a href="https://github.com/snide/sphinx_rtd_theme">Sphinx theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../',
+            VERSION:'0.0.4-dev-0-g4dad7c2',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../_static/doctools.js"></script>
+      <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

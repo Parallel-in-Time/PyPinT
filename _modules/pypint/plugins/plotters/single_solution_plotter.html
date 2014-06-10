@@ -1,0 +1,380 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>pypint.plugins.plotters.single_solution_plotter &mdash; PyPinT 0.0.4-dev-0-g4dad7c2 documentation</title>
+  
+
+  
+  
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+        <link rel="author" title="About these documents"
+              href="../../../../about.html"/>
+    <link rel="top" title="PyPinT 0.0.4-dev-0-g4dad7c2 documentation" href="../../../../index.html"/>
+        <link rel="up" title="pypint.plugins.plotters" href="../plotters.html"/> 
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-nav-search">
+        <a href="../../../../index.html" class="fa fa-home"> PyPinT</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+        
+        
+            <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../about.html">About</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../user/rationale.html">Rationale</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../../user/rationale.html#objectives">Objectives</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../user/rationale.html#goals">Goals</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../user/rationale.html#scope">Scope</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../user/requirements.html">Requirements</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../user/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../user/basic_usage.html">Basic Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api/examples/package.html">Examples</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/examples/problems/package.html">Example Problems (<tt class="docutils literal"><span class="pre">problems</span></tt>)</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../user/theory.html">Mathematical Theory</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../../user/bibliography.html">Bibliography</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../history.html">History</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../../history.html#release-0-0-3-04-04-2014">Release 0.0.3 (04/04/2014)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../history.html#release-0-0-2-04-03-2014">Release 0.0.2 (04/03/2014)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../history.html#release-0-0-1-2013-11-26">Release 0.0.1 (2013-11-26)</a></li>
+</ul>
+</li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../development/coding_style.html">Coding Style</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../development/documentation.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../development/contributing.html">Contributing</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../../development/contributing.html#branching-and-tagging-model">Branching and Tagging Model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../development/contributing.html#commit-messages">Commit Messages</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../development/contributing.html#how-to-implement-a-new-feature">How to Implement a New Feature?</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../development/testing.html">Testing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../development/todo.html">ToDos</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../../development/todo.html#global">Global</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../development/todo.html#in-source">In Source</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api/package.html">API Reference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/package.html#communicators">Communicators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/package.html#integrators">Integrators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/package.html#multi-level-providers">Multi Level Providers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/package.html#plugins">Plugins</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/package.html#problems">Problems</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/package.html#solutions">Solutions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/package.html#solvers">Solvers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/package.html#utilities">Utilities</a></li>
+</ul>
+</li>
+</ul>
+
+        
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../../../../index.html">PyPinT</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../../../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="../../../index.html">Module code</a> &raquo;</li>
+      
+          <li><a href="../plotters.html">pypint.plugins.plotters</a> &raquo;</li>
+      
+    <li>pypint.plugins.plotters.single_solution_plotter</li>
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main">
+            
+  <h1>Source code for pypint.plugins.plotters.single_solution_plotter</h1><div class="highlight"><pre>
+<span class="c"># coding=utf-8</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">.. moduleauthor:: Torbjörn Klatt &lt;t.klatt@fz-juelich.de&gt;</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="kn">as</span> <span class="nn">plt</span>
+<span class="kn">from</span> <span class="nn">matplotlib</span> <span class="kn">import</span> <span class="n">is_interactive</span>
+
+<span class="kn">from</span> <span class="nn">pypint.plugins.plotters.i_plotter</span> <span class="kn">import</span> <span class="n">IPlotter</span>
+<span class="kn">from</span> <span class="nn">pypint.plugins.plotters</span> <span class="kn">import</span> <span class="n">colorline</span>
+<span class="kn">from</span> <span class="nn">pypint.solvers.i_iterative_time_solver</span> <span class="kn">import</span> <span class="n">IIterativeTimeSolver</span>
+<span class="kn">from</span> <span class="nn">pypint.solvers.states</span> <span class="kn">import</span> <span class="n">ISolverState</span>
+<span class="kn">from</span> <span class="nn">pypint.solvers.diagnosis.norms</span> <span class="kn">import</span> <span class="n">supremum_norm</span>
+<span class="kn">from</span> <span class="nn">pypint.utilities</span> <span class="kn">import</span> <span class="n">assert_named_argument</span>
+<span class="kn">from</span> <span class="nn">pypint.utilities.logging</span> <span class="kn">import</span> <span class="n">LOG</span>
+
+
+<div class="viewcode-block" id="SingleSolutionPlotter"><a class="viewcode-back" href="../../../../api/plugins/plotters/single_solution_plotter.html#pypint.plugins.plotters.single_solution_plotter.SingleSolutionPlotter">[docs]</a><span class="k">class</span> <span class="nc">SingleSolutionPlotter</span><span class="p">(</span><span class="n">IPlotter</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Plotter for a single solution of an iterative time solver.</span>
+
+<span class="sd">    See Also</span>
+<span class="sd">    --------</span>
+<span class="sd">    :py:class:`.IPlotter` : overridden class</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">SingleSolutionPlotter</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_solver</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_state</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_nodes</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_errplot</span> <span class="o">=</span> <span class="bp">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_residualplot</span> <span class="o">=</span> <span class="bp">False</span>
+
+<div class="viewcode-block" id="SingleSolutionPlotter.plot"><a class="viewcode-back" href="../../../../api/plugins/plotters/single_solution_plotter.html#pypint.plugins.plotters.single_solution_plotter.SingleSolutionPlotter.plot">[docs]</a>    <span class="k">def</span> <span class="nf">plot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Plots the solution and optional also the error for each iteration.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        solver : :py:class:`.IIterativeTimeSolver`</span>
+<span class="sd">            solver instance used to calculate the solution</span>
+
+<span class="sd">        state : :py:class:`.ISolverState`</span>
+<span class="sd">            state containing information to plot</span>
+
+<span class="sd">        errplot : :py:class:`bool`</span>
+<span class="sd">            *(optional)*</span>
+<span class="sd">            if given and :py:class:`True` also plots the errors for each iteration found in the solution</span>
+
+<span class="sd">        residualplot : :py:class:`bool`</span>
+<span class="sd">            *(optional)*</span>
+<span class="sd">            if given and :py:class:`True` also plots the residual for each iteration found in the solution</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        ValueError</span>
+
+<span class="sd">            * if ``solver`` not given and not an :py:class:`.IIterativeTimeSolver`</span>
+<span class="sd">            * if ``state`` not given and not an :py:class:`.ISolverState`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">SingleSolutionPlotter</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+        <span class="n">assert_named_argument</span><span class="p">(</span><span class="s">&#39;solver&#39;</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">,</span> <span class="n">types</span><span class="o">=</span><span class="n">IIterativeTimeSolver</span><span class="p">,</span> <span class="n">descriptor</span><span class="o">=</span><span class="s">&quot;Solver&quot;</span><span class="p">,</span> <span class="n">checking_obj</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
+        <span class="n">assert_named_argument</span><span class="p">(</span><span class="s">&#39;state&#39;</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">,</span> <span class="n">types</span><span class="o">=</span><span class="n">ISolverState</span><span class="p">,</span> <span class="n">descriptor</span><span class="o">=</span><span class="s">&quot;State must be given&quot;</span><span class="p">,</span> <span class="n">checking_obj</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_solver</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s">&#39;solver&#39;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_state</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s">&#39;state&#39;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_nodes</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_state</span><span class="o">.</span><span class="n">first</span><span class="o">.</span><span class="n">time_points</span>
+
+        <span class="n">_subplots</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="n">_curr_subplot</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">if</span> <span class="s">&#39;errorplot&#39;</span> <span class="ow">in</span> <span class="n">kwargs</span> <span class="ow">and</span> <span class="n">kwargs</span><span class="p">[</span><span class="s">&#39;errorplot&#39;</span><span class="p">]:</span>
+            <span class="n">_subplots</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_errplot</span> <span class="o">=</span> <span class="bp">True</span>
+        <span class="k">if</span> <span class="s">&#39;residualplot&#39;</span> <span class="ow">in</span> <span class="n">kwargs</span> <span class="ow">and</span> <span class="n">kwargs</span><span class="p">[</span><span class="s">&#39;residualplot&#39;</span><span class="p">]:</span>
+            <span class="n">_subplots</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_residualplot</span> <span class="o">=</span> <span class="bp">True</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_solver</span><span class="o">.</span><span class="n">problem</span><span class="o">.</span><span class="n">time_start</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nodes</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_nodes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(([</span><span class="bp">self</span><span class="o">.</span><span class="n">_solver</span><span class="o">.</span><span class="n">problem</span><span class="o">.</span><span class="n">time_start</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nodes</span><span class="p">))</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_solver</span><span class="o">.</span><span class="n">problem</span><span class="o">.</span><span class="n">time_end</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nodes</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_nodes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">_nodes</span><span class="p">,</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_solver</span><span class="o">.</span><span class="n">problem</span><span class="o">.</span><span class="n">time_end</span><span class="p">]))</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_errplot</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">_residualplot</span><span class="p">:</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">suptitle</span><span class="p">(</span><span class="s">r&quot;after {:d} iterations; overall reduction: {:.2e}&quot;</span>
+                         <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_state</span><span class="p">),</span>
+                                 <span class="n">supremum_norm</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_state</span><span class="o">.</span><span class="n">solution</span>
+                                               <span class="o">.</span><span class="n">solution_reduction</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_state</span><span class="o">.</span><span class="n">last_iteration_index</span><span class="p">))))</span>
+            <span class="n">_curr_subplot</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="n">_subplots</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">_curr_subplot</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_final_solution</span><span class="p">()</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_solver</span><span class="o">.</span><span class="n">problem</span><span class="o">.</span><span class="n">__str__</span><span class="p">())</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_errplot</span><span class="p">:</span>
+            <span class="n">_curr_subplot</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">_curr_subplot</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_error_plot</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_residualplot</span><span class="p">:</span>
+            <span class="n">_curr_subplot</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">_curr_subplot</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_residual_plot</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_file_name</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">gcf</span><span class="p">()</span>
+            <span class="n">fig</span><span class="o">.</span><span class="n">set_dpi</span><span class="p">(</span><span class="mi">300</span><span class="p">)</span>
+            <span class="n">fig</span><span class="o">.</span><span class="n">set_size_inches</span><span class="p">((</span><span class="mf">15.</span><span class="p">,</span> <span class="mf">15.</span><span class="p">))</span>
+            <span class="n">LOG</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&quot;Plotting figure with size (w,h) {:s} inches and {:d} DPI.&quot;</span>
+                      <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">fig</span><span class="o">.</span><span class="n">get_size_inches</span><span class="p">(),</span> <span class="n">fig</span><span class="o">.</span><span class="n">get_dpi</span><span class="p">()))</span>
+            <span class="n">fig</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_file_name</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">is_interactive</span><span class="p">():</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="n">block</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="s">&#39;all&#39;</span><span class="p">)</span>
+</div>
+    <span class="k">def</span> <span class="nf">_final_solution</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">_solution</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_state</span><span class="o">.</span><span class="n">last_iteration</span><span class="o">.</span><span class="n">solution</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_state</span><span class="o">.</span><span class="n">initial</span><span class="o">.</span><span class="n">solution</span><span class="o">.</span><span class="n">value</span><span class="p">],</span>
+                              <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_state</span><span class="o">.</span><span class="n">last_iteration</span><span class="o">.</span><span class="n">solution</span><span class="o">.</span><span class="n">numeric_type</span> <span class="o">==</span> <span class="n">np</span><span class="o">.</span><span class="n">complex</span><span class="p">:</span>
+            <span class="n">colorline</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">_p</span><span class="o">.</span><span class="n">real</span> <span class="k">for</span> <span class="n">_p</span> <span class="ow">in</span> <span class="n">_solution</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float</span><span class="p">),</span>
+                      <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">_p</span><span class="o">.</span><span class="n">imag</span> <span class="k">for</span> <span class="n">_p</span> <span class="ow">in</span> <span class="n">_solution</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_nodes</span><span class="p">,</span> <span class="n">_solution</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="s">&quot;Solution&quot;</span><span class="p">)</span>
+        <span class="c"># TODO fix error checking</span>
+        <span class="c"># if problem_has_exact_solution(self._solver.problem, self):</span>
+                <span class="c"># and self._state.last_iteration.solution.errors.max() &gt; 1e-2:</span>
+            <span class="c"># exact = np.array([self._solver.problem.exact(_t) for _t in self._nodes],</span>
+            <span class="c">#                  dtype=self._solver.problem.numeric_type)</span>
+            <span class="c"># if exact.dtype == np.complex:</span>
+            <span class="c">#     LOG.debug(&quot;    plotting exact solution as complex values&quot;)</span>
+            <span class="c">#     colorline(exact.real, exact.imag)</span>
+            <span class="c"># else:</span>
+            <span class="c">#     LOG.debug(&quot;    plotting exact solution as real values&quot;)</span>
+            <span class="c">#     plt.plot(self._nodes, exact, label=&quot;Exact&quot;)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_state</span><span class="o">.</span><span class="n">last_iteration</span><span class="o">.</span><span class="n">solution</span><span class="o">.</span><span class="n">numeric_type</span> <span class="o">==</span> <span class="n">np</span><span class="o">.</span><span class="n">complex</span><span class="p">:</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s">&quot;real&quot;</span><span class="p">)</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s">&quot;imag&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">xticks</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_nodes</span><span class="p">)</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s">&quot;integration nodes&quot;</span><span class="p">)</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s">r&#39;$u(t, \phi_t)$&#39;</span><span class="p">)</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">xlim</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_nodes</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nodes</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_error_plot</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_state</span><span class="p">)):</span>
+            <span class="n">_error</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">_e</span><span class="o">.</span><span class="n">value</span> <span class="k">for</span> <span class="n">_e</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_state</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">solution</span><span class="o">.</span><span class="n">errors</span><span class="p">]),</span> <span class="mi">0</span><span class="p">,</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_nodes</span><span class="p">,</span> <span class="n">_error</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s">r&quot;Iteraion {:d}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">))</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">xticks</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_nodes</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">xlim</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_nodes</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nodes</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">yscale</span><span class="p">(</span><span class="s">&quot;log&quot;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s">&quot;integration nodes&quot;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s">r&#39;absolute error of iterations&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_residual_plot</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_state</span><span class="p">)):</span>
+            <span class="n">_residual</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">_r</span><span class="o">.</span><span class="n">value</span> <span class="k">for</span> <span class="n">_r</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_state</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">solution</span><span class="o">.</span><span class="n">residuals</span><span class="p">]),</span> <span class="mi">0</span><span class="p">,</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_nodes</span><span class="p">,</span> <span class="n">_residual</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s">r&quot;Iteration {:d}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">))</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">xticks</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_nodes</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">xlim</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_nodes</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nodes</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">yscale</span><span class="p">(</span><span class="s">&quot;log&quot;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s">&quot;integration nodes&quot;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s">r&#39;residual&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span></div>
+</pre></div>
+
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+      &copy; 2013-2014,
+        <a href="http://www.fz-juelich.de/ias/jsc/EN/Research/Algorithms/ParallelInTimeIntegration/_node.html">Parallel-in-Time Research Group</a>
+        at the
+        <a href="http://www.fz-juelich.de/ias/jsc/EN/Home/home_node.html">Jülich Supercomputing Centre</a><br />
+    </p>
+  </div>
+
+  <a href="https://github.com/snide/sphinx_rtd_theme">Sphinx theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../../',
+            VERSION:'0.0.4-dev-0-g4dad7c2',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+      <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

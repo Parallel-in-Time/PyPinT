@@ -1,0 +1,329 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Has Exact Solution Mixin (has_exact_solution_mixin) &mdash; PyPinT 0.0.4-dev-0-g4dad7c2 documentation</title>
+  
+
+  
+  
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  
+
+  
+        <link rel="author" title="About these documents"
+              href="../../about.html"/>
+    <link rel="top" title="PyPinT 0.0.4-dev-0-g4dad7c2 documentation" href="../../index.html"/>
+        <link rel="up" title="Problems (problems)" href="package.html"/>
+        <link rel="next" title="Has Direct Implicit Mixin (has_direct_implicit_mixin)" href="has_direct_implicit_mixin.html"/>
+        <link rel="prev" title="Initial Value Problem Interface (i_initial_value_problem)" href="i_initial_value_problem.html"/> 
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-nav-search">
+        <a href="../../index.html" class="fa fa-home"> PyPinT</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+        
+        
+            <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../about.html">About</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user/rationale.html">Rationale</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../user/rationale.html#objectives">Objectives</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../user/rationale.html#goals">Goals</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../user/rationale.html#scope">Scope</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../user/requirements.html">Requirements</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user/basic_usage.html">Basic Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/package.html">Examples</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../examples/problems/package.html">Example Problems (<tt class="docutils literal"><span class="pre">problems</span></tt>)</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../user/theory.html">Mathematical Theory</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../user/bibliography.html">Bibliography</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../history.html">History</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../history.html#release-0-0-3-04-04-2014">Release 0.0.3 (04/04/2014)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../history.html#release-0-0-2-04-03-2014">Release 0.0.2 (04/03/2014)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../history.html#release-0-0-1-2013-11-26">Release 0.0.1 (2013-11-26)</a></li>
+</ul>
+</li>
+</ul>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../development/coding_style.html">Coding Style</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../development/documentation.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../development/contributing.html">Contributing</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../development/contributing.html#branching-and-tagging-model">Branching and Tagging Model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../development/contributing.html#commit-messages">Commit Messages</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../development/contributing.html#how-to-implement-a-new-feature">How to Implement a New Feature?</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../development/testing.html">Testing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../development/todo.html">ToDos</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../development/todo.html#global">Global</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../development/todo.html#in-source">In Source</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="reference internal" href="../package.html">API Reference</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../package.html#communicators">Communicators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../package.html#integrators">Integrators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../package.html#multi-level-providers">Multi Level Providers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../package.html#plugins">Plugins</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../package.html#problems">Problems</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../package.html#solutions">Solutions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../package.html#solvers">Solvers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../package.html#utilities">Utilities</a></li>
+</ul>
+</li>
+</ul>
+
+        
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../../index.html">PyPinT</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="../package.html">PyPinT Package</a> &raquo;</li>
+      
+          <li><a href="package.html">Problems (<tt class="docutils literal"><span class="pre">problems</span></tt>)</a> &raquo;</li>
+      
+    <li>Has Exact Solution Mixin (<tt class="docutils literal"><span class="pre">has_exact_solution_mixin</span></tt>)</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          <a href="../../_sources/api/problems/has_exact_solution_mixin.txt" rel="nofollow"> View page source</a>
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main">
+            
+  <div class="section" id="module-pypint.problems.has_exact_solution_mixin">
+<span id="has-exact-solution-mixin-has-exact-solution-mixin"></span><h1>Has Exact Solution Mixin (<tt class="xref py py-mod docutils literal"><span class="pre">has_exact_solution_mixin</span></tt>)<a class="headerlink" href="#module-pypint.problems.has_exact_solution_mixin" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="pypint.problems.has_exact_solution_mixin.HasExactSolutionMixin">
+<em class="property">class </em><tt class="descclassname">pypint.problems.has_exact_solution_mixin.</tt><tt class="descname">HasExactSolutionMixin</tt><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pypint/problems/has_exact_solution_mixin.html#HasExactSolutionMixin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypint.problems.has_exact_solution_mixin.HasExactSolutionMixin" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">builtins.object</span></tt></p>
+<p>Provides exact analytical solution function for a problem.</p>
+<dl class="method">
+<dt id="pypint.problems.has_exact_solution_mixin.HasExactSolutionMixin.__init__">
+<tt class="descname">__init__</tt><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pypint/problems/has_exact_solution_mixin.html#HasExactSolutionMixin.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypint.problems.has_exact_solution_mixin.HasExactSolutionMixin.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>exact_function</strong> (<tt class="xref py py-class docutils literal"><span class="pre">callable</span></tt>) &#8211; <em>(optional)</em>
+If given initializes the problem with the exact solution function.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="pypint.problems.has_exact_solution_mixin.HasExactSolutionMixin.exact">
+<tt class="descname">exact</tt><span class="sig-paren">(</span><em>time</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pypint/problems/has_exact_solution_mixin.html#HasExactSolutionMixin.exact"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypint.problems.has_exact_solution_mixin.HasExactSolutionMixin.exact" title="Permalink to this definition">¶</a></dt>
+<dd><p>Evaluates given exact solution function at given time and with given time-dependent data.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>time</strong> (<tt class="xref py py-class docutils literal"><span class="pre">float</span></tt>) &#8211; Time point <span class="math">\(t\)</span></p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>exact_solution</strong></p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first"><tt class="xref py py-class docutils literal"><span class="pre">numpy.ndarray</span></tt></p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first"><tt class="xref py py-exc docutils literal"><span class="pre">ValueError</span></tt> &#8211;</p>
+<ul class="last simple">
+<li>if <tt class="docutils literal"><span class="pre">time</span></tt> is not a <tt class="xref py py-class docutils literal"><span class="pre">float</span></tt></li>
+<li>if <tt class="docutils literal"><span class="pre">phi_of_time</span></tt> is not a <tt class="xref py py-class docutils literal"><span class="pre">numpy.ndarray</span></tt></li>
+<li>if not exact function is given</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pypint.problems.has_exact_solution_mixin.HasExactSolutionMixin.__weakref__">
+<tt class="descname">__weakref__</tt><a class="headerlink" href="#pypint.problems.has_exact_solution_mixin.HasExactSolutionMixin.__weakref__" title="Permalink to this definition">¶</a></dt>
+<dd><p>list of weak references to the object (if defined)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pypint.problems.has_exact_solution_mixin.HasExactSolutionMixin.exact_function">
+<tt class="descname">exact_function</tt><a class="reference internal" href="../../_modules/pypint/problems/has_exact_solution_mixin.html#HasExactSolutionMixin.exact_function"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypint.problems.has_exact_solution_mixin.HasExactSolutionMixin.exact_function" title="Permalink to this definition">¶</a></dt>
+<dd><p>Accessor for the exact solution function.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><tt class="xref py py-exc docutils literal"><span class="pre">ValueError</span></tt> &#8211; 
+On setting, if the new exact solution function is not callable.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="pypint.problems.has_exact_solution_mixin.problem_has_exact_solution">
+<tt class="descclassname">pypint.problems.has_exact_solution_mixin.</tt><tt class="descname">problem_has_exact_solution</tt><span class="sig-paren">(</span><em>problem</em>, <em>checking_obj=None</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pypint/problems/has_exact_solution_mixin.html#problem_has_exact_solution"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypint.problems.has_exact_solution_mixin.problem_has_exact_solution" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convenience accessor for exact solution.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>problem</strong> (<a class="reference internal" href="i_problem.html#pypint.problems.i_problem.IProblem" title="pypint.problems.i_problem.IProblem"><tt class="xref py py-class docutils literal"><span class="pre">IProblem</span></tt></a>) &#8211; The problem to check for an exact solution function.</li>
+<li><strong>checking_obj</strong> (<em>object</em>) &#8211; <em>(optional)</em>
+The object calling this function for a meaningful error message.
+For debugging purposes only.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>has_exact_solution</strong> &#8211;
+<tt class="xref py py-class docutils literal"><span class="pre">True</span></tt> if exact solution was given, <tt class="xref py py-class docutils literal"><span class="pre">False</span></tt> otherwise</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first"><tt class="xref py py-class docutils literal"><span class="pre">bool</span></tt></p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><tt class="xref py py-exc docutils literal"><span class="pre">ValueError</span></tt> &#8211; 
+If the given problem is not an instance of <a class="reference internal" href="i_problem.html#pypint.problems.i_problem.IProblem" title="pypint.problems.i_problem.IProblem"><tt class="xref py py-class docutils literal"><span class="pre">IProblem</span></tt></a>.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+
+
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="has_direct_implicit_mixin.html" class="btn btn-neutral float-right" title="Has Direct Implicit Mixin (has_direct_implicit_mixin)"/>Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="i_initial_value_problem.html" class="btn btn-neutral" title="Initial Value Problem Interface (i_initial_value_problem)"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+      &copy; 2013-2014,
+        <a href="http://www.fz-juelich.de/ias/jsc/EN/Research/Algorithms/ParallelInTimeIntegration/_node.html">Parallel-in-Time Research Group</a>
+        at the
+        <a href="http://www.fz-juelich.de/ias/jsc/EN/Home/home_node.html">Jülich Supercomputing Centre</a><br />
+    </p>
+  </div>
+
+  <a href="https://github.com/snide/sphinx_rtd_theme">Sphinx theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../',
+            VERSION:'0.0.4-dev-0-g4dad7c2',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../_static/doctools.js"></script>
+      <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

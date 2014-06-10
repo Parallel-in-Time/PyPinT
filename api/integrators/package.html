@@ -1,0 +1,262 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Integrators (integrators) &mdash; PyPinT 0.0.4-dev-0-g4dad7c2 documentation</title>
+  
+
+  
+  
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  
+
+  
+        <link rel="author" title="About these documents"
+              href="../../about.html"/>
+    <link rel="top" title="PyPinT 0.0.4-dev-0-g4dad7c2 documentation" href="../../index.html"/>
+        <link rel="up" title="PyPinT Package" href="../package.html"/>
+        <link rel="next" title="Integrator Base (integrator_base)" href="integrator_base.html"/>
+        <link rel="prev" title="Message (message)" href="../communicators/message.html"/> 
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-nav-search">
+        <a href="../../index.html" class="fa fa-home"> PyPinT</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+        
+        
+            <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../about.html">About</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user/rationale.html">Rationale</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../user/rationale.html#objectives">Objectives</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../user/rationale.html#goals">Goals</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../user/rationale.html#scope">Scope</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../user/requirements.html">Requirements</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user/basic_usage.html">Basic Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/package.html">Examples</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../examples/problems/package.html">Example Problems (<tt class="docutils literal"><span class="pre">problems</span></tt>)</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../user/theory.html">Mathematical Theory</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../user/bibliography.html">Bibliography</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../history.html">History</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../history.html#release-0-0-3-04-04-2014">Release 0.0.3 (04/04/2014)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../history.html#release-0-0-2-04-03-2014">Release 0.0.2 (04/03/2014)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../history.html#release-0-0-1-2013-11-26">Release 0.0.1 (2013-11-26)</a></li>
+</ul>
+</li>
+</ul>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../development/coding_style.html">Coding Style</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../development/documentation.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../development/contributing.html">Contributing</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../development/contributing.html#branching-and-tagging-model">Branching and Tagging Model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../development/contributing.html#commit-messages">Commit Messages</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../development/contributing.html#how-to-implement-a-new-feature">How to Implement a New Feature?</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../development/testing.html">Testing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../development/todo.html">ToDos</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../development/todo.html#global">Global</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../development/todo.html#in-source">In Source</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="reference internal" href="../package.html">API Reference</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../package.html#communicators">Communicators</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../package.html#integrators">Integrators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../package.html#multi-level-providers">Multi Level Providers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../package.html#plugins">Plugins</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../package.html#problems">Problems</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../package.html#solutions">Solutions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../package.html#solvers">Solvers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../package.html#utilities">Utilities</a></li>
+</ul>
+</li>
+</ul>
+
+        
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../../index.html">PyPinT</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="../package.html">PyPinT Package</a> &raquo;</li>
+      
+    <li>Integrators (<tt class="docutils literal"><span class="pre">integrators</span></tt>)</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          <a href="../../_sources/api/integrators/package.txt" rel="nofollow"> View page source</a>
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main">
+            
+  <div class="section" id="module-pypint.integrators">
+<span id="integrators-integrators"></span><h1>Integrators (<tt class="xref py py-mod docutils literal"><span class="pre">integrators</span></tt>)<a class="headerlink" href="#module-pypint.integrators" title="Permalink to this headline">¶</a></h1>
+<p>Integrators for Iterative Time Solvers</p>
+<dl class="data">
+<dt id="pypint.integrators.INTEGRATOR_PRESETS">
+<tt class="descclassname">pypint.integrators.</tt><tt class="descname">INTEGRATOR_PRESETS</tt><em class="property"> = {'Gauss-Legendre': {'nodes_type': &lt;class 'pypint.integrators.node_providers.gauss_legendre_nodes.GaussLegendreNodes'&gt;, 'weights_function': {'coeffs': [1.0], 'class': &lt;class 'pypint.integrators.weight_function_providers.polynomial_weight_function.PolynomialWeightFunction'&gt;}, 'num_nodes': 3}, 'Gauss-Lobatto': {'nodes_type': &lt;class 'pypint.integrators.node_providers.gauss_lobatto_nodes.GaussLobattoNodes'&gt;, 'weights_function': {'coeffs': [1.0], 'class': &lt;class 'pypint.integrators.weight_function_providers.polynomial_weight_function.PolynomialWeightFunction'&gt;}, 'num_nodes': 3}}</em><a class="headerlink" href="#pypint.integrators.INTEGRATOR_PRESETS" title="Permalink to this definition">¶</a></dt>
+<dd><p>Useful presets for integrators.</p>
+<p>This dictionary provides useful parameter presets for frequently used integrators.
+Use them as parameters to the constructor of <a class="reference internal" href="integrator_base.html#pypint.integrators.integrator_base.IntegratorBase" title="pypint.integrators.integrator_base.IntegratorBase"><tt class="xref py py-class docutils literal"><span class="pre">IntegratorBase</span></tt></a>.
+Available presets:</p>
+<dl class="docutils">
+<dt><strong>Gauss-Lobatto</strong></dt>
+<dd>Classic <em>Gauss-Lobatto</em> integrator with constant one polynomial as the weight function.</dd>
+</dl>
+<div class="admonition-examples admonition">
+<p class="first admonition-title">Examples</p>
+<div class="last highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">integrator_base_params</span> <span class="o">=</span> <span class="n">INTEGRATOR_PRESETS</span><span class="p">[</span><span class="s">&quot;Gauss-Lobatto&quot;</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+</dd></dl>
+
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="integrator_base.html">Integrator Base (<tt class="docutils literal"><span class="pre">integrator_base</span></tt>)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sdc_integrator.html">SDC Integrator (<tt class="docutils literal"><span class="pre">sdc_integrator</span></tt>)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="node_providers/package.html">Node Providers (<tt class="docutils literal"><span class="pre">node_providers</span></tt>)</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="node_providers/i_nodes.html">Integration Nodes Interface (<tt class="docutils literal"><span class="pre">i_nodes</span></tt>)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="node_providers/gauss_legendre_nodes.html">Gauss-Legendre Nodes (<tt class="docutils literal"><span class="pre">gauss_legendre_nodes</span></tt>)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="node_providers/gauss_lobatto_nodes.html">Gauss-Lobatto Nodes (<tt class="docutils literal"><span class="pre">gauss_lobatto_nodes</span></tt>)</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="weight_function_providers/package.html">Weight Function Providers (<tt class="docutils literal"><span class="pre">weight_function_providers</span></tt>)</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="weight_function_providers/i_weight_function.html">Weight Function Interface (<tt class="docutils literal"><span class="pre">i_weight_function</span></tt>)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="weight_function_providers/polynomial_weight_function.html">Polynomial Weight Function (<tt class="docutils literal"><span class="pre">polynomial_weight_function</span></tt>)</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+
+
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="integrator_base.html" class="btn btn-neutral float-right" title="Integrator Base (integrator_base)"/>Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="../communicators/message.html" class="btn btn-neutral" title="Message (message)"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+      &copy; 2013-2014,
+        <a href="http://www.fz-juelich.de/ias/jsc/EN/Research/Algorithms/ParallelInTimeIntegration/_node.html">Parallel-in-Time Research Group</a>
+        at the
+        <a href="http://www.fz-juelich.de/ias/jsc/EN/Home/home_node.html">Jülich Supercomputing Centre</a><br />
+    </p>
+  </div>
+
+  <a href="https://github.com/snide/sphinx_rtd_theme">Sphinx theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../',
+            VERSION:'0.0.4-dev-0-g4dad7c2',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../_static/doctools.js"></script>
+      <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

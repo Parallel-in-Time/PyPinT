@@ -1,0 +1,262 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>pypint.solvers.cores.i_solver_core &mdash; PyPinT 0.0.4-dev-0-g4dad7c2 documentation</title>
+  
+
+  
+  
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+        <link rel="author" title="About these documents"
+              href="../../../../about.html"/>
+    <link rel="top" title="PyPinT 0.0.4-dev-0-g4dad7c2 documentation" href="../../../../index.html"/>
+        <link rel="up" title="Module code" href="../../../index.html"/> 
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-nav-search">
+        <a href="../../../../index.html" class="fa fa-home"> PyPinT</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+        
+        
+            <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../about.html">About</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../user/rationale.html">Rationale</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../../user/rationale.html#objectives">Objectives</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../user/rationale.html#goals">Goals</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../user/rationale.html#scope">Scope</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../user/requirements.html">Requirements</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../user/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../user/basic_usage.html">Basic Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api/examples/package.html">Examples</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/examples/problems/package.html">Example Problems (<tt class="docutils literal"><span class="pre">problems</span></tt>)</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../user/theory.html">Mathematical Theory</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../../user/bibliography.html">Bibliography</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../history.html">History</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../../history.html#release-0-0-3-04-04-2014">Release 0.0.3 (04/04/2014)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../history.html#release-0-0-2-04-03-2014">Release 0.0.2 (04/03/2014)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../history.html#release-0-0-1-2013-11-26">Release 0.0.1 (2013-11-26)</a></li>
+</ul>
+</li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../development/coding_style.html">Coding Style</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../development/documentation.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../development/contributing.html">Contributing</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../../development/contributing.html#branching-and-tagging-model">Branching and Tagging Model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../development/contributing.html#commit-messages">Commit Messages</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../development/contributing.html#how-to-implement-a-new-feature">How to Implement a New Feature?</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../development/testing.html">Testing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../development/todo.html">ToDos</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../../development/todo.html#global">Global</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../development/todo.html#in-source">In Source</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api/package.html">API Reference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/package.html#communicators">Communicators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/package.html#integrators">Integrators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/package.html#multi-level-providers">Multi Level Providers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/package.html#plugins">Plugins</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/package.html#problems">Problems</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/package.html#solutions">Solutions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/package.html#solvers">Solvers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/package.html#utilities">Utilities</a></li>
+</ul>
+</li>
+</ul>
+
+        
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../../../../index.html">PyPinT</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../../../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="../../../index.html">Module code</a> &raquo;</li>
+      
+    <li>pypint.solvers.cores.i_solver_core</li>
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main">
+            
+  <h1>Source code for pypint.solvers.cores.i_solver_core</h1><div class="highlight"><pre>
+<span class="c"># coding=utf-8</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">.. moduleauthor:: Torbjörn Klatt &lt;t.klatt@fz-juelich.de&gt;</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">pypint.utilities</span> <span class="kn">import</span> <span class="n">assert_is_instance</span>
+<span class="kn">from</span> <span class="nn">pypint.solvers.states.i_solver_state</span> <span class="kn">import</span> <span class="n">ISolverState</span>
+
+
+<div class="viewcode-block" id="ISolverCore"><a class="viewcode-back" href="../../../../api/solvers/cores/i_solver_core.html#pypint.solvers.cores.i_solver_core.ISolverCore">[docs]</a><span class="k">class</span> <span class="nc">ISolverCore</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Interface for the Solver&#39;s Cores</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">name</span> <span class="o">=</span> <span class="s">&#39;Solver Core Interface&#39;</span>
+    <span class="sd">&quot;&quot;&quot;Human readable name of the solver&#39;s core</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">pass</span>
+
+<div class="viewcode-block" id="ISolverCore.run"><a class="viewcode-back" href="../../../../api/solvers/cores/i_solver_core.html#pypint.solvers.cores.i_solver_core.ISolverCore.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Apply the solver core to the current state</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        state : :py:class:`.ISolverState`</span>
+<span class="sd">            Current state of the solver.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">assert_is_instance</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">ISolverState</span><span class="p">,</span> <span class="n">descriptor</span><span class="o">=</span><span class="s">&quot;Solver&#39;s State&quot;</span><span class="p">,</span> <span class="n">checking_obj</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="ISolverCore.compute_residual"><a class="viewcode-back" href="../../../../api/solvers/cores/i_solver_core.html#pypint.solvers.cores.i_solver_core.ISolverCore.compute_residual">[docs]</a>    <span class="k">def</span> <span class="nf">compute_residual</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Computes the residual of the current state</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        state : :py:class:`.ISolverState`</span>
+<span class="sd">            Current state of the solver.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">assert_is_instance</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">ISolverState</span><span class="p">,</span> <span class="n">descriptor</span><span class="o">=</span><span class="s">&quot;Solver&#39;s State&quot;</span><span class="p">,</span> <span class="n">checking_obj</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="ISolverCore.compute_error"><a class="viewcode-back" href="../../../../api/solvers/cores/i_solver_core.html#pypint.solvers.cores.i_solver_core.ISolverCore.compute_error">[docs]</a>    <span class="k">def</span> <span class="nf">compute_error</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Computes the error of the current state</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        state : :py:class:`.ISolverState`</span>
+<span class="sd">            Current state of the solver.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">assert_is_instance</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">ISolverState</span><span class="p">,</span> <span class="n">descriptor</span><span class="o">=</span><span class="s">&quot;Solver&#39;s State&quot;</span><span class="p">,</span> <span class="n">checking_obj</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
+
+</div></div>
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;ISolverCore&#39;</span><span class="p">]</span>
+</pre></div>
+
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+      &copy; 2013-2014,
+        <a href="http://www.fz-juelich.de/ias/jsc/EN/Research/Algorithms/ParallelInTimeIntegration/_node.html">Parallel-in-Time Research Group</a>
+        at the
+        <a href="http://www.fz-juelich.de/ias/jsc/EN/Home/home_node.html">Jülich Supercomputing Centre</a><br />
+    </p>
+  </div>
+
+  <a href="https://github.com/snide/sphinx_rtd_theme">Sphinx theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../../',
+            VERSION:'0.0.4-dev-0-g4dad7c2',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+      <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

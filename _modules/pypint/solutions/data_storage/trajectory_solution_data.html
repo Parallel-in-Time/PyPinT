@@ -1,0 +1,460 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>pypint.solutions.data_storage.trajectory_solution_data &mdash; PyPinT 0.0.4-dev-0-g4dad7c2 documentation</title>
+  
+
+  
+  
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+        <link rel="author" title="About these documents"
+              href="../../../../about.html"/>
+    <link rel="top" title="PyPinT 0.0.4-dev-0-g4dad7c2 documentation" href="../../../../index.html"/>
+        <link rel="up" title="Module code" href="../../../index.html"/> 
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-nav-search">
+        <a href="../../../../index.html" class="fa fa-home"> PyPinT</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+        
+        
+            <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../about.html">About</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../user/rationale.html">Rationale</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../../user/rationale.html#objectives">Objectives</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../user/rationale.html#goals">Goals</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../user/rationale.html#scope">Scope</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../user/requirements.html">Requirements</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../user/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../user/basic_usage.html">Basic Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api/examples/package.html">Examples</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/examples/problems/package.html">Example Problems (<tt class="docutils literal"><span class="pre">problems</span></tt>)</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../user/theory.html">Mathematical Theory</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../../user/bibliography.html">Bibliography</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../history.html">History</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../../history.html#release-0-0-3-04-04-2014">Release 0.0.3 (04/04/2014)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../history.html#release-0-0-2-04-03-2014">Release 0.0.2 (04/03/2014)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../history.html#release-0-0-1-2013-11-26">Release 0.0.1 (2013-11-26)</a></li>
+</ul>
+</li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../development/coding_style.html">Coding Style</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../development/documentation.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../development/contributing.html">Contributing</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../../development/contributing.html#branching-and-tagging-model">Branching and Tagging Model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../development/contributing.html#commit-messages">Commit Messages</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../development/contributing.html#how-to-implement-a-new-feature">How to Implement a New Feature?</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../development/testing.html">Testing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../development/todo.html">ToDos</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../../development/todo.html#global">Global</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../development/todo.html#in-source">In Source</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api/package.html">API Reference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/package.html#communicators">Communicators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/package.html#integrators">Integrators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/package.html#multi-level-providers">Multi Level Providers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/package.html#plugins">Plugins</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/package.html#problems">Problems</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/package.html#solutions">Solutions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/package.html#solvers">Solvers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/package.html#utilities">Utilities</a></li>
+</ul>
+</li>
+</ul>
+
+        
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../../../../index.html">PyPinT</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../../../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="../../../index.html">Module code</a> &raquo;</li>
+      
+    <li>pypint.solutions.data_storage.trajectory_solution_data</li>
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main">
+            
+  <h1>Source code for pypint.solutions.data_storage.trajectory_solution_data</h1><div class="highlight"><pre>
+<span class="c"># coding=utf-8</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">.. moduleauthor:: Torbjörn Klatt &lt;t.klatt@fz-juelich.de&gt;</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+
+<span class="kn">from</span> <span class="nn">pypint.solutions.data_storage.step_solution_data</span> <span class="kn">import</span> <span class="n">StepSolutionData</span>
+<span class="kn">from</span> <span class="nn">pypint.utilities</span> <span class="kn">import</span> <span class="n">assert_condition</span><span class="p">,</span> <span class="n">class_name</span>
+
+
+<div class="viewcode-block" id="TrajectorySolutionData"><a class="viewcode-back" href="../../../../api/solutions/data_storage/trajectory_solution_data.html#pypint.solutions.data_storage.trajectory_solution_data.TrajectorySolutionData">[docs]</a><span class="k">class</span> <span class="nc">TrajectorySolutionData</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Storage for a transient trajectory of solutions.</span>
+
+<span class="sd">    Basically, this is nothing more than an array of :py:class:`.StepSolutionData` objects and a couple of</span>
+<span class="sd">    utility functions for easy data access and consistency checks.</span>
+
+<span class="sd">    This class provides a selected subset of `Python&#39;s mutable sequence datatype methods`_:</span>
+
+<span class="sd">    :py:meth:`.__len__`</span>
+<span class="sd">        Returns the number of :py:class:`.StepSolutionData` objects stored in this instance.</span>
+
+<span class="sd">    :py:meth:`.__gettiem__`</span>
+<span class="sd">        Takes the 0-based index of the :py:class:`.StepSolutionData` object to query.</span>
+
+<span class="sd">    :py:meth:`.__setitem__`</span>
+<span class="sd">        Takes a :py:class:`float` representing the time point and a :py:class:`numpy.ndarray` as the rvalue.</span>
+<span class="sd">        Same as ``.add_solution_data(value=&lt;rvalue&gt;, time_point=&lt;time_point&gt;)``.</span>
+
+<span class="sd">    :py:meth:`.__iter__`</span>
+<span class="sd">        Gives an iterator over the stored :py:class:`.StepSolutionData` objects (proxies</span>
+<span class="sd">        :py:meth:`numpy.ndarray.__iter__`).</span>
+
+<span class="sd">    :py:meth:`.__contains__`</span>
+<span class="sd">        Finds the given :py:class:`.StepSolutionData` object in this sequence.</span>
+
+<span class="sd">    .. _Python&#39;s mutable sequence datatype methods: https://docs.python.org/3/library/stdtypes.html?highlight=sequence#mutable-sequence-types</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c"># self._data: numpy.ndarray of StepSolutionData instances</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">object</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_time_points</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_numeric_type</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_dim</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_finalized</span> <span class="o">=</span> <span class="bp">False</span>
+
+<div class="viewcode-block" id="TrajectorySolutionData.add_solution_data"><a class="viewcode-back" href="../../../../api/solutions/data_storage/trajectory_solution_data.html#pypint.solutions.data_storage.trajectory_solution_data.TrajectorySolutionData.add_solution_data">[docs]</a>    <span class="k">def</span> <span class="nf">add_solution_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Appends solution of a new time point to the trajectory.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        step_data : :py:class:`.StepSolutionData`</span>
+<span class="sd">            *(optional)*</span>
+<span class="sd">            In case a single unnamed argument is given, this is required to be an instance of</span>
+<span class="sd">            :py:class:`.StepSolutionData`.</span>
+<span class="sd">            If no named argument is given, the following two parameters are *not* optional.</span>
+<span class="sd">        values : :py:class:`numpy.ndarray`</span>
+<span class="sd">            *(optional)*</span>
+<span class="sd">            Solution values.</span>
+<span class="sd">            Passed on to constructor of :py:class:`.StepSolutionData`.</span>
+<span class="sd">        time_point : :py:class:`float`</span>
+<span class="sd">            *(optional)*</span>
+<span class="sd">            Time point of the solution.</span>
+<span class="sd">            Passed on to constructor of :py:class:`.StepSolutionData`.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        ValueError</span>
+
+<span class="sd">            * if construction of :py:class:`.StepSolutionData` fails</span>
+<span class="sd">            * if internal consistency check fails (see :py:meth:`._check_consistency`)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">assert_condition</span><span class="p">(</span><span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">finalized</span><span class="p">,</span> <span class="ne">AttributeError</span><span class="p">,</span>
+                         <span class="n">message</span><span class="o">=</span><span class="s">&quot;Cannot change this solution data storage any more.&quot;</span><span class="p">,</span> <span class="n">checking_obj</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
+        <span class="n">_old_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span>  <span class="c"># backup for potential rollback</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">StepSolutionData</span><span class="p">):</span>
+            <span class="n">assert_condition</span><span class="p">(</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">time_point</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">,</span> <span class="ne">ValueError</span><span class="p">,</span>
+                             <span class="n">message</span><span class="o">=</span><span class="s">&quot;Time point must not be None.&quot;</span><span class="p">,</span> <span class="n">checking_obj</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">object</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">StepSolutionData</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">object</span><span class="p">))</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_check_consistency</span><span class="p">()</span>
+        <span class="k">except</span> <span class="ne">ValueError</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
+            <span class="c"># consistency check failed, thus removing recently added solution data storage</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s">&quot;Consistency Check failed with:</span><span class="se">\n\t\t</span><span class="s">{}</span><span class="se">\n\t</span><span class="s">Not adding this solution.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">*</span><span class="n">err</span><span class="o">.</span><span class="n">args</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_data</span> <span class="o">=</span> <span class="n">_old_data</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>  <span class="c"># rollback</span>
+            <span class="k">raise</span> <span class="n">err</span>
+        <span class="k">finally</span><span class="p">:</span>
+            <span class="c"># everything ok</span>
+            <span class="k">pass</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="o">.</span><span class="n">size</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_dim</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">dim</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_numeric_type</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">numeric_type</span>
+</div>
+<div class="viewcode-block" id="TrajectorySolutionData.finalize"><a class="viewcode-back" href="../../../../api/solutions/data_storage/trajectory_solution_data.html#pypint.solutions.data_storage.trajectory_solution_data.TrajectorySolutionData.finalize">[docs]</a>    <span class="k">def</span> <span class="nf">finalize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Locks this storage data instance.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        ValueError :</span>
+<span class="sd">            If it has already been locked.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">assert_condition</span><span class="p">(</span><span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">finalized</span><span class="p">,</span> <span class="ne">AttributeError</span><span class="p">,</span>
+                         <span class="n">message</span><span class="o">=</span><span class="s">&quot;This solution data storage is already finalized.&quot;</span><span class="p">,</span> <span class="n">checking_obj</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_finalized</span> <span class="o">=</span> <span class="bp">True</span>
+</div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="TrajectorySolutionData.finalized"><a class="viewcode-back" href="../../../../api/solutions/data_storage/trajectory_solution_data.html#pypint.solutions.data_storage.trajectory_solution_data.TrajectorySolutionData.finalized">[docs]</a>    <span class="k">def</span> <span class="nf">finalized</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Accessor for the lock state.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        finilized : :py:class:`bool`</span>
+<span class="sd">            :py:class:`True` if it has been finalized before, :py:class:`False` otherwise</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_finalized</span>
+</div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="TrajectorySolutionData.data"><a class="viewcode-back" href="../../../../api/solutions/data_storage/trajectory_solution_data.html#pypint.solutions.data_storage.trajectory_solution_data.TrajectorySolutionData.data">[docs]</a>    <span class="k">def</span> <span class="nf">data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Read-only accessor for the stored solution objects.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        data : :py:class:`numpy.ndarray` of :py:class:`.StepSolutionData`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span>
+</div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="TrajectorySolutionData.time_points"><a class="viewcode-back" href="../../../../api/solutions/data_storage/trajectory_solution_data.html#pypint.solutions.data_storage.trajectory_solution_data.TrajectorySolutionData.time_points">[docs]</a>    <span class="k">def</span> <span class="nf">time_points</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Accessor for the time points of stored solution data.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        error : :py:class:`numpy.ndarray` of :py:class:`float`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">step</span><span class="o">.</span><span class="n">time_point</span> <span class="k">for</span> <span class="n">step</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float</span><span class="p">)</span>
+</div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="TrajectorySolutionData.values"><a class="viewcode-back" href="../../../../api/solutions/data_storage/trajectory_solution_data.html#pypint.solutions.data_storage.trajectory_solution_data.TrajectorySolutionData.values">[docs]</a>    <span class="k">def</span> <span class="nf">values</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Accessor for the solution values of stored solution data.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        error : :py:class:`numpy.ndarray` of :py:class:`.numeric_type`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">step</span><span class="o">.</span><span class="n">value</span> <span class="k">for</span> <span class="n">step</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">object</span><span class="p">)</span>
+</div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="TrajectorySolutionData.errors"><a class="viewcode-back" href="../../../../api/solutions/data_storage/trajectory_solution_data.html#pypint.solutions.data_storage.trajectory_solution_data.TrajectorySolutionData.errors">[docs]</a>    <span class="k">def</span> <span class="nf">errors</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Accessor for the errors of stored solution data.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        error : :py:class:`numpy.ndarray` of :py:class:`.Error`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">step</span><span class="o">.</span><span class="n">error</span> <span class="k">for</span> <span class="n">step</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">object</span><span class="p">)</span>
+</div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="TrajectorySolutionData.residuals"><a class="viewcode-back" href="../../../../api/solutions/data_storage/trajectory_solution_data.html#pypint.solutions.data_storage.trajectory_solution_data.TrajectorySolutionData.residuals">[docs]</a>    <span class="k">def</span> <span class="nf">residuals</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Accessor for the residuals of stored solution data.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        error : :py:class:`numpy.ndarray` of :py:class:`.Residual`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">step</span><span class="o">.</span><span class="n">residual</span> <span class="k">for</span> <span class="n">step</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">object</span><span class="p">)</span>
+</div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="TrajectorySolutionData.numeric_type"><a class="viewcode-back" href="../../../../api/solutions/data_storage/trajectory_solution_data.html#pypint.solutions.data_storage.trajectory_solution_data.TrajectorySolutionData.numeric_type">[docs]</a>    <span class="k">def</span> <span class="nf">numeric_type</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Read-only accessor for the numeric type of the solution data values.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_numeric_type</span>
+</div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="TrajectorySolutionData.dim"><a class="viewcode-back" href="../../../../api/solutions/data_storage/trajectory_solution_data.html#pypint.solutions.data_storage.trajectory_solution_data.TrajectorySolutionData.dim">[docs]</a>    <span class="k">def</span> <span class="nf">dim</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Read-only accessor for the spacial dimension of the solution data values.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dim</span>
+</div>
+<div class="viewcode-block" id="TrajectorySolutionData._check_consistency"><a class="viewcode-back" href="../../../../api/solutions/data_storage/trajectory_solution_data.html#pypint.solutions.data_storage.trajectory_solution_data.TrajectorySolutionData._check_consistency">[docs]</a>    <span class="k">def</span> <span class="nf">_check_consistency</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Checks for consistency of spacial dimension and numeric type of stored steps.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        ValueError :</span>
+
+<span class="sd">            * if the numeric type of at least one step does not match :py:attr:`.numeric_type`</span>
+<span class="sd">            * if the spacial dimension of at least one step does not match :py:attr:`.dim`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="o">.</span><span class="n">size</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">_time_point</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">time_point</span>
+            <span class="k">for</span> <span class="n">step</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">size</span><span class="p">):</span>
+                <span class="n">assert_condition</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">step</span><span class="p">]</span><span class="o">.</span><span class="n">time_point</span> <span class="o">&gt;</span> <span class="n">_time_point</span><span class="p">,</span> <span class="ne">ValueError</span><span class="p">,</span>
+                                 <span class="n">message</span><span class="o">=</span><span class="s">&quot;Time points must be strictly increasing: {:f} &lt;= {:f}&quot;</span>
+                                         <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">step</span><span class="p">]</span><span class="o">.</span><span class="n">time_point</span><span class="p">,</span> <span class="n">_time_point</span><span class="p">),</span>
+                                 <span class="n">checking_obj</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
+                <span class="n">assert_condition</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">step</span><span class="p">]</span><span class="o">.</span><span class="n">numeric_type</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">numeric_type</span><span class="p">,</span>
+                                 <span class="ne">ValueError</span><span class="p">,</span>
+                                 <span class="n">message</span><span class="o">=</span><span class="p">(</span><span class="s">&quot;Numeric type of step {:d} does not match global numeric type: &quot;</span>
+                                          <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">step</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">numeric_type</span><span class="p">)</span> <span class="o">+</span>
+                                          <span class="s">&quot;{} != {}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">step</span><span class="p">]</span><span class="o">.</span><span class="n">numeric_type</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">numeric_type</span><span class="p">)),</span>
+                                 <span class="n">checking_obj</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
+                <span class="n">assert_condition</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">step</span><span class="p">]</span><span class="o">.</span><span class="n">dim</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">dim</span><span class="p">,</span>
+                                 <span class="ne">ValueError</span><span class="p">,</span>
+                                 <span class="n">message</span><span class="o">=</span><span class="p">(</span><span class="s">&quot;Spacial dimension of step {:d} does not match global spacial dimension: &quot;</span>
+                                          <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">step</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dim</span><span class="p">)</span> <span class="o">+</span>
+                                          <span class="s">&quot;{:s} != {:s}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">step</span><span class="p">]</span><span class="o">.</span><span class="n">dim</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dim</span><span class="p">)),</span>
+                                 <span class="n">checking_obj</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="TrajectorySolutionData.append"><a class="viewcode-back" href="../../../../api/solutions/data_storage/trajectory_solution_data.html#pypint.solutions.data_storage.trajectory_solution_data.TrajectorySolutionData.append">[docs]</a>    <span class="k">def</span> <span class="nf">append</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p_object</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        See Also</span>
+<span class="sd">        --------</span>
+<span class="sd">        :py:meth:`.add_solution_data` : with one unnamed parameter</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_solution_data</span><span class="p">(</span><span class="n">p_object</span><span class="p">)</span>
+</div>
+    <span class="k">def</span> <span class="nf">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="o">.</span><span class="n">size</span>
+
+    <span class="k">def</span> <span class="nf">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">[</span><span class="n">item</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">__setitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_solution_data</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="n">value</span><span class="p">,</span> <span class="n">time_point</span><span class="o">=</span><span class="n">key</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">iter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__contains__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
+        <span class="n">assert_condition</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">StepSolutionData</span><span class="p">),</span> <span class="ne">TypeError</span><span class="p">,</span>
+                         <span class="n">message</span><span class="o">=</span><span class="s">&quot;Item must be a StepSolutionData: NOT {}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">class_name</span><span class="p">(</span><span class="n">item</span><span class="p">)),</span>
+                         <span class="n">checking_obj</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">elem</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">elem</span> <span class="o">==</span> <span class="n">item</span><span class="p">:</span>
+                <span class="k">return</span> <span class="bp">True</span>
+        <span class="k">return</span> <span class="bp">False</span>
+
+    <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s">&quot;TrajectorySolutionData(data={}, time_points={})&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">time_points</span><span class="p">)</span>
+
+</div>
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;TrajectorySolutionData&#39;</span><span class="p">]</span>
+</pre></div>
+
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+      &copy; 2013-2014,
+        <a href="http://www.fz-juelich.de/ias/jsc/EN/Research/Algorithms/ParallelInTimeIntegration/_node.html">Parallel-in-Time Research Group</a>
+        at the
+        <a href="http://www.fz-juelich.de/ias/jsc/EN/Home/home_node.html">Jülich Supercomputing Centre</a><br />
+    </p>
+  </div>
+
+  <a href="https://github.com/snide/sphinx_rtd_theme">Sphinx theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../../',
+            VERSION:'0.0.4-dev-0-g4dad7c2',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+      <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

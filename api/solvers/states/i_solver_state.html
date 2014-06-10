@@ -1,0 +1,1149 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Solver States Interfaces (i_solver_state) &mdash; PyPinT 0.0.4-dev-0-g4dad7c2 documentation</title>
+  
+
+  
+  
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+        <link rel="author" title="About these documents"
+              href="../../../about.html"/>
+    <link rel="top" title="PyPinT 0.0.4-dev-0-g4dad7c2 documentation" href="../../../index.html"/>
+        <link rel="up" title="Solver States (states)" href="package.html"/>
+        <link rel="next" title="SDC Solver States (sdc_solver_state)" href="sdc_solver_state.html"/>
+        <link rel="prev" title="Solver States (states)" href="package.html"/> 
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-nav-search">
+        <a href="../../../index.html" class="fa fa-home"> PyPinT</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+        
+        
+            <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../about.html">About</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user/rationale.html">Rationale</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../user/rationale.html#objectives">Objectives</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../user/rationale.html#goals">Goals</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../user/rationale.html#scope">Scope</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user/requirements.html">Requirements</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user/basic_usage.html">Basic Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../examples/package.html">Examples</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../examples/problems/package.html">Example Problems (<tt class="docutils literal"><span class="pre">problems</span></tt>)</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user/theory.html">Mathematical Theory</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../user/bibliography.html">Bibliography</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../history.html">History</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../history.html#release-0-0-3-04-04-2014">Release 0.0.3 (04/04/2014)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../history.html#release-0-0-2-04-03-2014">Release 0.0.2 (04/03/2014)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../history.html#release-0-0-1-2013-11-26">Release 0.0.1 (2013-11-26)</a></li>
+</ul>
+</li>
+</ul>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../development/coding_style.html">Coding Style</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../development/documentation.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../development/contributing.html">Contributing</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../development/contributing.html#branching-and-tagging-model">Branching and Tagging Model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../development/contributing.html#commit-messages">Commit Messages</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../development/contributing.html#how-to-implement-a-new-feature">How to Implement a New Feature?</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../development/testing.html">Testing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../development/todo.html">ToDos</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../development/todo.html#global">Global</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../development/todo.html#in-source">In Source</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../package.html">API Reference</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../package.html#communicators">Communicators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../package.html#integrators">Integrators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../package.html#multi-level-providers">Multi Level Providers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../package.html#plugins">Plugins</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../package.html#problems">Problems</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../package.html#solutions">Solutions</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../../package.html#solvers">Solvers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../package.html#utilities">Utilities</a></li>
+</ul>
+</li>
+</ul>
+
+        
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../../../index.html">PyPinT</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="../../package.html">PyPinT Package</a> &raquo;</li>
+      
+          <li><a href="../package.html">Solvers (<tt class="docutils literal"><span class="pre">solvers</span></tt>)</a> &raquo;</li>
+      
+          <li><a href="package.html">Solver States (<tt class="docutils literal"><span class="pre">states</span></tt>)</a> &raquo;</li>
+      
+    <li>Solver States Interfaces (<tt class="docutils literal"><span class="pre">i_solver_state</span></tt>)</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          <a href="../../../_sources/api/solvers/states/i_solver_state.txt" rel="nofollow"> View page source</a>
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main">
+            
+  <div class="section" id="module-pypint.solvers.states.i_solver_state">
+<span id="solver-states-interfaces-i-solver-state"></span><h1>Solver States Interfaces (<tt class="xref py py-mod docutils literal"><span class="pre">i_solver_state</span></tt>)<a class="headerlink" href="#module-pypint.solvers.states.i_solver_state" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="pypint.solvers.states.i_solver_state.IStepState">
+<em class="property">class </em><tt class="descclassname">pypint.solvers.states.i_solver_state.</tt><tt class="descname">IStepState</tt><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/pypint/solvers/states/i_solver_state.html#IStepState"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypint.solvers.states.i_solver_state.IStepState" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">builtins.object</span></tt></p>
+<p>State of a single integration step</p>
+<p>A integration step is a single point in time.</p>
+<dl class="method">
+<dt id="pypint.solvers.states.i_solver_state.IStepState.done">
+<tt class="descname">done</tt><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/pypint/solvers/states/i_solver_state.html#IStepState.done"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypint.solvers.states.i_solver_state.IStepState.done" title="Permalink to this definition">¶</a></dt>
+<dd><p>Finalize this state and its included solution</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pypint.solvers.states.i_solver_state.IStepState.__weakref__">
+<tt class="descname">__weakref__</tt><a class="headerlink" href="#pypint.solvers.states.i_solver_state.IStepState.__weakref__" title="Permalink to this definition">¶</a></dt>
+<dd><p>list of weak references to the object (if defined)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pypint.solvers.states.i_solver_state.IStepState.delta_tau">
+<tt class="descname">delta_tau</tt><a class="reference internal" href="../../../_modules/pypint/solvers/states/i_solver_state.html#IStepState.delta_tau"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypint.solvers.states.i_solver_state.IStepState.delta_tau" title="Permalink to this definition">¶</a></dt>
+<dd><p>Accessor for the width of the integration step</p>
+<p>Usually the distance to the previous integration node.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>delta_tau</strong></td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><tt class="xref py py-class docutils literal"><span class="pre">float</span></tt></td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><tt class="xref py py-exc docutils literal"><span class="pre">ValueError</span></tt> &#8211; 
+if <tt class="docutils literal"><span class="pre">delta_tau</span></tt> is not non-zero positive</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pypint.solvers.states.i_solver_state.IStepState.integral">
+<tt class="descname">integral</tt><a class="reference internal" href="../../../_modules/pypint/solvers/states/i_solver_state.html#IStepState.integral"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypint.solvers.states.i_solver_state.IStepState.integral" title="Permalink to this definition">¶</a></dt>
+<dd><p>Accessor for an integral value</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>integral</strong> (<tt class="xref py py-class docutils literal"><span class="pre">float</span></tt>) &#8211; (no consistency checks are done)</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pypint.solvers.states.i_solver_state.IStepState.solution">
+<tt class="descname">solution</tt><a class="reference internal" href="../../../_modules/pypint/solvers/states/i_solver_state.html#IStepState.solution"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypint.solvers.states.i_solver_state.IStepState.solution" title="Permalink to this definition">¶</a></dt>
+<dd><p>Proxy to the included solution of the state</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>solution</strong></td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="../../solutions/data_storage/step_solution_data.html#pypint.solutions.data_storage.step_solution_data.StepSolutionData" title="pypint.solutions.data_storage.step_solution_data.StepSolutionData"><tt class="xref py py-class docutils literal"><span class="pre">StepSolutionData</span></tt></a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pypint.solvers.states.i_solver_state.IStepState.time_point">
+<tt class="descname">time_point</tt><a class="reference internal" href="../../../_modules/pypint/solvers/states/i_solver_state.html#IStepState.time_point"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypint.solvers.states.i_solver_state.IStepState.time_point" title="Permalink to this definition">¶</a></dt>
+<dd><p>Proxy for <a class="reference internal" href="../../solutions/data_storage/step_solution_data.html#pypint.solutions.data_storage.step_solution_data.StepSolutionData.time_point" title="pypint.solutions.data_storage.step_solution_data.StepSolutionData.time_point"><tt class="xref py py-attr docutils literal"><span class="pre">StepSolutionData.time_point</span></tt></a></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pypint.solvers.states.i_solver_state.IStepState.value">
+<tt class="descname">value</tt><a class="reference internal" href="../../../_modules/pypint/solvers/states/i_solver_state.html#IStepState.value"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypint.solvers.states.i_solver_state.IStepState.value" title="Permalink to this definition">¶</a></dt>
+<dd><p>Proxy for the solution value</p>
+<p>On setting, the right hand side evaluation (<tt class="xref py py-attr docutils literal"><span class="pre">rhs</span></tt>) gets reset.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="pypint.solvers.states.i_solver_state.IStateIterator">
+<em class="property">class </em><tt class="descclassname">pypint.solvers.states.i_solver_state.</tt><tt class="descname">IStateIterator</tt><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/pypint/solvers/states/i_solver_state.html#IStateIterator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypint.solvers.states.i_solver_state.IStateIterator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">builtins.object</span></tt></p>
+<p>Interface for a sequence of states</p>
+<p><a class="reference internal" href="#pypint.solvers.states.i_solver_state.IStateIterator" title="pypint.solvers.states.i_solver_state.IStateIterator"><tt class="xref py py-class docutils literal"><span class="pre">IStateIterator</span></tt></a> models a sequence of states allowing for easy iteration over all containing states.</p>
+<div class="admonition-examples admonition">
+<p class="first admonition-title">Examples</p>
+<div class="last highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">pypint.solutions.data_storage</span> <span class="kn">import</span> <span class="n">TrajectorySolutionData</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">my_states</span> <span class="o">=</span> <span class="n">IStateIterator</span><span class="p">(</span><span class="n">solution_class</span><span class="o">=</span><span class="n">TrajectorySolutionData</span><span class="p">,</span> <span class="n">element_type</span><span class="o">=</span><span class="n">IStepState</span><span class="p">,</span> <span class="n">num_states</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">len</span><span class="p">(</span><span class="n">my_states</span><span class="p">)</span>
+<span class="go">3</span>
+</pre></div>
+</div>
+</div>
+<div class="admonition-notes admonition">
+<p class="first admonition-title">Notes</p>
+<p class="last">Please keep in mind, that only derived classes can alter the currently accesable state.
+Such a class is <a class="reference internal" href="#pypint.solvers.states.i_solver_state.IStaticStateIterator" title="pypint.solvers.states.i_solver_state.IStaticStateIterator"><tt class="xref py py-class docutils literal"><span class="pre">IStaticStateIterator</span></tt></a>.</p>
+</div>
+<dl class="method">
+<dt id="pypint.solvers.states.i_solver_state.IStateIterator.__init__">
+<tt class="descname">__init__</tt><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/pypint/solvers/states/i_solver_state.html#IStateIterator.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypint.solvers.states.i_solver_state.IStateIterator.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>num_states</strong> (<tt class="xref py py-class docutils literal"><span class="pre">int</span></tt>) &#8211; <em>(optional)</em></td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><tt class="xref py py-exc docutils literal"><span class="pre">ValueError</span></tt> &#8211; 
+if <tt class="docutils literal"><span class="pre">num_states</span></tt> is not a non-zero positive integer</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="pypint.solvers.states.i_solver_state.IStateIterator.finalize">
+<tt class="descname">finalize</tt><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/pypint/solvers/states/i_solver_state.html#IStateIterator.finalize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypint.solvers.states.i_solver_state.IStateIterator.finalize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Finalize this sequence of states</p>
+<p>This copies the solution data from all containing states to its own solution object and finalizes it.
+As well, the <a class="reference internal" href="#pypint.solvers.states.i_solver_state.IStateIterator.current_index" title="pypint.solvers.states.i_solver_state.IStateIterator.current_index"><tt class="xref py py-attr docutils literal"><span class="pre">current_index</span></tt></a> is reset to zero.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><tt class="xref py py-exc docutils literal"><span class="pre">RuntimeError</span></tt> &#8211; 
+if this state has already been finalized</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pypint.solvers.states.i_solver_state.IStateIterator.__weakref__">
+<tt class="descname">__weakref__</tt><a class="headerlink" href="#pypint.solvers.states.i_solver_state.IStateIterator.__weakref__" title="Permalink to this definition">¶</a></dt>
+<dd><p>list of weak references to the object (if defined)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pypint.solvers.states.i_solver_state.IStateIterator.current">
+<tt class="descname">current</tt><a class="reference internal" href="../../../_modules/pypint/solvers/states/i_solver_state.html#IStateIterator.current"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypint.solvers.states.i_solver_state.IStateIterator.current" title="Permalink to this definition">¶</a></dt>
+<dd><p>Accessor to the current state of this sequence</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pypint.solvers.states.i_solver_state.IStateIterator.current_index">
+<tt class="descname">current_index</tt><a class="reference internal" href="../../../_modules/pypint/solvers/states/i_solver_state.html#IStateIterator.current_index"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypint.solvers.states.i_solver_state.IStateIterator.current_index" title="Permalink to this definition">¶</a></dt>
+<dd><p>Index of the current state of this sequence</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pypint.solvers.states.i_solver_state.IStateIterator.finalized">
+<tt class="descname">finalized</tt><a class="reference internal" href="../../../_modules/pypint/solvers/states/i_solver_state.html#IStateIterator.finalized"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypint.solvers.states.i_solver_state.IStateIterator.finalized" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read-only accessor to determine the finalized state of this state sequence</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><tt class="xref py py-exc docutils literal"><span class="pre">RuntimeError</span></tt> &#8211; 
+if this object is finalized but its containing solution object is not
+(though, this should never happen)</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pypint.solvers.states.i_solver_state.IStateIterator.first">
+<tt class="descname">first</tt><a class="reference internal" href="../../../_modules/pypint/solvers/states/i_solver_state.html#IStateIterator.first"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypint.solvers.states.i_solver_state.IStateIterator.first" title="Permalink to this definition">¶</a></dt>
+<dd><p>Accessor to the first state of this sequence</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>first</strong> &#8211;
+if <a class="reference internal" href="#pypint.solvers.states.i_solver_state.IStateIterator.first_index" title="pypint.solvers.states.i_solver_state.IStateIterator.first_index"><tt class="xref py py-attr docutils literal"><span class="pre">first_index</span></tt></a> returns <tt class="xref py py-class docutils literal"><span class="pre">None</span></tt></td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><tt class="xref py py-class docutils literal"><span class="pre">None</span></tt></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pypint.solvers.states.i_solver_state.IStateIterator.first_index">
+<tt class="descname">first_index</tt><a class="reference internal" href="../../../_modules/pypint/solvers/states/i_solver_state.html#IStateIterator.first_index"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypint.solvers.states.i_solver_state.IStateIterator.first_index" title="Permalink to this definition">¶</a></dt>
+<dd><p>Index of the first state of this seuqence</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>first_index</strong> &#8211;
+<tt class="xref py py-class docutils literal"><span class="pre">None</span></tt> is returned, if there are no states in this sequence</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><tt class="docutils literal"><span class="pre">0</span></tt> or <tt class="xref py py-class docutils literal"><span class="pre">None</span></tt></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pypint.solvers.states.i_solver_state.IStateIterator.last">
+<tt class="descname">last</tt><a class="reference internal" href="../../../_modules/pypint/solvers/states/i_solver_state.html#IStateIterator.last"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypint.solvers.states.i_solver_state.IStateIterator.last" title="Permalink to this definition">¶</a></dt>
+<dd><p>Accessor for the last state in this sequence</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>last</strong> &#8211;
+<tt class="xref py py-class docutils literal"><span class="pre">None</span></tt> if <a class="reference internal" href="#pypint.solvers.states.i_solver_state.IStateIterator.last_index" title="pypint.solvers.states.i_solver_state.IStateIterator.last_index"><tt class="xref py py-attr docutils literal"><span class="pre">last_index</span></tt></a> is <tt class="xref py py-class docutils literal"><span class="pre">None</span></tt></td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="#pypint.solvers.states.i_solver_state.IStepState" title="pypint.solvers.states.i_solver_state.IStepState"><tt class="xref py py-class docutils literal"><span class="pre">IStepState</span></tt></a>, <a class="reference internal" href="#pypint.solvers.states.i_solver_state.IStateIterator" title="pypint.solvers.states.i_solver_state.IStateIterator"><tt class="xref py py-class docutils literal"><span class="pre">IStateIterator</span></tt></a> or <tt class="xref py py-class docutils literal"><span class="pre">None</span></tt></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pypint.solvers.states.i_solver_state.IStateIterator.last_index">
+<tt class="descname">last_index</tt><a class="reference internal" href="../../../_modules/pypint/solvers/states/i_solver_state.html#IStateIterator.last_index"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypint.solvers.states.i_solver_state.IStateIterator.last_index" title="Permalink to this definition">¶</a></dt>
+<dd><p>Index of the last state in this sequence</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>last_index</strong> &#8211;
+<tt class="xref py py-class docutils literal"><span class="pre">None</span></tt> if there are no states in this sequence</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><tt class="xref py py-class docutils literal"><span class="pre">int</span></tt> or <tt class="xref py py-class docutils literal"><span class="pre">None</span></tt></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pypint.solvers.states.i_solver_state.IStateIterator.previous">
+<tt class="descname">previous</tt><a class="reference internal" href="../../../_modules/pypint/solvers/states/i_solver_state.html#IStateIterator.previous"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypint.solvers.states.i_solver_state.IStateIterator.previous" title="Permalink to this definition">¶</a></dt>
+<dd><p>Accessor to the previous state of this sequence</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>previous</strong> &#8211;
+<tt class="xref py py-class docutils literal"><span class="pre">None</span></tt> if <a class="reference internal" href="#pypint.solvers.states.i_solver_state.IStateIterator.previous_index" title="pypint.solvers.states.i_solver_state.IStateIterator.previous_index"><tt class="xref py py-attr docutils literal"><span class="pre">previous_index</span></tt></a> returns <tt class="xref py py-class docutils literal"><span class="pre">None</span></tt></td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="#pypint.solvers.states.i_solver_state.IStepState" title="pypint.solvers.states.i_solver_state.IStepState"><tt class="xref py py-class docutils literal"><span class="pre">IStepState</span></tt></a>, <a class="reference internal" href="#pypint.solvers.states.i_solver_state.IStateIterator" title="pypint.solvers.states.i_solver_state.IStateIterator"><tt class="xref py py-class docutils literal"><span class="pre">IStateIterator</span></tt></a> or <tt class="xref py py-class docutils literal"><span class="pre">None</span></tt></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pypint.solvers.states.i_solver_state.IStateIterator.previous_index">
+<tt class="descname">previous_index</tt><a class="reference internal" href="../../../_modules/pypint/solvers/states/i_solver_state.html#IStateIterator.previous_index"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypint.solvers.states.i_solver_state.IStateIterator.previous_index" title="Permalink to this definition">¶</a></dt>
+<dd><p>Index of the previous state of this sequence</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>previous_index</strong> &#8211;
+<tt class="xref py py-class docutils literal"><span class="pre">None</span></tt> if no previous state is available, i.e. if <a class="reference internal" href="#pypint.solvers.states.i_solver_state.IStateIterator.current_index" title="pypint.solvers.states.i_solver_state.IStateIterator.current_index"><tt class="xref py py-attr docutils literal"><span class="pre">current_index</span></tt></a> is 0</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><tt class="xref py py-class docutils literal"><span class="pre">int</span></tt> or <tt class="xref py py-class docutils literal"><span class="pre">None</span></tt></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pypint.solvers.states.i_solver_state.IStateIterator.solution">
+<tt class="descname">solution</tt><a class="reference internal" href="../../../_modules/pypint/solvers/states/i_solver_state.html#IStateIterator.solution"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypint.solvers.states.i_solver_state.IStateIterator.solution" title="Permalink to this definition">¶</a></dt>
+<dd><p>Accessor for the containing solution object</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="pypint.solvers.states.i_solver_state.IStaticStateIterator">
+<em class="property">class </em><tt class="descclassname">pypint.solvers.states.i_solver_state.</tt><tt class="descname">IStaticStateIterator</tt><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/pypint/solvers/states/i_solver_state.html#IStaticStateIterator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypint.solvers.states.i_solver_state.IStaticStateIterator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#pypint.solvers.states.i_solver_state.IStateIterator" title="pypint.solvers.states.i_solver_state.IStateIterator"><tt class="xref py py-class docutils literal"><span class="pre">pypint.solvers.states.i_solver_state.IStateIterator</span></tt></a></p>
+<p>Specialized sequence of states with fixed number of states</p>
+<dl class="method">
+<dt id="pypint.solvers.states.i_solver_state.IStaticStateIterator.proceed">
+<tt class="descname">proceed</tt><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/pypint/solvers/states/i_solver_state.html#IStaticStateIterator.proceed"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypint.solvers.states.i_solver_state.IStaticStateIterator.proceed" title="Permalink to this definition">¶</a></dt>
+<dd><p>Proceed <a class="reference internal" href="#pypint.solvers.states.i_solver_state.IStateIterator.current" title="pypint.solvers.states.i_solver_state.IStateIterator.current"><tt class="xref py py-attr docutils literal"><span class="pre">current</span></tt></a> to the next state in the sequence</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><tt class="xref py py-exc docutils literal"><span class="pre">RuntimeError</span></tt> &#8211; 
+if this sequence has already been finalized via <a class="reference internal" href="#pypint.solvers.states.i_solver_state.IStateIterator.finalize" title="pypint.solvers.states.i_solver_state.IStateIterator.finalize"><tt class="xref py py-meth docutils literal"><span class="pre">IStateIterator.finalize()</span></tt></a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pypint.solvers.states.i_solver_state.IStaticStateIterator.next">
+<tt class="descname">next</tt><a class="reference internal" href="../../../_modules/pypint/solvers/states/i_solver_state.html#IStaticStateIterator.next"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypint.solvers.states.i_solver_state.IStaticStateIterator.next" title="Permalink to this definition">¶</a></dt>
+<dd><p>Accessor for the next state in this sequence</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>next</strong> &#8211;
+<tt class="xref py py-class docutils literal"><span class="pre">None</span></tt> if <a class="reference internal" href="#pypint.solvers.states.i_solver_state.IStaticStateIterator.next_index" title="pypint.solvers.states.i_solver_state.IStaticStateIterator.next_index"><tt class="xref py py-attr docutils literal"><span class="pre">next_index</span></tt></a> is <tt class="xref py py-class docutils literal"><span class="pre">None</span></tt></td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="#pypint.solvers.states.i_solver_state.IStepState" title="pypint.solvers.states.i_solver_state.IStepState"><tt class="xref py py-class docutils literal"><span class="pre">IStepState</span></tt></a>, <a class="reference internal" href="#pypint.solvers.states.i_solver_state.IStateIterator" title="pypint.solvers.states.i_solver_state.IStateIterator"><tt class="xref py py-class docutils literal"><span class="pre">IStateIterator</span></tt></a> or <tt class="xref py py-class docutils literal"><span class="pre">None</span></tt></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pypint.solvers.states.i_solver_state.IStaticStateIterator.next_index">
+<tt class="descname">next_index</tt><a class="reference internal" href="../../../_modules/pypint/solvers/states/i_solver_state.html#IStaticStateIterator.next_index"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypint.solvers.states.i_solver_state.IStaticStateIterator.next_index" title="Permalink to this definition">¶</a></dt>
+<dd><p>Index of the next state in this sequence</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>next_index</strong> &#8211;
+<tt class="xref py py-class docutils literal"><span class="pre">None</span></tt> if <a class="reference internal" href="#pypint.solvers.states.i_solver_state.IStateIterator.current" title="pypint.solvers.states.i_solver_state.IStateIterator.current"><tt class="xref py py-attr docutils literal"><span class="pre">current</span></tt></a> is already the last state in this sequence</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><tt class="xref py py-class docutils literal"><span class="pre">int</span></tt> or <tt class="xref py py-class docutils literal"><span class="pre">None</span></tt></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="pypint.solvers.states.i_solver_state.ITimeStepState">
+<em class="property">class </em><tt class="descclassname">pypint.solvers.states.i_solver_state.</tt><tt class="descname">ITimeStepState</tt><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/pypint/solvers/states/i_solver_state.html#ITimeStepState"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypint.solvers.states.i_solver_state.ITimeStepState" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#pypint.solvers.states.i_solver_state.IStaticStateIterator" title="pypint.solvers.states.i_solver_state.IStaticStateIterator"><tt class="xref py py-class docutils literal"><span class="pre">pypint.solvers.states.i_solver_state.IStaticStateIterator</span></tt></a></p>
+<p>Stores integration step states of a single time step.</p>
+<dl class="method">
+<dt id="pypint.solvers.states.i_solver_state.ITimeStepState.__init__">
+<tt class="descname">__init__</tt><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/pypint/solvers/states/i_solver_state.html#ITimeStepState.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypint.solvers.states.i_solver_state.ITimeStepState.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>num_states</strong> (<tt class="xref py py-class docutils literal"><span class="pre">int</span></tt>) &#8211; number of states in this sequence</li>
+<li><strong>solution_class</strong> (<a class="reference internal" href="../../solutions/data_storage/trajectory_solution_data.html#pypint.solutions.data_storage.trajectory_solution_data.TrajectorySolutionData" title="pypint.solutions.data_storage.trajectory_solution_data.TrajectorySolutionData"><tt class="xref py py-class docutils literal"><span class="pre">TrajectorySolutionData</span></tt></a> or <a class="reference internal" href="../../solutions/data_storage/step_solution_data.html#pypint.solutions.data_storage.step_solution_data.StepSolutionData" title="pypint.solutions.data_storage.step_solution_data.StepSolutionData"><tt class="xref py py-class docutils literal"><span class="pre">StepSolutionData</span></tt></a>) &#8211; <em>(optional)</em>
+defaults to <a class="reference internal" href="../../solutions/data_storage/trajectory_solution_data.html#pypint.solutions.data_storage.trajectory_solution_data.TrajectorySolutionData" title="pypint.solutions.data_storage.trajectory_solution_data.TrajectorySolutionData"><tt class="xref py py-class docutils literal"><span class="pre">TrajectorySolutionData</span></tt></a></li>
+<li><strong>element_type</strong> (<a class="reference internal" href="#pypint.solvers.states.i_solver_state.IStepState" title="pypint.solvers.states.i_solver_state.IStepState"><tt class="xref py py-class docutils literal"><span class="pre">IStepState</span></tt></a> or <a class="reference internal" href="#pypint.solvers.states.i_solver_state.IStateIterator" title="pypint.solvers.states.i_solver_state.IStateIterator"><tt class="xref py py-class docutils literal"><span class="pre">IStateIterator</span></tt></a>) &#8211; <em>(optional)</em>
+defaults to <a class="reference internal" href="#pypint.solvers.states.i_solver_state.IStepState" title="pypint.solvers.states.i_solver_state.IStepState"><tt class="xref py py-class docutils literal"><span class="pre">IStepState</span></tt></a></li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><tt class="xref py py-exc docutils literal"><span class="pre">ValueError</span></tt> &#8211; 
+if <tt class="docutils literal"><span class="pre">num_states</span></tt> is not given</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pypint.solvers.states.i_solver_state.ITimeStepState.current_step">
+<tt class="descname">current_step</tt><a class="reference internal" href="../../../_modules/pypint/solvers/states/i_solver_state.html#ITimeStepState.current_step"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypint.solvers.states.i_solver_state.ITimeStepState.current_step" title="Permalink to this definition">¶</a></dt>
+<dd><p>Proxy for <a class="reference internal" href="#pypint.solvers.states.i_solver_state.IStateIterator.current" title="pypint.solvers.states.i_solver_state.IStateIterator.current"><tt class="xref py py-attr docutils literal"><span class="pre">current</span></tt></a></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pypint.solvers.states.i_solver_state.ITimeStepState.current_step_index">
+<tt class="descname">current_step_index</tt><a class="reference internal" href="../../../_modules/pypint/solvers/states/i_solver_state.html#ITimeStepState.current_step_index"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypint.solvers.states.i_solver_state.ITimeStepState.current_step_index" title="Permalink to this definition">¶</a></dt>
+<dd><p>Proxy for <a class="reference internal" href="#pypint.solvers.states.i_solver_state.IStateIterator.current_index" title="pypint.solvers.states.i_solver_state.IStateIterator.current_index"><tt class="xref py py-attr docutils literal"><span class="pre">current_index</span></tt></a></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pypint.solvers.states.i_solver_state.ITimeStepState.current_time_point">
+<tt class="descname">current_time_point</tt><a class="reference internal" href="../../../_modules/pypint/solvers/states/i_solver_state.html#ITimeStepState.current_time_point"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypint.solvers.states.i_solver_state.ITimeStepState.current_time_point" title="Permalink to this definition">¶</a></dt>
+<dd><p>Accessor for the current step&#8217;s time point</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>current_time_point</strong> &#8211;
+<tt class="xref py py-class docutils literal"><span class="pre">None</span></tt> is returned if <a class="reference internal" href="#pypint.solvers.states.i_solver_state.ITimeStepState.current_step" title="pypint.solvers.states.i_solver_state.ITimeStepState.current_step"><tt class="xref py py-attr docutils literal"><span class="pre">current_step</span></tt></a> is <tt class="xref py py-class docutils literal"><span class="pre">None</span></tt></td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><tt class="xref py py-class docutils literal"><span class="pre">float</span></tt> or <tt class="xref py py-class docutils literal"><span class="pre">None</span></tt></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pypint.solvers.states.i_solver_state.ITimeStepState.delta_time_step">
+<tt class="descname">delta_time_step</tt><a class="reference internal" href="../../../_modules/pypint/solvers/states/i_solver_state.html#ITimeStepState.delta_time_step"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypint.solvers.states.i_solver_state.ITimeStepState.delta_time_step" title="Permalink to this definition">¶</a></dt>
+<dd><p>Accessor for the width of the time step</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>width_of_time_step</strong></td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><tt class="xref py py-class docutils literal"><span class="pre">float</span></tt></td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><tt class="xref py py-exc docutils literal"><span class="pre">ValueError</span></tt> &#8211; 
+<em>(only setter)</em>
+if <tt class="docutils literal"><span class="pre">delta_time_step</span></tt> is not a non-zero positive <tt class="xref py py-class docutils literal"><span class="pre">float</span></tt></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pypint.solvers.states.i_solver_state.ITimeStepState.initial">
+<tt class="descname">initial</tt><a class="reference internal" href="../../../_modules/pypint/solvers/states/i_solver_state.html#ITimeStepState.initial"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypint.solvers.states.i_solver_state.ITimeStepState.initial" title="Permalink to this definition">¶</a></dt>
+<dd><p>Accessor for the initial value of this time step</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pypint.solvers.states.i_solver_state.ITimeStepState.last_step">
+<tt class="descname">last_step</tt><a class="reference internal" href="../../../_modules/pypint/solvers/states/i_solver_state.html#ITimeStepState.last_step"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypint.solvers.states.i_solver_state.ITimeStepState.last_step" title="Permalink to this definition">¶</a></dt>
+<dd><p>Proxy for <a class="reference internal" href="#pypint.solvers.states.i_solver_state.IStateIterator.last" title="pypint.solvers.states.i_solver_state.IStateIterator.last"><tt class="xref py py-attr docutils literal"><span class="pre">last</span></tt></a></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pypint.solvers.states.i_solver_state.ITimeStepState.last_step_index">
+<tt class="descname">last_step_index</tt><a class="reference internal" href="../../../_modules/pypint/solvers/states/i_solver_state.html#ITimeStepState.last_step_index"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypint.solvers.states.i_solver_state.ITimeStepState.last_step_index" title="Permalink to this definition">¶</a></dt>
+<dd><p>Proxy for <a class="reference internal" href="#pypint.solvers.states.i_solver_state.IStateIterator.last_index" title="pypint.solvers.states.i_solver_state.IStateIterator.last_index"><tt class="xref py py-attr docutils literal"><span class="pre">last_index</span></tt></a></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pypint.solvers.states.i_solver_state.ITimeStepState.next_step">
+<tt class="descname">next_step</tt><a class="reference internal" href="../../../_modules/pypint/solvers/states/i_solver_state.html#ITimeStepState.next_step"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypint.solvers.states.i_solver_state.ITimeStepState.next_step" title="Permalink to this definition">¶</a></dt>
+<dd><p>Proxy for <a class="reference internal" href="#pypint.solvers.states.i_solver_state.IStaticStateIterator.next" title="pypint.solvers.states.i_solver_state.IStaticStateIterator.next"><tt class="xref py py-attr docutils literal"><span class="pre">next</span></tt></a></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pypint.solvers.states.i_solver_state.ITimeStepState.next_step_index">
+<tt class="descname">next_step_index</tt><a class="reference internal" href="../../../_modules/pypint/solvers/states/i_solver_state.html#ITimeStepState.next_step_index"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypint.solvers.states.i_solver_state.ITimeStepState.next_step_index" title="Permalink to this definition">¶</a></dt>
+<dd><p>Proxy for <a class="reference internal" href="#pypint.solvers.states.i_solver_state.IStaticStateIterator.next_index" title="pypint.solvers.states.i_solver_state.IStaticStateIterator.next_index"><tt class="xref py py-attr docutils literal"><span class="pre">next_index</span></tt></a></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pypint.solvers.states.i_solver_state.ITimeStepState.next_time_point">
+<tt class="descname">next_time_point</tt><a class="reference internal" href="../../../_modules/pypint/solvers/states/i_solver_state.html#ITimeStepState.next_time_point"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypint.solvers.states.i_solver_state.ITimeStepState.next_time_point" title="Permalink to this definition">¶</a></dt>
+<dd><p>Accessor for the next step&#8217;s time point</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>next_time_point</strong> &#8211;
+<tt class="xref py py-class docutils literal"><span class="pre">None</span></tt> is returned if <a class="reference internal" href="#pypint.solvers.states.i_solver_state.ITimeStepState.next_step" title="pypint.solvers.states.i_solver_state.ITimeStepState.next_step"><tt class="xref py py-attr docutils literal"><span class="pre">next_step</span></tt></a> is <tt class="xref py py-class docutils literal"><span class="pre">None</span></tt></td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><tt class="xref py py-class docutils literal"><span class="pre">float</span></tt> or <tt class="xref py py-class docutils literal"><span class="pre">None</span></tt></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pypint.solvers.states.i_solver_state.ITimeStepState.previous_step">
+<tt class="descname">previous_step</tt><a class="reference internal" href="../../../_modules/pypint/solvers/states/i_solver_state.html#ITimeStepState.previous_step"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypint.solvers.states.i_solver_state.ITimeStepState.previous_step" title="Permalink to this definition">¶</a></dt>
+<dd><p>Accessor for the previous step</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>previous step</strong> &#8211;
+<tt class="xref py py-class docutils literal"><span class="pre">None</span></tt> is returned if <a class="reference internal" href="#pypint.solvers.states.i_solver_state.IStateIterator.previous_index" title="pypint.solvers.states.i_solver_state.IStateIterator.previous_index"><tt class="xref py py-attr docutils literal"><span class="pre">previous_index</span></tt></a> is <tt class="xref py py-class docutils literal"><span class="pre">None</span></tt></td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="#pypint.solvers.states.i_solver_state.IStepState" title="pypint.solvers.states.i_solver_state.IStepState"><tt class="xref py py-class docutils literal"><span class="pre">IStepState</span></tt></a> or <tt class="xref py py-class docutils literal"><span class="pre">None</span></tt></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pypint.solvers.states.i_solver_state.ITimeStepState.previous_step_index">
+<tt class="descname">previous_step_index</tt><a class="reference internal" href="../../../_modules/pypint/solvers/states/i_solver_state.html#ITimeStepState.previous_step_index"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypint.solvers.states.i_solver_state.ITimeStepState.previous_step_index" title="Permalink to this definition">¶</a></dt>
+<dd><p>Proxy for <a class="reference internal" href="#pypint.solvers.states.i_solver_state.IStateIterator.previous_index" title="pypint.solvers.states.i_solver_state.IStateIterator.previous_index"><tt class="xref py py-attr docutils literal"><span class="pre">previous_index</span></tt></a></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pypint.solvers.states.i_solver_state.ITimeStepState.previous_time_point">
+<tt class="descname">previous_time_point</tt><a class="reference internal" href="../../../_modules/pypint/solvers/states/i_solver_state.html#ITimeStepState.previous_time_point"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypint.solvers.states.i_solver_state.ITimeStepState.previous_time_point" title="Permalink to this definition">¶</a></dt>
+<dd><p>Accessor for the previous step&#8217;s time point</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>previous_time_point</strong> &#8211;
+<tt class="xref py py-class docutils literal"><span class="pre">None</span></tt> is returned if <a class="reference internal" href="#pypint.solvers.states.i_solver_state.ITimeStepState.previous_step" title="pypint.solvers.states.i_solver_state.ITimeStepState.previous_step"><tt class="xref py py-attr docutils literal"><span class="pre">previous_step</span></tt></a> is <tt class="xref py py-class docutils literal"><span class="pre">None</span></tt></td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><tt class="xref py py-class docutils literal"><span class="pre">float</span></tt> or <tt class="xref py py-class docutils literal"><span class="pre">None</span></tt></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pypint.solvers.states.i_solver_state.ITimeStepState.time_points">
+<tt class="descname">time_points</tt><a class="reference internal" href="../../../_modules/pypint/solvers/states/i_solver_state.html#ITimeStepState.time_points"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypint.solvers.states.i_solver_state.ITimeStepState.time_points" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read-only accessor for the list of time points of this time step</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="pypint.solvers.states.i_solver_state.IIterationState">
+<em class="property">class </em><tt class="descclassname">pypint.solvers.states.i_solver_state.</tt><tt class="descname">IIterationState</tt><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/pypint/solvers/states/i_solver_state.html#IIterationState"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypint.solvers.states.i_solver_state.IIterationState" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#pypint.solvers.states.i_solver_state.IStaticStateIterator" title="pypint.solvers.states.i_solver_state.IStaticStateIterator"><tt class="xref py py-class docutils literal"><span class="pre">pypint.solvers.states.i_solver_state.IStaticStateIterator</span></tt></a></p>
+<p>Stores time step states of a single iteration.</p>
+<dl class="method">
+<dt id="pypint.solvers.states.i_solver_state.IIterationState.__init__">
+<tt class="descname">__init__</tt><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/pypint/solvers/states/i_solver_state.html#IIterationState.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypint.solvers.states.i_solver_state.IIterationState.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>num_time_steps</strong> (<tt class="xref py py-class docutils literal"><span class="pre">int</span></tt>) &#8211; number of time steps in this sequence</li>
+<li><strong>num_states</strong> (<tt class="xref py py-class docutils literal"><span class="pre">int</span></tt>) &#8211; number of steps per time step</li>
+<li><strong>solution_class</strong> (<a class="reference internal" href="../../solutions/data_storage/trajectory_solution_data.html#pypint.solutions.data_storage.trajectory_solution_data.TrajectorySolutionData" title="pypint.solutions.data_storage.trajectory_solution_data.TrajectorySolutionData"><tt class="xref py py-class docutils literal"><span class="pre">TrajectorySolutionData</span></tt></a>, <em>any other solution class</em>) &#8211; <em>(optional)</em>
+defaults to <a class="reference internal" href="../../solutions/data_storage/trajectory_solution_data.html#pypint.solutions.data_storage.trajectory_solution_data.TrajectorySolutionData" title="pypint.solutions.data_storage.trajectory_solution_data.TrajectorySolutionData"><tt class="xref py py-class docutils literal"><span class="pre">TrajectorySolutionData</span></tt></a></li>
+<li><strong>element_type</strong> (<a class="reference internal" href="#pypint.solvers.states.i_solver_state.IStateIterator" title="pypint.solvers.states.i_solver_state.IStateIterator"><tt class="xref py py-class docutils literal"><span class="pre">IStateIterator</span></tt></a>) &#8211; <em>(optional)</em>
+defaults to <a class="reference internal" href="#pypint.solvers.states.i_solver_state.ITimeStepState" title="pypint.solvers.states.i_solver_state.ITimeStepState"><tt class="xref py py-class docutils literal"><span class="pre">ITimeStepState</span></tt></a></li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><tt class="xref py py-exc docutils literal"><span class="pre">ValueError</span></tt> &#8211; 
+if <tt class="docutils literal"><span class="pre">num_time_steps</span></tt> is not given</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="pypint.solvers.states.i_solver_state.IIterationState.finalize">
+<tt class="descname">finalize</tt><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/pypint/solvers/states/i_solver_state.html#IIterationState.finalize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypint.solvers.states.i_solver_state.IIterationState.finalize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Finalizes this iteration and copies solutions</p>
+<p>The solutions of all steps of all time steps are copied to this sequence&#8217;s <a class="reference internal" href="../../solutions/data_storage/trajectory_solution_data.html#pypint.solutions.data_storage.trajectory_solution_data.TrajectorySolutionData" title="pypint.solutions.data_storage.trajectory_solution_data.TrajectorySolutionData"><tt class="xref py py-class docutils literal"><span class="pre">TrajectorySolutionData</span></tt></a>
+and is finalized afterwards.</p>
+<p>The remaining behaviour is the same as the overridden method.</p>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><a class="reference internal" href="#pypint.solvers.states.i_solver_state.IStateIterator.finalize" title="pypint.solvers.states.i_solver_state.IStateIterator.finalize"><tt class="xref py py-meth docutils literal"><span class="pre">IStateIterator.finalize()</span></tt></a> : overridden method</p>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="pypint.solvers.states.i_solver_state.IIterationState.proceed">
+<tt class="descname">proceed</tt><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/pypint/solvers/states/i_solver_state.html#IIterationState.proceed"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypint.solvers.states.i_solver_state.IIterationState.proceed" title="Permalink to this definition">¶</a></dt>
+<dd><p>Proceeds to the next time step</p>
+<p>Same as <a class="reference internal" href="#pypint.solvers.states.i_solver_state.IStaticStateIterator.proceed" title="pypint.solvers.states.i_solver_state.IStaticStateIterator.proceed"><tt class="xref py py-meth docutils literal"><span class="pre">IStaticStateIterator.proceed()</span></tt></a> with the addition, that the current time step&#8217;s initial
+value is set as a reference to the previous time step&#8217;s last step.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pypint.solvers.states.i_solver_state.IIterationState.current_step">
+<tt class="descname">current_step</tt><a class="reference internal" href="../../../_modules/pypint/solvers/states/i_solver_state.html#IIterationState.current_step"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypint.solvers.states.i_solver_state.IIterationState.current_step" title="Permalink to this definition">¶</a></dt>
+<dd><p>Proxy for <a class="reference internal" href="#pypint.solvers.states.i_solver_state.ITimeStepState.current_step" title="pypint.solvers.states.i_solver_state.ITimeStepState.current_step"><tt class="xref py py-attr docutils literal"><span class="pre">ITimeStepState.current_step</span></tt></a></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pypint.solvers.states.i_solver_state.IIterationState.current_step_index">
+<tt class="descname">current_step_index</tt><a class="reference internal" href="../../../_modules/pypint/solvers/states/i_solver_state.html#IIterationState.current_step_index"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypint.solvers.states.i_solver_state.IIterationState.current_step_index" title="Permalink to this definition">¶</a></dt>
+<dd><p>Proxy for <a class="reference internal" href="#pypint.solvers.states.i_solver_state.ITimeStepState.current_step_index" title="pypint.solvers.states.i_solver_state.ITimeStepState.current_step_index"><tt class="xref py py-attr docutils literal"><span class="pre">ITimeStepState.current_step_index</span></tt></a></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pypint.solvers.states.i_solver_state.IIterationState.current_time_step">
+<tt class="descname">current_time_step</tt><a class="reference internal" href="../../../_modules/pypint/solvers/states/i_solver_state.html#IIterationState.current_time_step"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypint.solvers.states.i_solver_state.IIterationState.current_time_step" title="Permalink to this definition">¶</a></dt>
+<dd><p>Proxy for <a class="reference internal" href="#pypint.solvers.states.i_solver_state.IStateIterator.current" title="pypint.solvers.states.i_solver_state.IStateIterator.current"><tt class="xref py py-attr docutils literal"><span class="pre">current</span></tt></a></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pypint.solvers.states.i_solver_state.IIterationState.current_time_step_index">
+<tt class="descname">current_time_step_index</tt><a class="reference internal" href="../../../_modules/pypint/solvers/states/i_solver_state.html#IIterationState.current_time_step_index"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypint.solvers.states.i_solver_state.IIterationState.current_time_step_index" title="Permalink to this definition">¶</a></dt>
+<dd><p>Proxy for <a class="reference internal" href="#pypint.solvers.states.i_solver_state.IStateIterator.current_index" title="pypint.solvers.states.i_solver_state.IStateIterator.current_index"><tt class="xref py py-attr docutils literal"><span class="pre">current_index</span></tt></a></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pypint.solvers.states.i_solver_state.IIterationState.final_step">
+<tt class="descname">final_step</tt><a class="reference internal" href="../../../_modules/pypint/solvers/states/i_solver_state.html#IIterationState.final_step"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypint.solvers.states.i_solver_state.IIterationState.final_step" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read-only accessor for the very last step</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>last_step</strong> &#8211;
+proxies <tt class="xref py py-attr docutils literal"><span class="pre">ITimeStepState.last</span></tt> if <a class="reference internal" href="#pypint.solvers.states.i_solver_state.IIterationState.last_time_step" title="pypint.solvers.states.i_solver_state.IIterationState.last_time_step"><tt class="xref py py-attr docutils literal"><span class="pre">last_time_step</span></tt></a> is not <tt class="xref py py-class docutils literal"><span class="pre">None</span></tt>
+else returns <tt class="xref py py-class docutils literal"><span class="pre">None</span></tt></td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="#pypint.solvers.states.i_solver_state.IStepState" title="pypint.solvers.states.i_solver_state.IStepState"><tt class="xref py py-class docutils literal"><span class="pre">IStepState</span></tt></a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pypint.solvers.states.i_solver_state.IIterationState.first_step">
+<tt class="descname">first_step</tt><a class="reference internal" href="../../../_modules/pypint/solvers/states/i_solver_state.html#IIterationState.first_step"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypint.solvers.states.i_solver_state.IIterationState.first_step" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read-only accessor for the first step</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>first_step</strong> &#8211;
+proxies <tt class="xref py py-attr docutils literal"><span class="pre">ITimeStepState.first</span></tt> if <a class="reference internal" href="#pypint.solvers.states.i_solver_state.IIterationState.first_time_step" title="pypint.solvers.states.i_solver_state.IIterationState.first_time_step"><tt class="xref py py-attr docutils literal"><span class="pre">first_time_step</span></tt></a> is not <tt class="xref py py-class docutils literal"><span class="pre">None</span></tt>
+else returns <tt class="xref py py-class docutils literal"><span class="pre">None</span></tt></td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="#pypint.solvers.states.i_solver_state.IStepState" title="pypint.solvers.states.i_solver_state.IStepState"><tt class="xref py py-class docutils literal"><span class="pre">IStepState</span></tt></a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pypint.solvers.states.i_solver_state.IIterationState.first_time_step">
+<tt class="descname">first_time_step</tt><a class="reference internal" href="../../../_modules/pypint/solvers/states/i_solver_state.html#IIterationState.first_time_step"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypint.solvers.states.i_solver_state.IIterationState.first_time_step" title="Permalink to this definition">¶</a></dt>
+<dd><p>Proxy for <a class="reference internal" href="#pypint.solvers.states.i_solver_state.IStateIterator.first" title="pypint.solvers.states.i_solver_state.IStateIterator.first"><tt class="xref py py-attr docutils literal"><span class="pre">first</span></tt></a></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pypint.solvers.states.i_solver_state.IIterationState.first_time_step_index">
+<tt class="descname">first_time_step_index</tt><a class="reference internal" href="../../../_modules/pypint/solvers/states/i_solver_state.html#IIterationState.first_time_step_index"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypint.solvers.states.i_solver_state.IIterationState.first_time_step_index" title="Permalink to this definition">¶</a></dt>
+<dd><p>Proxy for <a class="reference internal" href="#pypint.solvers.states.i_solver_state.IStateIterator.first_index" title="pypint.solvers.states.i_solver_state.IStateIterator.first_index"><tt class="xref py py-attr docutils literal"><span class="pre">first_index</span></tt></a></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pypint.solvers.states.i_solver_state.IIterationState.initial">
+<tt class="descname">initial</tt><a class="reference internal" href="../../../_modules/pypint/solvers/states/i_solver_state.html#IIterationState.initial"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypint.solvers.states.i_solver_state.IIterationState.initial" title="Permalink to this definition">¶</a></dt>
+<dd><p>Accessor to the initial value of this iteration</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pypint.solvers.states.i_solver_state.IIterationState.last_time_step">
+<tt class="descname">last_time_step</tt><a class="reference internal" href="../../../_modules/pypint/solvers/states/i_solver_state.html#IIterationState.last_time_step"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypint.solvers.states.i_solver_state.IIterationState.last_time_step" title="Permalink to this definition">¶</a></dt>
+<dd><p>Proxy for <a class="reference internal" href="#pypint.solvers.states.i_solver_state.IStateIterator.last" title="pypint.solvers.states.i_solver_state.IStateIterator.last"><tt class="xref py py-attr docutils literal"><span class="pre">last</span></tt></a></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pypint.solvers.states.i_solver_state.IIterationState.last_time_step_index">
+<tt class="descname">last_time_step_index</tt><a class="reference internal" href="../../../_modules/pypint/solvers/states/i_solver_state.html#IIterationState.last_time_step_index"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypint.solvers.states.i_solver_state.IIterationState.last_time_step_index" title="Permalink to this definition">¶</a></dt>
+<dd><p>Proxy for <a class="reference internal" href="#pypint.solvers.states.i_solver_state.IStateIterator.last_index" title="pypint.solvers.states.i_solver_state.IStateIterator.last_index"><tt class="xref py py-attr docutils literal"><span class="pre">last_index</span></tt></a></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pypint.solvers.states.i_solver_state.IIterationState.next_step">
+<tt class="descname">next_step</tt><a class="reference internal" href="../../../_modules/pypint/solvers/states/i_solver_state.html#IIterationState.next_step"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypint.solvers.states.i_solver_state.IIterationState.next_step" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read-only accessor for the next step</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>next_step</strong> &#8211;
+proxies <a class="reference internal" href="#pypint.solvers.states.i_solver_state.ITimeStepState.next_step" title="pypint.solvers.states.i_solver_state.ITimeStepState.next_step"><tt class="xref py py-attr docutils literal"><span class="pre">ITimeStepState.next_step</span></tt></a> if it is not <tt class="xref py py-class docutils literal"><span class="pre">None</span></tt>
+else returns <tt class="xref py py-attr docutils literal"><span class="pre">ITimeStepState.first</span></tt> if <a class="reference internal" href="#pypint.solvers.states.i_solver_state.IIterationState.next_time_step" title="pypint.solvers.states.i_solver_state.IIterationState.next_time_step"><tt class="xref py py-attr docutils literal"><span class="pre">next_time_step</span></tt></a> is not <tt class="xref py py-class docutils literal"><span class="pre">None</span></tt>
+else returns <tt class="xref py py-class docutils literal"><span class="pre">None</span></tt></td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="#pypint.solvers.states.i_solver_state.IStepState" title="pypint.solvers.states.i_solver_state.IStepState"><tt class="xref py py-class docutils literal"><span class="pre">IStepState</span></tt></a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pypint.solvers.states.i_solver_state.IIterationState.next_time_step">
+<tt class="descname">next_time_step</tt><a class="reference internal" href="../../../_modules/pypint/solvers/states/i_solver_state.html#IIterationState.next_time_step"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypint.solvers.states.i_solver_state.IIterationState.next_time_step" title="Permalink to this definition">¶</a></dt>
+<dd><p>Proxy for <a class="reference internal" href="#pypint.solvers.states.i_solver_state.IStaticStateIterator.next" title="pypint.solvers.states.i_solver_state.IStaticStateIterator.next"><tt class="xref py py-attr docutils literal"><span class="pre">next</span></tt></a></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pypint.solvers.states.i_solver_state.IIterationState.next_time_step_index">
+<tt class="descname">next_time_step_index</tt><a class="reference internal" href="../../../_modules/pypint/solvers/states/i_solver_state.html#IIterationState.next_time_step_index"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypint.solvers.states.i_solver_state.IIterationState.next_time_step_index" title="Permalink to this definition">¶</a></dt>
+<dd><p>Proxy for <a class="reference internal" href="#pypint.solvers.states.i_solver_state.IStaticStateIterator.next_index" title="pypint.solvers.states.i_solver_state.IStaticStateIterator.next_index"><tt class="xref py py-attr docutils literal"><span class="pre">next_index</span></tt></a></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pypint.solvers.states.i_solver_state.IIterationState.previous_step">
+<tt class="descname">previous_step</tt><a class="reference internal" href="../../../_modules/pypint/solvers/states/i_solver_state.html#IIterationState.previous_step"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypint.solvers.states.i_solver_state.IIterationState.previous_step" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read-only accessor for the previous step</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>previous_step</strong> &#8211;
+proxies <a class="reference internal" href="#pypint.solvers.states.i_solver_state.ITimeStepState.previous_step" title="pypint.solvers.states.i_solver_state.ITimeStepState.previous_step"><tt class="xref py py-attr docutils literal"><span class="pre">ITimeStepState.previous_step</span></tt></a> if it is not <tt class="xref py py-class docutils literal"><span class="pre">None</span></tt>
+else <a class="reference internal" href="#pypint.solvers.states.i_solver_state.ITimeStepState.initial" title="pypint.solvers.states.i_solver_state.ITimeStepState.initial"><tt class="xref py py-attr docutils literal"><span class="pre">ITimeStepState.initial</span></tt></a></td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="#pypint.solvers.states.i_solver_state.IStepState" title="pypint.solvers.states.i_solver_state.IStepState"><tt class="xref py py-class docutils literal"><span class="pre">IStepState</span></tt></a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pypint.solvers.states.i_solver_state.IIterationState.previous_time_step">
+<tt class="descname">previous_time_step</tt><a class="reference internal" href="../../../_modules/pypint/solvers/states/i_solver_state.html#IIterationState.previous_time_step"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypint.solvers.states.i_solver_state.IIterationState.previous_time_step" title="Permalink to this definition">¶</a></dt>
+<dd><p>Proxy for <a class="reference internal" href="#pypint.solvers.states.i_solver_state.IStateIterator.previous" title="pypint.solvers.states.i_solver_state.IStateIterator.previous"><tt class="xref py py-attr docutils literal"><span class="pre">previous</span></tt></a></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pypint.solvers.states.i_solver_state.IIterationState.previous_time_step_index">
+<tt class="descname">previous_time_step_index</tt><a class="reference internal" href="../../../_modules/pypint/solvers/states/i_solver_state.html#IIterationState.previous_time_step_index"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypint.solvers.states.i_solver_state.IIterationState.previous_time_step_index" title="Permalink to this definition">¶</a></dt>
+<dd><p>Proxy for <a class="reference internal" href="#pypint.solvers.states.i_solver_state.IStateIterator.previous_index" title="pypint.solvers.states.i_solver_state.IStateIterator.previous_index"><tt class="xref py py-attr docutils literal"><span class="pre">previous_index</span></tt></a></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pypint.solvers.states.i_solver_state.IIterationState.time_points">
+<tt class="descname">time_points</tt><a class="reference internal" href="../../../_modules/pypint/solvers/states/i_solver_state.html#IIterationState.time_points"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypint.solvers.states.i_solver_state.IIterationState.time_points" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read-only accessor for all time points</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>time_points</strong></td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><tt class="xref py py-class docutils literal"><span class="pre">numpy.array(dtype=float)</span></tt></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="pypint.solvers.states.i_solver_state.ISolverState">
+<em class="property">class </em><tt class="descclassname">pypint.solvers.states.i_solver_state.</tt><tt class="descname">ISolverState</tt><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/pypint/solvers/states/i_solver_state.html#ISolverState"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypint.solvers.states.i_solver_state.ISolverState" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#pypint.solvers.states.i_solver_state.IStateIterator" title="pypint.solvers.states.i_solver_state.IStateIterator"><tt class="xref py py-class docutils literal"><span class="pre">pypint.solvers.states.i_solver_state.IStateIterator</span></tt></a></p>
+<p>Stores iteration states.</p>
+<dl class="method">
+<dt id="pypint.solvers.states.i_solver_state.ISolverState.finalize">
+<tt class="descname">finalize</tt><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/pypint/solvers/states/i_solver_state.html#ISolverState.finalize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypint.solvers.states.i_solver_state.ISolverState.finalize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Finalizes the whole solver state.</p>
+<p>This copies the <a class="reference internal" href="../../solutions/data_storage/trajectory_solution_data.html#pypint.solutions.data_storage.trajectory_solution_data.TrajectorySolutionData" title="pypint.solutions.data_storage.trajectory_solution_data.TrajectorySolutionData"><tt class="xref py py-class docutils literal"><span class="pre">TrajectorySolutionData</span></tt></a> objects from the <a class="reference internal" href="#pypint.solvers.states.i_solver_state.IIterationState" title="pypint.solvers.states.i_solver_state.IIterationState"><tt class="xref py py-class docutils literal"><span class="pre">IIterationState</span></tt></a> instances of
+this sequence to the main <a class="reference internal" href="../../solutions/iterative_solution.html#pypint.solutions.iterative_solution.IterativeSolution" title="pypint.solutions.iterative_solution.IterativeSolution"><tt class="xref py py-class docutils literal"><span class="pre">IterativeSolution</span></tt></a> object and finalizes it.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pypint.solvers.states.i_solver_state.ISolverState.proceed">
+<tt class="descname">proceed</tt><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/pypint/solvers/states/i_solver_state.html#ISolverState.proceed"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypint.solvers.states.i_solver_state.ISolverState.proceed" title="Permalink to this definition">¶</a></dt>
+<dd><p>Proceeds to the next iteration</p>
+<p>Extends the sequence of <a class="reference internal" href="#pypint.solvers.states.i_solver_state.IIterationState" title="pypint.solvers.states.i_solver_state.IIterationState"><tt class="xref py py-class docutils literal"><span class="pre">IIterationState</span></tt></a> by appending a new instance with the set
+<a class="reference internal" href="#pypint.solvers.states.i_solver_state.ISolverState.num_time_steps" title="pypint.solvers.states.i_solver_state.ISolverState.num_time_steps"><tt class="xref py py-attr docutils literal"><span class="pre">num_time_steps</span></tt></a> and <a class="reference internal" href="#pypint.solvers.states.i_solver_state.ISolverState.num_nodes" title="pypint.solvers.states.i_solver_state.ISolverState.num_nodes"><tt class="xref py py-attr docutils literal"><span class="pre">num_nodes</span></tt></a>.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pypint.solvers.states.i_solver_state.ISolverState.current_iteration">
+<tt class="descname">current_iteration</tt><a class="reference internal" href="../../../_modules/pypint/solvers/states/i_solver_state.html#ISolverState.current_iteration"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypint.solvers.states.i_solver_state.ISolverState.current_iteration" title="Permalink to this definition">¶</a></dt>
+<dd><p>Proxies <a class="reference internal" href="#pypint.solvers.states.i_solver_state.IStateIterator.current" title="pypint.solvers.states.i_solver_state.IStateIterator.current"><tt class="xref py py-attr docutils literal"><span class="pre">IStateIterator.current</span></tt></a></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pypint.solvers.states.i_solver_state.ISolverState.current_iteration_index">
+<tt class="descname">current_iteration_index</tt><a class="reference internal" href="../../../_modules/pypint/solvers/states/i_solver_state.html#ISolverState.current_iteration_index"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypint.solvers.states.i_solver_state.ISolverState.current_iteration_index" title="Permalink to this definition">¶</a></dt>
+<dd><p>Proxies <a class="reference internal" href="#pypint.solvers.states.i_solver_state.IStateIterator.current_index" title="pypint.solvers.states.i_solver_state.IStateIterator.current_index"><tt class="xref py py-attr docutils literal"><span class="pre">IStateIterator.current_index</span></tt></a></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pypint.solvers.states.i_solver_state.ISolverState.current_step">
+<tt class="descname">current_step</tt><a class="reference internal" href="../../../_modules/pypint/solvers/states/i_solver_state.html#ISolverState.current_step"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypint.solvers.states.i_solver_state.ISolverState.current_step" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read-only accessor for the current step</p>
+<p>Proxies <a class="reference internal" href="#pypint.solvers.states.i_solver_state.ITimeStepState.current_step" title="pypint.solvers.states.i_solver_state.ITimeStepState.current_step"><tt class="xref py py-attr docutils literal"><span class="pre">ITimeStepState.current_step</span></tt></a> if <a class="reference internal" href="#pypint.solvers.states.i_solver_state.ISolverState.current_iteration" title="pypint.solvers.states.i_solver_state.ISolverState.current_iteration"><tt class="xref py py-attr docutils literal"><span class="pre">current_iteration</span></tt></a> and
+<a class="reference internal" href="#pypint.solvers.states.i_solver_state.IIterationState.current_time_step" title="pypint.solvers.states.i_solver_state.IIterationState.current_time_step"><tt class="xref py py-attr docutils literal"><span class="pre">IIterationState.current_time_step</span></tt></a> are not <tt class="xref py py-class docutils literal"><span class="pre">None</span></tt> else returns <tt class="xref py py-class docutils literal"><span class="pre">None</span></tt>.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pypint.solvers.states.i_solver_state.ISolverState.current_step_index">
+<tt class="descname">current_step_index</tt><a class="reference internal" href="../../../_modules/pypint/solvers/states/i_solver_state.html#ISolverState.current_step_index"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypint.solvers.states.i_solver_state.ISolverState.current_step_index" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read-only accessor for the current step&#8217;s index</p>
+<p>Proxies <a class="reference internal" href="#pypint.solvers.states.i_solver_state.ITimeStepState.current_step_index" title="pypint.solvers.states.i_solver_state.ITimeStepState.current_step_index"><tt class="xref py py-attr docutils literal"><span class="pre">ITimeStepState.current_step_index</span></tt></a> if <a class="reference internal" href="#pypint.solvers.states.i_solver_state.ISolverState.current_iteration" title="pypint.solvers.states.i_solver_state.ISolverState.current_iteration"><tt class="xref py py-attr docutils literal"><span class="pre">current_iteration</span></tt></a> and
+<a class="reference internal" href="#pypint.solvers.states.i_solver_state.IIterationState.current_time_step" title="pypint.solvers.states.i_solver_state.IIterationState.current_time_step"><tt class="xref py py-attr docutils literal"><span class="pre">IIterationState.current_time_step</span></tt></a> are not <tt class="xref py py-class docutils literal"><span class="pre">None</span></tt> else returns <tt class="xref py py-class docutils literal"><span class="pre">None</span></tt>.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pypint.solvers.states.i_solver_state.ISolverState.current_time_step">
+<tt class="descname">current_time_step</tt><a class="reference internal" href="../../../_modules/pypint/solvers/states/i_solver_state.html#ISolverState.current_time_step"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypint.solvers.states.i_solver_state.ISolverState.current_time_step" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read-only accessor for the current time step</p>
+<p>Proxies <a class="reference internal" href="#pypint.solvers.states.i_solver_state.IIterationState.current_time_step" title="pypint.solvers.states.i_solver_state.IIterationState.current_time_step"><tt class="xref py py-attr docutils literal"><span class="pre">IIterationState.current_time_step</span></tt></a> if <a class="reference internal" href="#pypint.solvers.states.i_solver_state.ISolverState.current_iteration" title="pypint.solvers.states.i_solver_state.ISolverState.current_iteration"><tt class="xref py py-attr docutils literal"><span class="pre">current_iteration</span></tt></a> is not <tt class="xref py py-class docutils literal"><span class="pre">None</span></tt>
+else returns <tt class="xref py py-class docutils literal"><span class="pre">None</span></tt>.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pypint.solvers.states.i_solver_state.ISolverState.current_time_step_index">
+<tt class="descname">current_time_step_index</tt><a class="reference internal" href="../../../_modules/pypint/solvers/states/i_solver_state.html#ISolverState.current_time_step_index"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypint.solvers.states.i_solver_state.ISolverState.current_time_step_index" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read-only accessor for the current time step&#8217;s index</p>
+<p>Proxies <a class="reference internal" href="#pypint.solvers.states.i_solver_state.IIterationState.current_time_step_index" title="pypint.solvers.states.i_solver_state.IIterationState.current_time_step_index"><tt class="xref py py-attr docutils literal"><span class="pre">IIterationState.current_time_step_index</span></tt></a> if <a class="reference internal" href="#pypint.solvers.states.i_solver_state.ISolverState.current_iteration" title="pypint.solvers.states.i_solver_state.ISolverState.current_iteration"><tt class="xref py py-attr docutils literal"><span class="pre">current_iteration</span></tt></a> is not
+<tt class="xref py py-class docutils literal"><span class="pre">None</span></tt> else returns <tt class="xref py py-class docutils literal"><span class="pre">None</span></tt>.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pypint.solvers.states.i_solver_state.ISolverState.delta_interval">
+<tt class="descname">delta_interval</tt><a class="reference internal" href="../../../_modules/pypint/solvers/states/i_solver_state.html#ISolverState.delta_interval"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypint.solvers.states.i_solver_state.ISolverState.delta_interval" title="Permalink to this definition">¶</a></dt>
+<dd><p>Accessor for the total interval width.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>delta_interval</strong> (<tt class="xref py py-class docutils literal"><span class="pre">float</span></tt>) &#8211; width of the whole interval</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><tt class="xref py py-exc docutils literal"><span class="pre">ValueError</span></tt> &#8211; 
+if given interval is not a non-zero float</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pypint.solvers.states.i_solver_state.ISolverState.first_iteration">
+<tt class="descname">first_iteration</tt><a class="reference internal" href="../../../_modules/pypint/solvers/states/i_solver_state.html#ISolverState.first_iteration"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypint.solvers.states.i_solver_state.ISolverState.first_iteration" title="Permalink to this definition">¶</a></dt>
+<dd><p>Proxies <a class="reference internal" href="#pypint.solvers.states.i_solver_state.IStateIterator.first" title="pypint.solvers.states.i_solver_state.IStateIterator.first"><tt class="xref py py-attr docutils literal"><span class="pre">IStateIterator.first</span></tt></a></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pypint.solvers.states.i_solver_state.ISolverState.initial">
+<tt class="descname">initial</tt><a class="reference internal" href="../../../_modules/pypint/solvers/states/i_solver_state.html#ISolverState.initial"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypint.solvers.states.i_solver_state.ISolverState.initial" title="Permalink to this definition">¶</a></dt>
+<dd><p>Accessor for the initial value</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pypint.solvers.states.i_solver_state.ISolverState.is_first_iteration">
+<tt class="descname">is_first_iteration</tt><a class="reference internal" href="../../../_modules/pypint/solvers/states/i_solver_state.html#ISolverState.is_first_iteration"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypint.solvers.states.i_solver_state.ISolverState.is_first_iteration" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check on whether current iteration is the first one.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>is_first</strong> &#8211;
+<tt class="xref py py-class docutils literal"><span class="pre">True</span></tt> if <tt class="docutils literal"><span class="pre">len(self)</span></tt> is one, <tt class="xref py py-class docutils literal"><span class="pre">False</span></tt> otherwise</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><tt class="xref py py-class docutils literal"><span class="pre">bool</span></tt></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pypint.solvers.states.i_solver_state.ISolverState.last_iteration">
+<tt class="descname">last_iteration</tt><a class="reference internal" href="../../../_modules/pypint/solvers/states/i_solver_state.html#ISolverState.last_iteration"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypint.solvers.states.i_solver_state.ISolverState.last_iteration" title="Permalink to this definition">¶</a></dt>
+<dd><p>Proxies <a class="reference internal" href="#pypint.solvers.states.i_solver_state.IStateIterator.last" title="pypint.solvers.states.i_solver_state.IStateIterator.last"><tt class="xref py py-attr docutils literal"><span class="pre">IStateIterator.last</span></tt></a></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pypint.solvers.states.i_solver_state.ISolverState.last_iteration_index">
+<tt class="descname">last_iteration_index</tt><a class="reference internal" href="../../../_modules/pypint/solvers/states/i_solver_state.html#ISolverState.last_iteration_index"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypint.solvers.states.i_solver_state.ISolverState.last_iteration_index" title="Permalink to this definition">¶</a></dt>
+<dd><p>Proxies <a class="reference internal" href="#pypint.solvers.states.i_solver_state.IStateIterator.last_index" title="pypint.solvers.states.i_solver_state.IStateIterator.last_index"><tt class="xref py py-attr docutils literal"><span class="pre">IStateIterator.last_index</span></tt></a></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pypint.solvers.states.i_solver_state.ISolverState.next_step">
+<tt class="descname">next_step</tt><a class="reference internal" href="../../../_modules/pypint/solvers/states/i_solver_state.html#ISolverState.next_step"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypint.solvers.states.i_solver_state.ISolverState.next_step" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read-only accessor for the next step</p>
+<p>Proxies <a class="reference internal" href="#pypint.solvers.states.i_solver_state.IIterationState.next_step" title="pypint.solvers.states.i_solver_state.IIterationState.next_step"><tt class="xref py py-attr docutils literal"><span class="pre">IIterationState.next_step</span></tt></a> if <a class="reference internal" href="#pypint.solvers.states.i_solver_state.ISolverState.current_iteration" title="pypint.solvers.states.i_solver_state.ISolverState.current_iteration"><tt class="xref py py-attr docutils literal"><span class="pre">current_iteration</span></tt></a> is not <tt class="xref py py-class docutils literal"><span class="pre">None</span></tt> else
+returns <tt class="xref py py-class docutils literal"><span class="pre">None</span></tt>.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pypint.solvers.states.i_solver_state.ISolverState.next_time_step">
+<tt class="descname">next_time_step</tt><a class="reference internal" href="../../../_modules/pypint/solvers/states/i_solver_state.html#ISolverState.next_time_step"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypint.solvers.states.i_solver_state.ISolverState.next_time_step" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read-only accessor for the next time step</p>
+<p>Proxies <a class="reference internal" href="#pypint.solvers.states.i_solver_state.IIterationState.next_time_step" title="pypint.solvers.states.i_solver_state.IIterationState.next_time_step"><tt class="xref py py-attr docutils literal"><span class="pre">IIterationState.next_time_step</span></tt></a> if <a class="reference internal" href="#pypint.solvers.states.i_solver_state.ISolverState.current_iteration" title="pypint.solvers.states.i_solver_state.ISolverState.current_iteration"><tt class="xref py py-attr docutils literal"><span class="pre">current_iteration</span></tt></a> is not <tt class="xref py py-class docutils literal"><span class="pre">None</span></tt>
+else returns <tt class="xref py py-class docutils literal"><span class="pre">None</span></tt>.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pypint.solvers.states.i_solver_state.ISolverState.num_nodes">
+<tt class="descname">num_nodes</tt><a class="reference internal" href="../../../_modules/pypint/solvers/states/i_solver_state.html#ISolverState.num_nodes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypint.solvers.states.i_solver_state.ISolverState.num_nodes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read-only accessor for the number of nodes per time step.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pypint.solvers.states.i_solver_state.ISolverState.num_time_steps">
+<tt class="descname">num_time_steps</tt><a class="reference internal" href="../../../_modules/pypint/solvers/states/i_solver_state.html#ISolverState.num_time_steps"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypint.solvers.states.i_solver_state.ISolverState.num_time_steps" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read-only accessor for the number of time steps per iteration.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pypint.solvers.states.i_solver_state.ISolverState.previous_iteration">
+<tt class="descname">previous_iteration</tt><a class="reference internal" href="../../../_modules/pypint/solvers/states/i_solver_state.html#ISolverState.previous_iteration"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypint.solvers.states.i_solver_state.ISolverState.previous_iteration" title="Permalink to this definition">¶</a></dt>
+<dd><p>Proxies <a class="reference internal" href="#pypint.solvers.states.i_solver_state.IStateIterator.previous" title="pypint.solvers.states.i_solver_state.IStateIterator.previous"><tt class="xref py py-attr docutils literal"><span class="pre">IStateIterator.previous</span></tt></a></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pypint.solvers.states.i_solver_state.ISolverState.previous_iteration_index">
+<tt class="descname">previous_iteration_index</tt><a class="reference internal" href="../../../_modules/pypint/solvers/states/i_solver_state.html#ISolverState.previous_iteration_index"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypint.solvers.states.i_solver_state.ISolverState.previous_iteration_index" title="Permalink to this definition">¶</a></dt>
+<dd><p>Proxies <a class="reference internal" href="#pypint.solvers.states.i_solver_state.IStateIterator.previous_index" title="pypint.solvers.states.i_solver_state.IStateIterator.previous_index"><tt class="xref py py-attr docutils literal"><span class="pre">IStateIterator.previous_index</span></tt></a></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pypint.solvers.states.i_solver_state.ISolverState.previous_step">
+<tt class="descname">previous_step</tt><a class="reference internal" href="../../../_modules/pypint/solvers/states/i_solver_state.html#ISolverState.previous_step"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypint.solvers.states.i_solver_state.ISolverState.previous_step" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read-only accessor for the previous step</p>
+<p>Proxies <a class="reference internal" href="#pypint.solvers.states.i_solver_state.ITimeStepState.previous_step" title="pypint.solvers.states.i_solver_state.ITimeStepState.previous_step"><tt class="xref py py-attr docutils literal"><span class="pre">ITimeStepState.previous_step</span></tt></a> if neither <a class="reference internal" href="#pypint.solvers.states.i_solver_state.ISolverState.current_iteration" title="pypint.solvers.states.i_solver_state.ISolverState.current_iteration"><tt class="xref py py-attr docutils literal"><span class="pre">current_iteration</span></tt></a> nor
+<a class="reference internal" href="#pypint.solvers.states.i_solver_state.IIterationState.current_time_step" title="pypint.solvers.states.i_solver_state.IIterationState.current_time_step"><tt class="xref py py-attr docutils literal"><span class="pre">IIterationState.current_time_step</span></tt></a> or <a class="reference internal" href="#pypint.solvers.states.i_solver_state.IIterationState.previous_step" title="pypint.solvers.states.i_solver_state.IIterationState.previous_step"><tt class="xref py py-attr docutils literal"><span class="pre">IIterationState.previous_step</span></tt></a> are <tt class="xref py py-class docutils literal"><span class="pre">None</span></tt>
+else returns <tt class="xref py py-class docutils literal"><span class="pre">None</span></tt>.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pypint.solvers.states.i_solver_state.ISolverState.previous_step_index">
+<tt class="descname">previous_step_index</tt><a class="reference internal" href="../../../_modules/pypint/solvers/states/i_solver_state.html#ISolverState.previous_step_index"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypint.solvers.states.i_solver_state.ISolverState.previous_step_index" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read-only accessor for the previous step&#8217;s index</p>
+<p>Proxies <a class="reference internal" href="#pypint.solvers.states.i_solver_state.ITimeStepState.previous_step_index" title="pypint.solvers.states.i_solver_state.ITimeStepState.previous_step_index"><tt class="xref py py-attr docutils literal"><span class="pre">ITimeStepState.previous_step_index</span></tt></a> if neither <a class="reference internal" href="#pypint.solvers.states.i_solver_state.ISolverState.current_iteration" title="pypint.solvers.states.i_solver_state.ISolverState.current_iteration"><tt class="xref py py-attr docutils literal"><span class="pre">current_iteration</span></tt></a> nor
+<a class="reference internal" href="#pypint.solvers.states.i_solver_state.IIterationState.current_time_step" title="pypint.solvers.states.i_solver_state.IIterationState.current_time_step"><tt class="xref py py-attr docutils literal"><span class="pre">IIterationState.current_time_step</span></tt></a> or <a class="reference internal" href="#pypint.solvers.states.i_solver_state.IIterationState.previous_step" title="pypint.solvers.states.i_solver_state.IIterationState.previous_step"><tt class="xref py py-attr docutils literal"><span class="pre">IIterationState.previous_step</span></tt></a> are <tt class="xref py py-class docutils literal"><span class="pre">None</span></tt>
+else returns <tt class="xref py py-class docutils literal"><span class="pre">None</span></tt>.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pypint.solvers.states.i_solver_state.ISolverState.previous_time_step">
+<tt class="descname">previous_time_step</tt><a class="reference internal" href="../../../_modules/pypint/solvers/states/i_solver_state.html#ISolverState.previous_time_step"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypint.solvers.states.i_solver_state.ISolverState.previous_time_step" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read-only accessor for the revious time step</p>
+<p>Proxies <a class="reference internal" href="#pypint.solvers.states.i_solver_state.IIterationState.previous_time_step" title="pypint.solvers.states.i_solver_state.IIterationState.previous_time_step"><tt class="xref py py-attr docutils literal"><span class="pre">IIterationState.previous_time_step</span></tt></a> if <a class="reference internal" href="#pypint.solvers.states.i_solver_state.ISolverState.current_iteration" title="pypint.solvers.states.i_solver_state.ISolverState.current_iteration"><tt class="xref py py-attr docutils literal"><span class="pre">current_iteration</span></tt></a> is not <tt class="xref py py-class docutils literal"><span class="pre">None</span></tt>
+else returns <tt class="xref py py-class docutils literal"><span class="pre">None</span></tt>.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="sdc_solver_state.html" class="btn btn-neutral float-right" title="SDC Solver States (sdc_solver_state)"/>Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="package.html" class="btn btn-neutral" title="Solver States (states)"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+      &copy; 2013-2014,
+        <a href="http://www.fz-juelich.de/ias/jsc/EN/Research/Algorithms/ParallelInTimeIntegration/_node.html">Parallel-in-Time Research Group</a>
+        at the
+        <a href="http://www.fz-juelich.de/ias/jsc/EN/Home/home_node.html">Jülich Supercomputing Centre</a><br />
+    </p>
+  </div>
+
+  <a href="https://github.com/snide/sphinx_rtd_theme">Sphinx theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../',
+            VERSION:'0.0.4-dev-0-g4dad7c2',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../_static/doctools.js"></script>
+      <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

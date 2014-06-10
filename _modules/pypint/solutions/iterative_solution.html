@@ -1,0 +1,483 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>pypint.solutions.iterative_solution &mdash; PyPinT 0.0.4-dev-0-g4dad7c2 documentation</title>
+  
+
+  
+  
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+        <link rel="author" title="About these documents"
+              href="../../../about.html"/>
+    <link rel="top" title="PyPinT 0.0.4-dev-0-g4dad7c2 documentation" href="../../../index.html"/>
+        <link rel="up" title="Module code" href="../../index.html"/> 
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-nav-search">
+        <a href="../../../index.html" class="fa fa-home"> PyPinT</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+        
+        
+            <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../about.html">About</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user/rationale.html">Rationale</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../user/rationale.html#objectives">Objectives</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../user/rationale.html#goals">Goals</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../user/rationale.html#scope">Scope</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user/requirements.html">Requirements</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user/basic_usage.html">Basic Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/examples/package.html">Examples</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/examples/problems/package.html">Example Problems (<tt class="docutils literal"><span class="pre">problems</span></tt>)</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user/theory.html">Mathematical Theory</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../user/bibliography.html">Bibliography</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../history.html">History</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../history.html#release-0-0-3-04-04-2014">Release 0.0.3 (04/04/2014)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../history.html#release-0-0-2-04-03-2014">Release 0.0.2 (04/03/2014)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../history.html#release-0-0-1-2013-11-26">Release 0.0.1 (2013-11-26)</a></li>
+</ul>
+</li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../development/coding_style.html">Coding Style</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../development/documentation.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../development/contributing.html">Contributing</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../development/contributing.html#branching-and-tagging-model">Branching and Tagging Model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../development/contributing.html#commit-messages">Commit Messages</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../development/contributing.html#how-to-implement-a-new-feature">How to Implement a New Feature?</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../development/testing.html">Testing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../development/todo.html">ToDos</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../development/todo.html#global">Global</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../development/todo.html#in-source">In Source</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/package.html">API Reference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/package.html#communicators">Communicators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/package.html#integrators">Integrators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/package.html#multi-level-providers">Multi Level Providers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/package.html#plugins">Plugins</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/package.html#problems">Problems</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/package.html#solutions">Solutions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/package.html#solvers">Solvers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/package.html#utilities">Utilities</a></li>
+</ul>
+</li>
+</ul>
+
+        
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../../../index.html">PyPinT</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+      
+    <li>pypint.solutions.iterative_solution</li>
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main">
+            
+  <h1>Source code for pypint.solutions.iterative_solution</h1><div class="highlight"><pre>
+<span class="c"># coding=utf-8</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">.. moduleauthor:: Torbjörn Klatt &lt;t.klatt@fz-juelich.de&gt;</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
+<span class="kn">import</span> <span class="nn">copy</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+
+<span class="kn">from</span> <span class="nn">pypint.solutions.i_solution</span> <span class="kn">import</span> <span class="n">ISolution</span>
+<span class="kn">from</span> <span class="nn">pypint.solutions.data_storage.step_solution_data</span> <span class="kn">import</span> <span class="n">StepSolutionData</span>
+<span class="kn">from</span> <span class="nn">pypint.solutions.data_storage.trajectory_solution_data</span> <span class="kn">import</span> <span class="n">TrajectorySolutionData</span>
+<span class="kn">from</span> <span class="nn">pypint.utilities</span> <span class="kn">import</span> <span class="n">assert_is_instance</span><span class="p">,</span> <span class="n">assert_condition</span>
+
+
+<div class="viewcode-block" id="IterativeSolution"><a class="viewcode-back" href="../../../api/solutions/iterative_solution.html#pypint.solutions.iterative_solution.IterativeSolution">[docs]</a><span class="k">class</span> <span class="nc">IterativeSolution</span><span class="p">(</span><span class="n">ISolution</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Storage for the solutions of an iterative solver.</span>
+
+<span class="sd">    A new solution of a specific iteration can be added via :py:meth:`.add_solution` and queried via</span>
+<span class="sd">    :py:meth:`.solution`.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    By default, the internal solution data storage type is :py:class:`.TrajectorySolutionData` allowing for</span>
+<span class="sd">    storage of the whole trajectory of the solution over the course of several iterations.</span>
+<span class="sd">    However, this can be changed on initialization to only store the solution of the last time point over the course of</span>
+<span class="sd">    iterations:</span>
+
+<span class="sd">    &gt;&gt;&gt; from pypint.solutions.iterative_solution import IterativeSolution</span>
+<span class="sd">    &gt;&gt;&gt; from pypint.solutions.data_storage.step_solution_data import StepSolutionData</span>
+<span class="sd">    &gt;&gt;&gt; my_reduced_full_solution = IterativeSolution(solution_data_type=StepSolutionData)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="IterativeSolution.__init__"><a class="viewcode-back" href="../../../api/solutions/iterative_solution.html#pypint.solutions.iterative_solution.IterativeSolution.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        solution_data_type : :py:class:`.TrajectorySolutionData` or :py:class:`.StepSolutionData`</span>
+<span class="sd">            Defaults to :py:class:`.TrajectorySolutionData`.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">IterativeSolution</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_data</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="c"># As this solution stores all values of all nodes of one iteration, `TrajectorySolutionData` is the solution</span>
+        <span class="c"># data type.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_data_type</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s">&#39;solution_data_type&#39;</span><span class="p">]</span> <span class="k">if</span> <span class="s">&#39;solution_data_type&#39;</span> <span class="ow">in</span> <span class="n">kwargs</span> <span class="k">else</span> <span class="n">TrajectorySolutionData</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_error_reduction</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_solution_reduction</span> <span class="o">=</span> <span class="p">{}</span>
+</div>
+<div class="viewcode-block" id="IterativeSolution.add_solution"><a class="viewcode-back" href="../../../api/solutions/iterative_solution.html#pypint.solutions.iterative_solution.IterativeSolution.add_solution">[docs]</a>    <span class="k">def</span> <span class="nf">add_solution</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Adds a new solution data storage object.</span>
+
+<span class="sd">        After each call an internal consistency check is carried out, which might raise further exceptions.</span>
+<span class="sd">        The number of used iterations (see :py:attr:`.used_iterations`) is auto-incremented on success.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        data : :py:class:`.TrajectorySolutionData` or :py:class:`.StepSolutionData`</span>
+<span class="sd">            *(must not be named)*</span>
+<span class="sd">            Exactly one unnamed argument must be given.</span>
+
+<span class="sd">        iteration : :py:class:`int`</span>
+<span class="sd">            *(optional)*</span>
+<span class="sd">            1-based index of the iteration.</span>
+<span class="sd">            Defaults to `-1` meaning append after last stored iteration.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        ValueError :</span>
+
+<span class="sd">            * if ``iteration`` is not an integer</span>
+<span class="sd">            * if ``iteration`` is not a valid index for the current size of stored solution data objects</span>
+<span class="sd">            * if not exactly one solution data object is given</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="s">&#39;iteration&#39;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+            <span class="n">assert_is_instance</span><span class="p">(</span><span class="n">kwargs</span><span class="p">[</span><span class="s">&#39;iteration&#39;</span><span class="p">],</span> <span class="nb">int</span><span class="p">,</span> <span class="n">descriptor</span><span class="o">=</span><span class="s">&quot;Iteration Index&quot;</span><span class="p">,</span> <span class="n">checking_obj</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
+            <span class="n">_iteration</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s">&#39;iteration&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span>
+            <span class="k">if</span> <span class="n">_iteration</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">assert_condition</span><span class="p">(</span><span class="n">_iteration</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">)),</span>
+                                 <span class="ne">ValueError</span><span class="p">,</span>
+                                 <span class="n">message</span><span class="o">=</span><span class="p">(</span><span class="s">&quot;Iteration index must be within the size of the solution data array: &quot;</span>
+                                          <span class="s">&quot;{:d} not in [0, {:d}]&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">_iteration</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">))),</span>
+                                 <span class="n">checking_obj</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
+            <span class="c"># remove the `iteration` key from the keyword arguments so it does not get passed onto the solution data</span>
+            <span class="c"># storage creation</span>
+            <span class="k">del</span> <span class="n">kwargs</span><span class="p">[</span><span class="s">&#39;iteration&#39;</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">_iteration</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+
+        <span class="n">assert_condition</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">or</span> <span class="s">&#39;data&#39;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">,</span> <span class="ne">ValueError</span><span class="p">,</span>
+                         <span class="n">message</span><span class="o">=</span><span class="s">&quot;Exactly one solution data object or &#39;data&#39; must be given.&quot;</span><span class="p">,</span>
+                         <span class="n">checking_obj</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
+        <span class="n">assert_is_instance</span><span class="p">(</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data_type</span><span class="p">,</span> <span class="n">descriptor</span><span class="o">=</span><span class="s">&quot;Solution Data Storage&quot;</span><span class="p">,</span> <span class="n">checking_obj</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
+
+        <span class="n">_old_data</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">)</span>  <span class="c"># backup for potential rollback</span>
+        <span class="k">if</span> <span class="n">_iteration</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">_iteration</span><span class="p">,</span> <span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_check_consistency</span><span class="p">()</span>
+        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+            <span class="c"># consistency check failed, thus removing recently added solution data storage</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s">&quot;Consistency Check failed. Not adding this solution.&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_data</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">_old_data</span><span class="p">)</span>  <span class="c"># rollback</span>
+        <span class="k">finally</span><span class="p">:</span>
+            <span class="c"># everything ok</span>
+            <span class="k">pass</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_used_iterations</span> <span class="o">+=</span> <span class="mi">1</span>
+</div>
+<div class="viewcode-block" id="IterativeSolution.solution"><a class="viewcode-back" href="../../../api/solutions/iterative_solution.html#pypint.solutions.iterative_solution.IterativeSolution.solution">[docs]</a>    <span class="k">def</span> <span class="nf">solution</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">iteration</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Accessor for the solution of a specific iteration.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        iteration : :py:class:`int`</span>
+<span class="sd">            0-based index of the iteration.</span>
+<span class="sd">            ``-1`` means last iteration.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        solution : instance of :py:attr:`.data_storage_type`</span>
+<span class="sd">            or :py:class:`None` if no solutions are stored.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        ValueError :</span>
+<span class="sd">            If given ``iteration`` index is not in the valid range.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">assert_condition</span><span class="p">(</span><span class="n">iteration</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">)),</span> <span class="ne">ValueError</span><span class="p">,</span>
+                             <span class="n">message</span><span class="o">=</span><span class="s">&quot;Iteration index not within valid range: {:d} not in [-1, {:d}&quot;</span>
+                                     <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">iteration</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">)),</span>
+                             <span class="n">checking_obj</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">[</span><span class="n">iteration</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">None</span>
+</div>
+<div class="viewcode-block" id="IterativeSolution.error"><a class="viewcode-back" href="../../../api/solutions/iterative_solution.html#pypint.solutions.iterative_solution.IterativeSolution.error">[docs]</a>    <span class="k">def</span> <span class="nf">error</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">iteration</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Accessor for the errors of a specific iteration.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        iteration : :py:class:`int`</span>
+<span class="sd">            0-based index of the iteration.</span>
+<span class="sd">            ``-1`` means last iteration.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        error : instance of :py:attr:`.Error`</span>
+<span class="sd">            or :py:class:`None` if no solutions are stored.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        ValueError :</span>
+<span class="sd">            If given ``iteration`` index is not in the valid range.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">assert_condition</span><span class="p">(</span><span class="n">iteration</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">)),</span> <span class="ne">ValueError</span><span class="p">,</span>
+                             <span class="n">message</span><span class="o">=</span><span class="s">&quot;Iteration index not within valid range: {:d} not in [-1, {:d}&quot;</span>
+                                     <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">iteration</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">)),</span>
+                             <span class="n">checking_obj</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data_type</span> <span class="o">==</span> <span class="n">StepSolutionData</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">[</span><span class="n">iteration</span><span class="p">]</span><span class="o">.</span><span class="n">error</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">object</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">[</span><span class="n">iteration</span><span class="p">]</span><span class="o">.</span><span class="n">errors</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">None</span>
+</div>
+<div class="viewcode-block" id="IterativeSolution.residual"><a class="viewcode-back" href="../../../api/solutions/iterative_solution.html#pypint.solutions.iterative_solution.IterativeSolution.residual">[docs]</a>    <span class="k">def</span> <span class="nf">residual</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">iteration</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Accessor for the residuals of a specific iteration.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        iteration : :py:class:`int`</span>
+<span class="sd">            0-based index of the iteration.</span>
+<span class="sd">            ``-1`` means last iteration.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        residual : instance of :py:attr:`.Residual`</span>
+<span class="sd">            or :py:class:`None` if no solutions are stored.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        ValueError :</span>
+<span class="sd">            If given ``iteration`` index is not in the valid range.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">assert_condition</span><span class="p">(</span><span class="n">iteration</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">)),</span> <span class="ne">ValueError</span><span class="p">,</span>
+                             <span class="n">message</span><span class="o">=</span><span class="s">&quot;Iteration index not within valid range: {:d} not in [-1, {:d}&quot;</span>
+                                     <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">iteration</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">)),</span>
+                             <span class="n">checking_obj</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data_type</span> <span class="o">==</span> <span class="n">StepSolutionData</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">[</span><span class="n">iteration</span><span class="p">]</span><span class="o">.</span><span class="n">residual</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">object</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">[</span><span class="n">iteration</span><span class="p">]</span><span class="o">.</span><span class="n">residuals</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">None</span>
+</div>
+    <span class="k">def</span> <span class="nf">error_reduction</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">iteration</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">iteration</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_error_reduction</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_error_reduction</span><span class="p">[</span><span class="n">iteration</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">None</span>
+
+    <span class="k">def</span> <span class="nf">solution_reduction</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">iteration</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">iteration</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_solution_reduction</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_solution_reduction</span><span class="p">[</span><span class="n">iteration</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">None</span>
+
+    <span class="k">def</span> <span class="nf">set_error_reduction</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">iteration</span><span class="p">,</span> <span class="n">reduction</span><span class="p">):</span>
+        <span class="n">assert_condition</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">iteration</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span> <span class="ow">and</span> <span class="n">iteration</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">,</span> <span class="ne">ValueError</span><span class="p">,</span>
+                         <span class="n">message</span><span class="o">=</span><span class="s">&quot;Iteration must be a non-zero positive integer: NOT {}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">iteration</span><span class="p">),</span>
+                         <span class="n">checking_obj</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
+        <span class="n">assert_is_instance</span><span class="p">(</span><span class="n">reduction</span><span class="p">,</span> <span class="p">(</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">),</span> <span class="n">descriptor</span><span class="o">=</span><span class="s">&quot;Reduction of Error&quot;</span><span class="p">,</span> <span class="n">checking_obj</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_error_reduction</span><span class="p">[</span><span class="n">iteration</span><span class="p">]</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">reduction</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">set_solution_reduction</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">iteration</span><span class="p">,</span> <span class="n">reduction</span><span class="p">):</span>
+        <span class="n">assert_condition</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">iteration</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span> <span class="ow">and</span> <span class="n">iteration</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">,</span>
+                         <span class="ne">ValueError</span><span class="p">,</span> <span class="s">&quot;Iteration must be a non-zero positive integer: NOT {}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">iteration</span><span class="p">),</span>
+                         <span class="bp">self</span><span class="p">)</span>
+        <span class="n">assert_is_instance</span><span class="p">(</span><span class="n">reduction</span><span class="p">,</span> <span class="p">(</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">),</span> <span class="n">descriptor</span><span class="o">=</span><span class="s">&quot;Reduction of Solution&quot;</span><span class="p">,</span> <span class="n">checking_obj</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_solution_reduction</span><span class="p">[</span><span class="n">iteration</span><span class="p">]</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">reduction</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="IterativeSolution.solutions"><a class="viewcode-back" href="../../../api/solutions/iterative_solution.html#pypint.solutions.iterative_solution.IterativeSolution.solutions">[docs]</a>    <span class="k">def</span> <span class="nf">solutions</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Read-only accessor for the stored list of solution data storages.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        values : :py:class:`list` of :py:class:`.TrajectorySolutionData` or :py:class:`.StepSolutionData` objects</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span>
+</div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="IterativeSolution.time_points"><a class="viewcode-back" href="../../../api/solutions/iterative_solution.html#pypint.solutions.iterative_solution.IterativeSolution.time_points">[docs]</a>    <span class="k">def</span> <span class="nf">time_points</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Proxies :py:attr:`.TrajectorySolutionData.time_points`.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        time_points : :py:class:`numpy.ndarray` or :py:class:`None`</span>
+<span class="sd">            :py:class:`None` is returned if no solutions have yet been stored</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data_type</span> <span class="o">==</span> <span class="n">TrajectorySolutionData</span><span class="p">:</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">time_points</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">step</span><span class="o">.</span><span class="n">time_point</span> <span class="k">for</span> <span class="n">step</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">None</span>
+</div>
+<div class="viewcode-block" id="IterativeSolution._check_consistency"><a class="viewcode-back" href="../../../api/solutions/iterative_solution.html#pypint.solutions.iterative_solution.IterativeSolution._check_consistency">[docs]</a>    <span class="k">def</span> <span class="nf">_check_consistency</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Check consistency of stored solution data objects.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        ValueError :</span>
+<span class="sd">            If the time points of at least two solution data storage objects differ.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">_time_points</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">time_points</span>
+            <span class="k">for</span> <span class="n">iteration</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">)):</span>
+                <span class="n">assert_condition</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array_equal</span><span class="p">(</span><span class="n">_time_points</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">[</span><span class="n">iteration</span><span class="p">]</span><span class="o">.</span><span class="n">time_points</span><span class="p">),</span> <span class="ne">ValueError</span><span class="p">,</span>
+                                 <span class="n">message</span><span class="o">=</span><span class="s">&quot;Time points of one or more stored solution data objects do not match.&quot;</span><span class="p">,</span>
+                                 <span class="n">checking_obj</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
+
+</div></div>
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;IterativeSolution&#39;</span><span class="p">]</span>
+</pre></div>
+
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+      &copy; 2013-2014,
+        <a href="http://www.fz-juelich.de/ias/jsc/EN/Research/Algorithms/ParallelInTimeIntegration/_node.html">Parallel-in-Time Research Group</a>
+        at the
+        <a href="http://www.fz-juelich.de/ias/jsc/EN/Home/home_node.html">Jülich Supercomputing Centre</a><br />
+    </p>
+  </div>
+
+  <a href="https://github.com/snide/sphinx_rtd_theme">Sphinx theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../',
+            VERSION:'0.0.4-dev-0-g4dad7c2',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../_static/doctools.js"></script>
+      <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

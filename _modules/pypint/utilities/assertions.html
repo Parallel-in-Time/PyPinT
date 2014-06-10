@@ -1,0 +1,438 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>pypint.utilities.assertions &mdash; PyPinT 0.0.4-dev-0-g4dad7c2 documentation</title>
+  
+
+  
+  
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+        <link rel="author" title="About these documents"
+              href="../../../about.html"/>
+    <link rel="top" title="PyPinT 0.0.4-dev-0-g4dad7c2 documentation" href="../../../index.html"/>
+        <link rel="up" title="Module code" href="../../index.html"/> 
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-nav-search">
+        <a href="../../../index.html" class="fa fa-home"> PyPinT</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+        
+        
+            <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../about.html">About</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user/rationale.html">Rationale</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../user/rationale.html#objectives">Objectives</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../user/rationale.html#goals">Goals</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../user/rationale.html#scope">Scope</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user/requirements.html">Requirements</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user/basic_usage.html">Basic Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/examples/package.html">Examples</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/examples/problems/package.html">Example Problems (<tt class="docutils literal"><span class="pre">problems</span></tt>)</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user/theory.html">Mathematical Theory</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../user/bibliography.html">Bibliography</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../history.html">History</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../history.html#release-0-0-3-04-04-2014">Release 0.0.3 (04/04/2014)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../history.html#release-0-0-2-04-03-2014">Release 0.0.2 (04/03/2014)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../history.html#release-0-0-1-2013-11-26">Release 0.0.1 (2013-11-26)</a></li>
+</ul>
+</li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../development/coding_style.html">Coding Style</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../development/documentation.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../development/contributing.html">Contributing</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../development/contributing.html#branching-and-tagging-model">Branching and Tagging Model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../development/contributing.html#commit-messages">Commit Messages</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../development/contributing.html#how-to-implement-a-new-feature">How to Implement a New Feature?</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../development/testing.html">Testing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../development/todo.html">ToDos</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../development/todo.html#global">Global</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../development/todo.html#in-source">In Source</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/package.html">API Reference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/package.html#communicators">Communicators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/package.html#integrators">Integrators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/package.html#multi-level-providers">Multi Level Providers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/package.html#plugins">Plugins</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/package.html#problems">Problems</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/package.html#solutions">Solutions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/package.html#solvers">Solvers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/package.html#utilities">Utilities</a></li>
+</ul>
+</li>
+</ul>
+
+        
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../../../index.html">PyPinT</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+      
+    <li>pypint.utilities.assertions</li>
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main">
+            
+  <h1>Source code for pypint.utilities.assertions</h1><div class="highlight"><pre>
+<span class="c"># coding=utf-8</span>
+<span class="sd">&quot;&quot;&quot;Collection of assertions for validation.</span>
+
+<span class="sd">.. moduleauthor:: Torbjörn Klatt &lt;t.klatt@fz-juelich.de&gt;</span>
+
+<span class="sd">Examples</span>
+<span class="sd">--------</span>
+<span class="sd">&gt;&gt;&gt; a = 3</span>
+<span class="sd">&gt;&gt;&gt; b = 2</span>
+<span class="sd">&gt;&gt;&gt; assert_condition(3 &gt; 2, ValueError, &quot;3 should be larger 2&quot;)</span>
+
+<span class="sd">&gt;&gt;&gt; func = lambda x: x</span>
+<span class="sd">&gt;&gt;&gt; assert_is_callable(func, &quot;A lambda expression is callable.&quot;)</span>
+
+<span class="sd">&gt;&gt;&gt; l = [1, 2, 4]</span>
+<span class="sd">&gt;&gt;&gt; assert_is_in(2, l, &quot;2 is in the list&quot;)</span>
+
+<span class="sd">&gt;&gt;&gt; m = {&#39;hello&#39;: &#39;world&#39;}</span>
+<span class="sd">&gt;&gt;&gt; assert_is_key(&#39;hello&#39;, m, &quot;&#39;hello&#39; is a key&quot;)</span>
+
+<span class="sd">&gt;&gt;&gt; a = 1</span>
+<span class="sd">&gt;&gt;&gt; assert_is_instance(a, int, &quot;&#39;a&#39; is an integer&quot;)</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">inspect</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">Callable</span>
+
+<span class="kn">from</span> <span class="nn">pypint.utilities.tracing</span> <span class="kn">import</span> <span class="n">checking_obj_name</span><span class="p">,</span> <span class="n">class_name</span><span class="p">,</span> <span class="n">func_name</span>
+<span class="kn">from</span> <span class="nn">pypint.utilities.logging</span> <span class="kn">import</span> <span class="n">LOG</span>
+
+
+<div class="viewcode-block" id="assert_condition"><a class="viewcode-back" href="../../../api/utilities/assertions.html#pypint.utilities.assertions.assert_condition">[docs]</a><span class="k">def</span> <span class="nf">assert_condition</span><span class="p">(</span><span class="n">condition</span><span class="p">,</span> <span class="n">exception_type</span><span class="p">,</span> <span class="n">message</span><span class="p">,</span> <span class="n">checking_obj</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Asserts trueness of arbitrary condition</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    condition : :py:class:`bool` or ``boolean expression``</span>
+<span class="sd">        expression to be asserted</span>
+<span class="sd">    exception_type : :py:class:`Exception`</span>
+<span class="sd">        type of exception to be raised if ``condition`` evaluates to :py:class:`False`</span>
+<span class="sd">    message : :py:class:`str`</span>
+<span class="sd">        message content of exception raised</span>
+<span class="sd">    checking_obj : :py:class:`object` or :py:class:`None`</span>
+<span class="sd">        The exception will be raised in the scope of the given object.</span>
+<span class="sd">        If :py:class:`None` (default) no scope will be displayed.</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    exception_type</span>
+<span class="sd">        if ``condition`` evaluates to :py:class:`False`</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">condition</span><span class="p">:</span>
+        <span class="n">LOG</span><span class="o">.</span><span class="n">critical</span><span class="p">(</span><span class="n">func_name</span><span class="p">(</span><span class="n">checking_obj</span><span class="p">)</span> <span class="o">+</span> <span class="n">message</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="n">exception_type</span><span class="p">(</span><span class="s">&quot;{:s}.{:s}(): {:s}&quot;</span>
+                             <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">checking_obj_name</span><span class="p">(</span><span class="n">checking_obj</span><span class="p">),</span> <span class="n">inspect</span><span class="o">.</span><span class="n">stack</span><span class="p">()[</span><span class="mi">1</span><span class="p">][</span><span class="mi">3</span><span class="p">],</span> <span class="n">message</span><span class="p">))</span>
+
+</div>
+<div class="viewcode-block" id="assert_is_callable"><a class="viewcode-back" href="../../../api/utilities/assertions.html#pypint.utilities.assertions.assert_is_callable">[docs]</a><span class="k">def</span> <span class="nf">assert_is_callable</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">message</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">descriptor</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">checking_obj</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Asserts callability of given object</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    obj : :py:class:`object`</span>
+<span class="sd">        object to be asserted callable</span>
+<span class="sd">    message : :py:class:`str` or :py:class:`None`</span>
+<span class="sd">        *(optional)*</span>
+<span class="sd">    checking_obj : :py:class:`object` or :py:class:`None`</span>
+<span class="sd">        *(optional)*</span>
+<span class="sd">        The exception will be raised in the scope of the given object.</span>
+<span class="sd">        If :py:class:`None` (default) no scope will be displayed.</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    ValueError</span>
+<span class="sd">        if ``obj`` is not :py:class:`Callable`</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">Callable</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">message</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">descriptor</span><span class="p">:</span>
+                <span class="n">message</span> <span class="o">=</span> <span class="s">&quot;{:s} must be callable.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">descriptor</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">message</span> <span class="o">=</span> <span class="s">&quot;Required a callable: NOT {:s}.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">class_name</span><span class="p">(</span><span class="n">obj</span><span class="p">))</span>
+        <span class="n">LOG</span><span class="o">.</span><span class="n">critical</span><span class="p">(</span><span class="n">func_name</span><span class="p">(</span><span class="n">checking_obj</span><span class="p">)</span> <span class="o">+</span> <span class="n">message</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&quot;{:s}.{:s}(): {:s}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">checking_obj_name</span><span class="p">(</span><span class="n">checking_obj</span><span class="p">),</span> <span class="n">inspect</span><span class="o">.</span><span class="n">stack</span><span class="p">()[</span><span class="mi">2</span><span class="p">][</span><span class="mi">3</span><span class="p">],</span> <span class="n">message</span><span class="p">))</span>
+
+</div>
+<div class="viewcode-block" id="assert_is_in"><a class="viewcode-back" href="../../../api/utilities/assertions.html#pypint.utilities.assertions.assert_is_in">[docs]</a><span class="k">def</span> <span class="nf">assert_is_in</span><span class="p">(</span><span class="n">element</span><span class="p">,</span> <span class="n">test_list</span><span class="p">,</span> <span class="n">message</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">elem_desc</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">list_desc</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">checking_obj</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Asserts element in list or sequence</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    element : :py:class:`object`</span>
+<span class="sd">        element to check membership</span>
+<span class="sd">    test_list : ``Sequence``</span>
+<span class="sd">        sequence to check</span>
+<span class="sd">    message : :py:class:`str`</span>
+<span class="sd">        *(optional)*</span>
+<span class="sd">        message content of exception raised</span>
+<span class="sd">    checking_obj : :py:class:`object` or :py:class:`None`</span>
+<span class="sd">        *(optional)*</span>
+<span class="sd">        The exception will be raised in the scope of the given object.</span>
+<span class="sd">        If :py:class:`None` (default) no scope will be displayed.</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    ValueError</span>
+<span class="sd">        if ``element`` is not in ``test_list``</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    assert_is_in(True, bool_list, elem_desc=&#39;&#39;, list_desc=&#39;&#39;, checking_obj=self)</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">element</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">test_list</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">message</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">list_desc</span><span class="p">:</span>
+                <span class="n">list_desc</span> <span class="o">=</span> <span class="n">class_name</span><span class="p">(</span><span class="n">test_list</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">elem_desc</span><span class="p">:</span>
+                <span class="n">elem_desc</span> <span class="o">=</span> <span class="s">&quot;Element {:r}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">element</span><span class="p">)</span>
+            <span class="n">message</span> <span class="o">=</span> <span class="s">&quot;{:s} is not in {:s}.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">elem_desc</span><span class="p">,</span> <span class="n">list_desc</span><span class="p">)</span>
+        <span class="n">LOG</span><span class="o">.</span><span class="n">critical</span><span class="p">(</span><span class="n">func_name</span><span class="p">(</span><span class="n">checking_obj</span><span class="p">)</span> <span class="o">+</span> <span class="n">message</span><span class="p">)</span>
+        <span class="n">LOG</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">func_name</span><span class="p">(</span><span class="n">checking_obj</span><span class="p">)</span> <span class="o">+</span>
+                  <span class="s">&quot;Elements in {:s}: {:s}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">class_name</span><span class="p">(</span><span class="n">test_list</span><span class="p">),</span> <span class="s">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">test_list</span><span class="p">)))</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&quot;{:s}.{:s}(): {:s}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">checking_obj_name</span><span class="p">(</span><span class="n">checking_obj</span><span class="p">),</span> <span class="n">inspect</span><span class="o">.</span><span class="n">stack</span><span class="p">()[</span><span class="mi">2</span><span class="p">][</span><span class="mi">3</span><span class="p">],</span> <span class="n">message</span><span class="p">))</span>
+
+</div>
+<div class="viewcode-block" id="assert_is_instance"><a class="viewcode-back" href="../../../api/utilities/assertions.html#pypint.utilities.assertions.assert_is_instance">[docs]</a><span class="k">def</span> <span class="nf">assert_is_instance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">instances</span><span class="p">,</span> <span class="n">message</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">descriptor</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">checking_obj</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Asserts element is of certain type</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    obj : :py:class:`object`</span>
+<span class="sd">        object to check type</span>
+<span class="sd">    instances : :py:class:`type` of ``classes`` or :py:class:`class`</span>
+<span class="sd">        types to check</span>
+<span class="sd">    message : :py:class:`str`</span>
+<span class="sd">        *(optional)*</span>
+<span class="sd">        message content of exception raised</span>
+<span class="sd">    checking_obj : :py:class:`object` or :py:class:`None`</span>
+<span class="sd">        *(optional)*</span>
+<span class="sd">        The exception will be raised in the scope of the given object.</span>
+<span class="sd">        If :py:class:`None` (default) no scope will be displayed.</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    ValueError</span>
+<span class="sd">        if ``obj`` is not of type ``instances``</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">instances</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">message</span><span class="p">:</span>
+            <span class="n">_instances_str</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">instances</span><span class="p">,</span> <span class="p">(</span><span class="nb">tuple</span><span class="p">,</span> <span class="nb">set</span><span class="p">,</span> <span class="nb">frozenset</span><span class="p">)):</span>
+                <span class="k">for</span> <span class="n">_i</span> <span class="ow">in</span> <span class="n">instances</span><span class="p">:</span>
+                    <span class="n">_instances_str</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s">&quot;&#39;</span><span class="si">%s</span><span class="s">&#39;&quot;</span> <span class="o">%</span> <span class="n">_i</span><span class="o">.</span><span class="n">__name__</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">_instances_str</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s">&quot;&#39;</span><span class="si">%s</span><span class="s">&#39;&quot;</span> <span class="o">%</span> <span class="n">instances</span><span class="o">.</span><span class="n">__name__</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">descriptor</span><span class="p">:</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">_instances_str</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+                    <span class="n">message</span> <span class="o">=</span> <span class="s">&quot;{:s} must be one of {:s}: NOT {:s}&quot;</span>\
+                              <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">descriptor</span><span class="p">,</span> <span class="s">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">_instances_str</span><span class="p">),</span> <span class="n">class_name</span><span class="p">(</span><span class="n">obj</span><span class="p">))</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">message</span> <span class="o">=</span> <span class="s">&quot;{:s} must be a {:s}: NOT {:s}&quot;</span>\
+                              <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">descriptor</span><span class="p">,</span> <span class="s">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">_instances_str</span><span class="p">),</span> <span class="n">class_name</span><span class="p">(</span><span class="n">obj</span><span class="p">))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">_instances_str</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+                    <span class="n">message</span> <span class="o">=</span> <span class="s">&quot;Required one of {:s}: NOT {:s}.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">_instances_str</span><span class="p">),</span> <span class="n">class_name</span><span class="p">(</span><span class="n">obj</span><span class="p">))</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">message</span> <span class="o">=</span> <span class="s">&quot;Required a {:s}: NOT {:s}.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">_instances_str</span><span class="p">),</span> <span class="n">class_name</span><span class="p">(</span><span class="n">obj</span><span class="p">))</span>
+        <span class="n">LOG</span><span class="o">.</span><span class="n">critical</span><span class="p">(</span><span class="n">func_name</span><span class="p">(</span><span class="n">checking_obj</span><span class="p">)</span> <span class="o">+</span> <span class="n">message</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&quot;{:s}.{:s}(): {:s}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">checking_obj_name</span><span class="p">(</span><span class="n">checking_obj</span><span class="p">),</span> <span class="n">inspect</span><span class="o">.</span><span class="n">stack</span><span class="p">()[</span><span class="mi">2</span><span class="p">][</span><span class="mi">3</span><span class="p">],</span> <span class="n">message</span><span class="p">))</span>
+
+</div>
+<div class="viewcode-block" id="assert_is_key"><a class="viewcode-back" href="../../../api/utilities/assertions.html#pypint.utilities.assertions.assert_is_key">[docs]</a><span class="k">def</span> <span class="nf">assert_is_key</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">dictionary</span><span class="p">,</span> <span class="n">message</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">key_desc</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">dict_desc</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">checking_obj</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Asserts dictionary has a certain key</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    key : ``key``</span>
+<span class="sd">        key to check</span>
+<span class="sd">    dictionary : :py:class:`dict`</span>
+<span class="sd">        dictionary to check</span>
+<span class="sd">    message : :py:class:`str`</span>
+<span class="sd">        *(optional)*</span>
+<span class="sd">        message content of exception raised</span>
+<span class="sd">    checking_obj : :py:class:`object` or :py:class:`None`</span>
+<span class="sd">        *(optional)*</span>
+<span class="sd">        The exception will be raised in the scope of the given object.</span>
+<span class="sd">        If :py:class:`None` (default) no scope will be displayed.</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    ValueError</span>
+<span class="sd">        if ``key`` is not of a key in ``dictionary``</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">dictionary</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">message</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">key_desc</span><span class="p">:</span>
+                <span class="n">key_desc</span> <span class="o">=</span> <span class="s">&quot;&#39;{:s}&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">dict_desc</span><span class="p">:</span>
+                <span class="n">dict_desc</span> <span class="o">=</span> <span class="s">&quot;given dict&quot;</span>
+            <span class="n">message</span> <span class="o">=</span> <span class="s">&quot;{:s} is not a key in {:s}.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">key_desc</span><span class="p">,</span> <span class="n">dict_desc</span><span class="p">)</span>
+        <span class="n">LOG</span><span class="o">.</span><span class="n">critical</span><span class="p">(</span><span class="n">func_name</span><span class="p">(</span><span class="n">checking_obj</span><span class="p">)</span> <span class="o">+</span> <span class="n">message</span><span class="p">)</span>
+        <span class="n">LOG</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">func_name</span><span class="p">(</span><span class="n">checking_obj</span><span class="p">)</span> <span class="o">+</span> <span class="s">&quot;Keys in {:s}: {:s}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">id</span><span class="p">(</span><span class="n">dictionary</span><span class="p">),</span> <span class="s">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">dictionary</span><span class="o">.</span><span class="n">keys</span><span class="p">())))</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&quot;{:s}.{:s}(): {:s}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">checking_obj_name</span><span class="p">(</span><span class="n">checking_obj</span><span class="p">),</span> <span class="n">inspect</span><span class="o">.</span><span class="n">stack</span><span class="p">()[</span><span class="mi">2</span><span class="p">][</span><span class="mi">3</span><span class="p">],</span> <span class="n">message</span><span class="p">))</span>
+
+</div>
+<span class="k">def</span> <span class="nf">assert_named_argument</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">,</span> <span class="n">types</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">message</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">descriptor</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">checking_obj</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">message</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">descriptor</span><span class="p">:</span>
+                <span class="n">message</span> <span class="o">=</span> <span class="s">&quot;</span><span class="si">%s</span><span class="s"> (&#39;</span><span class="si">%s</span><span class="s">&#39;) is a required argument.&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">descriptor</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">message</span> <span class="o">=</span> <span class="s">&quot;&#39;</span><span class="si">%s</span><span class="s">&#39; is a required argument.&quot;</span> <span class="o">%</span> <span class="n">name</span>
+        <span class="n">LOG</span><span class="o">.</span><span class="n">critical</span><span class="p">(</span><span class="n">func_name</span><span class="p">(</span><span class="n">checking_obj</span><span class="p">)</span> <span class="o">+</span> <span class="n">message</span><span class="p">)</span>
+        <span class="n">LOG</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">func_name</span><span class="p">(</span><span class="n">checking_obj</span><span class="p">)</span> <span class="o">+</span> <span class="s">&quot;Named arguments were: </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="s">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">kwargs</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&quot;{:s}.{:s}(): {:s}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">checking_obj_name</span><span class="p">(</span><span class="n">checking_obj</span><span class="p">),</span> <span class="n">inspect</span><span class="o">.</span><span class="n">stack</span><span class="p">()[</span><span class="mi">2</span><span class="p">][</span><span class="mi">3</span><span class="p">],</span> <span class="n">message</span><span class="p">))</span>
+
+    <span class="k">if</span> <span class="n">types</span><span class="p">:</span>
+        <span class="n">assert_is_instance</span><span class="p">(</span><span class="n">kwargs</span><span class="p">[</span><span class="n">name</span><span class="p">],</span> <span class="n">types</span><span class="p">,</span> <span class="n">descriptor</span><span class="o">=</span><span class="n">descriptor</span><span class="p">,</span> <span class="n">checking_obj</span><span class="o">=</span><span class="n">checking_obj</span><span class="p">)</span>
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s">&#39;assert_condition&#39;</span><span class="p">,</span>
+    <span class="s">&#39;assert_is_in&#39;</span><span class="p">,</span>
+    <span class="s">&#39;assert_is_instance&#39;</span><span class="p">,</span>
+    <span class="s">&#39;assert_is_callable&#39;</span><span class="p">,</span>
+    <span class="s">&#39;assert_is_key&#39;</span><span class="p">,</span>
+    <span class="s">&#39;assert_named_argument&#39;</span>
+<span class="p">]</span>
+</pre></div>
+
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+      &copy; 2013-2014,
+        <a href="http://www.fz-juelich.de/ias/jsc/EN/Research/Algorithms/ParallelInTimeIntegration/_node.html">Parallel-in-Time Research Group</a>
+        at the
+        <a href="http://www.fz-juelich.de/ias/jsc/EN/Home/home_node.html">Jülich Supercomputing Centre</a><br />
+    </p>
+  </div>
+
+  <a href="https://github.com/snide/sphinx_rtd_theme">Sphinx theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../',
+            VERSION:'0.0.4-dev-0-g4dad7c2',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../_static/doctools.js"></script>
+      <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

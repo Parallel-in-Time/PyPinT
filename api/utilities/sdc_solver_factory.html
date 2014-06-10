@@ -1,0 +1,267 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>SDC Solver Factory (sdc_solver_factory) &mdash; PyPinT 0.0.4-dev-0-g4dad7c2 documentation</title>
+  
+
+  
+  
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  
+
+  
+        <link rel="author" title="About these documents"
+              href="../../about.html"/>
+    <link rel="top" title="PyPinT 0.0.4-dev-0-g4dad7c2 documentation" href="../../index.html"/>
+        <link rel="up" title="Utilities (utilities)" href="package.html"/>
+        <link rel="next" title="Threshold Check (threshold_check)" href="threshold_check.html"/>
+        <link rel="prev" title="Math (math)" href="math.html"/> 
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-nav-search">
+        <a href="../../index.html" class="fa fa-home"> PyPinT</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+        
+        
+            <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../about.html">About</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user/rationale.html">Rationale</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../user/rationale.html#objectives">Objectives</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../user/rationale.html#goals">Goals</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../user/rationale.html#scope">Scope</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../user/requirements.html">Requirements</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user/basic_usage.html">Basic Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/package.html">Examples</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../examples/problems/package.html">Example Problems (<tt class="docutils literal"><span class="pre">problems</span></tt>)</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../user/theory.html">Mathematical Theory</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../user/bibliography.html">Bibliography</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../history.html">History</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../history.html#release-0-0-3-04-04-2014">Release 0.0.3 (04/04/2014)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../history.html#release-0-0-2-04-03-2014">Release 0.0.2 (04/03/2014)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../history.html#release-0-0-1-2013-11-26">Release 0.0.1 (2013-11-26)</a></li>
+</ul>
+</li>
+</ul>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../development/coding_style.html">Coding Style</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../development/documentation.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../development/contributing.html">Contributing</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../development/contributing.html#branching-and-tagging-model">Branching and Tagging Model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../development/contributing.html#commit-messages">Commit Messages</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../development/contributing.html#how-to-implement-a-new-feature">How to Implement a New Feature?</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../development/testing.html">Testing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../development/todo.html">ToDos</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../development/todo.html#global">Global</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../development/todo.html#in-source">In Source</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="reference internal" href="../package.html">API Reference</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../package.html#communicators">Communicators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../package.html#integrators">Integrators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../package.html#multi-level-providers">Multi Level Providers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../package.html#plugins">Plugins</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../package.html#problems">Problems</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../package.html#solutions">Solutions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../package.html#solvers">Solvers</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../package.html#utilities">Utilities</a></li>
+</ul>
+</li>
+</ul>
+
+        
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../../index.html">PyPinT</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="../package.html">PyPinT Package</a> &raquo;</li>
+      
+          <li><a href="package.html">Utilities (<tt class="docutils literal"><span class="pre">utilities</span></tt>)</a> &raquo;</li>
+      
+    <li>SDC Solver Factory (<tt class="docutils literal"><span class="pre">sdc_solver_factory</span></tt>)</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          <a href="../../_sources/api/utilities/sdc_solver_factory.txt" rel="nofollow"> View page source</a>
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main">
+            
+  <div class="section" id="module-pypint.utilities.sdc_solver_factory">
+<span id="sdc-solver-factory-sdc-solver-factory"></span><h1>SDC Solver Factory (<tt class="xref py py-mod docutils literal"><span class="pre">sdc_solver_factory</span></tt>)<a class="headerlink" href="#module-pypint.utilities.sdc_solver_factory" title="Permalink to this headline">¶</a></h1>
+<dl class="function">
+<dt id="pypint.utilities.sdc_solver_factory.sdc_solver_factory">
+<tt class="descclassname">pypint.utilities.sdc_solver_factory.</tt><tt class="descname">sdc_solver_factory</tt><span class="sig-paren">(</span><em>problem</em>, <em>num_solvers</em>, <em>num_total_time_steps</em>, <em>solver_core</em>, <em>**solver_options</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pypint/utilities/sdc_solver_factory.html#sdc_solver_factory"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypint.utilities.sdc_solver_factory.sdc_solver_factory" title="Permalink to this definition">¶</a></dt>
+<dd><p>Factory function for Parallel SDC with Forward Sending Messaging</p>
+<p>This function creates, initializes and executes one or more SDC solvers in parallel for a given problem.
+The number of solver instances and total number of time steps can be specified as well as the type of SDC core.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>problem</strong> (<a class="reference internal" href="../problems/i_initial_value_problem.html#pypint.problems.i_initial_value_problem.IInitialValueProblem" title="pypint.problems.i_initial_value_problem.IInitialValueProblem"><tt class="xref py py-class docutils literal"><span class="pre">IInitialValueProblem</span></tt></a>) &#8211; the initial value problem to create the solvers for</li>
+<li><strong>num_solvers</strong> (<tt class="xref py py-class docutils literal"><span class="pre">int</span></tt>) &#8211; number of parallel solvers to be created</li>
+<li><strong>num_total_time_steps</strong> (<tt class="xref py py-class docutils literal"><span class="pre">int</span></tt>) &#8211; total number of time steps for the whole interval defined by the problem</li>
+<li><strong>solver_core</strong> (<a class="reference internal" href="../solvers/cores/sdc_solver_core.html#pypint.solvers.cores.sdc_solver_core.SdcSolverCore" title="pypint.solvers.cores.sdc_solver_core.SdcSolverCore"><tt class="xref py py-class docutils literal"><span class="pre">SdcSolverCore</span></tt></a>) &#8211; type of the SDC solver core</li>
+<li><strong>solver_options</strong> (<tt class="xref py py-class docutils literal"><span class="pre">dict</span></tt>) &#8211; options to be passed as it to the solver instantiation
+(see <tt class="xref py py-meth docutils literal"><span class="pre">ParallelSDC.__init__()</span></tt> for details)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>solvers</strong></p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first"><tt class="xref py py-class docutils literal"><span class="pre">list</span></tt> of <tt class="xref py py-class docutils literal"><span class="pre">ParallelSDC</span></tt></p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first"><tt class="xref py py-exc docutils literal"><span class="pre">ValueError</span></tt> &#8211;</p>
+<ul class="last simple">
+<li>if <tt class="docutils literal"><span class="pre">problem</span></tt> is not an <a class="reference internal" href="../problems/i_initial_value_problem.html#pypint.problems.i_initial_value_problem.IInitialValueProblem" title="pypint.problems.i_initial_value_problem.IInitialValueProblem"><tt class="xref py py-class docutils literal"><span class="pre">IInitialValueProblem</span></tt></a></li>
+<li>if <tt class="docutils literal"><span class="pre">num_solvers</span></tt> is not an <tt class="xref py py-class docutils literal"><span class="pre">int</span></tt> or not larger zero</li>
+<li>if <tt class="docutils literal"><span class="pre">num_total_time_steps</span></tt> is smaller than <tt class="docutils literal"><span class="pre">num_solvers</span></tt></li>
+<li>if <tt class="docutils literal"><span class="pre">solver_options</span></tt> is not a <tt class="xref py py-class docutils literal"><span class="pre">dict</span></tt></li>
+<li>if the interval width per solver core is invalid (i.e. not non-zero possitive or larger the problem width)</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+
+
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="threshold_check.html" class="btn btn-neutral float-right" title="Threshold Check (threshold_check)"/>Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="math.html" class="btn btn-neutral" title="Math (math)"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+      &copy; 2013-2014,
+        <a href="http://www.fz-juelich.de/ias/jsc/EN/Research/Algorithms/ParallelInTimeIntegration/_node.html">Parallel-in-Time Research Group</a>
+        at the
+        <a href="http://www.fz-juelich.de/ias/jsc/EN/Home/home_node.html">Jülich Supercomputing Centre</a><br />
+    </p>
+  </div>
+
+  <a href="https://github.com/snide/sphinx_rtd_theme">Sphinx theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../',
+            VERSION:'0.0.4-dev-0-g4dad7c2',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../_static/doctools.js"></script>
+      <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

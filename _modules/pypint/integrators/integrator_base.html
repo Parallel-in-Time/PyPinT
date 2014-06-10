@@ -1,0 +1,401 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>pypint.integrators.integrator_base &mdash; PyPinT 0.0.4-dev-0-g4dad7c2 documentation</title>
+  
+
+  
+  
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+        <link rel="author" title="About these documents"
+              href="../../../about.html"/>
+    <link rel="top" title="PyPinT 0.0.4-dev-0-g4dad7c2 documentation" href="../../../index.html"/>
+        <link rel="up" title="pypint.integrators" href="../integrators.html"/> 
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-nav-search">
+        <a href="../../../index.html" class="fa fa-home"> PyPinT</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+        
+        
+            <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../about.html">About</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user/rationale.html">Rationale</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../user/rationale.html#objectives">Objectives</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../user/rationale.html#goals">Goals</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../user/rationale.html#scope">Scope</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user/requirements.html">Requirements</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user/basic_usage.html">Basic Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/examples/package.html">Examples</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/examples/problems/package.html">Example Problems (<tt class="docutils literal"><span class="pre">problems</span></tt>)</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user/theory.html">Mathematical Theory</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../user/bibliography.html">Bibliography</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../history.html">History</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../history.html#release-0-0-3-04-04-2014">Release 0.0.3 (04/04/2014)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../history.html#release-0-0-2-04-03-2014">Release 0.0.2 (04/03/2014)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../history.html#release-0-0-1-2013-11-26">Release 0.0.1 (2013-11-26)</a></li>
+</ul>
+</li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../development/coding_style.html">Coding Style</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../development/documentation.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../development/contributing.html">Contributing</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../development/contributing.html#branching-and-tagging-model">Branching and Tagging Model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../development/contributing.html#commit-messages">Commit Messages</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../development/contributing.html#how-to-implement-a-new-feature">How to Implement a New Feature?</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../development/testing.html">Testing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../development/todo.html">ToDos</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../development/todo.html#global">Global</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../development/todo.html#in-source">In Source</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/package.html">API Reference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/package.html#communicators">Communicators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/package.html#integrators">Integrators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/package.html#multi-level-providers">Multi Level Providers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/package.html#plugins">Plugins</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/package.html#problems">Problems</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/package.html#solutions">Solutions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/package.html#solvers">Solvers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/package.html#utilities">Utilities</a></li>
+</ul>
+</li>
+</ul>
+
+        
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../../../index.html">PyPinT</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+      
+          <li><a href="../integrators.html">pypint.integrators</a> &raquo;</li>
+      
+    <li>pypint.integrators.integrator_base</li>
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main">
+            
+  <h1>Source code for pypint.integrators.integrator_base</h1><div class="highlight"><pre>
+<span class="c"># coding=utf-8</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">.. moduleauthor:: Torbjörn Klatt &lt;t.klatt@fz-juelich.de&gt;</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+
+<span class="kn">from</span> <span class="nn">pypint.integrators.node_providers.i_nodes</span> <span class="kn">import</span> <span class="n">INodes</span>
+<span class="kn">from</span> <span class="nn">pypint.integrators.weight_function_providers.i_weight_function</span> <span class="kn">import</span> <span class="n">IWeightFunction</span>
+<span class="kn">from</span> <span class="nn">pypint.utilities</span> <span class="kn">import</span> <span class="n">assert_is_instance</span><span class="p">,</span> <span class="n">assert_condition</span><span class="p">,</span> <span class="n">class_name</span>
+
+
+<div class="viewcode-block" id="IntegratorBase"><a class="viewcode-back" href="../../../api/integrators/integrator_base.html#pypint.integrators.integrator_base.IntegratorBase">[docs]</a><span class="k">class</span> <span class="nc">IntegratorBase</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Basic and generic integrator for variable nodes and weights.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_nodes</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_weights_function</span> <span class="o">=</span> <span class="bp">None</span>
+
+<div class="viewcode-block" id="IntegratorBase.init"><a class="viewcode-back" href="../../../api/integrators/integrator_base.html#pypint.integrators.integrator_base.IntegratorBase.init">[docs]</a>    <span class="k">def</span> <span class="nf">init</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nodes_type</span><span class="p">,</span> <span class="n">num_nodes</span><span class="p">,</span> <span class="n">weights_function</span><span class="p">,</span> <span class="n">interval</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Initializes the integrator with given nodes and weights function.</span>
+
+<span class="sd">        Before setting the given attributes, a consistency check is carried out testing for the correct types.</span>
+<span class="sd">        :py:meth:`.INodes.init` is called on the provided nodes object.</span>
+<span class="sd">        :py:meth:`.IWeightFunction.evaluate` is called on the provided weight function object.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        nodes_type : :py:class:`.INodes`</span>
+<span class="sd">            Type of integration nodes as the class name **not instance**.</span>
+<span class="sd">        num_nodes : :py:class:`int`</span>
+<span class="sd">            Number of integration nodes</span>
+<span class="sd">        weights_function : :py:class:`.IWeightFunction` or :py:class:`dict`</span>
+<span class="sd">            Weight function for the integration nodes.</span>
+<span class="sd">            If it is a dictionary, it must have a ``class`` field with the :py:class:`.IWeightFunction` as the value.</span>
+<span class="sd">            Further fields are used as parameters to :py:class:`.IWeightFunction.init`.</span>
+<span class="sd">            In both cases the weight function class must be given as a name **not instance**.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        ValueError :</span>
+<span class="sd">            If the type of one of the given arguments does not match.</span>
+
+<span class="sd">            * ``nodes_type`` must be a subclass of :py:class:`.INodes`</span>
+<span class="sd">            * ``num_nodes`` must be an :py:class:`int`</span>
+<span class="sd">            * ``weights_function`` must be a subclass of :py:class:`.IWeightFunction` or :py:class:`dict`</span>
+
+<span class="sd">                - if ``weights_function`` is a dictionary, its field ``class`` must be an :py:class:`.IWeightFunction`.</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        &gt;&gt;&gt; from pypint.integrators import INTEGRATOR_PRESETS</span>
+<span class="sd">        &gt;&gt;&gt; integrator = IntegratorBase()</span>
+<span class="sd">        &gt;&gt;&gt; # create classic Gauss-Lobatto integrator with 4 integration nodes</span>
+<span class="sd">        &gt;&gt;&gt; options = INTEGRATOR_PRESETS[&#39;Gauss-Lobatto&#39;]</span>
+<span class="sd">        &gt;&gt;&gt; options[&#39;num_nodes&#39;] = 4</span>
+<span class="sd">        &gt;&gt;&gt; integrator.init(**options)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">assert_condition</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">nodes_type</span><span class="p">,</span> <span class="nb">type</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">nodes_type</span><span class="p">,</span> <span class="n">INodes</span><span class="p">),</span>
+                         <span class="ne">ValueError</span><span class="p">,</span> <span class="n">message</span><span class="o">=</span><span class="s">&quot;Given nodes type is not a valid type: </span><span class="si">%s</span><span class="s">&quot;</span>
+                                             <span class="o">%</span> <span class="n">nodes_type</span><span class="o">.</span><span class="n">__mro__</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">__name__</span><span class="p">,</span>
+                         <span class="n">checking_obj</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">weights_function</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+            <span class="n">assert_condition</span><span class="p">(</span><span class="s">&#39;class&#39;</span> <span class="ow">in</span> <span class="n">weights_function</span> <span class="ow">and</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">weights_function</span><span class="p">[</span><span class="s">&#39;class&#39;</span><span class="p">],</span> <span class="n">IWeightFunction</span><span class="p">),</span>
+                             <span class="ne">ValueError</span><span class="p">,</span> <span class="s">&quot;Given weight function is not a valid type: </span><span class="si">%s</span><span class="s">&quot;</span>
+                                         <span class="o">%</span> <span class="n">weights_function</span><span class="p">[</span><span class="s">&#39;class&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">__mro__</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">__name__</span><span class="p">,</span>
+                             <span class="bp">self</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_weights_function</span> <span class="o">=</span> <span class="n">weights_function</span><span class="p">[</span><span class="s">&#39;class&#39;</span><span class="p">]()</span>
+            <span class="c"># copy() is necessary as dictionaries are passed by reference</span>
+            <span class="n">_weight_function_options</span> <span class="o">=</span> <span class="n">weights_function</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+            <span class="k">del</span> <span class="n">_weight_function_options</span><span class="p">[</span><span class="s">&#39;class&#39;</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_weights_function</span><span class="o">.</span><span class="n">init</span><span class="p">(</span><span class="o">**</span><span class="n">_weight_function_options</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">assert_condition</span><span class="p">(</span><span class="nb">issubclass</span><span class="p">(</span><span class="n">weights_function</span><span class="p">,</span> <span class="n">IWeightFunction</span><span class="p">),</span>
+                             <span class="ne">ValueError</span><span class="p">,</span> <span class="n">message</span><span class="o">=</span><span class="s">&quot;Given Weight Function is not a valid type: </span><span class="si">%s</span><span class="s">&quot;</span>
+                                                 <span class="o">%</span> <span class="n">weights_function</span><span class="o">.</span><span class="n">__mro__</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">__name__</span><span class="p">,</span>
+                             <span class="n">checking_obj</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_weights_function</span> <span class="o">=</span> <span class="n">weights_function</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_weights_function</span><span class="o">.</span><span class="n">init</span><span class="p">()</span>
+        <span class="n">assert_is_instance</span><span class="p">(</span><span class="n">num_nodes</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span>
+                           <span class="s">&quot;Number of nodes need to be an integer: NOT </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="nb">type</span><span class="p">(</span><span class="n">num_nodes</span><span class="p">),</span>
+                           <span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_nodes</span> <span class="o">=</span> <span class="n">nodes_type</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_nodes</span><span class="o">.</span><span class="n">init</span><span class="p">(</span><span class="n">num_nodes</span><span class="p">,</span> <span class="n">interval</span><span class="o">=</span><span class="n">interval</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_weights_function</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_nodes</span><span class="o">.</span><span class="n">nodes</span><span class="p">,</span> <span class="n">interval</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_nodes</span><span class="o">.</span><span class="n">interval</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="IntegratorBase.evaluate"><a class="viewcode-back" href="../../../api/integrators/integrator_base.html#pypint.integrators.integrator_base.IntegratorBase.evaluate">[docs]</a>    <span class="k">def</span> <span class="nf">evaluate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Applies this integrator to given data in specified time interval.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        data : :py:class:`numpy.ndarray`</span>
+<span class="sd">            Data vector of the values at given time points.</span>
+<span class="sd">            Its length must equal the number of integration nodes.</span>
+<span class="sd">        time_start : :py:class:`float`</span>
+<span class="sd">            *(optional)*</span>
+<span class="sd">            Begining of the time interval to integrate over.</span>
+<span class="sd">        time_end : :py:class:`float`</span>
+<span class="sd">            *(optional)*</span>
+<span class="sd">            End of the time interval to integrate over.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        ValueError :</span>
+
+<span class="sd">            * if ``data`` is not a :py:class:`numpy.ndarray`</span>
+<span class="sd">            * if either ``time_start`` or ``time_end`` are not given</span>
+<span class="sd">            * if ``time_start`` is larger or equals ``time_end``</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">assert_is_instance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">descriptor</span><span class="o">=</span><span class="s">&quot;Data to integrate&quot;</span><span class="p">,</span> <span class="n">checking_obj</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
+        <span class="n">assert_condition</span><span class="p">(</span><span class="s">&quot;time_start&quot;</span> <span class="ow">in</span> <span class="n">kwargs</span> <span class="ow">or</span> <span class="s">&quot;time_end&quot;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">,</span>
+                         <span class="ne">ValueError</span><span class="p">,</span> <span class="n">message</span><span class="o">=</span><span class="s">&quot;Either start or end of time interval need to be given.&quot;</span><span class="p">,</span>
+                         <span class="n">checking_obj</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
+        <span class="n">assert_condition</span><span class="p">(</span><span class="n">kwargs</span><span class="p">[</span><span class="s">&quot;time_start&quot;</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">kwargs</span><span class="p">[</span><span class="s">&quot;time_end&quot;</span><span class="p">],</span>
+                         <span class="ne">ValueError</span><span class="p">,</span>
+                         <span class="n">message</span><span class="o">=</span><span class="s">&quot;Time interval need to be non-zero positive: [{:f}, {:f}]&quot;</span>
+                                 <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">kwargs</span><span class="p">[</span><span class="s">&quot;time_start&quot;</span><span class="p">],</span> <span class="n">kwargs</span><span class="p">[</span><span class="s">&quot;time_end&quot;</span><span class="p">]),</span>
+                         <span class="n">checking_obj</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="IntegratorBase.transform_interval"><a class="viewcode-back" href="../../../api/integrators/integrator_base.html#pypint.integrators.integrator_base.IntegratorBase.transform_interval">[docs]</a>    <span class="k">def</span> <span class="nf">transform_interval</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">interval</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Transform current interval to the given one</span>
+
+<span class="sd">        The integration nodes are transformed to fit the given interval and subsequently the weights are recomputed to</span>
+<span class="sd">        match the new nodes.</span>
+
+<span class="sd">        See Also</span>
+<span class="sd">        --------</span>
+<span class="sd">        :py:meth:`.INodes.transform` : method called for node transformation</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">interval</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_nodes</span><span class="o">.</span><span class="n">interval</span> <span class="o">=</span> <span class="n">interval</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_weights_function</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_nodes</span><span class="o">.</span><span class="n">nodes</span><span class="p">)</span>
+</div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="IntegratorBase.nodes"><a class="viewcode-back" href="../../../api/integrators/integrator_base.html#pypint.integrators.integrator_base.IntegratorBase.nodes">[docs]</a>    <span class="k">def</span> <span class="nf">nodes</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Proxy accessor for the integration nodes.</span>
+
+<span class="sd">        See Also</span>
+<span class="sd">        --------</span>
+<span class="sd">        :py:attr:`.INodes.nodes`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nodes</span><span class="o">.</span><span class="n">nodes</span>
+</div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="IntegratorBase.weights"><a class="viewcode-back" href="../../../api/integrators/integrator_base.html#pypint.integrators.integrator_base.IntegratorBase.weights">[docs]</a>    <span class="k">def</span> <span class="nf">weights</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Proxy accessor for the calculated and cached integration weights.</span>
+
+<span class="sd">        See Also</span>
+<span class="sd">        --------</span>
+<span class="sd">        :py:attr:`.IWeightFunction.weights`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">print</span><span class="p">(</span><span class="s">&quot;</span><span class="si">%s</span><span class="s">&lt;0x</span><span class="si">%x</span><span class="s">&gt;: </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_weights_function</span><span class="p">),</span> <span class="nb">id</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_weights_function</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">_weights_function</span><span class="p">))</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_weights_function</span><span class="o">.</span><span class="n">weights</span>
+</div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="IntegratorBase.nodes_type"><a class="viewcode-back" href="../../../api/integrators/integrator_base.html#pypint.integrators.integrator_base.IntegratorBase.nodes_type">[docs]</a>    <span class="k">def</span> <span class="nf">nodes_type</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Read-only accessor for the type of nodes</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        nodes : :py:class:`.INodes`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nodes</span>
+</div>
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">num_nodes</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nodes</span><span class="o">.</span><span class="n">num_nodes</span>
+
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="IntegratorBase.weights_function"><a class="viewcode-back" href="../../../api/integrators/integrator_base.html#pypint.integrators.integrator_base.IntegratorBase.weights_function">[docs]</a>    <span class="k">def</span> <span class="nf">weights_function</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Read-only accessor for the weights function</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        weights_function : :py:class:`.IWeightFunction`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_weights_function</span>
+</div>
+    <span class="k">def</span> <span class="nf">print_lines_for_log</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">_lines</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s">&#39;Type&#39;</span><span class="p">:</span> <span class="n">class_name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="p">}</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nodes</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">_lines</span><span class="p">[</span><span class="s">&#39;Nodes&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nodes</span><span class="o">.</span><span class="n">print_lines_for_log</span><span class="p">()</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_weights_function</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">_lines</span><span class="p">[</span><span class="s">&#39;Weight Function&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_weights_function</span><span class="o">.</span><span class="n">print_lines_for_log</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">_lines</span>
+
+    <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s">&quot;IntegratorBase&lt;0x</span><span class="si">%x</span><span class="s">&gt;(nodes=</span><span class="si">%s</span><span class="s">, weights=</span><span class="si">%s</span><span class="s">)&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="nb">id</span><span class="p">(</span><span class="bp">self</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">nodes_type</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">weights_function</span><span class="p">)</span></div>
+</pre></div>
+
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+      &copy; 2013-2014,
+        <a href="http://www.fz-juelich.de/ias/jsc/EN/Research/Algorithms/ParallelInTimeIntegration/_node.html">Parallel-in-Time Research Group</a>
+        at the
+        <a href="http://www.fz-juelich.de/ias/jsc/EN/Home/home_node.html">Jülich Supercomputing Centre</a><br />
+    </p>
+  </div>
+
+  <a href="https://github.com/snide/sphinx_rtd_theme">Sphinx theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../',
+            VERSION:'0.0.4-dev-0-g4dad7c2',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../_static/doctools.js"></script>
+      <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

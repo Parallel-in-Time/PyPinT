@@ -1,0 +1,447 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Parallel SDC (parallel_sdc) &mdash; PyPinT 0.0.4-dev-0-g4dad7c2 documentation</title>
+  
+
+  
+  
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  
+
+  
+        <link rel="author" title="About these documents"
+              href="../../about.html"/>
+    <link rel="top" title="PyPinT 0.0.4-dev-0-g4dad7c2 documentation" href="../../index.html"/>
+        <link rel="up" title="Solvers (solvers)" href="package.html"/>
+        <link rel="next" title="Utilities (utilities)" href="../utilities/package.html"/>
+        <link rel="prev" title="Parallel Solver Interface (i_parallel_solver)" href="i_parallel_solver.html"/> 
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-nav-search">
+        <a href="../../index.html" class="fa fa-home"> PyPinT</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+        
+        
+            <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../about.html">About</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user/rationale.html">Rationale</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../user/rationale.html#objectives">Objectives</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../user/rationale.html#goals">Goals</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../user/rationale.html#scope">Scope</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../user/requirements.html">Requirements</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user/basic_usage.html">Basic Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/package.html">Examples</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../examples/problems/package.html">Example Problems (<tt class="docutils literal"><span class="pre">problems</span></tt>)</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../user/theory.html">Mathematical Theory</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../user/bibliography.html">Bibliography</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../history.html">History</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../history.html#release-0-0-3-04-04-2014">Release 0.0.3 (04/04/2014)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../history.html#release-0-0-2-04-03-2014">Release 0.0.2 (04/03/2014)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../history.html#release-0-0-1-2013-11-26">Release 0.0.1 (2013-11-26)</a></li>
+</ul>
+</li>
+</ul>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../development/coding_style.html">Coding Style</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../development/documentation.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../development/contributing.html">Contributing</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../development/contributing.html#branching-and-tagging-model">Branching and Tagging Model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../development/contributing.html#commit-messages">Commit Messages</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../development/contributing.html#how-to-implement-a-new-feature">How to Implement a New Feature?</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../development/testing.html">Testing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../development/todo.html">ToDos</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../development/todo.html#global">Global</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../development/todo.html#in-source">In Source</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="reference internal" href="../package.html">API Reference</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../package.html#communicators">Communicators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../package.html#integrators">Integrators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../package.html#multi-level-providers">Multi Level Providers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../package.html#plugins">Plugins</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../package.html#problems">Problems</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../package.html#solutions">Solutions</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../package.html#solvers">Solvers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../package.html#utilities">Utilities</a></li>
+</ul>
+</li>
+</ul>
+
+        
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../../index.html">PyPinT</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="../package.html">PyPinT Package</a> &raquo;</li>
+      
+          <li><a href="package.html">Solvers (<tt class="docutils literal"><span class="pre">solvers</span></tt>)</a> &raquo;</li>
+      
+    <li>Parallel SDC (<tt class="docutils literal"><span class="pre">parallel_sdc</span></tt>)</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          <a href="../../_sources/api/solvers/parallel_sdc.txt" rel="nofollow"> View page source</a>
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main">
+            
+  <div class="section" id="module-pypint.solvers.parallel_sdc">
+<span id="parallel-sdc-parallel-sdc"></span><h1>Parallel SDC (<tt class="xref py py-mod docutils literal"><span class="pre">parallel_sdc</span></tt>)<a class="headerlink" href="#module-pypint.solvers.parallel_sdc" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="pypint.solvers.parallel_sdc.ParallelSdc">
+<em class="property">class </em><tt class="descclassname">pypint.solvers.parallel_sdc.</tt><tt class="descname">ParallelSdc</tt><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pypint/solvers/parallel_sdc.html#ParallelSdc"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypint.solvers.parallel_sdc.ParallelSdc" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="i_iterative_time_solver.html#pypint.solvers.i_iterative_time_solver.IIterativeTimeSolver" title="pypint.solvers.i_iterative_time_solver.IIterativeTimeSolver"><tt class="xref py py-class docutils literal"><span class="pre">pypint.solvers.i_iterative_time_solver.IIterativeTimeSolver</span></tt></a>, <a class="reference internal" href="i_parallel_solver.html#pypint.solvers.i_parallel_solver.IParallelSolver" title="pypint.solvers.i_parallel_solver.IParallelSolver"><tt class="xref py py-class docutils literal"><span class="pre">pypint.solvers.i_parallel_solver.IParallelSolver</span></tt></a></p>
+<p><em>Spectral Deferred Corrections</em> method for solving first order ODEs.</p>
+<p>The <em>Spectral Deferred Corrections</em> (SDC) method is described in <a class="reference internal" href="../../user/bibliography.html#minion2003" id="id1">[Minion2003]</a> (Equation 2.7)</p>
+<p>Default Values:</p>
+<blockquote>
+<div><ul>
+<li><p class="first"><a class="reference internal" href="../utilities/threshold_check.html#pypint.utilities.threshold_check.ThresholdCheck" title="pypint.utilities.threshold_check.ThresholdCheck"><tt class="xref py py-class docutils literal"><span class="pre">ThresholdCheck</span></tt></a></p>
+<blockquote>
+<div><ul class="simple">
+<li><tt class="docutils literal"><span class="pre">max_threshold</span></tt>: 10</li>
+<li><tt class="docutils literal"><span class="pre">min_threshold</span></tt>: 1e-7</li>
+<li><tt class="docutils literal"><span class="pre">conditions</span></tt>: <tt class="docutils literal"><span class="pre">('residual',</span> <span class="pre">'iterations')</span></tt></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p class="first"><a class="reference internal" href="#pypint.solvers.parallel_sdc.ParallelSdc.num_time_steps" title="pypint.solvers.parallel_sdc.ParallelSdc.num_time_steps"><tt class="xref py py-attr docutils literal"><span class="pre">num_time_steps</span></tt></a>: 1</p>
+</li>
+<li><p class="first"><a class="reference internal" href="#pypint.solvers.parallel_sdc.ParallelSdc.num_nodes" title="pypint.solvers.parallel_sdc.ParallelSdc.num_nodes"><tt class="xref py py-attr docutils literal"><span class="pre">num_nodes</span></tt></a>: 3</p>
+</li>
+</ul>
+</div></blockquote>
+<p>Given the total number of time steps <span class="math">\(T_{max}\)</span>, number of integration nodes per time
+step <span class="math">\(N\)</span>, current time step <span class="math">\(t \in [0,T_{max})\)</span> and the next integration node
+to consider <span class="math">\(n \in [0, N)\)</span>.
+Let <span class="math">\([a,b]\)</span> be the total time interval to integrate over.
+For <span class="math">\(T_{max}=3\)</span> and <span class="math">\(N=4\)</span>, this can be visualized as:</p>
+<div class="highlight-python"><div class="highlight"><pre>   a                                            b
+   |                                            |
+   |    .    .    |    .    .    |    .    .    |
+t  0    0    0    0    1    1    1    2    2    2
+n  0    1    2    3    1    2    3    1    2    3
+i  0    1    2    3    4    5    6    7    8    9
+</pre></div>
+</div>
+<p>In general, the value at <span class="math">\(a\)</span> (i.e. <span class="math">\(t=n=i=0\)</span>) is the initial value.</p>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<dl class="last docutils">
+<dt><a class="reference internal" href="i_iterative_time_solver.html#pypint.solvers.i_iterative_time_solver.IIterativeTimeSolver" title="pypint.solvers.i_iterative_time_solver.IIterativeTimeSolver"><tt class="xref py py-class docutils literal"><span class="pre">IIterativeTimeSolver</span></tt></a> :</dt>
+<dd>implemented interface</dd>
+<dt><a class="reference internal" href="i_parallel_solver.html#pypint.solvers.i_parallel_solver.IParallelSolver" title="pypint.solvers.i_parallel_solver.IParallelSolver"><tt class="xref py py-class docutils literal"><span class="pre">IParallelSolver</span></tt></a> :</dt>
+<dd>mixed-in interface</dd>
+</dl>
+</div>
+<dl class="method">
+<dt id="pypint.solvers.parallel_sdc.ParallelSdc._adjust_interval_width">
+<tt class="descname">_adjust_interval_width</tt><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pypint/solvers/parallel_sdc.html#ParallelSdc._adjust_interval_width"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypint.solvers.parallel_sdc.ParallelSdc._adjust_interval_width" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adjust width of time interval</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pypint.solvers.parallel_sdc.ParallelSdc._init_new_interval">
+<tt class="descname">_init_new_interval</tt><span class="sig-paren">(</span><em>start</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pypint/solvers/parallel_sdc.html#ParallelSdc._init_new_interval"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypint.solvers.parallel_sdc.ParallelSdc._init_new_interval" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initializes a new work interval</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>start</strong> (<tt class="xref py py-class docutils literal"><span class="pre">float</span></tt>) &#8211; start point of new interval</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>has_work</strong> &#8211;
+<tt class="xref py py-class docutils literal"><span class="pre">True</span></tt> if new interval have been initialized;
+<tt class="xref py py-class docutils literal"><span class="pre">False</span></tt> if no new interval have been initialized (i.e. new interval end would exceed end of time
+given by problem)</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><tt class="xref py py-class docutils literal"><span class="pre">bool</span></tt></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="pypint.solvers.parallel_sdc.ParallelSdc._init_new_state">
+<tt class="descname">_init_new_state</tt><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pypint/solvers/parallel_sdc.html#ParallelSdc._init_new_state"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypint.solvers.parallel_sdc.ParallelSdc._init_new_state" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize a new state for a work task</p>
+<p>Usually, this starts a new work task.
+The previous state, if applicable, is stored in a stack.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pypint.solvers.parallel_sdc.ParallelSdc.init">
+<tt class="descname">init</tt><span class="sig-paren">(</span><em>problem</em>, <em>integrator</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pypint/solvers/parallel_sdc.html#ParallelSdc.init"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypint.solvers.parallel_sdc.ParallelSdc.init" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initializes SDC solver with given problem and integrator.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>num_time_steps</strong> (<tt class="xref py py-class docutils literal"><span class="pre">int</span></tt>) &#8211; Number of time steps to be used within the time interval of the problem.</li>
+<li><strong>num_nodes</strong> (<tt class="xref py py-class docutils literal"><span class="pre">int</span></tt>) &#8211; <em>(otional)</em>
+number of nodes per time step</li>
+<li><strong>nodes_type</strong> (<a class="reference internal" href="../integrators/node_providers/i_nodes.html#pypint.integrators.node_providers.i_nodes.INodes" title="pypint.integrators.node_providers.i_nodes.INodes"><tt class="xref py py-class docutils literal"><span class="pre">INodes</span></tt></a>) &#8211; <em>(optional)</em>
+Type of integration nodes to be used (class name, <strong>NOT instance</strong>).</li>
+<li><strong>weights_type</strong> (<a class="reference internal" href="../integrators/weight_function_providers/i_weight_function.html#pypint.integrators.weight_function_providers.i_weight_function.IWeightFunction" title="pypint.integrators.weight_function_providers.i_weight_function.IWeightFunction"><tt class="xref py py-class docutils literal"><span class="pre">IWeightFunction</span></tt></a>) &#8211; <em>(optional)</em>
+Integration weights function to be used (class name, <strong>NOT instance</strong>).</li>
+<li><strong>classic</strong> (<tt class="xref py py-class docutils literal"><span class="pre">bool</span></tt>) &#8211; <em>(optional)</em>
+Flag for specifying the type of the SDC sweep.
+<tt class="xref py py-class docutils literal"><span class="pre">True</span></tt>: <em>(default)</em> For the classic SDC as known from the literature;
+<tt class="xref py py-class docutils literal"><span class="pre">False</span></tt>: For the modified SDC as developed by Torbjörn Klatt.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first"><tt class="xref py py-exc docutils literal"><span class="pre">ValueError</span></tt> &#8211;</p>
+<ul class="last simple">
+<li>if given problem is not an <a class="reference internal" href="../problems/i_initial_value_problem.html#pypint.problems.i_initial_value_problem.IInitialValueProblem" title="pypint.problems.i_initial_value_problem.IInitialValueProblem"><tt class="xref py py-class docutils literal"><span class="pre">IInitialValueProblem</span></tt></a></li>
+<li>if number of nodes per time step is not given; neither through <tt class="docutils literal"><span class="pre">num_nodes</span></tt>, <tt class="docutils literal"><span class="pre">nodes_type</span></tt> nor
+<tt class="docutils literal"><span class="pre">integrator</span></tt></li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<dl class="last docutils">
+<dt><a class="reference internal" href="i_iterative_time_solver.html#pypint.solvers.i_iterative_time_solver.IIterativeTimeSolver.init" title="pypint.solvers.i_iterative_time_solver.IIterativeTimeSolver.init"><tt class="xref py py-meth docutils literal"><span class="pre">IIterativeTimeSolver.init()</span></tt></a></dt>
+<dd>overridden method (with further parameters)</dd>
+<dt><tt class="xref py py-meth docutils literal"><span class="pre">IParallelSolver.init()</span></tt></dt>
+<dd>mixed in overridden method (with further parameters)</dd>
+</dl>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="pypint.solvers.parallel_sdc.ParallelSdc.run">
+<tt class="descname">run</tt><span class="sig-paren">(</span><em>core</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pypint/solvers/parallel_sdc.html#ParallelSdc.run"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypint.solvers.parallel_sdc.ParallelSdc.run" title="Permalink to this definition">¶</a></dt>
+<dd><p>Applies SDC solver to the initialized problem setup.</p>
+<p>Solves the given problem with the explicit SDC algorithm.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>core</strong> (<a class="reference internal" href="cores/sdc_solver_core.html#pypint.solvers.cores.sdc_solver_core.SdcSolverCore" title="pypint.solvers.cores.sdc_solver_core.SdcSolverCore"><tt class="xref py py-class docutils literal"><span class="pre">SdcSolverCore</span></tt></a>) &#8211; core solver stepping method</li>
+<li><strong>dt</strong> (<tt class="xref py py-class docutils literal"><span class="pre">float</span></tt>) &#8211; width of the interval to work on; this is devided into the number of given
+time steps this solver has been initialized with</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><a class="reference internal" href="i_iterative_time_solver.html#pypint.solvers.i_iterative_time_solver.IIterativeTimeSolver.run" title="pypint.solvers.i_iterative_time_solver.IIterativeTimeSolver.run"><tt class="xref py py-meth docutils literal"><span class="pre">IIterativeTimeSolver.run()</span></tt></a> : overridden method</p>
+</div>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pypint.solvers.parallel_sdc.ParallelSdc.classic">
+<tt class="descname">classic</tt><a class="reference internal" href="../../_modules/pypint/solvers/parallel_sdc.html#ParallelSdc.classic"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypint.solvers.parallel_sdc.ParallelSdc.classic" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read-only accessor for the type of SDC</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>is_classic</strong> &#8211;
+<tt class="xref py py-class docutils literal"><span class="pre">True</span></tt> if it&#8217;s the classic SDC as known from papers;
+<tt class="xref py py-class docutils literal"><span class="pre">False</span></tt> if it&#8217;s the modified SDC by Torbjörn Klatt</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><tt class="xref py py-class docutils literal"><span class="pre">bool</span></tt></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pypint.solvers.parallel_sdc.ParallelSdc.num_nodes">
+<tt class="descname">num_nodes</tt><a class="reference internal" href="../../_modules/pypint/solvers/parallel_sdc.html#ParallelSdc.num_nodes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypint.solvers.parallel_sdc.ParallelSdc.num_nodes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Accessor for the number of integration nodes per time step.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>number_of_nodes</strong> &#8211;
+Number of integration nodes used within one time step.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><tt class="xref py py-class docutils literal"><span class="pre">int</span></tt></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pypint.solvers.parallel_sdc.ParallelSdc.num_time_steps">
+<tt class="descname">num_time_steps</tt><a class="reference internal" href="../../_modules/pypint/solvers/parallel_sdc.html#ParallelSdc.num_time_steps"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypint.solvers.parallel_sdc.ParallelSdc.num_time_steps" title="Permalink to this definition">¶</a></dt>
+<dd><p>Accessor for the number of time steps within the interval.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>number_time_steps</strong> &#8211;
+Number of time steps within the problem-given time interval.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><tt class="xref py py-class docutils literal"><span class="pre">int</span></tt></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pypint.solvers.parallel_sdc.ParallelSdc.state">
+<tt class="descname">state</tt><a class="reference internal" href="../../_modules/pypint/solvers/parallel_sdc.html#ParallelSdc.state"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypint.solvers.parallel_sdc.ParallelSdc.state" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read-only accessor for the sovler&#8217;s state</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>state</strong></td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="states/i_solver_state.html#pypint.solvers.states.i_solver_state.ISolverState" title="pypint.solvers.states.i_solver_state.ISolverState"><tt class="xref py py-class docutils literal"><span class="pre">ISolverState</span></tt></a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="../utilities/package.html" class="btn btn-neutral float-right" title="Utilities (utilities)"/>Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="i_parallel_solver.html" class="btn btn-neutral" title="Parallel Solver Interface (i_parallel_solver)"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+      &copy; 2013-2014,
+        <a href="http://www.fz-juelich.de/ias/jsc/EN/Research/Algorithms/ParallelInTimeIntegration/_node.html">Parallel-in-Time Research Group</a>
+        at the
+        <a href="http://www.fz-juelich.de/ias/jsc/EN/Home/home_node.html">Jülich Supercomputing Centre</a><br />
+    </p>
+  </div>
+
+  <a href="https://github.com/snide/sphinx_rtd_theme">Sphinx theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../',
+            VERSION:'0.0.4-dev-0-g4dad7c2',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../_static/doctools.js"></script>
+      <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

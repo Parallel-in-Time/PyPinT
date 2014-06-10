@@ -1,0 +1,971 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>pypint.solvers.parallel_sdc &mdash; PyPinT 0.0.4-dev-0-g4dad7c2 documentation</title>
+  
+
+  
+  
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+        <link rel="author" title="About these documents"
+              href="../../../about.html"/>
+    <link rel="top" title="PyPinT 0.0.4-dev-0-g4dad7c2 documentation" href="../../../index.html"/>
+        <link rel="up" title="Module code" href="../../index.html"/> 
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-nav-search">
+        <a href="../../../index.html" class="fa fa-home"> PyPinT</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+        
+        
+            <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../about.html">About</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user/rationale.html">Rationale</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../user/rationale.html#objectives">Objectives</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../user/rationale.html#goals">Goals</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../user/rationale.html#scope">Scope</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user/requirements.html">Requirements</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user/basic_usage.html">Basic Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/examples/package.html">Examples</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/examples/problems/package.html">Example Problems (<tt class="docutils literal"><span class="pre">problems</span></tt>)</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user/theory.html">Mathematical Theory</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../user/bibliography.html">Bibliography</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../history.html">History</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../history.html#release-0-0-3-04-04-2014">Release 0.0.3 (04/04/2014)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../history.html#release-0-0-2-04-03-2014">Release 0.0.2 (04/03/2014)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../history.html#release-0-0-1-2013-11-26">Release 0.0.1 (2013-11-26)</a></li>
+</ul>
+</li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../development/coding_style.html">Coding Style</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../development/documentation.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../development/contributing.html">Contributing</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../development/contributing.html#branching-and-tagging-model">Branching and Tagging Model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../development/contributing.html#commit-messages">Commit Messages</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../development/contributing.html#how-to-implement-a-new-feature">How to Implement a New Feature?</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../development/testing.html">Testing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../development/todo.html">ToDos</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../development/todo.html#global">Global</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../development/todo.html#in-source">In Source</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/package.html">API Reference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/package.html#communicators">Communicators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/package.html#integrators">Integrators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/package.html#multi-level-providers">Multi Level Providers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/package.html#plugins">Plugins</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/package.html#problems">Problems</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/package.html#solutions">Solutions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/package.html#solvers">Solvers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/package.html#utilities">Utilities</a></li>
+</ul>
+</li>
+</ul>
+
+        
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../../../index.html">PyPinT</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+      
+    <li>pypint.solvers.parallel_sdc</li>
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main">
+            
+  <h1>Source code for pypint.solvers.parallel_sdc</h1><div class="highlight"><pre>
+<span class="c"># coding=utf-8</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">.. moduleauthor:: Torbjörn Klatt &lt;t.klatt@fz-juelich.de&gt;</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">deepcopy</span>
+<span class="kn">import</span> <span class="nn">warnings</span> <span class="kn">as</span> <span class="nn">warnings</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">OrderedDict</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+
+<span class="kn">from</span> <span class="nn">pypint.solvers.i_iterative_time_solver</span> <span class="kn">import</span> <span class="n">IIterativeTimeSolver</span>
+<span class="kn">from</span> <span class="nn">pypint.solvers.i_parallel_solver</span> <span class="kn">import</span> <span class="n">IParallelSolver</span>
+<span class="kn">from</span> <span class="nn">pypint.communicators.message</span> <span class="kn">import</span> <span class="n">Message</span>
+<span class="kn">from</span> <span class="nn">pypint.integrators.integrator_base</span> <span class="kn">import</span> <span class="n">IntegratorBase</span>
+<span class="kn">from</span> <span class="nn">pypint.integrators.node_providers.gauss_lobatto_nodes</span> <span class="kn">import</span> <span class="n">GaussLobattoNodes</span>
+<span class="kn">from</span> <span class="nn">pypint.integrators.weight_function_providers.polynomial_weight_function</span> <span class="kn">import</span> <span class="n">PolynomialWeightFunction</span>
+<span class="kn">from</span> <span class="nn">pypint.problems</span> <span class="kn">import</span> <span class="n">IInitialValueProblem</span><span class="p">,</span> <span class="n">problem_has_exact_solution</span>
+<span class="kn">from</span> <span class="nn">pypint.solvers.states.sdc_solver_state</span> <span class="kn">import</span> <span class="n">SdcSolverState</span>
+<span class="kn">from</span> <span class="nn">pypint.solvers.diagnosis</span> <span class="kn">import</span> <span class="n">IDiagnosisValue</span>
+<span class="kn">from</span> <span class="nn">pypint.solvers.diagnosis.norms</span> <span class="kn">import</span> <span class="n">supremum_norm</span>
+<span class="kn">from</span> <span class="nn">pypint.plugins.timers.timer_base</span> <span class="kn">import</span> <span class="n">TimerBase</span>
+<span class="kn">from</span> <span class="nn">pypint.utilities.threshold_check</span> <span class="kn">import</span> <span class="n">ThresholdCheck</span>
+<span class="kn">from</span> <span class="nn">pypint.utilities</span> <span class="kn">import</span> <span class="n">assert_is_instance</span><span class="p">,</span> <span class="n">assert_condition</span><span class="p">,</span> <span class="n">func_name</span><span class="p">,</span> <span class="n">assert_named_argument</span>
+<span class="kn">from</span> <span class="nn">pypint.utilities.logging</span> <span class="kn">import</span> <span class="o">*</span>
+
+
+<span class="c"># General Notes on Implementation</span>
+<span class="c"># ===============================</span>
+<span class="c">#</span>
+<span class="c"># Names and Meaning of Indices</span>
+<span class="c"># ----------------------------</span>
+<span class="c"># T_max (num_time_steps) | number of time steps</span>
+<span class="c"># N     (num_nodes)      | number of integration nodes per time step</span>
+<span class="c"># t                      | index of current time step; interval: [0, T_max)</span>
+<span class="c"># n                      | index of current node of current time step; interval: [1, N)</span>
+<span class="c">#                        |  the current node is always the next node, i.e. the node we are</span>
+<span class="c">#                        |  calculating the value for</span>
+<span class="c"># i                      | index of current point in continuous array of points</span>
+
+
+<div class="viewcode-block" id="ParallelSdc"><a class="viewcode-back" href="../../../api/solvers/parallel_sdc.html#pypint.solvers.parallel_sdc.ParallelSdc">[docs]</a><span class="k">class</span> <span class="nc">ParallelSdc</span><span class="p">(</span><span class="n">IIterativeTimeSolver</span><span class="p">,</span> <span class="n">IParallelSolver</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;*Spectral Deferred Corrections* method for solving first order ODEs.</span>
+
+<span class="sd">    The *Spectral Deferred Corrections* (SDC) method is described in [Minion2003]_ (Equation 2.7)</span>
+
+<span class="sd">    Default Values:</span>
+
+<span class="sd">        * :py:class:`.ThresholdCheck`</span>
+
+<span class="sd">            * ``max_threshold``: 10</span>
+
+<span class="sd">            * ``min_threshold``: 1e-7</span>
+
+<span class="sd">            * ``conditions``: ``(&#39;residual&#39;, &#39;iterations&#39;)``</span>
+
+<span class="sd">        * :py:attr:`.num_time_steps`: 1</span>
+
+<span class="sd">        * :py:attr:`.num_nodes`: 3</span>
+
+<span class="sd">    Given the total number of time steps :math:`T_{max}`, number of integration nodes per time</span>
+<span class="sd">    step :math:`N`, current time step :math:`t \\in [0,T_{max})` and the next integration node</span>
+<span class="sd">    to consider :math:`n \\in [0, N)`.</span>
+<span class="sd">    Let :math:`[a,b]` be the total time interval to integrate over.</span>
+<span class="sd">    For :math:`T_{max}=3` and :math:`N=4`, this can be visualized as::</span>
+
+<span class="sd">           a                                            b</span>
+<span class="sd">           |                                            |</span>
+<span class="sd">           |    .    .    |    .    .    |    .    .    |</span>
+<span class="sd">        t  0    0    0    0    1    1    1    2    2    2</span>
+<span class="sd">        n  0    1    2    3    1    2    3    1    2    3</span>
+<span class="sd">        i  0    1    2    3    4    5    6    7    8    9</span>
+
+<span class="sd">    In general, the value at :math:`a` (i.e. :math:`t=n=i=0`) is the initial value.</span>
+
+<span class="sd">    See Also</span>
+<span class="sd">    --------</span>
+<span class="sd">    :py:class:`.IIterativeTimeSolver` :</span>
+<span class="sd">        implemented interface</span>
+<span class="sd">    :py:class:`.IParallelSolver` :</span>
+<span class="sd">        mixed-in interface</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">ParallelSdc</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="n">IParallelSolver</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">_state</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">threshold</span> <span class="o">=</span> <span class="n">ThresholdCheck</span><span class="p">(</span><span class="n">min_threshold</span><span class="o">=</span><span class="mf">1e-7</span><span class="p">,</span> <span class="n">max_threshold</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">conditions</span><span class="o">=</span><span class="p">(</span><span class="s">&quot;residual&quot;</span><span class="p">,</span> <span class="s">&quot;iterations&quot;</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">timer</span> <span class="o">=</span> <span class="n">TimerBase</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_num_time_steps</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_dt</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_deltas</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s">&#39;t&#39;</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span>
+            <span class="s">&#39;n&#39;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="p">}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_classic</span> <span class="o">=</span> <span class="bp">True</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">__nodes_type</span> <span class="o">=</span> <span class="n">GaussLobattoNodes</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__weights_type</span> <span class="o">=</span> <span class="n">PolynomialWeightFunction</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__num_nodes</span> <span class="o">=</span> <span class="mi">3</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__exact</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__time_points</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s">&#39;steps&#39;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span>
+            <span class="s">&#39;nodes&#39;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="p">}</span>
+
+<div class="viewcode-block" id="ParallelSdc.init"><a class="viewcode-back" href="../../../api/solvers/parallel_sdc.html#pypint.solvers.parallel_sdc.ParallelSdc.init">[docs]</a>    <span class="k">def</span> <span class="nf">init</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">problem</span><span class="p">,</span> <span class="n">integrator</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Initializes SDC solver with given problem and integrator.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        num_time_steps : :py:class:`int`</span>
+<span class="sd">            Number of time steps to be used within the time interval of the problem.</span>
+<span class="sd">        num_nodes : :py:class:`int`</span>
+<span class="sd">            *(otional)*</span>
+<span class="sd">            number of nodes per time step</span>
+<span class="sd">        nodes_type : :py:class:`.INodes`</span>
+<span class="sd">            *(optional)*</span>
+<span class="sd">            Type of integration nodes to be used (class name, **NOT instance**).</span>
+<span class="sd">        weights_type : :py:class:`.IWeightFunction`</span>
+<span class="sd">            *(optional)*</span>
+<span class="sd">            Integration weights function to be used (class name, **NOT instance**).</span>
+<span class="sd">        classic : :py:class:`bool`</span>
+<span class="sd">            *(optional)*</span>
+<span class="sd">            Flag for specifying the type of the SDC sweep.</span>
+<span class="sd">            :py:class:`True`: *(default)* For the classic SDC as known from the literature;</span>
+<span class="sd">            :py:class:`False`: For the modified SDC as developed by Torbjörn Klatt.</span>
+
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        ValueError :</span>
+
+<span class="sd">            * if given problem is not an :py:class:`.IInitialValueProblem`</span>
+<span class="sd">            * if number of nodes per time step is not given; neither through ``num_nodes``, ``nodes_type`` nor</span>
+<span class="sd">              ``integrator``</span>
+
+<span class="sd">        See Also</span>
+<span class="sd">        --------</span>
+<span class="sd">        :py:meth:`.IIterativeTimeSolver.init`</span>
+<span class="sd">            overridden method (with further parameters)</span>
+<span class="sd">        :py:meth:`.IParallelSolver.init`</span>
+<span class="sd">            mixed in overridden method (with further parameters)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">assert_is_instance</span><span class="p">(</span><span class="n">problem</span><span class="p">,</span> <span class="n">IInitialValueProblem</span><span class="p">,</span> <span class="n">descriptor</span><span class="o">=</span><span class="s">&quot;Initial Value Problem&quot;</span><span class="p">,</span> <span class="n">checking_obj</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
+        <span class="n">assert_condition</span><span class="p">(</span><span class="nb">issubclass</span><span class="p">(</span><span class="n">integrator</span><span class="p">,</span> <span class="n">IntegratorBase</span><span class="p">),</span>
+                         <span class="ne">ValueError</span><span class="p">,</span> <span class="n">message</span><span class="o">=</span><span class="s">&quot;Integrator must be an IntegratorBase: NOT </span><span class="si">%s</span><span class="s">&quot;</span>
+                                             <span class="o">%</span> <span class="n">integrator</span><span class="o">.</span><span class="n">__mro__</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">__name__</span><span class="p">,</span>
+                         <span class="n">checking_obj</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
+
+        <span class="nb">super</span><span class="p">(</span><span class="n">ParallelSdc</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">init</span><span class="p">(</span><span class="n">problem</span><span class="p">,</span> <span class="n">integrator</span><span class="o">=</span><span class="n">integrator</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="s">&#39;num_time_steps&#39;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_num_time_steps</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s">&#39;num_time_steps&#39;</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="s">&#39;num_nodes&#39;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__num_nodes</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s">&#39;num_nodes&#39;</span><span class="p">]</span>
+        <span class="k">elif</span> <span class="s">&#39;nodes_type&#39;</span> <span class="ow">in</span> <span class="n">kwargs</span> <span class="ow">and</span> <span class="n">kwargs</span><span class="p">[</span><span class="s">&#39;nodes_type&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">num_nodes</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__num_nodes</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s">&#39;nodes_type&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">num_nodes</span>
+        <span class="k">elif</span> <span class="n">integrator</span><span class="o">.</span><span class="n">nodes_type</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="ow">and</span> <span class="n">integrator</span><span class="o">.</span><span class="n">nodes_type</span><span class="o">.</span><span class="n">num_nodes</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__num_nodes</span> <span class="o">=</span> <span class="n">integrator</span><span class="o">.</span><span class="n">nodes_type</span><span class="o">.</span><span class="n">num_nodes</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">func_name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">+</span> <span class="s">&quot;Number of nodes per time step not given.&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="s">&#39;notes_type&#39;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__nodes_type</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s">&#39;notes_type&#39;</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="s">&#39;weights_type&#39;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__weights_type</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s">&#39;weights_type&#39;</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="s">&#39;classic&#39;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+            <span class="n">assert_is_instance</span><span class="p">(</span><span class="n">kwargs</span><span class="p">[</span><span class="s">&#39;classic&#39;</span><span class="p">],</span> <span class="nb">bool</span><span class="p">,</span> <span class="n">descriptor</span><span class="o">=</span><span class="s">&quot;Classic Flag&quot;</span><span class="p">,</span> <span class="n">checking_obj</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_classic</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s">&#39;classic&#39;</span><span class="p">]</span>
+
+        <span class="c"># TODO: need to store the exact solution somewhere else</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__exact</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_time_steps</span> <span class="o">*</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__num_nodes</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">object</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="ParallelSdc.run"><a class="viewcode-back" href="../../../api/solvers/parallel_sdc.html#pypint.solvers.parallel_sdc.ParallelSdc.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">core</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Applies SDC solver to the initialized problem setup.</span>
+
+<span class="sd">        Solves the given problem with the explicit SDC algorithm.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        core : :py:class:`.SdcSolverCore`</span>
+<span class="sd">            core solver stepping method</span>
+<span class="sd">        dt : :py:class:`float`</span>
+<span class="sd">            width of the interval to work on; this is devided into the number of given</span>
+<span class="sd">            time steps this solver has been initialized with</span>
+
+<span class="sd">        See Also</span>
+<span class="sd">        --------</span>
+<span class="sd">        :py:meth:`.IIterativeTimeSolver.run` : overridden method</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">ParallelSdc</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">core</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+        <span class="n">assert_named_argument</span><span class="p">(</span><span class="s">&#39;dt&#39;</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">,</span> <span class="n">types</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span> <span class="n">descriptor</span><span class="o">=</span><span class="s">&quot;Width of Interval&quot;</span><span class="p">,</span> <span class="n">checking_obj</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_dt</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s">&#39;dt&#39;</span><span class="p">]</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_print_header</span><span class="p">()</span>
+
+        <span class="c"># start iterations</span>
+        <span class="c"># TODO: exact solution storage handling</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__exact</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">problem</span><span class="o">.</span><span class="n">initial_value</span>
+
+        <span class="n">_has_work</span> <span class="o">=</span> <span class="bp">True</span>
+        <span class="n">_previous_flag</span> <span class="o">=</span> <span class="n">Message</span><span class="o">.</span><span class="n">SolverFlag</span><span class="o">.</span><span class="n">none</span>
+        <span class="n">_current_flag</span> <span class="o">=</span> <span class="n">Message</span><span class="o">.</span><span class="n">SolverFlag</span><span class="o">.</span><span class="n">none</span>
+        <span class="n">__work_loop_count</span> <span class="o">=</span> <span class="mi">1</span>
+
+        <span class="k">while</span> <span class="n">_has_work</span><span class="p">:</span>
+            <span class="n">LOG</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&quot;Work Loop: </span><span class="si">%d</span><span class="s">&quot;</span> <span class="o">%</span> <span class="n">__work_loop_count</span><span class="p">)</span>
+            <span class="n">_previous_flag</span> <span class="o">=</span> <span class="n">_current_flag</span>
+            <span class="n">_current_flag</span> <span class="o">=</span> <span class="n">Message</span><span class="o">.</span><span class="n">SolverFlag</span><span class="o">.</span><span class="n">none</span>
+
+            <span class="c"># receive dedicated message</span>
+            <span class="n">_msg</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_communicator</span><span class="o">.</span><span class="n">receive</span><span class="p">()</span>
+
+            <span class="k">if</span> <span class="n">_msg</span><span class="o">.</span><span class="n">flag</span> <span class="o">==</span> <span class="n">Message</span><span class="o">.</span><span class="n">SolverFlag</span><span class="o">.</span><span class="n">failed</span><span class="p">:</span>
+                <span class="c"># previous solver failed</span>
+                <span class="c"># --&gt; pass on the failure and abort</span>
+                <span class="n">_current_flag</span> <span class="o">=</span> <span class="n">Message</span><span class="o">.</span><span class="n">SolverFlag</span><span class="o">.</span><span class="n">failed</span>
+                <span class="n">_has_work</span> <span class="o">=</span> <span class="bp">False</span>
+                <span class="n">LOG</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&quot;Previous Solver Failed&quot;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">_msg</span><span class="o">.</span><span class="n">flag</span> <span class="o">==</span> <span class="n">Message</span><span class="o">.</span><span class="n">SolverFlag</span><span class="o">.</span><span class="n">time_adjusted</span><span class="p">:</span>
+                    <span class="c"># the previous solver has adjusted its interval</span>
+                    <span class="c"># --&gt; we need to recompute our interval</span>
+                    <span class="n">_current_flag</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_adjust_interval_width</span><span class="p">()</span>
+                    <span class="c"># we don&#39;t immediately start the computation of the newly computed interval</span>
+                    <span class="c"># but try to pass the new interval end to the next solver as soon as possible</span>
+                    <span class="c"># (this should avoid throwing away useless computation)</span>
+                    <span class="n">LOG</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&quot;Previous Solver Adjusted Time&quot;</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">_previous_flag</span> <span class="ow">in</span> \
+                            <span class="p">[</span><span class="n">Message</span><span class="o">.</span><span class="n">SolverFlag</span><span class="o">.</span><span class="n">none</span><span class="p">,</span> <span class="n">Message</span><span class="o">.</span><span class="n">SolverFlag</span><span class="o">.</span><span class="n">converged</span><span class="p">,</span> <span class="n">Message</span><span class="o">.</span><span class="n">SolverFlag</span><span class="o">.</span><span class="n">finished</span><span class="p">,</span>
+                             <span class="n">Message</span><span class="o">.</span><span class="n">SolverFlag</span><span class="o">.</span><span class="n">time_adjusted</span><span class="p">]:</span>
+                        <span class="c"># we just started or finished our previous interval</span>
+                        <span class="c"># --&gt; start a new interval</span>
+                        <span class="n">_has_work</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_init_new_interval</span><span class="p">(</span><span class="n">_msg</span><span class="o">.</span><span class="n">time_point</span><span class="p">)</span>
+
+                        <span class="k">if</span> <span class="n">_has_work</span><span class="p">:</span>
+                            <span class="c"># set initial values</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">initial</span><span class="o">.</span><span class="n">solution</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">_msg</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">initial</span><span class="o">.</span><span class="n">solution</span><span class="o">.</span><span class="n">time_point</span> <span class="o">=</span> <span class="n">_msg</span><span class="o">.</span><span class="n">time_point</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">initial</span><span class="o">.</span><span class="n">done</span><span class="p">()</span>
+
+                            <span class="n">LOG</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&quot;New Interval Initialized&quot;</span><span class="p">)</span>
+
+                            <span class="c"># start logging output</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">_print_interval_header</span><span class="p">()</span>
+
+                            <span class="c"># start global timing (per interval)</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">timer</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="c"># pass</span>
+                            <span class="n">LOG</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&quot;No New Interval Available&quot;</span><span class="p">)</span>
+                    <span class="k">elif</span> <span class="n">_previous_flag</span> <span class="o">==</span> <span class="n">Message</span><span class="o">.</span><span class="n">SolverFlag</span><span class="o">.</span><span class="n">iterating</span><span class="p">:</span>
+                        <span class="n">LOG</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&quot;Next Iteration&quot;</span><span class="p">)</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">LOG</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s">&quot;WARNING!!! Something went wrong here&quot;</span><span class="p">)</span>
+
+                    <span class="k">if</span> <span class="n">_has_work</span><span class="p">:</span>
+                        <span class="c"># we are still on the same interval or have just successfully initialized a new interval</span>
+                        <span class="c"># --&gt; do the real computation</span>
+                        <span class="n">LOG</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&quot;Starting New Solver Main Loop&quot;</span><span class="p">)</span>
+
+                        <span class="c"># initialize a new iteration state</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">proceed</span><span class="p">()</span>
+
+                        <span class="k">if</span> <span class="n">_msg</span><span class="o">.</span><span class="n">time_point</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">initial</span><span class="o">.</span><span class="n">time_point</span><span class="p">:</span>
+                            <span class="k">if</span> <span class="n">_previous_flag</span> <span class="o">==</span> <span class="n">Message</span><span class="o">.</span><span class="n">SolverFlag</span><span class="o">.</span><span class="n">iterating</span><span class="p">:</span>
+                                <span class="n">LOG</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&quot;Updating initial value&quot;</span><span class="p">)</span>
+                                <span class="c"># if the previous solver has a new initial value for us, we use it</span>
+                                <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">current_iteration</span><span class="o">.</span><span class="n">initial</span><span class="o">.</span><span class="n">solution</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">_msg</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+                        <span class="n">_current_flag</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_main_solver_loop</span><span class="p">()</span>
+
+                        <span class="k">if</span> <span class="n">_current_flag</span> <span class="ow">in</span> \
+                                <span class="p">[</span><span class="n">Message</span><span class="o">.</span><span class="n">SolverFlag</span><span class="o">.</span><span class="n">converged</span><span class="p">,</span> <span class="n">Message</span><span class="o">.</span><span class="n">SolverFlag</span><span class="o">.</span><span class="n">finished</span><span class="p">,</span> <span class="n">Message</span><span class="o">.</span><span class="n">SolverFlag</span><span class="o">.</span><span class="n">failed</span><span class="p">]:</span>
+                            <span class="n">_log_msgs</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;&#39;</span><span class="p">:</span> <span class="n">OrderedDict</span><span class="p">()}</span>
+                            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">last_iteration_index</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">threshold</span><span class="o">.</span><span class="n">max_iterations</span><span class="p">:</span>
+                                <span class="n">_group</span> <span class="o">=</span> <span class="s">&#39;Converged after </span><span class="si">%d</span><span class="s"> iteration(s)&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">last_iteration_index</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+                                <span class="n">_log_msgs</span><span class="p">[</span><span class="s">&#39;&#39;</span><span class="p">][</span><span class="n">_group</span><span class="p">]</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
+                                <span class="n">_log_msgs</span><span class="p">[</span><span class="s">&#39;&#39;</span><span class="p">][</span><span class="n">_group</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">threshold</span><span class="o">.</span><span class="n">has_reached</span><span class="p">(</span><span class="n">log</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+                                <span class="n">_log_msgs</span><span class="p">[</span><span class="s">&#39;&#39;</span><span class="p">][</span><span class="n">_group</span><span class="p">][</span><span class="s">&#39;Final Residual&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s">&quot;{:.3e}&quot;</span>\
+                                    <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">supremum_norm</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">last_iteration</span><span class="o">.</span><span class="n">final_step</span><span class="o">.</span><span class="n">solution</span><span class="o">.</span><span class="n">residual</span><span class="p">))</span>
+                                <span class="n">_log_msgs</span><span class="p">[</span><span class="s">&#39;&#39;</span><span class="p">][</span><span class="n">_group</span><span class="p">][</span><span class="s">&#39;Solution Reduction&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s">&quot;{:.3e}&quot;</span>\
+                                    <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">supremum_norm</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">solution</span>
+                                                          <span class="o">.</span><span class="n">solution_reduction</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">last_iteration_index</span><span class="p">)))</span>
+                                <span class="k">if</span> <span class="n">problem_has_exact_solution</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">problem</span><span class="p">,</span> <span class="bp">self</span><span class="p">):</span>
+                                    <span class="n">_log_msgs</span><span class="p">[</span><span class="s">&#39;&#39;</span><span class="p">][</span><span class="n">_group</span><span class="p">][</span><span class="s">&#39;Error Reduction&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s">&quot;{:.3e}&quot;</span>\
+                                        <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">supremum_norm</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">solution</span>
+                                                              <span class="o">.</span><span class="n">error_reduction</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">last_iteration_index</span><span class="p">)))</span>
+                            <span class="k">else</span><span class="p">:</span>
+                                <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s">&quot;{}: Did not converged: {:s}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_core</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">problem</span><span class="p">))</span>
+                                <span class="n">_group</span> <span class="o">=</span> <span class="s">&quot;FAILED: After maximum of {:d} iteration(s)&quot;</span>\
+                                         <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">last_iteration_index</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+                                <span class="n">_log_msgs</span><span class="p">[</span><span class="s">&#39;&#39;</span><span class="p">][</span><span class="n">_group</span><span class="p">]</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
+                                <span class="n">_log_msgs</span><span class="p">[</span><span class="s">&#39;&#39;</span><span class="p">][</span><span class="n">_group</span><span class="p">][</span><span class="s">&#39;Final Residual&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s">&quot;{:.3e}&quot;</span>\
+                                    <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">supremum_norm</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">last_iteration</span><span class="o">.</span><span class="n">final_step</span><span class="o">.</span><span class="n">solution</span><span class="o">.</span><span class="n">residual</span><span class="p">))</span>
+                                <span class="n">_log_msgs</span><span class="p">[</span><span class="s">&#39;&#39;</span><span class="p">][</span><span class="n">_group</span><span class="p">][</span><span class="s">&#39;Solution Reduction&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s">&quot;{:.3e}&quot;</span>\
+                                    <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">supremum_norm</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">solution</span>
+                                                          <span class="o">.</span><span class="n">solution_reduction</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">last_iteration_index</span><span class="p">)))</span>
+                                <span class="k">if</span> <span class="n">problem_has_exact_solution</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">problem</span><span class="p">,</span> <span class="bp">self</span><span class="p">):</span>
+                                    <span class="n">_log_msgs</span><span class="p">[</span><span class="s">&#39;&#39;</span><span class="p">][</span><span class="n">_group</span><span class="p">][</span><span class="s">&#39;Error Reduction&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s">&quot;{:.3e}&quot;</span>\
+                                        <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">supremum_norm</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">solution</span>
+                                                              <span class="o">.</span><span class="n">error_reduction</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">last_iteration_index</span><span class="p">)))</span>
+                                <span class="n">LOG</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s">&quot;  {} Failed: Maximum number iterations reached without convergence.&quot;</span>
+                                         <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_core</span><span class="o">.</span><span class="n">name</span><span class="p">))</span>
+                            <span class="n">print_logging_message_tree</span><span class="p">(</span><span class="n">_log_msgs</span><span class="p">)</span>
+                    <span class="k">elif</span> <span class="n">_previous_flag</span> <span class="ow">in</span> <span class="p">[</span><span class="n">Message</span><span class="o">.</span><span class="n">SolverFlag</span><span class="o">.</span><span class="n">converged</span><span class="p">,</span> <span class="n">Message</span><span class="o">.</span><span class="n">SolverFlag</span><span class="o">.</span><span class="n">finished</span><span class="p">]:</span>
+                        <span class="n">LOG</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&quot;Solver Finished.&quot;</span><span class="p">)</span>
+
+                        <span class="bp">self</span><span class="o">.</span><span class="n">timer</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
+
+                        <span class="bp">self</span><span class="o">.</span><span class="n">_print_footer</span><span class="p">()</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="c"># something went wrong</span>
+                        <span class="c"># --&gt; we failed</span>
+                        <span class="n">LOG</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s">&quot;Solver failed.&quot;</span><span class="p">)</span>
+                        <span class="n">_current_flag</span> <span class="o">=</span> <span class="n">Message</span><span class="o">.</span><span class="n">SolverFlag</span><span class="o">.</span><span class="n">failed</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">_communicator</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">current_iteration</span><span class="o">.</span><span class="n">final_step</span><span class="o">.</span><span class="n">solution</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
+                                    <span class="n">time_point</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">current_iteration</span><span class="o">.</span><span class="n">final_step</span><span class="o">.</span><span class="n">time_point</span><span class="p">,</span>
+                                    <span class="n">flag</span><span class="o">=</span><span class="n">_current_flag</span><span class="p">)</span>
+            <span class="n">__work_loop_count</span> <span class="o">+=</span> <span class="mi">1</span>
+
+        <span class="c"># end while:has_work is None</span>
+        <span class="n">LOG</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&quot;Solver Main Loop Done&quot;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="p">[</span><span class="n">_s</span><span class="o">.</span><span class="n">solution</span> <span class="k">for</span> <span class="n">_s</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_states</span><span class="p">]</span>
+</div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="ParallelSdc.state"><a class="viewcode-back" href="../../../api/solvers/parallel_sdc.html#pypint.solvers.parallel_sdc.ParallelSdc.state">[docs]</a>    <span class="k">def</span> <span class="nf">state</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Read-only accessor for the sovler&#39;s state</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        state : :py:class:`.ISolverState`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_states</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_states</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">None</span>
+</div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="ParallelSdc.num_time_steps"><a class="viewcode-back" href="../../../api/solvers/parallel_sdc.html#pypint.solvers.parallel_sdc.ParallelSdc.num_time_steps">[docs]</a>    <span class="k">def</span> <span class="nf">num_time_steps</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Accessor for the number of time steps within the interval.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        number_time_steps : :py:class:`int`</span>
+<span class="sd">            Number of time steps within the problem-given time interval.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_num_time_steps</span>
+</div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="ParallelSdc.num_nodes"><a class="viewcode-back" href="../../../api/solvers/parallel_sdc.html#pypint.solvers.parallel_sdc.ParallelSdc.num_nodes">[docs]</a>    <span class="k">def</span> <span class="nf">num_nodes</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Accessor for the number of integration nodes per time step.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        number_of_nodes : :py:class:`int`</span>
+<span class="sd">            Number of integration nodes used within one time step.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__num_nodes</span>
+</div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="ParallelSdc.classic"><a class="viewcode-back" href="../../../api/solvers/parallel_sdc.html#pypint.solvers.parallel_sdc.ParallelSdc.classic">[docs]</a>    <span class="k">def</span> <span class="nf">classic</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Read-only accessor for the type of SDC</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        is_classic : :py:class:`bool`</span>
+<span class="sd">            :py:class:`True` if it&#39;s the classic SDC as known from papers;</span>
+<span class="sd">            :py:class:`False` if it&#39;s the modified SDC by Torbjörn Klatt</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_classic</span>
+</div>
+<div class="viewcode-block" id="ParallelSdc._init_new_state"><a class="viewcode-back" href="../../../api/solvers/parallel_sdc.html#pypint.solvers.parallel_sdc.ParallelSdc._init_new_state">[docs]</a>    <span class="k">def</span> <span class="nf">_init_new_state</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Initialize a new state for a work task</span>
+
+<span class="sd">        Usually, this starts a new work task.</span>
+<span class="sd">        The previous state, if applicable, is stored in a stack.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="p">:</span>
+            <span class="c"># finalize the current state</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">finalize</span><span class="p">()</span>
+
+        <span class="c"># initialize solver state</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_states</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">SdcSolverState</span><span class="p">(</span><span class="n">num_nodes</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">num_nodes</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">num_time_steps</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">num_time_steps</span><span class="p">))</span>
+</div>
+<div class="viewcode-block" id="ParallelSdc._init_new_interval"><a class="viewcode-back" href="../../../api/solvers/parallel_sdc.html#pypint.solvers.parallel_sdc.ParallelSdc._init_new_interval">[docs]</a>    <span class="k">def</span> <span class="nf">_init_new_interval</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">start</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Initializes a new work interval</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        start : :py:class:`float`</span>
+<span class="sd">            start point of new interval</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        has_work : :py:class:`bool`</span>
+<span class="sd">            :py:class:`True` if new interval have been initialized;</span>
+<span class="sd">            :py:class:`False` if no new interval have been initialized (i.e. new interval end would exceed end of time</span>
+<span class="sd">            given by problem)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">assert_is_instance</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="n">descriptor</span><span class="o">=</span><span class="s">&quot;Time Point&quot;</span><span class="p">,</span> <span class="n">checking_obj</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">start</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dt</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">problem</span><span class="o">.</span><span class="n">time_end</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">False</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span> <span class="ow">and</span> <span class="n">start</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">initial</span><span class="o">.</span><span class="n">time_point</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">False</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_init_new_state</span><span class="p">()</span>
+
+        <span class="c"># set width of current interval</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">delta_interval</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dt</span>
+
+        <span class="c"># compute time step and node distances</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_deltas</span><span class="p">[</span><span class="s">&#39;t&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">delta_interval</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_time_steps</span>  <span class="c"># width of a single time step (equidistant)</span>
+
+        <span class="c"># start time points of time steps</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__time_points</span><span class="p">[</span><span class="s">&#39;steps&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">start</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dt</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_time_steps</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+
+        <span class="c"># initialize and transform integrator for time step width</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_integrator</span><span class="o">.</span><span class="n">init</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__nodes_type</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">__num_nodes</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">__weights_type</span><span class="p">,</span>
+                              <span class="n">interval</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">__time_points</span><span class="p">[</span><span class="s">&#39;steps&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">__time_points</span><span class="p">[</span><span class="s">&#39;steps&#39;</span><span class="p">][</span><span class="mi">1</span><span class="p">]],</span>
+                                                <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float</span><span class="p">))</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">__time_points</span><span class="p">[</span><span class="s">&#39;nodes&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">num_time_steps</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_nodes</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float</span><span class="p">)</span>
+        <span class="n">_deltas_n</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_time_steps</span> <span class="o">*</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_nodes</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+
+        <span class="c"># copy the node provider so we do not alter the integrator&#39;s one</span>
+        <span class="n">_nodes</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_integrator</span><span class="o">.</span><span class="n">nodes_type</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">_t</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_time_steps</span><span class="p">):</span>
+            <span class="c"># transform Nodes (copy) onto new time step for retrieving actual integration nodes</span>
+            <span class="n">_nodes</span><span class="o">.</span><span class="n">interval</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">__time_points</span><span class="p">[</span><span class="s">&#39;steps&#39;</span><span class="p">][</span><span class="n">_t</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">__time_points</span><span class="p">[</span><span class="s">&#39;steps&#39;</span><span class="p">][</span><span class="n">_t</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]])</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__time_points</span><span class="p">[</span><span class="s">&#39;nodes&#39;</span><span class="p">][</span><span class="n">_t</span><span class="p">]</span> <span class="o">=</span> <span class="n">_nodes</span><span class="o">.</span><span class="n">nodes</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">_n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_nodes</span> <span class="o">-</span> <span class="mi">1</span><span class="p">):</span>
+                <span class="n">_i</span> <span class="o">=</span> <span class="n">_t</span> <span class="o">*</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_nodes</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="n">_n</span>
+                <span class="n">_deltas_n</span><span class="p">[</span><span class="n">_i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">_nodes</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="n">_n</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">_nodes</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="n">_n</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_deltas</span><span class="p">[</span><span class="s">&#39;n&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">_deltas_n</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+        <span class="k">return</span> <span class="bp">True</span>
+</div>
+<div class="viewcode-block" id="ParallelSdc._adjust_interval_width"><a class="viewcode-back" href="../../../api/solvers/parallel_sdc.html#pypint.solvers.parallel_sdc.ParallelSdc._adjust_interval_width">[docs]</a>    <span class="k">def</span> <span class="nf">_adjust_interval_width</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Adjust width of time interval</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s">&quot;Time Adaptivity not yet implemented.&quot;</span><span class="p">)</span>
+        <span class="c"># return Message.SolverFlag.time_adjusted</span>
+</div>
+    <span class="k">def</span> <span class="nf">_main_solver_loop</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c"># initialize iteration timer of same type as global timer</span>
+        <span class="n">_iter_timer</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">timer</span><span class="o">.</span><span class="n">__class__</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_print_iteration</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">current_iteration_index</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+
+        <span class="c"># iterate on time steps</span>
+        <span class="n">_iter_timer</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">_current_time_step</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">current_iteration</span><span class="p">:</span>
+            <span class="c"># run this time step</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_time_step</span><span class="p">()</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">current_time_step_index</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">current_iteration</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">current_iteration</span><span class="o">.</span><span class="n">proceed</span><span class="p">()</span>
+        <span class="n">_iter_timer</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
+
+        <span class="c"># check termination criteria</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">threshold</span><span class="o">.</span><span class="n">check</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="p">)</span>
+
+        <span class="c"># log this iteration&#39;s summary</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">is_first_iteration</span><span class="p">:</span>
+            <span class="c"># on first iteration we do not have comparison values</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_print_iteration_end</span><span class="p">(</span><span class="bp">None</span><span class="p">,</span> <span class="bp">None</span><span class="p">,</span> <span class="bp">None</span><span class="p">,</span> <span class="n">_iter_timer</span><span class="o">.</span><span class="n">past</span><span class="p">())</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">problem_has_exact_solution</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">problem</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">is_first_iteration</span><span class="p">:</span>
+                <span class="c"># we could compute the correct error of our current solution</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_print_iteration_end</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">solution</span><span class="o">.</span><span class="n">solution_reduction</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">current_iteration_index</span><span class="p">),</span>
+                                          <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">solution</span><span class="o">.</span><span class="n">error_reduction</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">current_iteration_index</span><span class="p">),</span>
+                                          <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">current_step</span><span class="o">.</span><span class="n">solution</span><span class="o">.</span><span class="n">residual</span><span class="p">,</span>
+                                          <span class="n">_iter_timer</span><span class="o">.</span><span class="n">past</span><span class="p">())</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_print_iteration_end</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">solution</span><span class="o">.</span><span class="n">solution_reduction</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">current_iteration_index</span><span class="p">),</span>
+                                          <span class="bp">None</span><span class="p">,</span>
+                                          <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">current_step</span><span class="o">.</span><span class="n">solution</span><span class="o">.</span><span class="n">residual</span><span class="p">,</span>
+                                          <span class="n">_iter_timer</span><span class="o">.</span><span class="n">past</span><span class="p">())</span>
+
+        <span class="c"># finalize this iteration (i.e. TrajectorySolutionData.finalize())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">current_iteration</span><span class="o">.</span><span class="n">finalize</span><span class="p">()</span>
+
+        <span class="n">_reason</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">threshold</span><span class="o">.</span><span class="n">has_reached</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">_reason</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="c"># LOG.debug(&quot;solver main loop done: no reason&quot;)</span>
+            <span class="k">return</span> <span class="n">Message</span><span class="o">.</span><span class="n">SolverFlag</span><span class="o">.</span><span class="n">iterating</span>
+        <span class="k">elif</span> <span class="n">_reason</span> <span class="o">==</span> <span class="p">[</span><span class="s">&#39;iterations&#39;</span><span class="p">]:</span>
+            <span class="c"># LOG.debug(&quot;solver main loop done: iterations&quot;)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">finalize</span><span class="p">()</span>
+            <span class="k">return</span> <span class="n">Message</span><span class="o">.</span><span class="n">SolverFlag</span><span class="o">.</span><span class="n">finished</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c"># LOG.debug(&quot;solver main loop done: other&quot;)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">finalize</span><span class="p">()</span>
+            <span class="k">return</span> <span class="n">Message</span><span class="o">.</span><span class="n">SolverFlag</span><span class="o">.</span><span class="n">converged</span>
+
+    <span class="k">def</span> <span class="nf">_time_step</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">current_time_step</span><span class="o">.</span><span class="n">delta_time_step</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_deltas</span><span class="p">[</span><span class="s">&#39;t&#39;</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">_step</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">current_time_step</span><span class="p">)):</span>
+            <span class="n">_node_index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">current_time_step_index</span> <span class="o">*</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_nodes</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="n">_step</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">current_time_step</span><span class="p">[</span><span class="n">_step</span><span class="p">]</span><span class="o">.</span><span class="n">delta_tau</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_deltas</span><span class="p">[</span><span class="s">&#39;n&#39;</span><span class="p">][</span><span class="n">_node_index</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">current_time_step</span><span class="p">[</span><span class="n">_step</span><span class="p">]</span><span class="o">.</span><span class="n">solution</span><span class="o">.</span><span class="n">time_point</span> <span class="o">=</span> \
+                <span class="bp">self</span><span class="o">.</span><span class="n">__time_points</span><span class="p">[</span><span class="s">&#39;nodes&#39;</span><span class="p">][</span><span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">current_time_step_index</span><span class="p">][</span><span class="n">_step</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_print_time_step</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">current_time_step_index</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>
+                              <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">current_time_step</span><span class="o">.</span><span class="n">initial</span><span class="o">.</span><span class="n">time_point</span><span class="p">,</span>
+                              <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">current_time_step</span><span class="o">.</span><span class="n">last</span><span class="o">.</span><span class="n">time_point</span><span class="p">,</span>
+                              <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">current_time_step</span><span class="o">.</span><span class="n">delta_time_step</span><span class="p">)</span>
+
+        <span class="c"># for classic SDC compute integral</span>
+        <span class="n">_integral</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="n">_integrate_values</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">classic</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">current_time_step</span><span class="o">.</span><span class="n">initial</span><span class="o">.</span><span class="n">rhs_evaluated</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">current_time_step</span><span class="o">.</span><span class="n">initial</span><span class="o">.</span><span class="n">rhs</span> <span class="o">=</span> \
+                    <span class="bp">self</span><span class="o">.</span><span class="n">problem</span><span class="o">.</span><span class="n">evaluate_wrt_time</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">current_time_step</span><span class="o">.</span><span class="n">initial</span><span class="o">.</span><span class="n">time_point</span><span class="p">,</span>
+                                                   <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">current_time_step</span><span class="o">.</span><span class="n">initial</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+
+            <span class="n">_integrate_values</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">current_time_step</span><span class="o">.</span><span class="n">initial</span><span class="o">.</span><span class="n">rhs</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">problem</span><span class="o">.</span><span class="n">numeric_type</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">_step_index</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">current_time_step</span><span class="p">)):</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">is_first_iteration</span><span class="p">:</span>
+                    <span class="n">_integrate_values</span> <span class="o">=</span> \
+                        <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">_integrate_values</span><span class="p">,</span>
+                                  <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">current_time_step</span><span class="o">.</span><span class="n">initial</span><span class="o">.</span><span class="n">rhs</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">problem</span><span class="o">.</span><span class="n">numeric_type</span><span class="p">),</span>
+                                  <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">_step</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">previous_iteration</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">current_time_step_index</span><span class="p">][</span><span class="n">_step_index</span><span class="p">]</span>
+                    <span class="k">if</span> <span class="ow">not</span> <span class="n">_step</span><span class="o">.</span><span class="n">rhs_evaluated</span><span class="p">:</span>
+                        <span class="n">_step</span><span class="o">.</span><span class="n">rhs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">problem</span><span class="o">.</span><span class="n">evaluate_wrt_time</span><span class="p">(</span><span class="n">_step</span><span class="o">.</span><span class="n">time_point</span><span class="p">,</span> <span class="n">_step</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+                    <span class="n">_integrate_values</span> <span class="o">=</span> \
+                        <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">_integrate_values</span><span class="p">,</span>
+                                  <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">_step</span><span class="o">.</span><span class="n">rhs</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">problem</span><span class="o">.</span><span class="n">numeric_type</span><span class="p">),</span>
+                                  <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+            <span class="n">assert_condition</span><span class="p">(</span><span class="n">_integrate_values</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_nodes</span><span class="p">,</span>
+                             <span class="ne">ValueError</span><span class="p">,</span> <span class="n">message</span><span class="o">=</span><span class="s">&quot;Number of integration values not correct: {:d} != {:d}&quot;</span>
+                                                 <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">_integrate_values</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_nodes</span><span class="p">),</span>
+                             <span class="n">checking_obj</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
+
+        <span class="n">_full_integral</span> <span class="o">=</span> <span class="mf">0.0</span>
+
+        <span class="c"># do the actual SDC steps of this SDC sweep</span>
+        <span class="k">for</span> <span class="n">_step_index</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">current_time_step</span><span class="p">)):</span>
+            <span class="n">_current_step</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">current_time_step</span><span class="p">[</span><span class="n">_step_index</span><span class="p">]</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">classic</span><span class="p">:</span>
+                <span class="n">_integral</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_integrator</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">_integrate_values</span><span class="p">,</span>
+                                                      <span class="n">from_node</span><span class="o">=</span><span class="n">_step_index</span><span class="p">,</span> <span class="n">target_node</span><span class="o">=</span><span class="n">_step_index</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+                <span class="c"># we successively compute the full integral, which is used for the residual at the end</span>
+                <span class="n">_full_integral</span> <span class="o">+=</span> <span class="n">_integral</span>
+            <span class="n">_current_step</span><span class="o">.</span><span class="n">integral</span> <span class="o">=</span> <span class="n">_integral</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+            <span class="c"># do the SDC step of this sweep</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_sdc_step</span><span class="p">()</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">current_step_index</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">current_time_step</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">current_time_step</span><span class="o">.</span><span class="n">proceed</span><span class="p">()</span>
+
+        <span class="k">del</span> <span class="n">_integrate_values</span>
+
+        <span class="c"># compute residual and print step details</span>
+        <span class="k">for</span> <span class="n">_step_index</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">current_time_step</span><span class="p">)):</span>
+            <span class="n">_step</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">current_time_step</span><span class="p">[</span><span class="n">_step_index</span><span class="p">]</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">_core</span><span class="o">.</span><span class="n">compute_residual</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="p">,</span> <span class="n">step</span><span class="o">=</span><span class="n">_step</span><span class="p">,</span> <span class="n">integral</span><span class="o">=</span><span class="n">_full_integral</span><span class="p">)</span>
+
+            <span class="c"># finalize this step (i.e. StepSolutionData.finalize())</span>
+            <span class="n">_step</span><span class="o">.</span><span class="n">done</span><span class="p">()</span>
+
+            <span class="k">if</span> <span class="n">_step_index</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">_previous_time</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">current_time_step</span><span class="p">[</span><span class="n">_step_index</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">time_point</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">_previous_time</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">current_time_step</span><span class="o">.</span><span class="n">initial</span><span class="o">.</span><span class="n">time_point</span>
+
+            <span class="k">if</span> <span class="n">problem_has_exact_solution</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">problem</span><span class="p">,</span> <span class="bp">self</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_print_step</span><span class="p">(</span><span class="n">_step_index</span> <span class="o">+</span> <span class="mi">2</span><span class="p">,</span>
+                                 <span class="n">_previous_time</span><span class="p">,</span>
+                                 <span class="n">_step</span><span class="o">.</span><span class="n">time_point</span><span class="p">,</span>
+                                 <span class="n">supremum_norm</span><span class="p">(</span><span class="n">_step</span><span class="o">.</span><span class="n">value</span><span class="p">),</span>
+                                 <span class="n">_step</span><span class="o">.</span><span class="n">solution</span><span class="o">.</span><span class="n">residual</span><span class="p">,</span>
+                                 <span class="n">_step</span><span class="o">.</span><span class="n">solution</span><span class="o">.</span><span class="n">error</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_print_step</span><span class="p">(</span><span class="n">_step_index</span> <span class="o">+</span> <span class="mi">2</span><span class="p">,</span>
+                                 <span class="n">_previous_time</span><span class="p">,</span>
+                                 <span class="n">_step</span><span class="o">.</span><span class="n">time_point</span><span class="p">,</span>
+                                 <span class="n">supremum_norm</span><span class="p">(</span><span class="n">_step</span><span class="o">.</span><span class="n">value</span><span class="p">),</span>
+                                 <span class="n">_step</span><span class="o">.</span><span class="n">solution</span><span class="o">.</span><span class="n">residual</span><span class="p">,</span>
+                                 <span class="bp">None</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_print_time_step_end</span><span class="p">()</span>
+
+        <span class="c"># finalizing the current time step (i.e. TrajectorySolutionData.finalize)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">current_time_step</span><span class="o">.</span><span class="n">finalize</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">_sdc_step</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c"># helper variables</span>
+        <span class="n">_current_time_step_index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">current_time_step_index</span>
+        <span class="n">_current_step_index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">current_step_index</span>
+
+        <span class="c"># copy solution of previous iteration to this one</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">is_first_iteration</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">current_step</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">initial</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">current_step</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> \
+                <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">previous_iteration</span><span class="p">[</span><span class="n">_current_time_step_index</span><span class="p">][</span><span class="n">_current_step_index</span><span class="p">]</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+        <span class="c"># TODO: review the custom modification</span>
+        <span class="c"># if not self.classic:</span>
+        <span class="c">#     # gather values for integration and evaluate problem at given points</span>
+        <span class="c">#     #  initial value for this time step</span>
+        <span class="c">#     _integrate_values = \</span>
+        <span class="c">#         np.array(</span>
+        <span class="c">#             [self.problem.evaluate_wrt_time(self.state.current_time_step.initial.time_point,</span>
+        <span class="c">#                                             self.state.current_time_step.initial.value.copy())</span>
+        <span class="c">#              ], dtype=self.problem.numeric_type)</span>
+        <span class="c">#</span>
+        <span class="c">#     if _current_step_index &gt; 0:</span>
+        <span class="c">#         #  values from this iteration (already calculated)</span>
+        <span class="c">#         _from_current_iteration_range = range(0, _current_step_index)</span>
+        <span class="c">#         for _index in _from_current_iteration_range:</span>
+        <span class="c">#             _integrate_values = \</span>
+        <span class="c">#                 np.append(_integrate_values,</span>
+        <span class="c">#                           np.array(</span>
+        <span class="c">#                               [self.problem.evaluate_wrt_time(self.state.current_time_step[_index].solution.time_point,</span>
+        <span class="c">#                                                               self.state.current_time_step[_index].solution.value.copy())</span>
+        <span class="c">#                                ], dtype=self.problem.numeric_type</span>
+        <span class="c">#                           ), axis=0)</span>
+        <span class="c">#</span>
+        <span class="c">#     #  values from previous iteration</span>
+        <span class="c">#     _from_previous_iteration_range = range(_current_step_index, self.num_nodes - 1)</span>
+        <span class="c">#     for _index in _from_previous_iteration_range:</span>
+        <span class="c">#         if self.state.is_first_iteration:</span>
+        <span class="c">#             _this_value = self.problem.initial_value</span>
+        <span class="c">#         else:</span>
+        <span class="c">#             _this_value = self.state.previous_iteration[_current_time_step_index][_index].solution.value.copy()</span>
+        <span class="c">#         _integrate_values = \</span>
+        <span class="c">#             np.append(_integrate_values,</span>
+        <span class="c">#                       np.array(</span>
+        <span class="c">#                           [self.problem.evaluate_wrt_time(self.state.current_time_step[_index].solution.time_point,</span>
+        <span class="c">#                                                           _this_value)</span>
+        <span class="c">#                            ], dtype=self.problem.numeric_type</span>
+        <span class="c">#                       ), axis=0)</span>
+        <span class="c">#     assert_condition(_integrate_values.shape[0] == self.num_nodes,</span>
+        <span class="c">#                      ValueError, message=&quot;Number of integration values not correct: {:d} != {:d}&quot;</span>
+        <span class="c">#                                          .format(_integrate_values.shape[0], self.num_nodes),</span>
+        <span class="c">#                      checking_obj=self)</span>
+        <span class="c">#</span>
+        <span class="c">#     # integrate</span>
+        <span class="c">#     self.state.current_step.integral = self._integrator.evaluate(_integrate_values,</span>
+        <span class="c">#                                                                  from_node=_current_step_index,</span>
+        <span class="c">#                                                                  target_node=_current_step_index + 1)</span>
+        <span class="c">#     del _integrate_values</span>
+        <span class="c"># # END if not self.classic</span>
+
+        <span class="c"># compute step</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_core</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="p">,</span> <span class="n">problem</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">problem</span><span class="p">)</span>
+
+        <span class="c"># calculate error</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_core</span><span class="o">.</span><span class="n">compute_error</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="p">,</span> <span class="n">problem</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">problem</span><span class="p">)</span>
+
+        <span class="c"># step gets finalized after computation of residual</span>
+
+    <span class="k">def</span> <span class="nf">print_lines_for_log</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">_lines</span> <span class="o">=</span> <span class="nb">super</span><span class="p">(</span><span class="n">ParallelSdc</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">print_lines_for_log</span><span class="p">()</span>
+        <span class="k">if</span> <span class="s">&#39;Number Nodes per Time Step&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">_lines</span><span class="p">[</span><span class="s">&#39;Integrator&#39;</span><span class="p">]:</span>
+            <span class="n">_lines</span><span class="p">[</span><span class="s">&#39;Integrator&#39;</span><span class="p">][</span><span class="s">&#39;Number Nodes per Time Step&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s">&quot;</span><span class="si">%d</span><span class="s">&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">__num_nodes</span>
+        <span class="k">if</span> <span class="s">&#39;Number Time Steps&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">_lines</span><span class="p">[</span><span class="s">&#39;Integrator&#39;</span><span class="p">]:</span>
+            <span class="n">_lines</span><span class="p">[</span><span class="s">&#39;Integrator&#39;</span><span class="p">][</span><span class="s">&#39;Number Time Steps&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s">&quot;</span><span class="si">%d</span><span class="s">&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">_num_time_steps</span>
+        <span class="k">return</span> <span class="n">_lines</span>
+
+    <span class="k">def</span> <span class="nf">_print_interval_header</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">LOG</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&quot;</span><span class="si">%s%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">VERBOSITY_LVL1</span><span class="p">,</span> <span class="n">SEPARATOR_LVL3</span><span class="p">))</span>
+        <span class="n">LOG</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&quot;{}  Interval: [{:.3f}, {:.3f}]&quot;</span>
+                 <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">VERBOSITY_LVL1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">initial</span><span class="o">.</span><span class="n">time_point</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">initial</span><span class="o">.</span><span class="n">time_point</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dt</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_print_output_tree_header</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">_print_output_tree_header</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">LOG</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&quot;</span><span class="si">%s</span><span class="s">   iter&quot;</span> <span class="o">%</span> <span class="n">VERBOSITY_LVL1</span><span class="p">)</span>
+        <span class="n">LOG</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&quot;</span><span class="si">%s</span><span class="s">        </span><span class="se">\\</span><span class="s">&quot;</span> <span class="o">%</span> <span class="n">VERBOSITY_LVL2</span><span class="p">)</span>
+        <span class="n">LOG</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&quot;</span><span class="si">%s</span><span class="s">         |- time    start     end        delta&quot;</span> <span class="o">%</span> <span class="n">VERBOSITY_LVL2</span><span class="p">)</span>
+        <span class="n">LOG</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&quot;</span><span class="si">%s</span><span class="s">         |     </span><span class="se">\\</span><span class="s">&quot;</span> <span class="o">%</span> <span class="n">VERBOSITY_LVL3</span><span class="p">)</span>
+        <span class="n">LOG</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&quot;</span><span class="si">%s</span><span class="s">         |      |- step    t_0      t_1       phi(t_1)    resid       err&quot;</span> <span class="o">%</span> <span class="n">VERBOSITY_LVL3</span><span class="p">)</span>
+        <span class="n">LOG</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&quot;</span><span class="si">%s</span><span class="s">         |      </span><span class="se">\\</span><span class="s">_&quot;</span> <span class="o">%</span> <span class="n">VERBOSITY_LVL2</span><span class="p">)</span>
+        <span class="n">LOG</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&quot;</span><span class="si">%s</span><span class="s">         </span><span class="se">\\</span><span class="s">_   sol r.red    err r.red      resid       time&quot;</span> <span class="o">%</span> <span class="n">VERBOSITY_LVL1</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_print_iteration</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">_iter</span><span class="p">):</span>
+        <span class="n">_iter</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_output_format</span><span class="p">(</span><span class="n">_iter</span><span class="p">,</span> <span class="s">&#39;int&#39;</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+        <span class="n">LOG</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&quot;</span><span class="si">%s</span><span class="s">   </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">VERBOSITY_LVL1</span><span class="p">,</span> <span class="n">_iter</span><span class="p">))</span>
+        <span class="n">LOG</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&quot;</span><span class="si">%s</span><span class="s">        </span><span class="se">\\</span><span class="s">&quot;</span> <span class="o">%</span> <span class="n">VERBOSITY_LVL2</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_print_iteration_end</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">solred</span><span class="p">,</span> <span class="n">errred</span><span class="p">,</span> <span class="n">resid</span><span class="p">,</span> <span class="n">time</span><span class="p">):</span>
+        <span class="n">_solred</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_output_format</span><span class="p">(</span><span class="n">solred</span><span class="p">,</span> <span class="s">&#39;exp&#39;</span><span class="p">)</span>
+        <span class="n">_errred</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_output_format</span><span class="p">(</span><span class="n">errred</span><span class="p">,</span> <span class="s">&#39;exp&#39;</span><span class="p">)</span>
+        <span class="n">_resid</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_output_format</span><span class="p">(</span><span class="n">resid</span><span class="p">,</span> <span class="s">&#39;exp&#39;</span><span class="p">)</span>
+        <span class="n">_time</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_output_format</span><span class="p">(</span><span class="n">time</span><span class="p">,</span> <span class="s">&#39;float&#39;</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mf">6.3</span><span class="p">)</span>
+        <span class="n">LOG</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&quot;</span><span class="si">%s</span><span class="s">         </span><span class="se">\\</span><span class="s">_   </span><span class="si">%s</span><span class="s">    </span><span class="si">%s</span><span class="s">    </span><span class="si">%s</span><span class="s">    </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">VERBOSITY_LVL1</span><span class="p">,</span> <span class="n">_solred</span><span class="p">,</span> <span class="n">_errred</span><span class="p">,</span> <span class="n">_resid</span><span class="p">,</span> <span class="n">_time</span><span class="p">))</span>
+
+    <span class="k">def</span> <span class="nf">_print_time_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">time_step</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="p">,</span> <span class="n">delta</span><span class="p">):</span>
+        <span class="n">_time_step</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_output_format</span><span class="p">(</span><span class="n">time_step</span><span class="p">,</span> <span class="s">&#39;int&#39;</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+        <span class="n">_start</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_output_format</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="s">&#39;float&#39;</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mf">6.3</span><span class="p">)</span>
+        <span class="n">_end</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_output_format</span><span class="p">(</span><span class="n">end</span><span class="p">,</span> <span class="s">&#39;float&#39;</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mf">6.3</span><span class="p">)</span>
+        <span class="n">_delta</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_output_format</span><span class="p">(</span><span class="n">delta</span><span class="p">,</span> <span class="s">&#39;float&#39;</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mf">6.3</span><span class="p">)</span>
+        <span class="n">LOG</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&quot;</span><span class="si">%s</span><span class="s">         |- </span><span class="si">%s</span><span class="s">    </span><span class="si">%s</span><span class="s">    </span><span class="si">%s</span><span class="s">    </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">VERBOSITY_LVL2</span><span class="p">,</span> <span class="n">_time_step</span><span class="p">,</span> <span class="n">_start</span><span class="p">,</span> <span class="n">_end</span><span class="p">,</span> <span class="n">_delta</span><span class="p">))</span>
+        <span class="n">LOG</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&quot;</span><span class="si">%s</span><span class="s">         |     </span><span class="se">\\</span><span class="s">&quot;</span> <span class="o">%</span> <span class="n">VERBOSITY_LVL3</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_print_step</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="bp">None</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">current_time_step</span><span class="o">.</span><span class="n">initial</span><span class="o">.</span><span class="n">time_point</span><span class="p">,</span>
+                         <span class="n">supremum_norm</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">current_time_step</span><span class="o">.</span><span class="n">initial</span><span class="o">.</span><span class="n">solution</span><span class="o">.</span><span class="n">value</span><span class="p">),</span>
+                         <span class="bp">None</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_print_time_step_end</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">LOG</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&quot;</span><span class="si">%s</span><span class="s">         |      </span><span class="se">\\</span><span class="s">_&quot;</span> <span class="o">%</span> <span class="n">VERBOSITY_LVL2</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_print_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">step</span><span class="p">,</span> <span class="n">t0</span><span class="p">,</span> <span class="n">t1</span><span class="p">,</span> <span class="n">phi</span><span class="p">,</span> <span class="n">resid</span><span class="p">,</span> <span class="n">err</span><span class="p">):</span>
+        <span class="n">_step</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_output_format</span><span class="p">(</span><span class="n">step</span><span class="p">,</span> <span class="s">&#39;int&#39;</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+        <span class="n">_t0</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_output_format</span><span class="p">(</span><span class="n">t0</span><span class="p">,</span> <span class="s">&#39;float&#39;</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mf">6.3</span><span class="p">)</span>
+        <span class="n">_t1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_output_format</span><span class="p">(</span><span class="n">t1</span><span class="p">,</span> <span class="s">&#39;float&#39;</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mf">6.3</span><span class="p">)</span>
+        <span class="n">_phi</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_output_format</span><span class="p">(</span><span class="n">phi</span><span class="p">,</span> <span class="s">&#39;float&#39;</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mf">6.3</span><span class="p">)</span>
+        <span class="n">_resid</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_output_format</span><span class="p">(</span><span class="n">resid</span><span class="p">,</span> <span class="s">&#39;exp&#39;</span><span class="p">)</span>
+        <span class="n">_err</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_output_format</span><span class="p">(</span><span class="n">err</span><span class="p">,</span> <span class="s">&#39;exp&#39;</span><span class="p">)</span>
+        <span class="n">LOG</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&quot;</span><span class="si">%s</span><span class="s">         |      |- </span><span class="si">%s</span><span class="s">    </span><span class="si">%s</span><span class="s">    </span><span class="si">%s</span><span class="s">    </span><span class="si">%s</span><span class="s">    </span><span class="si">%s</span><span class="s">    </span><span class="si">%s</span><span class="s">&quot;</span>
+                 <span class="o">%</span> <span class="p">(</span><span class="n">VERBOSITY_LVL3</span><span class="p">,</span> <span class="n">_step</span><span class="p">,</span> <span class="n">_t0</span><span class="p">,</span> <span class="n">_t1</span><span class="p">,</span> <span class="n">_phi</span><span class="p">,</span> <span class="n">_resid</span><span class="p">,</span> <span class="n">_err</span><span class="p">))</span>
+
+    <span class="k">def</span> <span class="nf">_output_format</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">_type</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="k">def</span> <span class="nf">_value_to_numeric</span><span class="p">(</span><span class="n">val</span><span class="p">):</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">IDiagnosisValue</span><span class="p">)):</span>
+                <span class="k">return</span> <span class="n">supremum_norm</span><span class="p">(</span><span class="n">val</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">val</span>
+
+        <span class="k">if</span> <span class="n">_type</span> <span class="ow">and</span> <span class="n">width</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">_type</span> <span class="o">==</span> <span class="s">&#39;float&#39;</span><span class="p">:</span>
+                <span class="n">width</span> <span class="o">=</span> <span class="mf">10.3</span>
+            <span class="k">elif</span> <span class="n">_type</span> <span class="o">==</span> <span class="s">&#39;int&#39;</span><span class="p">:</span>
+                <span class="n">width</span> <span class="o">=</span> <span class="mi">10</span>
+            <span class="k">elif</span> <span class="n">_type</span> <span class="o">==</span> <span class="s">&#39;exp&#39;</span><span class="p">:</span>
+                <span class="n">width</span> <span class="o">=</span> <span class="mf">9.2</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">width</span> <span class="o">=</span> <span class="mi">10</span>
+
+        <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">_outstr</span> <span class="o">=</span> <span class="s">&quot;{: ^{width}s}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s">&#39;na&#39;</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">width</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">_type</span> <span class="o">==</span> <span class="s">&#39;float&#39;</span><span class="p">:</span>
+                <span class="n">_outstr</span> <span class="o">=</span> <span class="s">&quot;{: {width}f}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">_value_to_numeric</span><span class="p">(</span><span class="n">value</span><span class="p">),</span> <span class="n">width</span><span class="o">=</span><span class="n">width</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">_type</span> <span class="o">==</span> <span class="s">&#39;int&#39;</span><span class="p">:</span>
+                <span class="n">_outstr</span> <span class="o">=</span> <span class="s">&quot;{: {width}d}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">_value_to_numeric</span><span class="p">(</span><span class="n">value</span><span class="p">),</span> <span class="n">width</span><span class="o">=</span><span class="n">width</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">_type</span> <span class="o">==</span> <span class="s">&#39;exp&#39;</span><span class="p">:</span>
+                <span class="n">_outstr</span> <span class="o">=</span> <span class="s">&quot;{: {width}e}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">_value_to_numeric</span><span class="p">(</span><span class="n">value</span><span class="p">),</span> <span class="n">width</span><span class="o">=</span><span class="n">width</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">_outstr</span> <span class="o">=</span> <span class="s">&quot;{: &gt;{width}s}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="n">width</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">_outstr</span>
+
+</div>
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;ParallelSdc&#39;</span><span class="p">]</span>
+</pre></div>
+
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+      &copy; 2013-2014,
+        <a href="http://www.fz-juelich.de/ias/jsc/EN/Research/Algorithms/ParallelInTimeIntegration/_node.html">Parallel-in-Time Research Group</a>
+        at the
+        <a href="http://www.fz-juelich.de/ias/jsc/EN/Home/home_node.html">Jülich Supercomputing Centre</a><br />
+    </p>
+  </div>
+
+  <a href="https://github.com/snide/sphinx_rtd_theme">Sphinx theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../',
+            VERSION:'0.0.4-dev-0-g4dad7c2',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../_static/doctools.js"></script>
+      <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

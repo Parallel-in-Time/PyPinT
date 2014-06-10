@@ -1,0 +1,274 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Contributing &mdash; PyPinT 0.0.4-dev-0-g4dad7c2 documentation</title>
+  
+
+  
+  
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+        <link rel="author" title="About these documents"
+              href="../about.html"/>
+    <link rel="top" title="PyPinT 0.0.4-dev-0-g4dad7c2 documentation" href="../index.html"/>
+        <link rel="next" title="Testing" href="testing.html"/>
+        <link rel="prev" title="Documentation" href="documentation.html"/> 
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-nav-search">
+        <a href="../index.html" class="fa fa-home"> PyPinT</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+        
+        
+            <ul>
+<li class="toctree-l1"><a class="reference internal" href="../about.html">About</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../user/rationale.html">Rationale</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../user/rationale.html#objectives">Objectives</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../user/rationale.html#goals">Goals</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../user/rationale.html#scope">Scope</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../user/requirements.html">Requirements</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../user/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../user/basic_usage.html">Basic Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/examples/package.html">Examples</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../api/examples/problems/package.html">Example Problems (<tt class="docutils literal"><span class="pre">problems</span></tt>)</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../user/theory.html">Mathematical Theory</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../user/bibliography.html">Bibliography</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../history.html">History</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../history.html#release-0-0-3-04-04-2014">Release 0.0.3 (04/04/2014)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../history.html#release-0-0-2-04-03-2014">Release 0.0.2 (04/03/2014)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../history.html#release-0-0-1-2013-11-26">Release 0.0.1 (2013-11-26)</a></li>
+</ul>
+</li>
+</ul>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="coding_style.html">Coding Style</a></li>
+<li class="toctree-l1"><a class="reference internal" href="documentation.html">Documentation</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="">Contributing</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#branching-and-tagging-model">Branching and Tagging Model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#commit-messages">Commit Messages</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#how-to-implement-a-new-feature">How to Implement a New Feature?</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="testing.html">Testing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="todo.html">ToDos</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="todo.html#global">Global</a></li>
+<li class="toctree-l2"><a class="reference internal" href="todo.html#in-source">In Source</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../api/package.html">API Reference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../api/package.html#communicators">Communicators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/package.html#integrators">Integrators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/package.html#multi-level-providers">Multi Level Providers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/package.html#plugins">Plugins</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/package.html#problems">Problems</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/package.html#solutions">Solutions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/package.html#solvers">Solvers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/package.html#utilities">Utilities</a></li>
+</ul>
+</li>
+</ul>
+
+        
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../index.html">PyPinT</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../index.html">Docs</a> &raquo;</li>
+      
+    <li>Contributing</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          <a href="../_sources/development/contributing.txt" rel="nofollow"> View page source</a>
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main">
+            
+  <div class="section" id="contributing">
+<h1>Contributing<a class="headerlink" href="#contributing" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="branching-and-tagging-model">
+<h2>Branching and Tagging Model<a class="headerlink" href="#branching-and-tagging-model" title="Permalink to this headline">¶</a></h2>
+<p>We use the <a class="reference external" href="http://nvie.com/posts/a-successful-git-branching-model/">git-flow</a> workflow to that extend, that branch names(paces) have a certain meaing:</p>
+<dl class="docutils">
+<dt><tt class="docutils literal"><span class="pre">master</span></tt></dt>
+<dd>tip of the <tt class="docutils literal"><span class="pre">master</span></tt> branch is always the latest stable release</dd>
+<dt><tt class="docutils literal"><span class="pre">development</span></tt></dt>
+<dd>tip of the <tt class="docutils literal"><span class="pre">development</span></tt> branch is the current state of development and not expected to be stable or even usable</dd>
+<dt><tt class="docutils literal"><span class="pre">feature/*</span></tt></dt>
+<dd>various feature branches are used to implement new features and should be based off the <tt class="docutils literal"><span class="pre">development</span></tt> branch</dd>
+<dt><tt class="docutils literal"><span class="pre">release/*</span></tt></dt>
+<dd>a release branch is created from the <tt class="docutils literal"><span class="pre">development</span></tt> branch and used to prepare a new release and will be merged
+into <tt class="docutils literal"><span class="pre">master</span></tt></dd>
+<dt><tt class="docutils literal"><span class="pre">hotfix/*</span></tt></dt>
+<dd>hotfix branches are based off <tt class="docutils literal"><span class="pre">master</span></tt> or <tt class="docutils literal"><span class="pre">development</span></tt> to fix important and severe bugs and should be merged
+into <tt class="docutils literal"><span class="pre">development</span></tt> and <tt class="docutils literal"><span class="pre">master</span></tt> as soon as possible</dd>
+</dl>
+<p>Releases and release candidates are tagged in the form <tt class="docutils literal"><span class="pre">release-X.Y.Z(-RCa)</span></tt>, where <tt class="docutils literal"><span class="pre">X</span></tt>, <tt class="docutils literal"><span class="pre">Y</span></tt>, and <tt class="docutils literal"><span class="pre">Z</span></tt> specify
+the version with respect to <a class="reference external" href="http://semver.org/">semantic versioning</a> and <tt class="docutils literal"><span class="pre">a</span></tt> the number of the release candidate of that version.</p>
+</div>
+<div class="section" id="commit-messages">
+<h2>Commit Messages<a class="headerlink" href="#commit-messages" title="Permalink to this headline">¶</a></h2>
+<p>To ease browsing the proejct&#8217;s history, we try to keep our commit messages clean and descriptive.
+Please try to follow the following rules as best as possible:</p>
+<ul>
+<li><p class="first">Commit Title must not be longer than 50 characters</p>
+<p>If applicable, the title should start with a category name (such as &#8216;<tt class="docutils literal"><span class="pre">docu</span></tt>&#8216;, &#8216;<tt class="docutils literal"><span class="pre">tests</span></tt>&#8216;, &#8216;<tt class="docutils literal"><span class="pre">solvers</span></tt>&#8216;, ...)
+followed by a colon (e.g. &#8220;<em>docu: add usage examples for SDC solver</em>&#8221;).</p>
+</li>
+<li><p class="first">Commit Description must have line wraps at 72 characters</p>
+</li>
+<li><p class="first">Please <em>sign</em> your commits (i.e. use <tt class="docutils literal"><span class="pre">git</span> <span class="pre">commit</span> <span class="pre">-s</span></tt>)</p>
+<p>This automatically appends a line of the form &#8220;<em>Signed-off-by: Torbjörn Klatt &lt;t.klatt&#64;fz-juelich.de&gt;</em>&#8221; to the end
+of the commit message.</p>
+</li>
+</ul>
+</div>
+<div class="section" id="how-to-implement-a-new-feature">
+<h2>How to Implement a New Feature?<a class="headerlink" href="#how-to-implement-a-new-feature" title="Permalink to this headline">¶</a></h2>
+<ol class="arabic simple">
+<li>create a fork/clone</li>
+<li>switch to the <tt class="docutils literal"><span class="pre">development</span></tt> branch and pull in the latest changes</li>
+<li>create a new branch <tt class="docutils literal"><span class="pre">feature/XYZ</span></tt> where <tt class="docutils literal"><span class="pre">XYZ</span></tt> is a short title of your planned feature
+(word seperation should be done with underscores, e.g. <tt class="docutils literal"><span class="pre">feature/my_awesome_feature</span></tt>)</li>
+<li>hack and write Unit Tests</li>
+<li>commit</li>
+<li>repeat steps 4 and 5 until you feel your feature is in an almost usable state and most of the unit tests pass</li>
+<li>write documentation for your feature</li>
+<li>push your feature branch</li>
+<li>stay tuned on reviews, remarks and suggestions by the other developers</li>
+</ol>
+</div>
+</div>
+
+
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="testing.html" class="btn btn-neutral float-right" title="Testing"/>Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="documentation.html" class="btn btn-neutral" title="Documentation"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+      &copy; 2013-2014,
+        <a href="http://www.fz-juelich.de/ias/jsc/EN/Research/Algorithms/ParallelInTimeIntegration/_node.html">Parallel-in-Time Research Group</a>
+        at the
+        <a href="http://www.fz-juelich.de/ias/jsc/EN/Home/home_node.html">Jülich Supercomputing Centre</a><br />
+    </p>
+  </div>
+
+  <a href="https://github.com/snide/sphinx_rtd_theme">Sphinx theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'0.0.4-dev-0-g4dad7c2',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+      <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

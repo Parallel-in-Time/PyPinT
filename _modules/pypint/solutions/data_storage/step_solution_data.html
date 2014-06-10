@@ -1,0 +1,537 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>pypint.solutions.data_storage.step_solution_data &mdash; PyPinT 0.0.4-dev-0-g4dad7c2 documentation</title>
+  
+
+  
+  
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+        <link rel="author" title="About these documents"
+              href="../../../../about.html"/>
+    <link rel="top" title="PyPinT 0.0.4-dev-0-g4dad7c2 documentation" href="../../../../index.html"/>
+        <link rel="up" title="Module code" href="../../../index.html"/> 
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-nav-search">
+        <a href="../../../../index.html" class="fa fa-home"> PyPinT</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+        
+        
+            <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../about.html">About</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../user/rationale.html">Rationale</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../../user/rationale.html#objectives">Objectives</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../user/rationale.html#goals">Goals</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../user/rationale.html#scope">Scope</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../user/requirements.html">Requirements</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../user/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../user/basic_usage.html">Basic Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api/examples/package.html">Examples</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/examples/problems/package.html">Example Problems (<tt class="docutils literal"><span class="pre">problems</span></tt>)</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../user/theory.html">Mathematical Theory</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../../user/bibliography.html">Bibliography</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../history.html">History</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../../history.html#release-0-0-3-04-04-2014">Release 0.0.3 (04/04/2014)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../history.html#release-0-0-2-04-03-2014">Release 0.0.2 (04/03/2014)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../history.html#release-0-0-1-2013-11-26">Release 0.0.1 (2013-11-26)</a></li>
+</ul>
+</li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../development/coding_style.html">Coding Style</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../development/documentation.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../development/contributing.html">Contributing</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../../development/contributing.html#branching-and-tagging-model">Branching and Tagging Model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../development/contributing.html#commit-messages">Commit Messages</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../development/contributing.html#how-to-implement-a-new-feature">How to Implement a New Feature?</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../development/testing.html">Testing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../development/todo.html">ToDos</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../../development/todo.html#global">Global</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../development/todo.html#in-source">In Source</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api/package.html">API Reference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/package.html#communicators">Communicators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/package.html#integrators">Integrators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/package.html#multi-level-providers">Multi Level Providers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/package.html#plugins">Plugins</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/package.html#problems">Problems</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/package.html#solutions">Solutions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/package.html#solvers">Solvers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/package.html#utilities">Utilities</a></li>
+</ul>
+</li>
+</ul>
+
+        
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../../../../index.html">PyPinT</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../../../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="../../../index.html">Module code</a> &raquo;</li>
+      
+    <li>pypint.solutions.data_storage.step_solution_data</li>
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main">
+            
+  <h1>Source code for pypint.solutions.data_storage.step_solution_data</h1><div class="highlight"><pre>
+<span class="c"># coding=utf-8</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">.. moduleauthor:: Torbjörn Klatt &lt;t.klatt@fz-juelich.de&gt;</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">deepcopy</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+
+<span class="kn">from</span> <span class="nn">pypint.solvers.diagnosis</span> <span class="kn">import</span> <span class="n">Error</span><span class="p">,</span> <span class="n">Residual</span>
+<span class="kn">from</span> <span class="nn">pypint.utilities</span> <span class="kn">import</span> <span class="n">assert_is_instance</span><span class="p">,</span> <span class="n">assert_condition</span><span class="p">,</span> <span class="n">class_name</span>
+<span class="kn">from</span> <span class="nn">pypint.utilities.logging</span> <span class="kn">import</span> <span class="n">LOG</span>
+
+
+<div class="viewcode-block" id="StepSolutionData"><a class="viewcode-back" href="../../../../api/solutions/data_storage/step_solution_data.html#pypint.solutions.data_storage.step_solution_data.StepSolutionData">[docs]</a><span class="k">class</span> <span class="nc">StepSolutionData</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Storage for the solution of a single time point.</span>
+
+<span class="sd">    Finalization</span>
+<span class="sd">        The attributes (:py:attr:`.value`, :py:attr:`.time_point`, :py:attr:`.error` and :py:attr:`.residual` can only</span>
+<span class="sd">        be modified before calling :py:meth:`.finalize`.</span>
+<span class="sd">        It is not intended and possible to *definalize* a once finalized :py:class:`StepSolutionData` instance.</span>
+
+<span class="sd">    Comparability</span>
+<span class="sd">        It can be compared with respect to all numerical comparison operators.</span>
+<span class="sd">        For all operators to evaluate to :py:class:`True` it is necessary that :py:attr:`.dim` and</span>
+<span class="sd">        :py:attr:`.numeric_type` are the same.</span>
+<span class="sd">        Equality is given, if :py:attr:`.time_point`, :py:attr:`.error` and :py:attr:`.residual` are the same as well</span>
+<span class="sd">        as :py:attr:`.value` with respect to :py:meth:`numpy.array_equal`.</span>
+<span class="sd">        The other comparison operators do not take :py:attr:`.value`, :py:attr:`.error` and :py:attr:`.residual` into</span>
+<span class="sd">        account and induce an order only with respect to :py:attr:`.time_point`.</span>
+
+<span class="sd">    Hashable</span>
+<span class="sd">        It is not hashable due to its wrapping around :py:class:`numpy.ndarray`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="StepSolutionData.__init__"><a class="viewcode-back" href="../../../../api/solutions/data_storage/step_solution_data.html#pypint.solutions.data_storage.step_solution_data.StepSolutionData.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        value : :py:class:`numpy.ndarray`</span>
+<span class="sd">            Solution value.</span>
+<span class="sd">            Size of the vector must equal the spacial dimension of the problem.</span>
+<span class="sd">        time_point : :py:class:`float`</span>
+<span class="sd">            Time point of associated with the solution.</span>
+<span class="sd">        error : :py:class:`.Error` or :py:class:`numpy.ndarray`</span>
+<span class="sd">            Error of the solution.</span>
+<span class="sd">        residual : :py:class:`.Residual` or :py:class:`numpy.ndarray`</span>
+<span class="sd">            Residual of the solution.</span>
+<span class="sd">            Same abundance of constrains apply as for the error.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        ValueError :</span>
+
+<span class="sd">            * if ``value`` is not a :py:class:`numpy.ndarray`</span>
+<span class="sd">            * if ``time_point`` is not a :py:class:`float`</span>
+<span class="sd">            * if either :py:attr:`.error` or :py:attr:`.residual` raises</span>
+
+<span class="sd">        UserWarning :</span>
+<span class="sd">            if no ``value`` or ``time_point`` is given</span>
+
+<span class="sd">        Notes</span>
+<span class="sd">        -----</span>
+<span class="sd">        The spacial dimension and the numerical type are derived from the given solution values.</span>
+<span class="sd">        Thus, specifying :py:attr:`.ISolutionData.dim` and :py:attr:`.ISolutionData.numeric_type` is not recommended</span>
+<span class="sd">        (in fact they are ignored).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_data</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_time_point</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_error</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_residual</span> <span class="o">=</span> <span class="bp">None</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_dim</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_numeric_type</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_finalized</span> <span class="o">=</span> <span class="bp">False</span>
+
+        <span class="k">if</span> <span class="s">&#39;value&#39;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s">&#39;value&#39;</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="s">&#39;time_point&#39;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">time_point</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s">&#39;time_point&#39;</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="s">&#39;error&#39;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">error</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s">&#39;error&#39;</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="s">&#39;residual&#39;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">residual</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s">&#39;residual&#39;</span><span class="p">]</span>
+</div>
+<div class="viewcode-block" id="StepSolutionData.finalize"><a class="viewcode-back" href="../../../../api/solutions/data_storage/step_solution_data.html#pypint.solutions.data_storage.step_solution_data.StepSolutionData.finalize">[docs]</a>    <span class="k">def</span> <span class="nf">finalize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Locks this storage data instance.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        ValueError :</span>
+<span class="sd">            If it has already been locked.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">assert_condition</span><span class="p">(</span><span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">finalized</span><span class="p">,</span> <span class="ne">AttributeError</span><span class="p">,</span>
+                         <span class="n">message</span><span class="o">=</span><span class="s">&quot;This solution data storage is already finalized.&quot;</span><span class="p">,</span> <span class="n">checking_obj</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_finalized</span> <span class="o">=</span> <span class="bp">True</span>
+</div>
+    <span class="k">def</span> <span class="nf">definalize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">finalized</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_finalized</span> <span class="o">=</span> <span class="bp">False</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">LOG</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s">&quot;This Solution is not finalized.&quot;</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="StepSolutionData.finalized"><a class="viewcode-back" href="../../../../api/solutions/data_storage/step_solution_data.html#pypint.solutions.data_storage.step_solution_data.StepSolutionData.finalized">[docs]</a>    <span class="k">def</span> <span class="nf">finalized</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Accessor for the lock state.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        finilized : :py:class:`bool`</span>
+<span class="sd">            :py:class:`True` if it has been finalized before, :py:class:`False` otherwise</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_finalized</span>
+</div>
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">value</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Accessor for the solution value.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        value : :py:class:`numpy.ndarray`</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        ValueError :</span>
+<span class="sd">            If this storage data instance has been finalized.</span>
+<span class="sd">            *(only setter)*</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span>
+
+    <span class="nd">@value.setter</span>
+<div class="viewcode-block" id="StepSolutionData.value"><a class="viewcode-back" href="../../../../api/solutions/data_storage/step_solution_data.html#pypint.solutions.data_storage.step_solution_data.StepSolutionData.value">[docs]</a>    <span class="k">def</span> <span class="nf">value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="n">assert_condition</span><span class="p">(</span><span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">finalized</span><span class="p">,</span> <span class="ne">AttributeError</span><span class="p">,</span>
+                         <span class="n">message</span><span class="o">=</span><span class="s">&quot;Cannot change this solution data storage any more.&quot;</span><span class="p">,</span> <span class="n">checking_obj</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
+        <span class="n">assert_is_instance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">descriptor</span><span class="o">=</span><span class="s">&quot;Values&quot;</span><span class="p">,</span> <span class="n">checking_obj</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_dim</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">shape</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_numeric_type</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">dtype</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_data</span> <span class="o">=</span> <span class="n">value</span>
+</div>
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">time_point</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Accessor for the associated time point.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        time_point : :py:class:`float`</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        time_point : :py:class:`float`</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        ValueError :</span>
+<span class="sd">            If this storage data instance has been finalized.</span>
+<span class="sd">            *(only setter)*</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_time_point</span>
+
+    <span class="nd">@time_point.setter</span>
+<div class="viewcode-block" id="StepSolutionData.time_point"><a class="viewcode-back" href="../../../../api/solutions/data_storage/step_solution_data.html#pypint.solutions.data_storage.step_solution_data.StepSolutionData.time_point">[docs]</a>    <span class="k">def</span> <span class="nf">time_point</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">time_point</span><span class="p">):</span>
+        <span class="n">assert_condition</span><span class="p">(</span><span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">finalized</span><span class="p">,</span> <span class="ne">AttributeError</span><span class="p">,</span>
+                         <span class="n">message</span><span class="o">=</span><span class="s">&quot;Cannot change this solution data storage any more.&quot;</span><span class="p">,</span> <span class="n">checking_obj</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
+        <span class="n">assert_is_instance</span><span class="p">(</span><span class="n">time_point</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="n">descriptor</span><span class="o">=</span><span class="s">&quot;Time Point&quot;</span><span class="p">,</span> <span class="n">checking_obj</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_time_point</span> <span class="o">=</span> <span class="n">time_point</span>
+</div>
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">error</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Accessor for the error.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        error : :py:class:`.Error` or :py:class:`numpy.ndarray`</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        error : :py:class:`.Error`</span>
+<span class="sd">            or :py:class:`None` if no error is given</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        ValueError :</span>
+<span class="sd">            If this storage data instance has been finalized.</span>
+<span class="sd">            *(only setter)*</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_error</span>
+
+    <span class="nd">@error.setter</span>
+<div class="viewcode-block" id="StepSolutionData.error"><a class="viewcode-back" href="../../../../api/solutions/data_storage/step_solution_data.html#pypint.solutions.data_storage.step_solution_data.StepSolutionData.error">[docs]</a>    <span class="k">def</span> <span class="nf">error</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">error</span><span class="p">):</span>
+        <span class="n">assert_condition</span><span class="p">(</span><span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">finalized</span><span class="p">,</span> <span class="ne">AttributeError</span><span class="p">,</span>
+                         <span class="n">message</span><span class="o">=</span><span class="s">&quot;Cannot change this solution data storage any more.&quot;</span><span class="p">,</span> <span class="n">checking_obj</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
+        <span class="n">assert_is_instance</span><span class="p">(</span><span class="n">error</span><span class="p">,</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">Error</span><span class="p">),</span> <span class="n">descriptor</span><span class="o">=</span><span class="s">&quot;Error&quot;</span><span class="p">,</span> <span class="n">checking_obj</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_error</span> <span class="o">=</span> <span class="n">error</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">error</span><span class="p">,</span> <span class="n">Error</span><span class="p">)</span> <span class="k">else</span> <span class="n">Error</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="n">error</span><span class="p">)</span>
+</div>
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">residual</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Accessor for the residual.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        residual : :py:class:`.Residual` or :py:class:`numpy.ndarray`</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        residual : :py:class:`.Residual`</span>
+<span class="sd">            or :py:class:`None` if no residual is given</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        ValueError :</span>
+<span class="sd">            If this storage data instance has been finalized.</span>
+<span class="sd">            *(only setter)*</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_residual</span>
+
+    <span class="nd">@residual.setter</span>
+<div class="viewcode-block" id="StepSolutionData.residual"><a class="viewcode-back" href="../../../../api/solutions/data_storage/step_solution_data.html#pypint.solutions.data_storage.step_solution_data.StepSolutionData.residual">[docs]</a>    <span class="k">def</span> <span class="nf">residual</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">residual</span><span class="p">):</span>
+        <span class="n">assert_condition</span><span class="p">(</span><span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">finalized</span><span class="p">,</span> <span class="ne">AttributeError</span><span class="p">,</span>
+                         <span class="n">message</span><span class="o">=</span><span class="s">&quot;Cannot change this solution data storage any more.&quot;</span><span class="p">,</span> <span class="n">checking_obj</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
+        <span class="n">assert_is_instance</span><span class="p">(</span><span class="n">residual</span><span class="p">,</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">Residual</span><span class="p">),</span> <span class="n">descriptor</span><span class="o">=</span><span class="s">&quot;Residual&quot;</span><span class="p">,</span> <span class="n">checking_obj</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_residual</span> <span class="o">=</span> <span class="n">residual</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">residual</span><span class="p">,</span> <span class="n">Residual</span><span class="p">)</span> <span class="k">else</span> <span class="n">Residual</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="n">residual</span><span class="p">)</span>
+</div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="StepSolutionData.dim"><a class="viewcode-back" href="../../../../api/solutions/data_storage/step_solution_data.html#pypint.solutions.data_storage.step_solution_data.StepSolutionData.dim">[docs]</a>    <span class="k">def</span> <span class="nf">dim</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Read-only accessor for the spacial dimension.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        dim : :py:class:`int`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dim</span>
+</div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="StepSolutionData.numeric_type"><a class="viewcode-back" href="../../../../api/solutions/data_storage/step_solution_data.html#pypint.solutions.data_storage.step_solution_data.StepSolutionData.numeric_type">[docs]</a>    <span class="k">def</span> <span class="nf">numeric_type</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Read-only accessor for the numerical type.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        numeric_type : :py:class:`numpy.dtype`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_numeric_type</span>
+</div>
+    <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s">&quot;StepSolutionData(value={}, time_point={}, finalized={})&quot;</span>\
+            <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">time_point</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">finalized</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__copy__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">copy</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="o">.</span><span class="n">__new__</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="p">)</span>
+        <span class="n">copy</span><span class="o">.</span><span class="n">__dict__</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__dict__</span><span class="p">)</span>
+        <span class="n">copy</span><span class="o">.</span><span class="n">_finalized</span> <span class="o">=</span> <span class="bp">False</span>
+        <span class="k">return</span> <span class="n">copy</span>
+
+    <span class="k">def</span> <span class="nf">__deepcopy__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">memo</span><span class="p">):</span>
+        <span class="n">copy</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="o">.</span><span class="n">__new__</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="p">)</span>
+        <span class="n">memo</span><span class="p">[</span><span class="nb">id</span><span class="p">(</span><span class="bp">self</span><span class="p">)]</span> <span class="o">=</span> <span class="n">copy</span>
+        <span class="k">for</span> <span class="n">item</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__dict__</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="nb">setattr</span><span class="p">(</span><span class="n">copy</span><span class="p">,</span> <span class="n">item</span><span class="p">,</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">memo</span><span class="p">))</span>
+        <span class="n">copy</span><span class="o">.</span><span class="n">_finalized</span> <span class="o">=</span> <span class="bp">False</span>
+        <span class="k">return</span> <span class="n">copy</span>
+
+    <span class="k">def</span> <span class="nf">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="n">assert_is_instance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">StepSolutionData</span><span class="p">,</span>
+                           <span class="n">message</span><span class="o">=</span><span class="s">&quot;Can not compare StepSolutionData with {}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">class_name</span><span class="p">(</span><span class="n">other</span><span class="p">)),</span>
+                           <span class="n">checking_obj</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">time_point</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">time_point</span>
+            <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">dim</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">dim</span>
+            <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">numeric_type</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">numeric_type</span>
+            <span class="ow">and</span> <span class="n">np</span><span class="o">.</span><span class="n">array_equal</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">other</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+            <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">error</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">error</span>
+            <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">residual</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">residual</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__ge__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="n">assert_is_instance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">StepSolutionData</span><span class="p">,</span>
+                           <span class="n">message</span><span class="o">=</span><span class="s">&quot;Can not compare StepSolutionData with {}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">class_name</span><span class="p">(</span><span class="n">other</span><span class="p">)),</span>
+                           <span class="n">checking_obj</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">dim</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">dim</span>
+            <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">numeric_type</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">numeric_type</span>
+            <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">time_point</span> <span class="o">&gt;=</span> <span class="n">other</span><span class="o">.</span><span class="n">time_point</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__gt__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="n">assert_is_instance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">StepSolutionData</span><span class="p">,</span>
+                           <span class="n">message</span><span class="o">=</span><span class="s">&quot;Can not compare StepSolutionData with {}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">class_name</span><span class="p">(</span><span class="n">other</span><span class="p">)),</span>
+                           <span class="n">checking_obj</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">dim</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">dim</span>
+            <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">numeric_type</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">numeric_type</span>
+            <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">time_point</span> <span class="o">&gt;</span> <span class="n">other</span><span class="o">.</span><span class="n">time_point</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__le__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="n">assert_is_instance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">StepSolutionData</span><span class="p">,</span>
+                           <span class="n">message</span><span class="o">=</span><span class="s">&quot;Can not compare StepSolutionData with {}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">class_name</span><span class="p">(</span><span class="n">other</span><span class="p">)),</span>
+                           <span class="n">checking_obj</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">dim</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">dim</span>
+            <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">numeric_type</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">numeric_type</span>
+            <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">time_point</span> <span class="o">&lt;</span> <span class="n">other</span><span class="o">.</span><span class="n">time_point</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__lt__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="n">assert_is_instance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">StepSolutionData</span><span class="p">,</span>
+                           <span class="n">message</span><span class="o">=</span><span class="s">&quot;Can not compare StepSolutionData with {}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">class_name</span><span class="p">(</span><span class="n">other</span><span class="p">)),</span>
+                           <span class="n">checking_obj</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">dim</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">dim</span>
+            <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">numeric_type</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">numeric_type</span>
+            <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">time_point</span> <span class="o">&lt;</span> <span class="n">other</span><span class="o">.</span><span class="n">time_point</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__ne__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="n">assert_is_instance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">StepSolutionData</span><span class="p">,</span>
+                           <span class="n">message</span><span class="o">=</span><span class="s">&quot;Can not compare StepSolutionData with {}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">class_name</span><span class="p">(</span><span class="n">other</span><span class="p">)),</span>
+                           <span class="n">checking_obj</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
+        <span class="k">return</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">__eq__</span><span class="p">(</span><span class="n">other</span><span class="p">)</span>
+
+    <span class="c"># StepSolutionData is mutable</span>
+    <span class="n">__hash__</span> <span class="o">=</span> <span class="bp">None</span>
+
+</div>
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;StepSolutionData&#39;</span><span class="p">]</span>
+</pre></div>
+
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+      &copy; 2013-2014,
+        <a href="http://www.fz-juelich.de/ias/jsc/EN/Research/Algorithms/ParallelInTimeIntegration/_node.html">Parallel-in-Time Research Group</a>
+        at the
+        <a href="http://www.fz-juelich.de/ias/jsc/EN/Home/home_node.html">Jülich Supercomputing Centre</a><br />
+    </p>
+  </div>
+
+  <a href="https://github.com/snide/sphinx_rtd_theme">Sphinx theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../../',
+            VERSION:'0.0.4-dev-0-g4dad7c2',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+      <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

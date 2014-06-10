@@ -1,0 +1,387 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Assertions (assertions) &mdash; PyPinT 0.0.4-dev-0-g4dad7c2 documentation</title>
+  
+
+  
+  
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  
+
+  
+        <link rel="author" title="About these documents"
+              href="../../about.html"/>
+    <link rel="top" title="PyPinT 0.0.4-dev-0-g4dad7c2 documentation" href="../../index.html"/>
+        <link rel="up" title="Utilities (utilities)" href="package.html"/>
+        <link rel="next" title="Config (config)" href="config.html"/>
+        <link rel="prev" title="Utilities (utilities)" href="package.html"/> 
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-nav-search">
+        <a href="../../index.html" class="fa fa-home"> PyPinT</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+        
+        
+            <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../about.html">About</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user/rationale.html">Rationale</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../user/rationale.html#objectives">Objectives</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../user/rationale.html#goals">Goals</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../user/rationale.html#scope">Scope</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../user/requirements.html">Requirements</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user/basic_usage.html">Basic Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/package.html">Examples</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../examples/problems/package.html">Example Problems (<tt class="docutils literal"><span class="pre">problems</span></tt>)</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../user/theory.html">Mathematical Theory</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../user/bibliography.html">Bibliography</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../history.html">History</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../history.html#release-0-0-3-04-04-2014">Release 0.0.3 (04/04/2014)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../history.html#release-0-0-2-04-03-2014">Release 0.0.2 (04/03/2014)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../history.html#release-0-0-1-2013-11-26">Release 0.0.1 (2013-11-26)</a></li>
+</ul>
+</li>
+</ul>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../development/coding_style.html">Coding Style</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../development/documentation.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../development/contributing.html">Contributing</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../development/contributing.html#branching-and-tagging-model">Branching and Tagging Model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../development/contributing.html#commit-messages">Commit Messages</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../development/contributing.html#how-to-implement-a-new-feature">How to Implement a New Feature?</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../development/testing.html">Testing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../development/todo.html">ToDos</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../development/todo.html#global">Global</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../development/todo.html#in-source">In Source</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="reference internal" href="../package.html">API Reference</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../package.html#communicators">Communicators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../package.html#integrators">Integrators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../package.html#multi-level-providers">Multi Level Providers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../package.html#plugins">Plugins</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../package.html#problems">Problems</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../package.html#solutions">Solutions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../package.html#solvers">Solvers</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../package.html#utilities">Utilities</a></li>
+</ul>
+</li>
+</ul>
+
+        
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../../index.html">PyPinT</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="../package.html">PyPinT Package</a> &raquo;</li>
+      
+          <li><a href="package.html">Utilities (<tt class="docutils literal"><span class="pre">utilities</span></tt>)</a> &raquo;</li>
+      
+    <li>Assertions (<tt class="docutils literal"><span class="pre">assertions</span></tt>)</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          <a href="../../_sources/api/utilities/assertions.txt" rel="nofollow"> View page source</a>
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main">
+            
+  <div class="section" id="module-pypint.utilities.assertions">
+<span id="assertions-assertions"></span><h1>Assertions (<tt class="xref py py-mod docutils literal"><span class="pre">assertions</span></tt>)<a class="headerlink" href="#module-pypint.utilities.assertions" title="Permalink to this headline">¶</a></h1>
+<p>Collection of assertions for validation.</p>
+<div class="admonition-examples admonition">
+<p class="first admonition-title">Examples</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">a</span> <span class="o">=</span> <span class="mi">3</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">b</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">assert_condition</span><span class="p">(</span><span class="mi">3</span> <span class="o">&gt;</span> <span class="mi">2</span><span class="p">,</span> <span class="ne">ValueError</span><span class="p">,</span> <span class="s">&quot;3 should be larger 2&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">func</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">assert_is_callable</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="s">&quot;A lambda expression is callable.&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">l</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">assert_is_in</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">l</span><span class="p">,</span> <span class="s">&quot;2 is in the list&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">m</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;hello&#39;</span><span class="p">:</span> <span class="s">&#39;world&#39;</span><span class="p">}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">assert_is_key</span><span class="p">(</span><span class="s">&#39;hello&#39;</span><span class="p">,</span> <span class="n">m</span><span class="p">,</span> <span class="s">&quot;&#39;hello&#39; is a key&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="last highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">a</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">assert_is_instance</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="s">&quot;&#39;a&#39; is an integer&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<dl class="function">
+<dt id="pypint.utilities.assertions.assert_condition">
+<tt class="descclassname">pypint.utilities.assertions.</tt><tt class="descname">assert_condition</tt><span class="sig-paren">(</span><em>condition</em>, <em>exception_type</em>, <em>message</em>, <em>checking_obj=None</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pypint/utilities/assertions.html#assert_condition"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypint.utilities.assertions.assert_condition" title="Permalink to this definition">¶</a></dt>
+<dd><p>Asserts trueness of arbitrary condition</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>condition</strong> (<tt class="xref py py-class docutils literal"><span class="pre">bool</span></tt> or <tt class="docutils literal"><span class="pre">boolean</span> <span class="pre">expression</span></tt>) &#8211; expression to be asserted</li>
+<li><strong>exception_type</strong> (<tt class="xref py py-class docutils literal"><span class="pre">Exception</span></tt>) &#8211; type of exception to be raised if <tt class="docutils literal"><span class="pre">condition</span></tt> evaluates to <tt class="xref py py-class docutils literal"><span class="pre">False</span></tt></li>
+<li><strong>message</strong> (<tt class="xref py py-class docutils literal"><span class="pre">str</span></tt>) &#8211; message content of exception raised</li>
+<li><strong>checking_obj</strong> (<tt class="xref py py-class docutils literal"><span class="pre">object</span></tt> or <tt class="xref py py-class docutils literal"><span class="pre">None</span></tt>) &#8211; The exception will be raised in the scope of the given object.
+If <tt class="xref py py-class docutils literal"><span class="pre">None</span></tt> (default) no scope will be displayed.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><tt class="xref py py-exc docutils literal"><span class="pre">exception_type</span></tt> &#8211; 
+if <tt class="docutils literal"><span class="pre">condition</span></tt> evaluates to <tt class="xref py py-class docutils literal"><span class="pre">False</span></tt></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="pypint.utilities.assertions.assert_is_in">
+<tt class="descclassname">pypint.utilities.assertions.</tt><tt class="descname">assert_is_in</tt><span class="sig-paren">(</span><em>element</em>, <em>test_list</em>, <em>message=None</em>, <em>elem_desc=None</em>, <em>list_desc=None</em>, <em>checking_obj=None</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pypint/utilities/assertions.html#assert_is_in"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypint.utilities.assertions.assert_is_in" title="Permalink to this definition">¶</a></dt>
+<dd><p>Asserts element in list or sequence</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>element</strong> (<tt class="xref py py-class docutils literal"><span class="pre">object</span></tt>) &#8211; element to check membership</li>
+<li><strong>test_list</strong> (<tt class="docutils literal"><span class="pre">Sequence</span></tt>) &#8211; sequence to check</li>
+<li><strong>message</strong> (<tt class="xref py py-class docutils literal"><span class="pre">str</span></tt>) &#8211; <em>(optional)</em>
+message content of exception raised</li>
+<li><strong>checking_obj</strong> (<tt class="xref py py-class docutils literal"><span class="pre">object</span></tt> or <tt class="xref py py-class docutils literal"><span class="pre">None</span></tt>) &#8211; <em>(optional)</em>
+The exception will be raised in the scope of the given object.
+If <tt class="xref py py-class docutils literal"><span class="pre">None</span></tt> (default) no scope will be displayed.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><tt class="xref py py-exc docutils literal"><span class="pre">ValueError</span></tt> &#8211; 
+if <tt class="docutils literal"><span class="pre">element</span></tt> is not in <tt class="docutils literal"><span class="pre">test_list</span></tt></p>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition-examples admonition">
+<p class="first admonition-title">Examples</p>
+<p class="last">assert_is_in(True, bool_list, elem_desc=&#8217;&#8216;, list_desc=&#8217;&#8216;, checking_obj=self)</p>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="pypint.utilities.assertions.assert_is_instance">
+<tt class="descclassname">pypint.utilities.assertions.</tt><tt class="descname">assert_is_instance</tt><span class="sig-paren">(</span><em>obj</em>, <em>instances</em>, <em>message=None</em>, <em>descriptor=None</em>, <em>checking_obj=None</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pypint/utilities/assertions.html#assert_is_instance"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypint.utilities.assertions.assert_is_instance" title="Permalink to this definition">¶</a></dt>
+<dd><p>Asserts element is of certain type</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>obj</strong> (<tt class="xref py py-class docutils literal"><span class="pre">object</span></tt>) &#8211; object to check type</li>
+<li><strong>instances</strong> (<tt class="xref py py-class docutils literal"><span class="pre">type</span></tt> of <tt class="docutils literal"><span class="pre">classes</span></tt> or <tt class="xref py py-class docutils literal"><span class="pre">class</span></tt>) &#8211; types to check</li>
+<li><strong>message</strong> (<tt class="xref py py-class docutils literal"><span class="pre">str</span></tt>) &#8211; <em>(optional)</em>
+message content of exception raised</li>
+<li><strong>checking_obj</strong> (<tt class="xref py py-class docutils literal"><span class="pre">object</span></tt> or <tt class="xref py py-class docutils literal"><span class="pre">None</span></tt>) &#8211; <em>(optional)</em>
+The exception will be raised in the scope of the given object.
+If <tt class="xref py py-class docutils literal"><span class="pre">None</span></tt> (default) no scope will be displayed.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><tt class="xref py py-exc docutils literal"><span class="pre">ValueError</span></tt> &#8211; 
+if <tt class="docutils literal"><span class="pre">obj</span></tt> is not of type <tt class="docutils literal"><span class="pre">instances</span></tt></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="pypint.utilities.assertions.assert_is_callable">
+<tt class="descclassname">pypint.utilities.assertions.</tt><tt class="descname">assert_is_callable</tt><span class="sig-paren">(</span><em>obj</em>, <em>message=None</em>, <em>descriptor=None</em>, <em>checking_obj=None</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pypint/utilities/assertions.html#assert_is_callable"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypint.utilities.assertions.assert_is_callable" title="Permalink to this definition">¶</a></dt>
+<dd><p>Asserts callability of given object</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>obj</strong> (<tt class="xref py py-class docutils literal"><span class="pre">object</span></tt>) &#8211; object to be asserted callable</li>
+<li><strong>message</strong> (<tt class="xref py py-class docutils literal"><span class="pre">str</span></tt> or <tt class="xref py py-class docutils literal"><span class="pre">None</span></tt>) &#8211; <em>(optional)</em></li>
+<li><strong>checking_obj</strong> (<tt class="xref py py-class docutils literal"><span class="pre">object</span></tt> or <tt class="xref py py-class docutils literal"><span class="pre">None</span></tt>) &#8211; <em>(optional)</em>
+The exception will be raised in the scope of the given object.
+If <tt class="xref py py-class docutils literal"><span class="pre">None</span></tt> (default) no scope will be displayed.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><tt class="xref py py-exc docutils literal"><span class="pre">ValueError</span></tt> &#8211; 
+if <tt class="docutils literal"><span class="pre">obj</span></tt> is not <tt class="xref py py-class docutils literal"><span class="pre">Callable</span></tt></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="pypint.utilities.assertions.assert_is_key">
+<tt class="descclassname">pypint.utilities.assertions.</tt><tt class="descname">assert_is_key</tt><span class="sig-paren">(</span><em>key</em>, <em>dictionary</em>, <em>message=None</em>, <em>key_desc=None</em>, <em>dict_desc=None</em>, <em>checking_obj=None</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pypint/utilities/assertions.html#assert_is_key"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypint.utilities.assertions.assert_is_key" title="Permalink to this definition">¶</a></dt>
+<dd><p>Asserts dictionary has a certain key</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>key</strong> (<tt class="docutils literal"><span class="pre">key</span></tt>) &#8211; key to check</li>
+<li><strong>dictionary</strong> (<tt class="xref py py-class docutils literal"><span class="pre">dict</span></tt>) &#8211; dictionary to check</li>
+<li><strong>message</strong> (<tt class="xref py py-class docutils literal"><span class="pre">str</span></tt>) &#8211; <em>(optional)</em>
+message content of exception raised</li>
+<li><strong>checking_obj</strong> (<tt class="xref py py-class docutils literal"><span class="pre">object</span></tt> or <tt class="xref py py-class docutils literal"><span class="pre">None</span></tt>) &#8211; <em>(optional)</em>
+The exception will be raised in the scope of the given object.
+If <tt class="xref py py-class docutils literal"><span class="pre">None</span></tt> (default) no scope will be displayed.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><tt class="xref py py-exc docutils literal"><span class="pre">ValueError</span></tt> &#8211; 
+if <tt class="docutils literal"><span class="pre">key</span></tt> is not of a key in <tt class="docutils literal"><span class="pre">dictionary</span></tt></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+
+
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="config.html" class="btn btn-neutral float-right" title="Config (config)"/>Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="package.html" class="btn btn-neutral" title="Utilities (utilities)"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+      &copy; 2013-2014,
+        <a href="http://www.fz-juelich.de/ias/jsc/EN/Research/Algorithms/ParallelInTimeIntegration/_node.html">Parallel-in-Time Research Group</a>
+        at the
+        <a href="http://www.fz-juelich.de/ias/jsc/EN/Home/home_node.html">Jülich Supercomputing Centre</a><br />
+    </p>
+  </div>
+
+  <a href="https://github.com/snide/sphinx_rtd_theme">Sphinx theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../',
+            VERSION:'0.0.4-dev-0-g4dad7c2',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../_static/doctools.js"></script>
+      <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

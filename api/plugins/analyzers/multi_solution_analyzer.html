@@ -1,0 +1,281 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Multi Solution Analyzer (multi_solution_analyzer) &mdash; PyPinT 0.0.4-dev-0-g4dad7c2 documentation</title>
+  
+
+  
+  
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+        <link rel="author" title="About these documents"
+              href="../../../about.html"/>
+    <link rel="top" title="PyPinT 0.0.4-dev-0-g4dad7c2 documentation" href="../../../index.html"/>
+        <link rel="up" title="Analyzers (analyzers)" href="package.html"/>
+        <link rel="next" title="Function Generators (function_generators)" href="../function_generators/package.html"/>
+        <link rel="prev" title="Single Solution Analyzer (single_solution_analyzer)" href="single_solution_analyzer.html"/> 
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-nav-search">
+        <a href="../../../index.html" class="fa fa-home"> PyPinT</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+        
+        
+            <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../about.html">About</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user/rationale.html">Rationale</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../user/rationale.html#objectives">Objectives</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../user/rationale.html#goals">Goals</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../user/rationale.html#scope">Scope</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user/requirements.html">Requirements</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user/basic_usage.html">Basic Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../examples/package.html">Examples</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../examples/problems/package.html">Example Problems (<tt class="docutils literal"><span class="pre">problems</span></tt>)</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user/theory.html">Mathematical Theory</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../user/bibliography.html">Bibliography</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../history.html">History</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../history.html#release-0-0-3-04-04-2014">Release 0.0.3 (04/04/2014)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../history.html#release-0-0-2-04-03-2014">Release 0.0.2 (04/03/2014)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../history.html#release-0-0-1-2013-11-26">Release 0.0.1 (2013-11-26)</a></li>
+</ul>
+</li>
+</ul>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../development/coding_style.html">Coding Style</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../development/documentation.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../development/contributing.html">Contributing</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../development/contributing.html#branching-and-tagging-model">Branching and Tagging Model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../development/contributing.html#commit-messages">Commit Messages</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../development/contributing.html#how-to-implement-a-new-feature">How to Implement a New Feature?</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../development/testing.html">Testing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../development/todo.html">ToDos</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../development/todo.html#global">Global</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../development/todo.html#in-source">In Source</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../package.html">API Reference</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../package.html#communicators">Communicators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../package.html#integrators">Integrators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../package.html#multi-level-providers">Multi Level Providers</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../../package.html#plugins">Plugins</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../package.html#problems">Problems</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../package.html#solutions">Solutions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../package.html#solvers">Solvers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../package.html#utilities">Utilities</a></li>
+</ul>
+</li>
+</ul>
+
+        
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../../../index.html">PyPinT</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="../../package.html">PyPinT Package</a> &raquo;</li>
+      
+          <li><a href="../package.html">Plugins (<tt class="docutils literal"><span class="pre">plugins</span></tt>)</a> &raquo;</li>
+      
+          <li><a href="package.html">Analyzers (<tt class="docutils literal"><span class="pre">analyzers</span></tt>)</a> &raquo;</li>
+      
+    <li>Multi Solution Analyzer (<tt class="docutils literal"><span class="pre">multi_solution_analyzer</span></tt>)</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          <a href="../../../_sources/api/plugins/analyzers/multi_solution_analyzer.txt" rel="nofollow"> View page source</a>
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main">
+            
+  <div class="section" id="module-pypint.plugins.analyzers.multi_solution_analyzer">
+<span id="multi-solution-analyzer-multi-solution-analyzer"></span><h1>Multi Solution Analyzer (<tt class="xref py py-mod docutils literal"><span class="pre">multi_solution_analyzer</span></tt>)<a class="headerlink" href="#module-pypint.plugins.analyzers.multi_solution_analyzer" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="pypint.plugins.analyzers.multi_solution_analyzer.MultiSolutionAnalyzer">
+<em class="property">class </em><tt class="descclassname">pypint.plugins.analyzers.multi_solution_analyzer.</tt><tt class="descname">MultiSolutionAnalyzer</tt><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/pypint/plugins/analyzers/multi_solution_analyzer.html#MultiSolutionAnalyzer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypint.plugins.analyzers.multi_solution_analyzer.MultiSolutionAnalyzer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="i_analyzer.html#pypint.plugins.analyzers.i_analyzer.IAnalyzer" title="pypint.plugins.analyzers.i_analyzer.IAnalyzer"><tt class="xref py py-class docutils literal"><span class="pre">pypint.plugins.analyzers.i_analyzer.IAnalyzer</span></tt></a></p>
+<p>Analyzer for multiple solver states</p>
+<p>For now, it only plots the final residual vs. final reduction of all given states.
+Only up to seven separate states are supported.</p>
+<dl class="method">
+<dt id="pypint.plugins.analyzers.multi_solution_analyzer.MultiSolutionAnalyzer.__init__">
+<tt class="descname">__init__</tt><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/pypint/plugins/analyzers/multi_solution_analyzer.html#MultiSolutionAnalyzer.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypint.plugins.analyzers.multi_solution_analyzer.MultiSolutionAnalyzer.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>plotter_options</strong> (<tt class="xref py py-class docutils literal"><span class="pre">dict</span></tt>) &#8211; options to be passed on to the plotter</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="pypint.plugins.analyzers.multi_solution_analyzer.MultiSolutionAnalyzer.add_data">
+<tt class="descname">add_data</tt><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/pypint/plugins/analyzers/multi_solution_analyzer.html#MultiSolutionAnalyzer.add_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypint.plugins.analyzers.multi_solution_analyzer.MultiSolutionAnalyzer.add_data" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>solver</strong> (<a class="reference internal" href="../../solvers/i_iterative_time_solver.html#pypint.solvers.i_iterative_time_solver.IIterativeTimeSolver" title="pypint.solvers.i_iterative_time_solver.IIterativeTimeSolver"><tt class="xref py py-class docutils literal"><span class="pre">IIterativeTimeSolver</span></tt></a>) &#8211; solver</li>
+<li><strong>state</strong> (<a class="reference internal" href="../../solvers/states/i_solver_state.html#pypint.solvers.states.i_solver_state.ISolverState" title="pypint.solvers.states.i_solver_state.ISolverState"><tt class="xref py py-class docutils literal"><span class="pre">ISolverState</span></tt></a>) &#8211; state of the solver</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first"><tt class="xref py py-exc docutils literal"><span class="pre">ValueError</span></tt> &#8211;</p>
+<ul class="last simple">
+<li>if <tt class="docutils literal"><span class="pre">solver</span></tt> is not given or is not a <a class="reference internal" href="../../solvers/i_iterative_time_solver.html#pypint.solvers.i_iterative_time_solver.IIterativeTimeSolver" title="pypint.solvers.i_iterative_time_solver.IIterativeTimeSolver"><tt class="xref py py-class docutils literal"><span class="pre">IIterativeTimeSolver</span></tt></a></li>
+<li>if <tt class="docutils literal"><span class="pre">state</span></tt> is not given or is not a <a class="reference internal" href="../../solvers/states/i_solver_state.html#pypint.solvers.states.i_solver_state.ISolverState" title="pypint.solvers.states.i_solver_state.ISolverState"><tt class="xref py py-class docutils literal"><span class="pre">ISolverState</span></tt></a></li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="pypint.plugins.analyzers.multi_solution_analyzer.MultiSolutionAnalyzer.run">
+<tt class="descname">run</tt><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/pypint/plugins/analyzers/multi_solution_analyzer.html#MultiSolutionAnalyzer.run"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypint.plugins.analyzers.multi_solution_analyzer.MultiSolutionAnalyzer.run" title="Permalink to this definition">¶</a></dt>
+<dd><p>Executes the analysis</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="../function_generators/package.html" class="btn btn-neutral float-right" title="Function Generators (function_generators)"/>Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="single_solution_analyzer.html" class="btn btn-neutral" title="Single Solution Analyzer (single_solution_analyzer)"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+      &copy; 2013-2014,
+        <a href="http://www.fz-juelich.de/ias/jsc/EN/Research/Algorithms/ParallelInTimeIntegration/_node.html">Parallel-in-Time Research Group</a>
+        at the
+        <a href="http://www.fz-juelich.de/ias/jsc/EN/Home/home_node.html">Jülich Supercomputing Centre</a><br />
+    </p>
+  </div>
+
+  <a href="https://github.com/snide/sphinx_rtd_theme">Sphinx theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../',
+            VERSION:'0.0.4-dev-0-g4dad7c2',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../_static/doctools.js"></script>
+      <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

@@ -1,0 +1,407 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>PyPinT Package &mdash; PyPinT 0.0.4-dev-0-g4dad7c2 documentation</title>
+  
+
+  
+  
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+        <link rel="author" title="About these documents"
+              href="../about.html"/>
+    <link rel="top" title="PyPinT 0.0.4-dev-0-g4dad7c2 documentation" href="../index.html"/>
+        <link rel="next" title="Communicators (communicators)" href="communicators/package.html"/>
+        <link rel="prev" title="ToDos" href="../development/todo.html"/> 
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-nav-search">
+        <a href="../index.html" class="fa fa-home"> PyPinT</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+        
+        
+            <ul>
+<li class="toctree-l1"><a class="reference internal" href="../about.html">About</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../user/rationale.html">Rationale</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../user/rationale.html#objectives">Objectives</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../user/rationale.html#goals">Goals</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../user/rationale.html#scope">Scope</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../user/requirements.html">Requirements</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../user/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../user/basic_usage.html">Basic Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/package.html">Examples</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="examples/problems/package.html">Example Problems (<tt class="docutils literal"><span class="pre">problems</span></tt>)</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../user/theory.html">Mathematical Theory</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../user/bibliography.html">Bibliography</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../history.html">History</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../history.html#release-0-0-3-04-04-2014">Release 0.0.3 (04/04/2014)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../history.html#release-0-0-2-04-03-2014">Release 0.0.2 (04/03/2014)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../history.html#release-0-0-1-2013-11-26">Release 0.0.1 (2013-11-26)</a></li>
+</ul>
+</li>
+</ul>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../development/coding_style.html">Coding Style</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../development/documentation.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../development/contributing.html">Contributing</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../development/contributing.html#branching-and-tagging-model">Branching and Tagging Model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../development/contributing.html#commit-messages">Commit Messages</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../development/contributing.html#how-to-implement-a-new-feature">How to Implement a New Feature?</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../development/testing.html">Testing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../development/todo.html">ToDos</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../development/todo.html#global">Global</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../development/todo.html#in-source">In Source</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="current reference internal" href="">API Reference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#communicators">Communicators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#integrators">Integrators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#multi-level-providers">Multi Level Providers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#plugins">Plugins</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#problems">Problems</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#solutions">Solutions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#solvers">Solvers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#utilities">Utilities</a></li>
+</ul>
+</li>
+</ul>
+
+        
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../index.html">PyPinT</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../index.html">Docs</a> &raquo;</li>
+      
+    <li>PyPinT Package</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          <a href="../_sources/api/package.txt" rel="nofollow"> View page source</a>
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main">
+            
+  <div class="section" id="module-pypint">
+<span id="pypint-package"></span><h1>PyPinT Package<a class="headerlink" href="#module-pypint" title="Permalink to this headline">¶</a></h1>
+<p><em>PyPinT</em> is a framework for Parallel-in-Time integration routines.</p>
+<p>The main purpose of <em>PyPinT</em> is to provide a framework for educational use and prototyping new parallel-in-time
+algorithms.
+As well it will aid in developing a high-performance C++ implementation for massively parallel computers providing the
+benefits of parallel-in-time routines to a zoo of time integrators in various applications.</p>
+<div class="section" id="communicators">
+<h2>Communicators<a class="headerlink" href="#communicators" title="Permalink to this headline">¶</a></h2>
+<p>Communicators on top of Iterative Time Solvers</p>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="communicators/package.html">Communicators (<tt class="docutils literal"><span class="pre">communicators</span></tt>)</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="communicators/i_communication_provider.html">Communication Provider Interface (<tt class="docutils literal"><span class="pre">i_communication_provider</span></tt>)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="communicators/forward_sending_messaging.html">Forward Sending Messaging (<tt class="docutils literal"><span class="pre">forward_sending_messaging</span></tt>)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="communicators/message.html">Message (<tt class="docutils literal"><span class="pre">message</span></tt>)</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="integrators">
+<h2>Integrators<a class="headerlink" href="#integrators" title="Permalink to this headline">¶</a></h2>
+<p>Integrators for Iterative Time Solvers</p>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="integrators/package.html">Integrators (<tt class="docutils literal"><span class="pre">integrators</span></tt>)</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="integrators/integrator_base.html">Integrator Base (<tt class="docutils literal"><span class="pre">integrator_base</span></tt>)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="integrators/sdc_integrator.html">SDC Integrator (<tt class="docutils literal"><span class="pre">sdc_integrator</span></tt>)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="integrators/node_providers/package.html">Node Providers (<tt class="docutils literal"><span class="pre">node_providers</span></tt>)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="integrators/node_providers/i_nodes.html">Integration Nodes Interface (<tt class="docutils literal"><span class="pre">i_nodes</span></tt>)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="integrators/node_providers/gauss_legendre_nodes.html">Gauss-Legendre Nodes (<tt class="docutils literal"><span class="pre">gauss_legendre_nodes</span></tt>)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="integrators/node_providers/gauss_lobatto_nodes.html">Gauss-Lobatto Nodes (<tt class="docutils literal"><span class="pre">gauss_lobatto_nodes</span></tt>)</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="integrators/weight_function_providers/package.html">Weight Function Providers (<tt class="docutils literal"><span class="pre">weight_function_providers</span></tt>)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="integrators/weight_function_providers/i_weight_function.html">Weight Function Interface (<tt class="docutils literal"><span class="pre">i_weight_function</span></tt>)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="integrators/weight_function_providers/polynomial_weight_function.html">Polynomial Weight Function (<tt class="docutils literal"><span class="pre">polynomial_weight_function</span></tt>)</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="multi-level-providers">
+<h2>Multi Level Providers<a class="headerlink" href="#multi-level-providers" title="Permalink to this headline">¶</a></h2>
+<p>Multi-Level Providers for Iterative Time Solvers</p>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="multi_level_providers/package.html">Multi-Level Providers (<tt class="docutils literal"><span class="pre">multi_level_providers</span></tt>)</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="multi_level_providers/multi_level_provider.html">Multi-Level Provider (<tt class="docutils literal"><span class="pre">multi_level_provider</span></tt>)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="multi_level_providers/level_transition_providers/package.html">Level Transition Providers (<tt class="docutils literal"><span class="pre">level_transition_providers</span></tt>)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="multi_level_providers/level_transition_providers/i_level_transition_provider.html">Level Transition Provider Interface (<tt class="docutils literal"><span class="pre">i_level_transition_provider</span></tt>)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="multi_level_providers/level_transition_providers/time_transition_provider.html">Time Transition Provider (<tt class="docutils literal"><span class="pre">time_transition_provider</span></tt>)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="multi_level_providers/level_transition_providers/injection.html">Injective Level Transition (<tt class="docutils literal"><span class="pre">injection</span></tt>)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="multi_level_providers/level_transition_providers/full_weighting.html">Full-Weighting Level Transition (<tt class="docutils literal"><span class="pre">full_weighting</span></tt>)</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="plugins">
+<h2>Plugins<a class="headerlink" href="#plugins" title="Permalink to this headline">¶</a></h2>
+<p>Plugins for PyPinT</p>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="plugins/package.html">Plugins (<tt class="docutils literal"><span class="pre">plugins</span></tt>)</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="plugins/analyzers/package.html">Analyzers (<tt class="docutils literal"><span class="pre">analyzers</span></tt>)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="plugins/analyzers/i_analyzer.html">Analyzer Interface (<tt class="docutils literal"><span class="pre">i_analyzer</span></tt>)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="plugins/analyzers/single_solution_analyzer.html">Single Solution Analyzer (<tt class="docutils literal"><span class="pre">single_solution_analyzer</span></tt>)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="plugins/analyzers/multi_solution_analyzer.html">Multi Solution Analyzer (<tt class="docutils literal"><span class="pre">multi_solution_analyzer</span></tt>)</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="plugins/function_generators/package.html">Function Generators (<tt class="docutils literal"><span class="pre">function_generators</span></tt>)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="plugins/function_generators/nested.html">Nested Function Generator (<tt class="docutils literal"><span class="pre">nested</span></tt>)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="plugins/function_generators/piecewise.html">Piecewise Function Generator (<tt class="docutils literal"><span class="pre">piecewise</span></tt>)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="plugins/function_generators/polynomial.html">Polynomial Function Generator (<tt class="docutils literal"><span class="pre">polynomial</span></tt>)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="plugins/function_generators/trigonometric.html">Trigonometric Function Generator (<tt class="docutils literal"><span class="pre">trigonometric</span></tt>)</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="plugins/plotters/package.html">Plotters (<tt class="docutils literal"><span class="pre">plotters</span></tt>)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="plugins/plotters/i_plotter.html">Plotter Interface (<tt class="docutils literal"><span class="pre">i_plotter</span></tt>)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="plugins/plotters/single_solution_plotter.html">Single Solution Plotter (<tt class="docutils literal"><span class="pre">single_solution_plotter</span></tt>)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="plugins/plotters/reduction_residual_plotter.html">Reduction vs. Residual Plotter (<tt class="docutils literal"><span class="pre">reduction_residual_plotter</span></tt>)</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="plugins/timers/package.html">Timers (<tt class="docutils literal"><span class="pre">timers</span></tt>)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="plugins/timers/timer_base.html">Timer Base (<tt class="docutils literal"><span class="pre">timer_base</span></tt>)</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="problems">
+<h2>Problems<a class="headerlink" href="#problems" title="Permalink to this headline">¶</a></h2>
+<p>Problems for Iterative Time Solvers</p>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="problems/package.html">Problems (<tt class="docutils literal"><span class="pre">problems</span></tt>)</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="problems/i_problem.html">Problem Interface (<tt class="docutils literal"><span class="pre">i_problem</span></tt>)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="problems/i_initial_value_problem.html">Initial Value Problem Interface (<tt class="docutils literal"><span class="pre">i_initial_value_problem</span></tt>)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="problems/has_exact_solution_mixin.html">Has Exact Solution Mixin (<tt class="docutils literal"><span class="pre">has_exact_solution_mixin</span></tt>)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="problems/has_direct_implicit_mixin.html">Has Direct Implicit Mixin (<tt class="docutils literal"><span class="pre">has_direct_implicit_mixin</span></tt>)</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="solutions">
+<h2>Solutions<a class="headerlink" href="#solutions" title="Permalink to this headline">¶</a></h2>
+<p>Solutions of Iterative Time Solvers</p>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="solutions/package.html">Solutions (<tt class="docutils literal"><span class="pre">solutions</span></tt>)</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="solutions/data_storage/package.html">Data Storage (<tt class="docutils literal"><span class="pre">data_storage</span></tt>)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="solutions/data_storage/step_solution_data.html">Step Solution Data (<tt class="docutils literal"><span class="pre">step_solution_data</span></tt>)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="solutions/data_storage/trajectory_solution_data.html">Trajectory Solution Data (<tt class="docutils literal"><span class="pre">trajectory_solution_data</span></tt>)</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="solutions/i_solution.html">Solution Interface (<tt class="docutils literal"><span class="pre">i_solution</span></tt>)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="solutions/final_solution.html">Final Solution (<tt class="docutils literal"><span class="pre">final_solution</span></tt>)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="solutions/iterative_solution.html">Iterative Solution (<tt class="docutils literal"><span class="pre">iterative_solution</span></tt>)</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="solvers">
+<h2>Solvers<a class="headerlink" href="#solvers" title="Permalink to this headline">¶</a></h2>
+<p>Iterative Time Solvers</p>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="solvers/package.html">Solvers (<tt class="docutils literal"><span class="pre">solvers</span></tt>)</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="solvers/cores/package.html">Solver Cores (<tt class="docutils literal"><span class="pre">cores</span></tt>)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="solvers/cores/i_solver_core.html">Solver Core Interface (<tt class="docutils literal"><span class="pre">i_solver_core</span></tt>)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="solvers/cores/sdc_solver_core.html">SDC Solver Core (<tt class="docutils literal"><span class="pre">sdc_solver_core</span></tt>)</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="solvers/cores/explicit_sdc_core.html">Explicit SDC Core (<tt class="docutils literal"><span class="pre">explicit_sdc_core</span></tt>)</a></li>
+<li class="toctree-l4"><a class="reference internal" href="solvers/cores/implicit_sdc_core.html">Implicit SDC Core (<tt class="docutils literal"><span class="pre">implicit_sdc_core</span></tt>)</a></li>
+<li class="toctree-l4"><a class="reference internal" href="solvers/cores/semi_implicit_sdc_core.html">Semi-Implicit SDC Core (<tt class="docutils literal"><span class="pre">semi_implicit_sdc_core</span></tt>)</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="solvers/diagnosis/package.html">Solver Diagnostics (<tt class="docutils literal"><span class="pre">diagnosis</span></tt>)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="solvers/diagnosis/i_diagnosis_value.html">Diagnosis Value Interface (<tt class="docutils literal"><span class="pre">i_diagnosis_value</span></tt>)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="solvers/diagnosis/error.html">Error (<tt class="docutils literal"><span class="pre">error</span></tt>)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="solvers/diagnosis/residual.html">Residual (<tt class="docutils literal"><span class="pre">residual</span></tt>)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="solvers/diagnosis/norms.html">Norms (<tt class="docutils literal"><span class="pre">norms</span></tt>)</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="solvers/states/package.html">Solver States (<tt class="docutils literal"><span class="pre">states</span></tt>)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="solvers/states/i_solver_state.html">Solver States Interfaces (<tt class="docutils literal"><span class="pre">i_solver_state</span></tt>)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="solvers/states/sdc_solver_state.html">SDC Solver States (<tt class="docutils literal"><span class="pre">sdc_solver_state</span></tt>)</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="solvers/i_iterative_time_solver.html">Iterative Time Solver Interface (<tt class="docutils literal"><span class="pre">i_iterative_time_solver</span></tt>)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="solvers/i_multi_level_solver.html">Multi-Level Solver Interface (<tt class="docutils literal"><span class="pre">i_multi_level_solver</span></tt>)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="solvers/i_parallel_solver.html">Parallel Solver Interface (<tt class="docutils literal"><span class="pre">i_parallel_solver</span></tt>)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="solvers/parallel_sdc.html">Parallel SDC (<tt class="docutils literal"><span class="pre">parallel_sdc</span></tt>)</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="utilities">
+<h2>Utilities<a class="headerlink" href="#utilities" title="Permalink to this headline">¶</a></h2>
+<p>Collection of various utility functions.</p>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="utilities/package.html">Utilities (<tt class="docutils literal"><span class="pre">utilities</span></tt>)</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="utilities/assertions.html">Assertions (<tt class="docutils literal"><span class="pre">assertions</span></tt>)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utilities/config.html">Config (<tt class="docutils literal"><span class="pre">config</span></tt>)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utilities/logging.html">Logging (<tt class="docutils literal"><span class="pre">logging</span></tt>)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utilities/math.html">Math (<tt class="docutils literal"><span class="pre">math</span></tt>)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utilities/sdc_solver_factory.html">SDC Solver Factory (<tt class="docutils literal"><span class="pre">sdc_solver_factory</span></tt>)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utilities/threshold_check.html">Threshold Check (<tt class="docutils literal"><span class="pre">threshold_check</span></tt>)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utilities/tracing.html">Tracing (<tt class="docutils literal"><span class="pre">tracing</span></tt>)</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+</div>
+
+
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="communicators/package.html" class="btn btn-neutral float-right" title="Communicators (communicators)"/>Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="../development/todo.html" class="btn btn-neutral" title="ToDos"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+      &copy; 2013-2014,
+        <a href="http://www.fz-juelich.de/ias/jsc/EN/Research/Algorithms/ParallelInTimeIntegration/_node.html">Parallel-in-Time Research Group</a>
+        at the
+        <a href="http://www.fz-juelich.de/ias/jsc/EN/Home/home_node.html">Jülich Supercomputing Centre</a><br />
+    </p>
+  </div>
+
+  <a href="https://github.com/snide/sphinx_rtd_theme">Sphinx theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'0.0.4-dev-0-g4dad7c2',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+      <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

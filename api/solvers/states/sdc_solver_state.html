@@ -1,0 +1,323 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>SDC Solver States (sdc_solver_state) &mdash; PyPinT 0.0.4-dev-0-g4dad7c2 documentation</title>
+  
+
+  
+  
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+        <link rel="author" title="About these documents"
+              href="../../../about.html"/>
+    <link rel="top" title="PyPinT 0.0.4-dev-0-g4dad7c2 documentation" href="../../../index.html"/>
+        <link rel="up" title="Solver States (states)" href="package.html"/>
+        <link rel="next" title="Iterative Time Solver Interface (i_iterative_time_solver)" href="../i_iterative_time_solver.html"/>
+        <link rel="prev" title="Solver States Interfaces (i_solver_state)" href="i_solver_state.html"/> 
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-nav-search">
+        <a href="../../../index.html" class="fa fa-home"> PyPinT</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+        
+        
+            <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../about.html">About</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user/rationale.html">Rationale</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../user/rationale.html#objectives">Objectives</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../user/rationale.html#goals">Goals</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../user/rationale.html#scope">Scope</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user/requirements.html">Requirements</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user/basic_usage.html">Basic Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../examples/package.html">Examples</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../examples/problems/package.html">Example Problems (<tt class="docutils literal"><span class="pre">problems</span></tt>)</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user/theory.html">Mathematical Theory</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../user/bibliography.html">Bibliography</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../history.html">History</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../history.html#release-0-0-3-04-04-2014">Release 0.0.3 (04/04/2014)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../history.html#release-0-0-2-04-03-2014">Release 0.0.2 (04/03/2014)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../history.html#release-0-0-1-2013-11-26">Release 0.0.1 (2013-11-26)</a></li>
+</ul>
+</li>
+</ul>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../development/coding_style.html">Coding Style</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../development/documentation.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../development/contributing.html">Contributing</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../development/contributing.html#branching-and-tagging-model">Branching and Tagging Model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../development/contributing.html#commit-messages">Commit Messages</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../development/contributing.html#how-to-implement-a-new-feature">How to Implement a New Feature?</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../development/testing.html">Testing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../development/todo.html">ToDos</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../development/todo.html#global">Global</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../development/todo.html#in-source">In Source</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../package.html">API Reference</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../package.html#communicators">Communicators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../package.html#integrators">Integrators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../package.html#multi-level-providers">Multi Level Providers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../package.html#plugins">Plugins</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../package.html#problems">Problems</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../package.html#solutions">Solutions</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../../package.html#solvers">Solvers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../package.html#utilities">Utilities</a></li>
+</ul>
+</li>
+</ul>
+
+        
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../../../index.html">PyPinT</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="../../package.html">PyPinT Package</a> &raquo;</li>
+      
+          <li><a href="../package.html">Solvers (<tt class="docutils literal"><span class="pre">solvers</span></tt>)</a> &raquo;</li>
+      
+          <li><a href="package.html">Solver States (<tt class="docutils literal"><span class="pre">states</span></tt>)</a> &raquo;</li>
+      
+    <li>SDC Solver States (<tt class="docutils literal"><span class="pre">sdc_solver_state</span></tt>)</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          <a href="../../../_sources/api/solvers/states/sdc_solver_state.txt" rel="nofollow"> View page source</a>
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main">
+            
+  <div class="section" id="module-pypint.solvers.states.sdc_solver_state">
+<span id="sdc-solver-states-sdc-solver-state"></span><h1>SDC Solver States (<tt class="xref py py-mod docutils literal"><span class="pre">sdc_solver_state</span></tt>)<a class="headerlink" href="#module-pypint.solvers.states.sdc_solver_state" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="pypint.solvers.states.sdc_solver_state.SdcStepState">
+<em class="property">class </em><tt class="descclassname">pypint.solvers.states.sdc_solver_state.</tt><tt class="descname">SdcStepState</tt><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/pypint/solvers/states/sdc_solver_state.html#SdcStepState"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypint.solvers.states.sdc_solver_state.SdcStepState" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="i_solver_state.html#pypint.solvers.states.i_solver_state.IStepState" title="pypint.solvers.states.i_solver_state.IStepState"><tt class="xref py py-class docutils literal"><span class="pre">pypint.solvers.states.i_solver_state.IStepState</span></tt></a></p>
+<p>Step States for SDC Solver</p>
+<dl class="attribute">
+<dt id="pypint.solvers.states.sdc_solver_state.SdcStepState.integral">
+<tt class="descname">integral</tt><a class="reference internal" href="../../../_modules/pypint/solvers/states/sdc_solver_state.html#SdcStepState.integral"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypint.solvers.states.sdc_solver_state.SdcStepState.integral" title="Permalink to this definition">¶</a></dt>
+<dd><p>Accessor for an integral value</p>
+<p>Defaults to <span class="math">\(0.0\)</span> if not set.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>integral</strong> (<tt class="xref py py-class docutils literal"><span class="pre">float</span></tt>) &#8211; (no consistency checks are done)</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="pypint.solvers.states.sdc_solver_state.SdcTimeStepState">
+<em class="property">class </em><tt class="descclassname">pypint.solvers.states.sdc_solver_state.</tt><tt class="descname">SdcTimeStepState</tt><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/pypint/solvers/states/sdc_solver_state.html#SdcTimeStepState"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypint.solvers.states.sdc_solver_state.SdcTimeStepState" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="i_solver_state.html#pypint.solvers.states.i_solver_state.ITimeStepState" title="pypint.solvers.states.i_solver_state.ITimeStepState"><tt class="xref py py-class docutils literal"><span class="pre">pypint.solvers.states.i_solver_state.ITimeStepState</span></tt></a></p>
+<p>Time Step States for SDC Solver</p>
+<dl class="method">
+<dt id="pypint.solvers.states.sdc_solver_state.SdcTimeStepState.__init__">
+<tt class="descname">__init__</tt><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/pypint/solvers/states/sdc_solver_state.html#SdcTimeStepState.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypint.solvers.states.sdc_solver_state.SdcTimeStepState.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>solution_class</strong> &#8211; forced to <a class="reference internal" href="../../solutions/data_storage/trajectory_solution_data.html#pypint.solutions.data_storage.trajectory_solution_data.TrajectorySolutionData" title="pypint.solutions.data_storage.trajectory_solution_data.TrajectorySolutionData"><tt class="xref py py-class docutils literal"><span class="pre">TrajectorySolutionData</span></tt></a></li>
+<li><strong>element_type</strong> &#8211; forced to <a class="reference internal" href="#pypint.solvers.states.sdc_solver_state.SdcStepState" title="pypint.solvers.states.sdc_solver_state.SdcStepState"><tt class="xref py py-class docutils literal"><span class="pre">SdcStepState</span></tt></a></li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="pypint.solvers.states.sdc_solver_state.SdcIterationState">
+<em class="property">class </em><tt class="descclassname">pypint.solvers.states.sdc_solver_state.</tt><tt class="descname">SdcIterationState</tt><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/pypint/solvers/states/sdc_solver_state.html#SdcIterationState"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypint.solvers.states.sdc_solver_state.SdcIterationState" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="i_solver_state.html#pypint.solvers.states.i_solver_state.IIterationState" title="pypint.solvers.states.i_solver_state.IIterationState"><tt class="xref py py-class docutils literal"><span class="pre">pypint.solvers.states.i_solver_state.IIterationState</span></tt></a></p>
+<p>Iteration States for SDC Solver</p>
+<dl class="method">
+<dt id="pypint.solvers.states.sdc_solver_state.SdcIterationState.__init__">
+<tt class="descname">__init__</tt><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/pypint/solvers/states/sdc_solver_state.html#SdcIterationState.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypint.solvers.states.sdc_solver_state.SdcIterationState.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>solution_class</strong> &#8211; forced to <a class="reference internal" href="../../solutions/data_storage/trajectory_solution_data.html#pypint.solutions.data_storage.trajectory_solution_data.TrajectorySolutionData" title="pypint.solutions.data_storage.trajectory_solution_data.TrajectorySolutionData"><tt class="xref py py-class docutils literal"><span class="pre">TrajectorySolutionData</span></tt></a></li>
+<li><strong>element_type</strong> &#8211; forced to <a class="reference internal" href="#pypint.solvers.states.sdc_solver_state.SdcTimeStepState" title="pypint.solvers.states.sdc_solver_state.SdcTimeStepState"><tt class="xref py py-class docutils literal"><span class="pre">SdcTimeStepState</span></tt></a></li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="pypint.solvers.states.sdc_solver_state.SdcSolverState">
+<em class="property">class </em><tt class="descclassname">pypint.solvers.states.sdc_solver_state.</tt><tt class="descname">SdcSolverState</tt><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/pypint/solvers/states/sdc_solver_state.html#SdcSolverState"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypint.solvers.states.sdc_solver_state.SdcSolverState" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="i_solver_state.html#pypint.solvers.states.i_solver_state.ISolverState" title="pypint.solvers.states.i_solver_state.ISolverState"><tt class="xref py py-class docutils literal"><span class="pre">pypint.solvers.states.i_solver_state.ISolverState</span></tt></a></p>
+<p>Solver States for SDC Solver</p>
+<dl class="method">
+<dt id="pypint.solvers.states.sdc_solver_state.SdcSolverState.__init__">
+<tt class="descname">__init__</tt><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/pypint/solvers/states/sdc_solver_state.html#SdcSolverState.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypint.solvers.states.sdc_solver_state.SdcSolverState.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>solution_class</strong> &#8211; forced to <a class="reference internal" href="../../solutions/iterative_solution.html#pypint.solutions.iterative_solution.IterativeSolution" title="pypint.solutions.iterative_solution.IterativeSolution"><tt class="xref py py-class docutils literal"><span class="pre">IterativeSolution</span></tt></a></li>
+<li><strong>element_type</strong> &#8211; forced to <a class="reference internal" href="#pypint.solvers.states.sdc_solver_state.SdcIterationState" title="pypint.solvers.states.sdc_solver_state.SdcIterationState"><tt class="xref py py-class docutils literal"><span class="pre">SdcIterationState</span></tt></a></li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="../i_iterative_time_solver.html" class="btn btn-neutral float-right" title="Iterative Time Solver Interface (i_iterative_time_solver)"/>Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="i_solver_state.html" class="btn btn-neutral" title="Solver States Interfaces (i_solver_state)"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+      &copy; 2013-2014,
+        <a href="http://www.fz-juelich.de/ias/jsc/EN/Research/Algorithms/ParallelInTimeIntegration/_node.html">Parallel-in-Time Research Group</a>
+        at the
+        <a href="http://www.fz-juelich.de/ias/jsc/EN/Home/home_node.html">Jülich Supercomputing Centre</a><br />
+    </p>
+  </div>
+
+  <a href="https://github.com/snide/sphinx_rtd_theme">Sphinx theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../',
+            VERSION:'0.0.4-dev-0-g4dad7c2',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../_static/doctools.js"></script>
+      <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

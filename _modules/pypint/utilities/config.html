@@ -1,0 +1,325 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>pypint.utilities.config &mdash; PyPinT 0.0.4-dev-0-g4dad7c2 documentation</title>
+  
+
+  
+  
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+        <link rel="author" title="About these documents"
+              href="../../../about.html"/>
+    <link rel="top" title="PyPinT 0.0.4-dev-0-g4dad7c2 documentation" href="../../../index.html"/>
+        <link rel="up" title="Module code" href="../../index.html"/> 
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-nav-search">
+        <a href="../../../index.html" class="fa fa-home"> PyPinT</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+        
+        
+            <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../about.html">About</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user/rationale.html">Rationale</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../user/rationale.html#objectives">Objectives</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../user/rationale.html#goals">Goals</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../user/rationale.html#scope">Scope</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user/requirements.html">Requirements</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user/basic_usage.html">Basic Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/examples/package.html">Examples</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/examples/problems/package.html">Example Problems (<tt class="docutils literal"><span class="pre">problems</span></tt>)</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user/theory.html">Mathematical Theory</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../user/bibliography.html">Bibliography</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../history.html">History</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../history.html#release-0-0-3-04-04-2014">Release 0.0.3 (04/04/2014)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../history.html#release-0-0-2-04-03-2014">Release 0.0.2 (04/03/2014)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../history.html#release-0-0-1-2013-11-26">Release 0.0.1 (2013-11-26)</a></li>
+</ul>
+</li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../development/coding_style.html">Coding Style</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../development/documentation.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../development/contributing.html">Contributing</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../development/contributing.html#branching-and-tagging-model">Branching and Tagging Model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../development/contributing.html#commit-messages">Commit Messages</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../development/contributing.html#how-to-implement-a-new-feature">How to Implement a New Feature?</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../development/testing.html">Testing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../development/todo.html">ToDos</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../development/todo.html#global">Global</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../development/todo.html#in-source">In Source</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/package.html">API Reference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/package.html#communicators">Communicators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/package.html#integrators">Integrators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/package.html#multi-level-providers">Multi Level Providers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/package.html#plugins">Plugins</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/package.html#problems">Problems</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/package.html#solutions">Solutions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/package.html#solvers">Solvers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/package.html#utilities">Utilities</a></li>
+</ul>
+</li>
+</ul>
+
+        
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../../../index.html">PyPinT</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+      
+    <li>pypint.utilities.config</li>
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main">
+            
+  <h1>Source code for pypint.utilities.config</h1><div class="highlight"><pre>
+<span class="c"># coding=utf-8</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">.. moduleauthor:: Torbjörn Klatt &lt;t.klatt@fz-juelich.de&gt;</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">os.path</span> <span class="kn">import</span> <span class="n">expandvars</span><span class="p">,</span> <span class="n">expanduser</span><span class="p">,</span> <span class="n">abspath</span><span class="p">,</span> <span class="n">dirname</span><span class="p">,</span> <span class="n">isfile</span>
+<span class="kn">from</span> <span class="nn">sys</span> <span class="kn">import</span> <span class="n">stdout</span><span class="p">,</span> <span class="n">stderr</span>
+
+<span class="kn">from</span> <span class="nn">configobj</span> <span class="kn">import</span> <span class="n">ConfigObj</span><span class="p">,</span> <span class="n">ConfigObjError</span>
+
+<span class="kn">from</span> <span class="nn">pypint</span> <span class="kn">import</span> <span class="n">__file__</span> <span class="k">as</span> <span class="n">pypint_path</span>
+
+
+<span class="n">_CONFIG_SPEC_FILE</span> <span class="o">=</span> <span class="n">abspath</span><span class="p">(</span><span class="n">dirname</span><span class="p">(</span><span class="n">pypint_path</span><span class="p">))</span> <span class="o">+</span> <span class="s">&#39;/utilities/config.spec&#39;</span>
+<span class="n">_DEFAULT_CONFIG_FILE</span> <span class="o">=</span> <span class="n">abspath</span><span class="p">(</span><span class="n">dirname</span><span class="p">(</span><span class="n">pypint_path</span><span class="p">))</span> <span class="o">+</span> <span class="s">&#39;/default_config.conf&#39;</span>
+
+<span class="n">_CONFIG_READ</span> <span class="o">=</span> <span class="bp">False</span>
+
+<span class="n">_CONFIG</span> <span class="o">=</span> <span class="bp">None</span>
+
+
+<div class="viewcode-block" id="config"><a class="viewcode-back" href="../../../api/utilities/config.html#pypint.utilities.config.config">[docs]</a><span class="k">def</span> <span class="nf">config</span><span class="p">(</span><span class="n">config_file</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Returns configuration object</span>
+
+<span class="sd">    By default, *PyPinT* looks in the current user&#39;s home directory (i.e. ``$HOME``) for a file called ``.pypint.conf``.</span>
+
+<span class="sd">    In case the environment variable ``$PYPINT_CONFIG`` is set, its value is used as the absolute path and file name</span>
+<span class="sd">    of the config file (cf. ``config_file`` parameter).</span>
+
+<span class="sd">    Validation of the given config file is done against the configspec file in PyPinT&#39;s installation path in</span>
+<span class="sd">    ``utilities/config.spec``.</span>
+
+<span class="sd">    In case no config file is present, the default values as stated in ``$PYPINT_ROOT/default_config.conf`` file are</span>
+<span class="sd">    used.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    config_file : :py:class:`str`</span>
+<span class="sd">        *(optional)*</span>
+<span class="sd">        The absolute path and file name of the config file to use.</span>
+<span class="sd">        If given, it will override all defaults.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    config : :py:class:`ConfigObj`</span>
+<span class="sd">        Configuration object parsed from the config file.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">global</span> <span class="n">_CONFIG</span>
+    <span class="k">global</span> <span class="n">_CONFIG_READ</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">_CONFIG_READ</span><span class="p">:</span>
+        <span class="k">print</span><span class="p">(</span><span class="s">&quot;Configuration has not yet been loaded. Doing it now.&quot;</span><span class="p">,</span> <span class="nb">file</span><span class="o">=</span><span class="n">stdout</span><span class="p">)</span>
+        <span class="n">_CONFIG</span> <span class="o">=</span> <span class="n">_get_config</span><span class="p">(</span><span class="n">config_file</span><span class="o">=</span><span class="n">config_file</span><span class="p">)</span>
+        <span class="n">_CONFIG_READ</span> <span class="o">=</span> <span class="bp">True</span>
+
+    <span class="k">return</span> <span class="n">_CONFIG</span>
+
+</div>
+<span class="k">def</span> <span class="nf">_get_config</span><span class="p">(</span><span class="n">config_file</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Reads in the configuration from a file</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    config_file : :py:class:`str`</span>
+<span class="sd">        see :py:func:`.get_config`</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    config : :py:class:`ConfigObj`</span>
+<span class="sd">        Configuration object parsed from the config file.</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    IOError</span>
+<span class="sd">        if the config file could not be found</span>
+<span class="sd">    ConfigObjError</span>
+<span class="sd">        on parsing errors</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">_config_file</span> <span class="o">=</span> <span class="n">expandvars</span><span class="p">(</span><span class="s">&#39;$PYPINT_CONFIG&#39;</span><span class="p">)</span> <span class="k">if</span> <span class="n">config_file</span> <span class="ow">is</span> <span class="bp">None</span> <span class="k">else</span> <span class="n">config_file</span>
+    <span class="k">if</span> <span class="n">_config_file</span> <span class="o">==</span> <span class="s">&#39;$PYPINT_CONFIG&#39;</span><span class="p">:</span>
+        <span class="c"># default config file location has not been overridden by user</span>
+        <span class="c"># -&gt; taking default</span>
+        <span class="n">_config_file</span> <span class="o">=</span> <span class="n">expanduser</span><span class="p">(</span><span class="s">&#39;~&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="s">&#39;/.pypint.conf&#39;</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">isfile</span><span class="p">(</span><span class="n">_config_file</span><span class="p">):</span>
+        <span class="k">print</span><span class="p">(</span><span class="s">&quot;WARNING: Configuration file &#39;</span><span class="si">%s</span><span class="s">&#39; not found. Using defaults.&quot;</span> <span class="o">%</span> <span class="n">_config_file</span><span class="p">,</span> <span class="nb">file</span><span class="o">=</span><span class="n">stdout</span><span class="p">)</span>
+        <span class="k">print</span><span class="p">(</span><span class="s">&quot;WARNING: Configuration file &#39;</span><span class="si">%s</span><span class="s">&#39; not found. Using defaults.&quot;</span> <span class="o">%</span> <span class="n">_config_file</span><span class="p">,</span> <span class="nb">file</span><span class="o">=</span><span class="n">stderr</span><span class="p">)</span>
+        <span class="n">_config_file</span> <span class="o">=</span> <span class="n">_DEFAULT_CONFIG_FILE</span>
+
+    <span class="n">_config_spec</span> <span class="o">=</span> <span class="n">ConfigObj</span><span class="p">(</span><span class="n">_CONFIG_SPEC_FILE</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s">&#39;UTF-8&#39;</span><span class="p">,</span> <span class="n">interpolation</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">list_values</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span>
+                             <span class="n">_inspec</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">config</span> <span class="o">=</span> <span class="n">ConfigObj</span><span class="p">(</span><span class="n">_config_file</span><span class="p">,</span> <span class="n">interpolation</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">file_error</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">raise_errors</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s">&#39;UTF-8&#39;</span><span class="p">,</span>
+                           <span class="n">configspec</span><span class="o">=</span><span class="n">_config_spec</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">IOError</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
+        <span class="c"># Shouldn&#39;t happend!</span>
+        <span class="k">print</span><span class="p">(</span><span class="s">&quot;Configuration file &#39;</span><span class="si">%s</span><span class="s">&#39; not found.&quot;</span> <span class="o">%</span> <span class="n">_config_file</span><span class="p">,</span> <span class="nb">file</span><span class="o">=</span><span class="n">stdout</span><span class="p">)</span>
+        <span class="k">print</span><span class="p">(</span><span class="s">&quot;Configuration file &#39;</span><span class="si">%s</span><span class="s">&#39; not found. (Shouldn&#39;t reached here, thus something really bad happend!)&quot;</span>
+              <span class="o">%</span> <span class="n">_config_file</span><span class="p">,</span> <span class="nb">file</span><span class="o">=</span><span class="n">stderr</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="n">err</span>
+    <span class="k">except</span> <span class="n">ConfigObjError</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
+        <span class="k">print</span><span class="p">(</span><span class="s">&quot;Error occured while parsing the config file at &#39;</span><span class="si">%s</span><span class="s">&#39;. Check syntax.&quot;</span> <span class="o">%</span> <span class="n">_config_file</span><span class="p">,</span> <span class="nb">file</span><span class="o">=</span><span class="n">stdout</span><span class="p">)</span>
+        <span class="k">print</span><span class="p">(</span><span class="s">&quot;Error occured while parsing the config file at &#39;</span><span class="si">%s</span><span class="s">&#39;. Check syntax.&quot;</span> <span class="o">%</span> <span class="n">_config_file</span><span class="p">,</span> <span class="nb">file</span><span class="o">=</span><span class="n">stderr</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="n">err</span>
+
+    <span class="kn">from</span> <span class="nn">validate</span> <span class="kn">import</span> <span class="n">Validator</span>
+    <span class="k">if</span> <span class="n">config</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span><span class="n">Validator</span><span class="p">())</span> <span class="ow">is</span> <span class="bp">True</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">config</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">ConfigObjError</span><span class="p">(</span><span class="s">&quot;Invalid config file.&quot;</span><span class="p">)</span>
+
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s">&#39;config&#39;</span>
+<span class="p">]</span>
+</pre></div>
+
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+      &copy; 2013-2014,
+        <a href="http://www.fz-juelich.de/ias/jsc/EN/Research/Algorithms/ParallelInTimeIntegration/_node.html">Parallel-in-Time Research Group</a>
+        at the
+        <a href="http://www.fz-juelich.de/ias/jsc/EN/Home/home_node.html">Jülich Supercomputing Centre</a><br />
+    </p>
+  </div>
+
+  <a href="https://github.com/snide/sphinx_rtd_theme">Sphinx theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../',
+            VERSION:'0.0.4-dev-0-g4dad7c2',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../_static/doctools.js"></script>
+      <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

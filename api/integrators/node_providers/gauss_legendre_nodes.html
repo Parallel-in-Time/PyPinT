@@ -1,0 +1,297 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Gauss-Legendre Nodes (gauss_legendre_nodes) &mdash; PyPinT 0.0.4-dev-0-g4dad7c2 documentation</title>
+  
+
+  
+  
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+        <link rel="author" title="About these documents"
+              href="../../../about.html"/>
+    <link rel="top" title="PyPinT 0.0.4-dev-0-g4dad7c2 documentation" href="../../../index.html"/>
+        <link rel="up" title="Node Providers (node_providers)" href="package.html"/>
+        <link rel="next" title="Gauss-Lobatto Nodes (gauss_lobatto_nodes)" href="gauss_lobatto_nodes.html"/>
+        <link rel="prev" title="Integration Nodes Interface (i_nodes)" href="i_nodes.html"/> 
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-nav-search">
+        <a href="../../../index.html" class="fa fa-home"> PyPinT</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+        
+        
+            <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../about.html">About</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user/rationale.html">Rationale</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../user/rationale.html#objectives">Objectives</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../user/rationale.html#goals">Goals</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../user/rationale.html#scope">Scope</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user/requirements.html">Requirements</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user/basic_usage.html">Basic Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../examples/package.html">Examples</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../examples/problems/package.html">Example Problems (<tt class="docutils literal"><span class="pre">problems</span></tt>)</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user/theory.html">Mathematical Theory</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../user/bibliography.html">Bibliography</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../history.html">History</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../history.html#release-0-0-3-04-04-2014">Release 0.0.3 (04/04/2014)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../history.html#release-0-0-2-04-03-2014">Release 0.0.2 (04/03/2014)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../history.html#release-0-0-1-2013-11-26">Release 0.0.1 (2013-11-26)</a></li>
+</ul>
+</li>
+</ul>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../development/coding_style.html">Coding Style</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../development/documentation.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../development/contributing.html">Contributing</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../development/contributing.html#branching-and-tagging-model">Branching and Tagging Model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../development/contributing.html#commit-messages">Commit Messages</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../development/contributing.html#how-to-implement-a-new-feature">How to Implement a New Feature?</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../development/testing.html">Testing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../development/todo.html">ToDos</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../development/todo.html#global">Global</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../development/todo.html#in-source">In Source</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../package.html">API Reference</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../package.html#communicators">Communicators</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../../package.html#integrators">Integrators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../package.html#multi-level-providers">Multi Level Providers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../package.html#plugins">Plugins</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../package.html#problems">Problems</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../package.html#solutions">Solutions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../package.html#solvers">Solvers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../package.html#utilities">Utilities</a></li>
+</ul>
+</li>
+</ul>
+
+        
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../../../index.html">PyPinT</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="../../package.html">PyPinT Package</a> &raquo;</li>
+      
+          <li><a href="../package.html">Integrators (<tt class="docutils literal"><span class="pre">integrators</span></tt>)</a> &raquo;</li>
+      
+          <li><a href="package.html">Node Providers (<tt class="docutils literal"><span class="pre">node_providers</span></tt>)</a> &raquo;</li>
+      
+    <li>Gauss-Legendre Nodes (<tt class="docutils literal"><span class="pre">gauss_legendre_nodes</span></tt>)</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          <a href="../../../_sources/api/integrators/node_providers/gauss_legendre_nodes.txt" rel="nofollow"> View page source</a>
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main">
+            
+  <div class="section" id="module-pypint.integrators.node_providers.gauss_legendre_nodes">
+<span id="gauss-legendre-nodes-gauss-legendre-nodes"></span><h1>Gauss-Legendre Nodes (<tt class="xref py py-mod docutils literal"><span class="pre">gauss_legendre_nodes</span></tt>)<a class="headerlink" href="#module-pypint.integrators.node_providers.gauss_legendre_nodes" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="pypint.integrators.node_providers.gauss_legendre_nodes.GaussLegendreNodes">
+<em class="property">class </em><tt class="descclassname">pypint.integrators.node_providers.gauss_legendre_nodes.</tt><tt class="descname">GaussLegendreNodes</tt><a class="reference internal" href="../../../_modules/pypint/integrators/node_providers/gauss_legendre_nodes.html#GaussLegendreNodes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypint.integrators.node_providers.gauss_legendre_nodes.GaussLegendreNodes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="i_nodes.html#pypint.integrators.node_providers.i_nodes.INodes" title="pypint.integrators.node_providers.i_nodes.INodes"><tt class="xref py py-class docutils literal"><span class="pre">pypint.integrators.node_providers.i_nodes.INodes</span></tt></a></p>
+<p>Provider for Gauss-Legendre integration nodes with variable count.</p>
+<dl class="method">
+<dt id="pypint.integrators.node_providers.gauss_legendre_nodes.GaussLegendreNodes._compute_nodes">
+<tt class="descname">_compute_nodes</tt><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/pypint/integrators/node_providers/gauss_legendre_nodes.html#GaussLegendreNodes._compute_nodes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypint.integrators.node_providers.gauss_legendre_nodes.GaussLegendreNodes._compute_nodes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computats nodes for the Gauss-Legendre quadrature of order <span class="math">\(n&gt;1\)</span> on <span class="math">\([-1,+1]\)</span>.</p>
+<p>(ported from MATLAB code, reference see below, original commend from MATLAB code:)</p>
+<blockquote class="epigraph">
+<div><p>Unlike many publicly available functions, this function is valid for <span class="math">\(n&gt;=46\)</span>.
+This is due to the fact that it does not rely on MATLAB&#8217;s build-in &#8216;root&#8217; routines to determine the roots
+of the Legendre polynomial, but finds the roots by looking for the eigenvalues of an alternative version of
+the companion matrix of the n&#8217;th degree Legendre polynomial.
+The companion matrix is constructed as a symmetrical matrix, guaranteeing that all the eigenvalues (roots)
+will be real.
+On the contrary, MATLAB&#8217;s &#8216;roots&#8217; function uses a general form for the companion matrix, which becomes
+unstable at higher orders <span class="math">\(n\)</span>, leading to complex roots.</p>
+<p class="attribution">&mdash;original MATLAB function by: Geert Van Damme &lt;<a class="reference external" href="mailto:geert&#37;&#52;&#48;vandamme-iliano&#46;be">geert<span>&#64;</span>vandamme-iliano<span>&#46;</span>be</a>&gt; (February 21, 2010)</p>
+</div></blockquote>
+</dd></dl>
+
+<dl class="method">
+<dt id="pypint.integrators.node_providers.gauss_legendre_nodes.GaussLegendreNodes.init">
+<tt class="descname">init</tt><span class="sig-paren">(</span><em>n_nodes</em>, <em>interval=None</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/pypint/integrators/node_providers/gauss_legendre_nodes.html#GaussLegendreNodes.init"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypint.integrators.node_providers.gauss_legendre_nodes.GaussLegendreNodes.init" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initializes and computes Gauss-Legendre nodes.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>n_nodes</strong> (<tt class="xref py py-class docutils literal"><span class="pre">int</span></tt>) &#8211; The number of desired Gauss-Legendre nodes</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><a class="reference internal" href="i_nodes.html#pypint.integrators.node_providers.i_nodes.INodes.init" title="pypint.integrators.node_providers.i_nodes.INodes.init"><tt class="xref py py-meth docutils literal"><span class="pre">INodes.init()</span></tt></a> : overridden method</p>
+</div>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pypint.integrators.node_providers.gauss_legendre_nodes.GaussLegendreNodes.num_nodes">
+<tt class="descname">num_nodes</tt><a class="reference internal" href="../../../_modules/pypint/integrators/node_providers/gauss_legendre_nodes.html#GaussLegendreNodes.num_nodes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypint.integrators.node_providers.gauss_legendre_nodes.GaussLegendreNodes.num_nodes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Accessor of number of Gauss-Legendre nodes.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><tt class="xref py py-exc docutils literal"><span class="pre">ValueError</span></tt> &#8211; 
+if <tt class="docutils literal"><span class="pre">n_nodes</span></tt> is smaller than 2 <em>(only Setter)</em>.</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><a class="reference internal" href="i_nodes.html#pypint.integrators.node_providers.i_nodes.INodes.num_nodes" title="pypint.integrators.node_providers.i_nodes.INodes.num_nodes"><tt class="xref py py-attr docutils literal"><span class="pre">INodes.num_nodes</span></tt></a> : overridden method</p>
+</div>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pypint.integrators.node_providers.gauss_legendre_nodes.GaussLegendreNodes.std_interval">
+<tt class="descname">std_interval</tt><em class="property"> = array([-1.,  1.])</em><a class="headerlink" href="#pypint.integrators.node_providers.gauss_legendre_nodes.GaussLegendreNodes.std_interval" title="Permalink to this definition">¶</a></dt>
+<dd><p>Standard integration interval</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="gauss_lobatto_nodes.html" class="btn btn-neutral float-right" title="Gauss-Lobatto Nodes (gauss_lobatto_nodes)"/>Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="i_nodes.html" class="btn btn-neutral" title="Integration Nodes Interface (i_nodes)"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+      &copy; 2013-2014,
+        <a href="http://www.fz-juelich.de/ias/jsc/EN/Research/Algorithms/ParallelInTimeIntegration/_node.html">Parallel-in-Time Research Group</a>
+        at the
+        <a href="http://www.fz-juelich.de/ias/jsc/EN/Home/home_node.html">Jülich Supercomputing Centre</a><br />
+    </p>
+  </div>
+
+  <a href="https://github.com/snide/sphinx_rtd_theme">Sphinx theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../',
+            VERSION:'0.0.4-dev-0-g4dad7c2',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../_static/doctools.js"></script>
+      <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

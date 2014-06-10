@@ -1,0 +1,444 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Trajectory Solution Data (trajectory_solution_data) &mdash; PyPinT 0.0.4-dev-0-g4dad7c2 documentation</title>
+  
+
+  
+  
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+        <link rel="author" title="About these documents"
+              href="../../../about.html"/>
+    <link rel="top" title="PyPinT 0.0.4-dev-0-g4dad7c2 documentation" href="../../../index.html"/>
+        <link rel="up" title="Data Storage (data_storage)" href="package.html"/>
+        <link rel="next" title="Solution Interface (i_solution)" href="../i_solution.html"/>
+        <link rel="prev" title="Step Solution Data (step_solution_data)" href="step_solution_data.html"/> 
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-nav-search">
+        <a href="../../../index.html" class="fa fa-home"> PyPinT</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+        
+        
+            <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../about.html">About</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user/rationale.html">Rationale</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../user/rationale.html#objectives">Objectives</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../user/rationale.html#goals">Goals</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../user/rationale.html#scope">Scope</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user/requirements.html">Requirements</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user/basic_usage.html">Basic Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../examples/package.html">Examples</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../examples/problems/package.html">Example Problems (<tt class="docutils literal"><span class="pre">problems</span></tt>)</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user/theory.html">Mathematical Theory</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../user/bibliography.html">Bibliography</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../history.html">History</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../history.html#release-0-0-3-04-04-2014">Release 0.0.3 (04/04/2014)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../history.html#release-0-0-2-04-03-2014">Release 0.0.2 (04/03/2014)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../history.html#release-0-0-1-2013-11-26">Release 0.0.1 (2013-11-26)</a></li>
+</ul>
+</li>
+</ul>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../development/coding_style.html">Coding Style</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../development/documentation.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../development/contributing.html">Contributing</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../development/contributing.html#branching-and-tagging-model">Branching and Tagging Model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../development/contributing.html#commit-messages">Commit Messages</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../development/contributing.html#how-to-implement-a-new-feature">How to Implement a New Feature?</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../development/testing.html">Testing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../development/todo.html">ToDos</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../development/todo.html#global">Global</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../development/todo.html#in-source">In Source</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../package.html">API Reference</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../package.html#communicators">Communicators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../package.html#integrators">Integrators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../package.html#multi-level-providers">Multi Level Providers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../package.html#plugins">Plugins</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../package.html#problems">Problems</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../../package.html#solutions">Solutions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../package.html#solvers">Solvers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../package.html#utilities">Utilities</a></li>
+</ul>
+</li>
+</ul>
+
+        
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../../../index.html">PyPinT</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="../../package.html">PyPinT Package</a> &raquo;</li>
+      
+          <li><a href="../package.html">Solutions (<tt class="docutils literal"><span class="pre">solutions</span></tt>)</a> &raquo;</li>
+      
+          <li><a href="package.html">Data Storage (<tt class="docutils literal"><span class="pre">data_storage</span></tt>)</a> &raquo;</li>
+      
+    <li>Trajectory Solution Data (<tt class="docutils literal"><span class="pre">trajectory_solution_data</span></tt>)</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          <a href="../../../_sources/api/solutions/data_storage/trajectory_solution_data.txt" rel="nofollow"> View page source</a>
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main">
+            
+  <div class="section" id="module-pypint.solutions.data_storage.trajectory_solution_data">
+<span id="trajectory-solution-data-trajectory-solution-data"></span><h1>Trajectory Solution Data (<tt class="xref py py-mod docutils literal"><span class="pre">trajectory_solution_data</span></tt>)<a class="headerlink" href="#module-pypint.solutions.data_storage.trajectory_solution_data" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="pypint.solutions.data_storage.trajectory_solution_data.TrajectorySolutionData">
+<em class="property">class </em><tt class="descclassname">pypint.solutions.data_storage.trajectory_solution_data.</tt><tt class="descname">TrajectorySolutionData</tt><a class="reference internal" href="../../../_modules/pypint/solutions/data_storage/trajectory_solution_data.html#TrajectorySolutionData"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypint.solutions.data_storage.trajectory_solution_data.TrajectorySolutionData" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">builtins.object</span></tt></p>
+<p>Storage for a transient trajectory of solutions.</p>
+<p>Basically, this is nothing more than an array of <a class="reference internal" href="step_solution_data.html#pypint.solutions.data_storage.step_solution_data.StepSolutionData" title="pypint.solutions.data_storage.step_solution_data.StepSolutionData"><tt class="xref py py-class docutils literal"><span class="pre">StepSolutionData</span></tt></a> objects and a couple of
+utility functions for easy data access and consistency checks.</p>
+<p>This class provides a selected subset of <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html?highlight=sequence#mutable-sequence-types">Python&#8217;s mutable sequence datatype methods</a>:</p>
+<dl class="docutils">
+<dt><tt class="xref py py-meth docutils literal"><span class="pre">__len__()</span></tt></dt>
+<dd>Returns the number of <a class="reference internal" href="step_solution_data.html#pypint.solutions.data_storage.step_solution_data.StepSolutionData" title="pypint.solutions.data_storage.step_solution_data.StepSolutionData"><tt class="xref py py-class docutils literal"><span class="pre">StepSolutionData</span></tt></a> objects stored in this instance.</dd>
+<dt><tt class="xref py py-meth docutils literal"><span class="pre">__gettiem__()</span></tt></dt>
+<dd>Takes the 0-based index of the <a class="reference internal" href="step_solution_data.html#pypint.solutions.data_storage.step_solution_data.StepSolutionData" title="pypint.solutions.data_storage.step_solution_data.StepSolutionData"><tt class="xref py py-class docutils literal"><span class="pre">StepSolutionData</span></tt></a> object to query.</dd>
+<dt><tt class="xref py py-meth docutils literal"><span class="pre">__setitem__()</span></tt></dt>
+<dd>Takes a <tt class="xref py py-class docutils literal"><span class="pre">float</span></tt> representing the time point and a <tt class="xref py py-class docutils literal"><span class="pre">numpy.ndarray</span></tt> as the rvalue.
+Same as <tt class="docutils literal"><span class="pre">.add_solution_data(value=&lt;rvalue&gt;,</span> <span class="pre">time_point=&lt;time_point&gt;)</span></tt>.</dd>
+<dt><tt class="xref py py-meth docutils literal"><span class="pre">__iter__()</span></tt></dt>
+<dd>Gives an iterator over the stored <a class="reference internal" href="step_solution_data.html#pypint.solutions.data_storage.step_solution_data.StepSolutionData" title="pypint.solutions.data_storage.step_solution_data.StepSolutionData"><tt class="xref py py-class docutils literal"><span class="pre">StepSolutionData</span></tt></a> objects (proxies
+<tt class="xref py py-meth docutils literal"><span class="pre">numpy.ndarray.__iter__()</span></tt>).</dd>
+<dt><tt class="xref py py-meth docutils literal"><span class="pre">__contains__()</span></tt></dt>
+<dd>Finds the given <a class="reference internal" href="step_solution_data.html#pypint.solutions.data_storage.step_solution_data.StepSolutionData" title="pypint.solutions.data_storage.step_solution_data.StepSolutionData"><tt class="xref py py-class docutils literal"><span class="pre">StepSolutionData</span></tt></a> object in this sequence.</dd>
+</dl>
+<dl class="method">
+<dt id="pypint.solutions.data_storage.trajectory_solution_data.TrajectorySolutionData._check_consistency">
+<tt class="descname">_check_consistency</tt><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/pypint/solutions/data_storage/trajectory_solution_data.html#TrajectorySolutionData._check_consistency"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypint.solutions.data_storage.trajectory_solution_data.TrajectorySolutionData._check_consistency" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks for consistency of spacial dimension and numeric type of stored steps.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><p class="first"><tt class="xref py py-exc docutils literal"><span class="pre">ValueError</span></tt> &#8211;</p>
+<ul class="last simple">
+<li>if the numeric type of at least one step does not match <a class="reference internal" href="#pypint.solutions.data_storage.trajectory_solution_data.TrajectorySolutionData.numeric_type" title="pypint.solutions.data_storage.trajectory_solution_data.TrajectorySolutionData.numeric_type"><tt class="xref py py-attr docutils literal"><span class="pre">numeric_type</span></tt></a></li>
+<li>if the spacial dimension of at least one step does not match <a class="reference internal" href="#pypint.solutions.data_storage.trajectory_solution_data.TrajectorySolutionData.dim" title="pypint.solutions.data_storage.trajectory_solution_data.TrajectorySolutionData.dim"><tt class="xref py py-attr docutils literal"><span class="pre">dim</span></tt></a></li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="pypint.solutions.data_storage.trajectory_solution_data.TrajectorySolutionData.add_solution_data">
+<tt class="descname">add_solution_data</tt><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/pypint/solutions/data_storage/trajectory_solution_data.html#TrajectorySolutionData.add_solution_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypint.solutions.data_storage.trajectory_solution_data.TrajectorySolutionData.add_solution_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Appends solution of a new time point to the trajectory.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>step_data</strong> (<a class="reference internal" href="step_solution_data.html#pypint.solutions.data_storage.step_solution_data.StepSolutionData" title="pypint.solutions.data_storage.step_solution_data.StepSolutionData"><tt class="xref py py-class docutils literal"><span class="pre">StepSolutionData</span></tt></a>) &#8211; <em>(optional)</em>
+In case a single unnamed argument is given, this is required to be an instance of
+<a class="reference internal" href="step_solution_data.html#pypint.solutions.data_storage.step_solution_data.StepSolutionData" title="pypint.solutions.data_storage.step_solution_data.StepSolutionData"><tt class="xref py py-class docutils literal"><span class="pre">StepSolutionData</span></tt></a>.
+If no named argument is given, the following two parameters are <em>not</em> optional.</li>
+<li><strong>values</strong> (<tt class="xref py py-class docutils literal"><span class="pre">numpy.ndarray</span></tt>) &#8211; <em>(optional)</em>
+Solution values.
+Passed on to constructor of <a class="reference internal" href="step_solution_data.html#pypint.solutions.data_storage.step_solution_data.StepSolutionData" title="pypint.solutions.data_storage.step_solution_data.StepSolutionData"><tt class="xref py py-class docutils literal"><span class="pre">StepSolutionData</span></tt></a>.</li>
+<li><strong>time_point</strong> (<tt class="xref py py-class docutils literal"><span class="pre">float</span></tt>) &#8211; <em>(optional)</em>
+Time point of the solution.
+Passed on to constructor of <a class="reference internal" href="step_solution_data.html#pypint.solutions.data_storage.step_solution_data.StepSolutionData" title="pypint.solutions.data_storage.step_solution_data.StepSolutionData"><tt class="xref py py-class docutils literal"><span class="pre">StepSolutionData</span></tt></a>.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first"><tt class="xref py py-exc docutils literal"><span class="pre">ValueError</span></tt> &#8211;</p>
+<ul class="last simple">
+<li>if construction of <a class="reference internal" href="step_solution_data.html#pypint.solutions.data_storage.step_solution_data.StepSolutionData" title="pypint.solutions.data_storage.step_solution_data.StepSolutionData"><tt class="xref py py-class docutils literal"><span class="pre">StepSolutionData</span></tt></a> fails</li>
+<li>if internal consistency check fails (see <a class="reference internal" href="#pypint.solutions.data_storage.trajectory_solution_data.TrajectorySolutionData._check_consistency" title="pypint.solutions.data_storage.trajectory_solution_data.TrajectorySolutionData._check_consistency"><tt class="xref py py-meth docutils literal"><span class="pre">_check_consistency()</span></tt></a>)</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="pypint.solutions.data_storage.trajectory_solution_data.TrajectorySolutionData.append">
+<tt class="descname">append</tt><span class="sig-paren">(</span><em>p_object</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/pypint/solutions/data_storage/trajectory_solution_data.html#TrajectorySolutionData.append"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypint.solutions.data_storage.trajectory_solution_data.TrajectorySolutionData.append" title="Permalink to this definition">¶</a></dt>
+<dd><div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><a class="reference internal" href="#pypint.solutions.data_storage.trajectory_solution_data.TrajectorySolutionData.add_solution_data" title="pypint.solutions.data_storage.trajectory_solution_data.TrajectorySolutionData.add_solution_data"><tt class="xref py py-meth docutils literal"><span class="pre">add_solution_data()</span></tt></a> : with one unnamed parameter</p>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="pypint.solutions.data_storage.trajectory_solution_data.TrajectorySolutionData.finalize">
+<tt class="descname">finalize</tt><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/pypint/solutions/data_storage/trajectory_solution_data.html#TrajectorySolutionData.finalize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypint.solutions.data_storage.trajectory_solution_data.TrajectorySolutionData.finalize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Locks this storage data instance.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><tt class="xref py py-exc docutils literal"><span class="pre">ValueError</span></tt> &#8211; 
+If it has already been locked.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pypint.solutions.data_storage.trajectory_solution_data.TrajectorySolutionData.__weakref__">
+<tt class="descname">__weakref__</tt><a class="headerlink" href="#pypint.solutions.data_storage.trajectory_solution_data.TrajectorySolutionData.__weakref__" title="Permalink to this definition">¶</a></dt>
+<dd><p>list of weak references to the object (if defined)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pypint.solutions.data_storage.trajectory_solution_data.TrajectorySolutionData.data">
+<tt class="descname">data</tt><a class="reference internal" href="../../../_modules/pypint/solutions/data_storage/trajectory_solution_data.html#TrajectorySolutionData.data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypint.solutions.data_storage.trajectory_solution_data.TrajectorySolutionData.data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read-only accessor for the stored solution objects.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>data</strong></td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><tt class="xref py py-class docutils literal"><span class="pre">numpy.ndarray</span></tt> of <a class="reference internal" href="step_solution_data.html#pypint.solutions.data_storage.step_solution_data.StepSolutionData" title="pypint.solutions.data_storage.step_solution_data.StepSolutionData"><tt class="xref py py-class docutils literal"><span class="pre">StepSolutionData</span></tt></a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pypint.solutions.data_storage.trajectory_solution_data.TrajectorySolutionData.dim">
+<tt class="descname">dim</tt><a class="reference internal" href="../../../_modules/pypint/solutions/data_storage/trajectory_solution_data.html#TrajectorySolutionData.dim"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypint.solutions.data_storage.trajectory_solution_data.TrajectorySolutionData.dim" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read-only accessor for the spacial dimension of the solution data values.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pypint.solutions.data_storage.trajectory_solution_data.TrajectorySolutionData.errors">
+<tt class="descname">errors</tt><a class="reference internal" href="../../../_modules/pypint/solutions/data_storage/trajectory_solution_data.html#TrajectorySolutionData.errors"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypint.solutions.data_storage.trajectory_solution_data.TrajectorySolutionData.errors" title="Permalink to this definition">¶</a></dt>
+<dd><p>Accessor for the errors of stored solution data.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>error</strong></td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><tt class="xref py py-class docutils literal"><span class="pre">numpy.ndarray</span></tt> of <a class="reference internal" href="../../solvers/diagnosis/error.html#pypint.solvers.diagnosis.error.Error" title="pypint.solvers.diagnosis.error.Error"><tt class="xref py py-class docutils literal"><span class="pre">Error</span></tt></a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pypint.solutions.data_storage.trajectory_solution_data.TrajectorySolutionData.finalized">
+<tt class="descname">finalized</tt><a class="reference internal" href="../../../_modules/pypint/solutions/data_storage/trajectory_solution_data.html#TrajectorySolutionData.finalized"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypint.solutions.data_storage.trajectory_solution_data.TrajectorySolutionData.finalized" title="Permalink to this definition">¶</a></dt>
+<dd><p>Accessor for the lock state.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>finilized</strong> &#8211;
+<tt class="xref py py-class docutils literal"><span class="pre">True</span></tt> if it has been finalized before, <tt class="xref py py-class docutils literal"><span class="pre">False</span></tt> otherwise</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><tt class="xref py py-class docutils literal"><span class="pre">bool</span></tt></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pypint.solutions.data_storage.trajectory_solution_data.TrajectorySolutionData.numeric_type">
+<tt class="descname">numeric_type</tt><a class="reference internal" href="../../../_modules/pypint/solutions/data_storage/trajectory_solution_data.html#TrajectorySolutionData.numeric_type"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypint.solutions.data_storage.trajectory_solution_data.TrajectorySolutionData.numeric_type" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read-only accessor for the numeric type of the solution data values.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pypint.solutions.data_storage.trajectory_solution_data.TrajectorySolutionData.residuals">
+<tt class="descname">residuals</tt><a class="reference internal" href="../../../_modules/pypint/solutions/data_storage/trajectory_solution_data.html#TrajectorySolutionData.residuals"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypint.solutions.data_storage.trajectory_solution_data.TrajectorySolutionData.residuals" title="Permalink to this definition">¶</a></dt>
+<dd><p>Accessor for the residuals of stored solution data.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>error</strong></td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><tt class="xref py py-class docutils literal"><span class="pre">numpy.ndarray</span></tt> of <a class="reference internal" href="../../solvers/diagnosis/residual.html#pypint.solvers.diagnosis.residual.Residual" title="pypint.solvers.diagnosis.residual.Residual"><tt class="xref py py-class docutils literal"><span class="pre">Residual</span></tt></a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pypint.solutions.data_storage.trajectory_solution_data.TrajectorySolutionData.time_points">
+<tt class="descname">time_points</tt><a class="reference internal" href="../../../_modules/pypint/solutions/data_storage/trajectory_solution_data.html#TrajectorySolutionData.time_points"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypint.solutions.data_storage.trajectory_solution_data.TrajectorySolutionData.time_points" title="Permalink to this definition">¶</a></dt>
+<dd><p>Accessor for the time points of stored solution data.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>error</strong></td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><tt class="xref py py-class docutils literal"><span class="pre">numpy.ndarray</span></tt> of <tt class="xref py py-class docutils literal"><span class="pre">float</span></tt></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pypint.solutions.data_storage.trajectory_solution_data.TrajectorySolutionData.values">
+<tt class="descname">values</tt><a class="reference internal" href="../../../_modules/pypint/solutions/data_storage/trajectory_solution_data.html#TrajectorySolutionData.values"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypint.solutions.data_storage.trajectory_solution_data.TrajectorySolutionData.values" title="Permalink to this definition">¶</a></dt>
+<dd><p>Accessor for the solution values of stored solution data.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>error</strong></td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><tt class="xref py py-class docutils literal"><span class="pre">numpy.ndarray</span></tt> of <tt class="xref py py-class docutils literal"><span class="pre">numeric_type</span></tt></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="../i_solution.html" class="btn btn-neutral float-right" title="Solution Interface (i_solution)"/>Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="step_solution_data.html" class="btn btn-neutral" title="Step Solution Data (step_solution_data)"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+      &copy; 2013-2014,
+        <a href="http://www.fz-juelich.de/ias/jsc/EN/Research/Algorithms/ParallelInTimeIntegration/_node.html">Parallel-in-Time Research Group</a>
+        at the
+        <a href="http://www.fz-juelich.de/ias/jsc/EN/Home/home_node.html">Jülich Supercomputing Centre</a><br />
+    </p>
+  </div>
+
+  <a href="https://github.com/snide/sphinx_rtd_theme">Sphinx theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../',
+            VERSION:'0.0.4-dev-0-g4dad7c2',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../_static/doctools.js"></script>
+      <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

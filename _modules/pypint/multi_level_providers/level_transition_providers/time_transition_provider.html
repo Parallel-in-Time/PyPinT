@@ -1,0 +1,346 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>pypint.multi_level_providers.level_transition_providers.time_transition_provider &mdash; PyPinT 0.0.4-dev-0-g4dad7c2 documentation</title>
+  
+
+  
+  
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+        <link rel="author" title="About these documents"
+              href="../../../../about.html"/>
+    <link rel="top" title="PyPinT 0.0.4-dev-0-g4dad7c2 documentation" href="../../../../index.html"/>
+        <link rel="up" title="Module code" href="../../../index.html"/> 
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-nav-search">
+        <a href="../../../../index.html" class="fa fa-home"> PyPinT</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+        
+        
+            <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../about.html">About</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../user/rationale.html">Rationale</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../../user/rationale.html#objectives">Objectives</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../user/rationale.html#goals">Goals</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../user/rationale.html#scope">Scope</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../user/requirements.html">Requirements</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../user/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../user/basic_usage.html">Basic Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api/examples/package.html">Examples</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/examples/problems/package.html">Example Problems (<tt class="docutils literal"><span class="pre">problems</span></tt>)</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../user/theory.html">Mathematical Theory</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../../user/bibliography.html">Bibliography</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../history.html">History</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../../history.html#release-0-0-3-04-04-2014">Release 0.0.3 (04/04/2014)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../history.html#release-0-0-2-04-03-2014">Release 0.0.2 (04/03/2014)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../history.html#release-0-0-1-2013-11-26">Release 0.0.1 (2013-11-26)</a></li>
+</ul>
+</li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../development/coding_style.html">Coding Style</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../development/documentation.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../development/contributing.html">Contributing</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../../development/contributing.html#branching-and-tagging-model">Branching and Tagging Model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../development/contributing.html#commit-messages">Commit Messages</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../development/contributing.html#how-to-implement-a-new-feature">How to Implement a New Feature?</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../development/testing.html">Testing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../development/todo.html">ToDos</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../../development/todo.html#global">Global</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../development/todo.html#in-source">In Source</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api/package.html">API Reference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/package.html#communicators">Communicators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/package.html#integrators">Integrators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/package.html#multi-level-providers">Multi Level Providers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/package.html#plugins">Plugins</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/package.html#problems">Problems</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/package.html#solutions">Solutions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/package.html#solvers">Solvers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/package.html#utilities">Utilities</a></li>
+</ul>
+</li>
+</ul>
+
+        
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../../../../index.html">PyPinT</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../../../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="../../../index.html">Module code</a> &raquo;</li>
+      
+    <li>pypint.multi_level_providers.level_transition_providers.time_transition_provider</li>
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main">
+            
+  <h1>Source code for pypint.multi_level_providers.level_transition_providers.time_transition_provider</h1><div class="highlight"><pre>
+<span class="c"># coding=utf-8</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">.. moduleauthor:: Torbjörn Klatt &lt;t.klatt@fz-juelich.de&gt;</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">math</span> <span class="kn">import</span> <span class="n">fabs</span>
+
+<span class="kn">from</span> <span class="nn">pypint.multi_level_providers.level_transition_providers.i_level_transition_provider</span> <span class="kn">import</span> <span class="n">ILevelTransitionProvider</span>
+<span class="kn">from</span> <span class="nn">pypint.utilities.math</span> <span class="kn">import</span> <span class="n">lagrange_polynome</span>
+<span class="kn">from</span> <span class="nn">pypint.utilities</span> <span class="kn">import</span> <span class="n">assert_named_argument</span><span class="p">,</span> <span class="n">assert_condition</span>
+<span class="kn">from</span> <span class="nn">pypint.utilities.logging</span> <span class="kn">import</span> <span class="n">LOG</span>
+
+
+<div class="viewcode-block" id="TimeTransitionProvider"><a class="viewcode-back" href="../../../../api/multi_level_providers/level_transition_providers/time_transition_provider.html#pypint.multi_level_providers.level_transition_providers.time_transition_provider.TimeTransitionProvider">[docs]</a><span class="k">class</span> <span class="nc">TimeTransitionProvider</span><span class="p">(</span><span class="n">ILevelTransitionProvider</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Level Transition Provider between two time levels</span>
+
+<span class="sd">    Provides prolongation and restringation between two time levels based on interpolation.</span>
+
+<span class="sd">    In case of nested notes (i.e. fine level with 5 Gauss-Lobatto nodes, coarse level with 3 Gauss-Lobatto nodes)</span>
+<span class="sd">    the restringation is a simple injection.</span>
+
+<span class="sd">    Prolongation is always done via plain interpolation.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="TimeTransitionProvider.__init__"><a class="viewcode-back" href="../../../../api/multi_level_providers/level_transition_providers/time_transition_provider.html#pypint.multi_level_providers.level_transition_providers.time_transition_provider.TimeTransitionProvider.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        fine_nodes : :py:class:`numpy.ndarray` of :py:class:`float`</span>
+<span class="sd">        coarse_nodes : :py:class:`numpy.ndarray` of :py:class:`float`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">TimeTransitionProvider</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="n">assert_named_argument</span><span class="p">(</span><span class="s">&#39;fine_nodes&#39;</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">descriptor</span><span class="o">=</span><span class="s">&#39;Fine Nodes&#39;</span><span class="p">,</span> <span class="n">checking_obj</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
+        <span class="n">assert_condition</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">kwargs</span><span class="p">[</span><span class="s">&#39;fine_nodes&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">,</span> <span class="ne">ValueError</span><span class="p">,</span>
+                         <span class="n">message</span><span class="o">=</span><span class="s">&quot;Fine Nodes must have a single dimension: NOT </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="n">kwargs</span><span class="p">[</span><span class="s">&#39;fine_nodes&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span>
+                         <span class="n">checking_obj</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
+
+        <span class="n">assert_named_argument</span><span class="p">(</span><span class="s">&#39;coarse_nodes&#39;</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">descriptor</span><span class="o">=</span><span class="s">&#39;Coarse Nodes&#39;</span><span class="p">,</span> <span class="n">checking_obj</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
+        <span class="n">assert_condition</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">kwargs</span><span class="p">[</span><span class="s">&#39;coarse_nodes&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">,</span> <span class="ne">ValueError</span><span class="p">,</span>
+                         <span class="n">message</span><span class="o">=</span><span class="s">&quot;Coarse Nodes must have a single dimension: NOT </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="n">kwargs</span><span class="p">[</span><span class="s">&#39;coarse_nodes&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span>
+                         <span class="n">checking_obj</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
+
+        <span class="n">assert_condition</span><span class="p">(</span><span class="n">kwargs</span><span class="p">[</span><span class="s">&#39;fine_nodes&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">size</span> <span class="o">&gt;=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s">&#39;coarse_nodes&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">size</span><span class="p">,</span> <span class="ne">ValueError</span><span class="p">,</span>
+                         <span class="n">message</span><span class="o">=</span><span class="s">&quot;There must be more or at least as many Fine Nodes than Coarse Nodes: NOT </span><span class="si">%d</span><span class="s"> &lt; </span><span class="si">%d</span><span class="s">&quot;</span>
+                                 <span class="o">%</span> <span class="p">(</span><span class="n">kwargs</span><span class="p">[</span><span class="s">&#39;fine_nodes&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">size</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">[</span><span class="s">&#39;coarse_nodes&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">size</span><span class="p">),</span>
+                         <span class="n">checking_obj</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_n_fine_points</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s">&#39;fine_nodes&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">size</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_fine_nodes</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s">&#39;fine_nodes&#39;</span><span class="p">]</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_n_coarse_points</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s">&#39;coarse_nodes&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">size</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_coarse_nodes</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s">&#39;coarse_nodes&#39;</span><span class="p">]</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_weight_scale</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s">&#39;weight_scale&#39;</span><span class="p">]</span> <span class="k">if</span> <span class="s">&#39;weight_scale&#39;</span> <span class="ow">in</span> <span class="n">kwargs</span> <span class="k">else</span> <span class="mi">2</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_compute_prolongation_matrix</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_compute_restringation_matrix</span><span class="p">()</span>
+</div>
+    <span class="k">def</span> <span class="nf">prolongate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">coarse_data</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">TimeTransitionProvider</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">prolongate</span><span class="p">(</span><span class="n">coarse_data</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">tensordot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">prolongation_operator</span><span class="p">,</span> <span class="n">coarse_data</span><span class="p">,</span> <span class="n">axes</span><span class="o">=</span><span class="p">([</span><span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+        <span class="c"># return np.dot(self.prolongation_operator, coarse_data)</span>
+
+    <span class="k">def</span> <span class="nf">restringate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fine_data</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">TimeTransitionProvider</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">restringate</span><span class="p">(</span><span class="n">fine_data</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">tensordot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">restringation_operator</span><span class="p">,</span> <span class="n">fine_data</span><span class="p">,</span> <span class="n">axes</span><span class="o">=</span><span class="p">([</span><span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+        <span class="c"># return np.dot(self.restringation_operator, fine_data)</span>
+
+    <span class="k">def</span> <span class="nf">_compute_prolongation_matrix</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_prolongation_operator</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">num_fine_points</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_coarse_points</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_fine_points</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_coarse_points</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_prolongation_operator</span><span class="p">[</span><span class="n">k</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">lagrange_polynome</span><span class="p">(</span><span class="n">j</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_coarse_nodes</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fine_nodes</span><span class="p">[</span><span class="n">k</span><span class="p">])</span>
+        <span class="c">#     self._prolongation_operator[k] = self._scaled_interpolation_weights(from_points=self._coarse_nodes,</span>
+        <span class="c">#                                                                         to_points=self._fine_nodes,</span>
+        <span class="c">#                                                                         index=k)</span>
+        <span class="c"># LOG.debug(&quot;Prolongation Operator: %s&quot; % self._prolongation_operator)</span>
+
+    <span class="k">def</span> <span class="nf">_compute_restringation_matrix</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_restringation_operator</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">num_coarse_points</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_fine_points</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_coarse_points</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_fine_points</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_restringation_operator</span><span class="p">[</span><span class="n">k</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">lagrange_polynome</span><span class="p">(</span><span class="n">j</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fine_nodes</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_coarse_nodes</span><span class="p">[</span><span class="n">k</span><span class="p">])</span>
+                <span class="c">#     self._restringation_operator[k] = self._scaled_interpolation_weights(from_points=self._fine_nodes,</span>
+                <span class="c">#                                                                          to_points=self._coarse_nodes,</span>
+                <span class="c">#                                                                          index=k)</span>
+        <span class="c"># LOG.debug(&quot;Restringation Operator: %s&quot; % self._restringation_operator)</span>
+
+<div class="viewcode-block" id="TimeTransitionProvider._scaled_interpolation_weights"><a class="viewcode-back" href="../../../../api/multi_level_providers/level_transition_providers/time_transition_provider.html#pypint.multi_level_providers.level_transition_providers.time_transition_provider.TimeTransitionProvider._scaled_interpolation_weights">[docs]</a>    <span class="k">def</span> <span class="nf">_scaled_interpolation_weights</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">from_points</span><span class="p">,</span> <span class="n">to_points</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;non-proofen custom integration method</span>
+
+<span class="sd">        This computes the integration weights based on their relative distance.</span>
+<span class="sd">        The distance contributes squared to weaken nodes further away in contrast to nodes close by.</span>
+
+<span class="sd">        For two given sets of nodes :math:`\\vec{x}^C \\in \\mathbb{R}^n` and :math:`\\vec{x}^F \\in \\mathbb{R}^N`</span>
+<span class="sd">        with :math:`n &lt; N` the interpolation weights for the interpolation from :math:`\\vec{x}^C` onto</span>
+<span class="sd">        :math:`\\vec{x}^F` at a target node :math:`x^F \\in \\vec{x}^F`:</span>
+
+<span class="sd">        .. math::</span>
+
+<span class="sd">            \\tilde{\\omega}_i = \\left( 1 - \\frac{|x^F - x_i^C|}{|x_0 - x_N|} \\right) ^ 2</span>
+
+<span class="sd">        To counter unwanted scaling effects, the computed weights are scaled to sum up to :math:`1`:</span>
+
+<span class="sd">        .. math::</span>
+
+<span class="sd">            \\vec{\\omega} = \\frac{\\tilde{\\omega}}{\\sum_{i=1}^n \\tilde{\\omega}_i}</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        from_points : :py:class:`numpy.ndarray` of :math:`n` :py:class:`float`</span>
+<span class="sd">            nodes to interpolate from; the Lagrange polynome is based on these</span>
+<span class="sd">        to_points : :py:class:`numpy.ndarray` of :math:`N` :py:class:`float`</span>
+<span class="sd">            nodes to interpolate onto; the Lagrange polynome is evaluated at one of these</span>
+<span class="sd">        index : :py:class:`float`</span>
+<span class="sd">            index of the target node to evaluate the Lagrange polynome at</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        value : :py:class:`float`</span>
+<span class="sd">            interpolation weight for given nodes</span>
+
+<span class="sd">        Notes</span>
+<span class="sd">        -----</span>
+<span class="sd">        Please be aware, that this method has not been mathematically or numerically tested and validated.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">_weights</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">from_points</span><span class="o">.</span><span class="n">size</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+        <span class="n">_width</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">to_points</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">to_points</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">from_points</span><span class="o">.</span><span class="n">size</span><span class="p">):</span>
+            <span class="n">_weights</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="nb">pow</span><span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="nb">abs</span><span class="p">(</span><span class="n">to_points</span><span class="p">[</span><span class="n">index</span><span class="p">]</span> <span class="o">-</span> <span class="n">from_points</span><span class="p">[</span><span class="n">j</span><span class="p">])</span> <span class="o">/</span> <span class="n">_width</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_weight_scale</span><span class="p">)</span>
+        <span class="n">_weights</span> <span class="o">/=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">_weights</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">_weights</span>
+</div>
+    <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s">&quot;TimeTransitionProvider&lt;0x</span><span class="si">%x</span><span class="s">&gt;(fine_nodes=</span><span class="si">%d</span><span class="s">, coarse_nodes=</span><span class="si">%d</span><span class="s">)&quot;</span> \
+               <span class="o">%</span> <span class="p">(</span><span class="nb">id</span><span class="p">(</span><span class="bp">self</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">_n_fine_points</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_n_coarse_points</span><span class="p">)</span></div>
+</pre></div>
+
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+      &copy; 2013-2014,
+        <a href="http://www.fz-juelich.de/ias/jsc/EN/Research/Algorithms/ParallelInTimeIntegration/_node.html">Parallel-in-Time Research Group</a>
+        at the
+        <a href="http://www.fz-juelich.de/ias/jsc/EN/Home/home_node.html">Jülich Supercomputing Centre</a><br />
+    </p>
+  </div>
+
+  <a href="https://github.com/snide/sphinx_rtd_theme">Sphinx theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../../',
+            VERSION:'0.0.4-dev-0-g4dad7c2',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+      <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

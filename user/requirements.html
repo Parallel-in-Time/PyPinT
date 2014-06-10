@@ -1,0 +1,275 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Requirements &mdash; PyPinT 0.0.4-dev-0-g4dad7c2 documentation</title>
+  
+
+  
+  
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+        <link rel="author" title="About these documents"
+              href="../about.html"/>
+    <link rel="top" title="PyPinT 0.0.4-dev-0-g4dad7c2 documentation" href="../index.html"/>
+        <link rel="next" title="Installation" href="installation.html"/>
+        <link rel="prev" title="Rationale" href="rationale.html"/> 
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-nav-search">
+        <a href="../index.html" class="fa fa-home"> PyPinT</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+        
+        
+            <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../about.html">About</a></li>
+<li class="toctree-l1"><a class="reference internal" href="rationale.html">Rationale</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="rationale.html#objectives">Objectives</a></li>
+<li class="toctree-l2"><a class="reference internal" href="rationale.html#goals">Goals</a></li>
+<li class="toctree-l2"><a class="reference internal" href="rationale.html#scope">Scope</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="current reference internal" href="">Requirements</a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="basic_usage.html">Basic Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/examples/package.html">Examples</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../api/examples/problems/package.html">Example Problems (<tt class="docutils literal"><span class="pre">problems</span></tt>)</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="theory.html">Mathematical Theory</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="bibliography.html">Bibliography</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../history.html">History</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../history.html#release-0-0-3-04-04-2014">Release 0.0.3 (04/04/2014)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../history.html#release-0-0-2-04-03-2014">Release 0.0.2 (04/03/2014)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../history.html#release-0-0-1-2013-11-26">Release 0.0.1 (2013-11-26)</a></li>
+</ul>
+</li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../development/coding_style.html">Coding Style</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../development/documentation.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../development/contributing.html">Contributing</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../development/contributing.html#branching-and-tagging-model">Branching and Tagging Model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../development/contributing.html#commit-messages">Commit Messages</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../development/contributing.html#how-to-implement-a-new-feature">How to Implement a New Feature?</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../development/testing.html">Testing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../development/todo.html">ToDos</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../development/todo.html#global">Global</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../development/todo.html#in-source">In Source</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../api/package.html">API Reference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../api/package.html#communicators">Communicators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/package.html#integrators">Integrators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/package.html#multi-level-providers">Multi Level Providers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/package.html#plugins">Plugins</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/package.html#problems">Problems</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/package.html#solutions">Solutions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/package.html#solvers">Solvers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/package.html#utilities">Utilities</a></li>
+</ul>
+</li>
+</ul>
+
+        
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../index.html">PyPinT</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../index.html">Docs</a> &raquo;</li>
+      
+    <li>Requirements</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          <a href="../_sources/user/requirements.txt" rel="nofollow"> View page source</a>
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main">
+            
+  <div class="section" id="requirements">
+<h1>Requirements<a class="headerlink" href="#requirements" title="Permalink to this headline">¶</a></h1>
+<p>It is advised to use <a class="reference external" href="https://pypi.python.org/pypi/setuptools">setuptools</a> via the provided <tt class="docutils literal"><span class="pre">setup.py</span></tt> file for pulling in the required dependencies.
+The dependencies for building the documentation and running the test coverage analysis, two requirements files to be
+passed to <tt class="docutils literal"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">-r</span></tt> are provided: <tt class="docutils literal"><span class="pre">test_requirements.txt</span></tt> and <tt class="docutils literal"><span class="pre">docu_requirements.txt</span></tt>.</p>
+<dl class="docutils">
+<dt><a class="reference external" href="http://python.org/">Python</a> (obviously, &gt;= 3.3)</dt>
+<dd><em>PyPinT</em> has been tested with Python version 3.3.x and 3.4.0.
+Python 3.2 does not have <tt class="xref py py-mod docutils literal"><span class="pre">unittest.mock</span></tt> included <a class="footnote-reference" href="#id3" id="id1">[1]</a> and do not support Unicode literals of the form
+<tt class="docutils literal"><span class="pre">u'text</span></tt> (cf. <a class="reference external" href="http://www.python.org/dev/peps/pep-0414">PEP414</a>), which is used by <a class="reference external" href="https://pythonhosted.org/Logbook/index.html">Logbook</a>, thus Python 3.2 is not supported.
+All 2.x versions are known to not be compatible. This is on purpose. <a class="footnote-reference" href="#id4" id="id2">[2]</a></dd>
+<dt><a class="reference external" href="https://pypi.python.org/pypi/enum34">enum34</a> (required if Python &lt; 3.4)</dt>
+<dd>Enumeration types have been introduced by Python 3.4 and are backported as this package.</dd>
+<dt><a class="reference external" href="http://numpy.scipy.org/">NumPy</a> (required, &gt;= 1.6.1)</dt>
+<dd>Required for its arrays</dd>
+<dt><a class="reference external" href="http://www.scipy.org/scipylib/index.html">SciPy</a> (required, &gt;= 0.9.0)</dt>
+<dd>Required for its linear algebra module</dd>
+<dt><a class="reference external" href="http://matplotlib.org/">matplotlib</a> (required, &gt;= 1.2.0)</dt>
+<dd>Required for the plotters</dd>
+<dt><a class="reference external" href="https://github.com/DiffSK/configobj">configobj</a> (required, &gt;=5.0.2)</dt>
+<dd>Required for dealing with configuration files</dd>
+<dt><a class="reference external" href="https://pythonhosted.org/Logbook/index.html">Logbook</a> (required, &gt;= 0.6.0)</dt>
+<dd>The logging output is handeled via <em>LogBook</em>.</dd>
+<dt><a class="reference external" href="http://sphinx-doc.org/">Sphinx</a> (optional, &gt;= 1.3a0)</dt>
+<dd><p class="first">Required to generate the documentation.
+See <a class="reference internal" href="../development/documentation.html"><em>Documentation</em></a> for further details.</p>
+<dl class="last docutils">
+<dt><a class="reference external" href="https://github.com/snide/sphinx_rtd_theme">sphinx-rtd-theme</a> (required)</dt>
+<dd>Required for the layout and look of the generated HTML documentation.</dd>
+</dl>
+</dd>
+<dt><a class="reference external" href="https://nose.readthedocs.org/en/latest/">nose</a> (optional, &gt;= 1.3.1)</dt>
+<dd><p class="first">Required for running the unit test suite.
+See <a class="reference internal" href="../development/testing.html"><em>Testing</em></a> for further details.</p>
+<dl class="last docutils">
+<dt><a class="reference external" href="https://pypi.python.org/pypi/coverage">coverage</a> (strongly suggested)</dt>
+<dd>For test coverage analysis.</dd>
+<dt><a class="reference external" href="https://pypi.python.org/pypi/nose-cover3">nose-cover3</a> (required if <em>coverage</em> is installed)</dt>
+<dd>Plugin for nose to generate test coverage.</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Footnotes</p>
+<table class="docutils footnote" frame="void" id="id3" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id1">[1]</a></td><td><a class="reference external" href="https://docs.python.org/3.3/library/unittest.mock.html#module-unittest.mock">https://docs.python.org/3.3/library/unittest.mock.html#module-unittest.mock</a></td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="id4" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id2">[2]</a></td><td>Blame your system&#8217;s administrator in case you don&#8217;t have any Python 3 available.</td></tr>
+</tbody>
+</table>
+</div>
+
+
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="installation.html" class="btn btn-neutral float-right" title="Installation"/>Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="rationale.html" class="btn btn-neutral" title="Rationale"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+      &copy; 2013-2014,
+        <a href="http://www.fz-juelich.de/ias/jsc/EN/Research/Algorithms/ParallelInTimeIntegration/_node.html">Parallel-in-Time Research Group</a>
+        at the
+        <a href="http://www.fz-juelich.de/ias/jsc/EN/Home/home_node.html">Jülich Supercomputing Centre</a><br />
+    </p>
+  </div>
+
+  <a href="https://github.com/snide/sphinx_rtd_theme">Sphinx theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'0.0.4-dev-0-g4dad7c2',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+      <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

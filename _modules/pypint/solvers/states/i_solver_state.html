@@ -1,0 +1,1232 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>pypint.solvers.states.i_solver_state &mdash; PyPinT 0.0.4-dev-0-g4dad7c2 documentation</title>
+  
+
+  
+  
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+        <link rel="author" title="About these documents"
+              href="../../../../about.html"/>
+    <link rel="top" title="PyPinT 0.0.4-dev-0-g4dad7c2 documentation" href="../../../../index.html"/>
+        <link rel="up" title="Module code" href="../../../index.html"/> 
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-nav-search">
+        <a href="../../../../index.html" class="fa fa-home"> PyPinT</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+        
+        
+            <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../about.html">About</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../user/rationale.html">Rationale</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../../user/rationale.html#objectives">Objectives</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../user/rationale.html#goals">Goals</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../user/rationale.html#scope">Scope</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../user/requirements.html">Requirements</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../user/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../user/basic_usage.html">Basic Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api/examples/package.html">Examples</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/examples/problems/package.html">Example Problems (<tt class="docutils literal"><span class="pre">problems</span></tt>)</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../user/theory.html">Mathematical Theory</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../../user/bibliography.html">Bibliography</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../history.html">History</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../../history.html#release-0-0-3-04-04-2014">Release 0.0.3 (04/04/2014)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../history.html#release-0-0-2-04-03-2014">Release 0.0.2 (04/03/2014)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../history.html#release-0-0-1-2013-11-26">Release 0.0.1 (2013-11-26)</a></li>
+</ul>
+</li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../development/coding_style.html">Coding Style</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../development/documentation.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../development/contributing.html">Contributing</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../../development/contributing.html#branching-and-tagging-model">Branching and Tagging Model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../development/contributing.html#commit-messages">Commit Messages</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../development/contributing.html#how-to-implement-a-new-feature">How to Implement a New Feature?</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../development/testing.html">Testing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../development/todo.html">ToDos</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../../development/todo.html#global">Global</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../development/todo.html#in-source">In Source</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api/package.html">API Reference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/package.html#communicators">Communicators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/package.html#integrators">Integrators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/package.html#multi-level-providers">Multi Level Providers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/package.html#plugins">Plugins</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/package.html#problems">Problems</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/package.html#solutions">Solutions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/package.html#solvers">Solvers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/package.html#utilities">Utilities</a></li>
+</ul>
+</li>
+</ul>
+
+        
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../../../../index.html">PyPinT</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../../../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="../../../index.html">Module code</a> &raquo;</li>
+      
+    <li>pypint.solvers.states.i_solver_state</li>
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main">
+            
+  <h1>Source code for pypint.solvers.states.i_solver_state</h1><div class="highlight"><pre>
+<span class="c"># coding=utf-8</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">.. moduleauthor:: Torbjörn Klatt &lt;t.kaltt@fz-juelich.de&gt;</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">deepcopy</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+
+<span class="kn">from</span> <span class="nn">pypint.solutions.data_storage</span> <span class="kn">import</span> <span class="n">StepSolutionData</span><span class="p">,</span> <span class="n">TrajectorySolutionData</span>
+<span class="kn">from</span> <span class="nn">pypint.solutions</span> <span class="kn">import</span> <span class="n">IterativeSolution</span>
+<span class="kn">from</span> <span class="nn">pypint.utilities</span> <span class="kn">import</span> <span class="n">func_name</span><span class="p">,</span> <span class="n">assert_condition</span><span class="p">,</span> <span class="n">assert_named_argument</span><span class="p">,</span> <span class="n">class_name</span>
+<span class="kn">from</span> <span class="nn">pypint.utilities.logging</span> <span class="kn">import</span> <span class="n">LOG</span>
+
+
+<div class="viewcode-block" id="IStepState"><a class="viewcode-back" href="../../../../api/solvers/states/i_solver_state.html#pypint.solvers.states.i_solver_state.IStepState">[docs]</a><span class="k">class</span> <span class="nc">IStepState</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;State of a single integration step</span>
+
+<span class="sd">    A integration step is a single point in time.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_solution</span> <span class="o">=</span> <span class="n">StepSolutionData</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_delta_tau</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_rhs</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_rhs_evaluated</span> <span class="o">=</span> <span class="bp">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_integral</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_integral_available</span> <span class="o">=</span> <span class="bp">False</span>
+
+<div class="viewcode-block" id="IStepState.done"><a class="viewcode-back" href="../../../../api/solvers/states/i_solver_state.html#pypint.solvers.states.i_solver_state.IStepState.done">[docs]</a>    <span class="k">def</span> <span class="nf">done</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Finalize this state and its included solution</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">solution</span><span class="o">.</span><span class="n">finalize</span><span class="p">()</span>
+</div>
+    <span class="k">def</span> <span class="nf">definalize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">solution</span><span class="o">.</span><span class="n">definalize</span><span class="p">()</span>
+
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="IStepState.solution"><a class="viewcode-back" href="../../../../api/solvers/states/i_solver_state.html#pypint.solvers.states.i_solver_state.IStepState.solution">[docs]</a>    <span class="k">def</span> <span class="nf">solution</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Proxy to the included solution of the state</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        solution : :py:class:`.StepSolutionData`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_solution</span>
+</div>
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">value</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Proxy for the solution value</span>
+
+<span class="sd">        On setting, the right hand side evaluation (:py:attr:`.rhs`) gets reset.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_solution</span><span class="o">.</span><span class="n">value</span>
+
+    <span class="nd">@value.setter</span>
+<div class="viewcode-block" id="IStepState.value"><a class="viewcode-back" href="../../../../api/solvers/states/i_solver_state.html#pypint.solvers.states.i_solver_state.IStepState.value">[docs]</a>    <span class="k">def</span> <span class="nf">value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_solution</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">value</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_rhs_evaluated</span> <span class="o">=</span> <span class="bp">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_integral_available</span> <span class="o">=</span> <span class="bp">False</span>
+</div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="IStepState.time_point"><a class="viewcode-back" href="../../../../api/solvers/states/i_solver_state.html#pypint.solvers.states.i_solver_state.IStepState.time_point">[docs]</a>    <span class="k">def</span> <span class="nf">time_point</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Proxy for :py:attr:`.StepSolutionData.time_point`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_solution</span><span class="o">.</span><span class="n">time_point</span>
+</div>
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">rhs_evaluated</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rhs_evaluated</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">rhs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rhs</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">rhs_evaluated</span> <span class="k">else</span> <span class="bp">None</span>
+
+    <span class="nd">@rhs.setter</span>
+    <span class="k">def</span> <span class="nf">rhs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rhs</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_rhs</span> <span class="o">=</span> <span class="n">rhs</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_rhs_evaluated</span> <span class="o">=</span> <span class="bp">True</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">integral_available</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_integral_available</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">integral</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Accessor for an integral value</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        integral : :py:class:`float`</span>
+<span class="sd">            (no consistency checks are done)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_integral</span>
+
+    <span class="nd">@integral.setter</span>
+<div class="viewcode-block" id="IStepState.integral"><a class="viewcode-back" href="../../../../api/solvers/states/i_solver_state.html#pypint.solvers.states.i_solver_state.IStepState.integral">[docs]</a>    <span class="k">def</span> <span class="nf">integral</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">integral</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_integral</span> <span class="o">=</span> <span class="n">integral</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_integral_available</span> <span class="o">=</span> <span class="bp">True</span>
+</div>
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">delta_tau</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Accessor for the width of the integration step</span>
+
+<span class="sd">        Usually the distance to the previous integration node.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        delta_tau : :py:class:`float`</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        delta_tau : :py:class:`float`</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        ValueError</span>
+<span class="sd">            if ``delta_tau`` is not non-zero positive</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_delta_tau</span>
+
+    <span class="nd">@delta_tau.setter</span>
+<div class="viewcode-block" id="IStepState.delta_tau"><a class="viewcode-back" href="../../../../api/solvers/states/i_solver_state.html#pypint.solvers.states.i_solver_state.IStepState.delta_tau">[docs]</a>    <span class="k">def</span> <span class="nf">delta_tau</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">delta_tau</span><span class="p">):</span>
+        <span class="n">assert_condition</span><span class="p">(</span><span class="n">delta_tau</span> <span class="o">&gt;</span> <span class="mf">0.0</span><span class="p">,</span> <span class="ne">ValueError</span><span class="p">,</span>
+                         <span class="n">message</span><span class="o">=</span><span class="s">&quot;Delta tau must be non-zero positive: NOT {}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">delta_tau</span><span class="p">),</span>
+                         <span class="n">checking_obj</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_delta_tau</span> <span class="o">=</span> <span class="n">delta_tau</span>
+</div>
+    <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s">&quot;{}(solution={})&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">class_name</span><span class="p">(</span><span class="bp">self</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">solution</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__copy__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">copy</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="o">.</span><span class="n">__new__</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="p">)</span>
+        <span class="n">copy</span><span class="o">.</span><span class="n">__dict__</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__dict__</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">copy</span>
+
+    <span class="k">def</span> <span class="nf">__deepcopy__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">memo</span><span class="p">):</span>
+        <span class="n">copy</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="o">.</span><span class="n">__new__</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="p">)</span>
+        <span class="n">memo</span><span class="p">[</span><span class="nb">id</span><span class="p">(</span><span class="bp">self</span><span class="p">)]</span> <span class="o">=</span> <span class="n">copy</span>
+        <span class="k">for</span> <span class="n">item</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__dict__</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="nb">setattr</span><span class="p">(</span><span class="n">copy</span><span class="p">,</span> <span class="n">item</span><span class="p">,</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">memo</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">copy</span>
+
+</div>
+<div class="viewcode-block" id="IStateIterator"><a class="viewcode-back" href="../../../../api/solvers/states/i_solver_state.html#pypint.solvers.states.i_solver_state.IStateIterator">[docs]</a><span class="k">class</span> <span class="nc">IStateIterator</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Interface for a sequence of states</span>
+
+<span class="sd">    :py:class:`.IStateIterator` models a sequence of states allowing for easy iteration over all containing states.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; from pypint.solutions.data_storage import TrajectorySolutionData</span>
+<span class="sd">    &gt;&gt;&gt; my_states = IStateIterator(solution_class=TrajectorySolutionData, element_type=IStepState, num_states=3)</span>
+<span class="sd">    &gt;&gt;&gt; len(my_states)</span>
+<span class="sd">    3</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    Please keep in mind, that only derived classes can alter the currently accesable state.</span>
+<span class="sd">    Such a class is :py:class:`.IStaticStateIterator`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="IStateIterator.__init__"><a class="viewcode-back" href="../../../../api/solvers/states/i_solver_state.html#pypint.solvers.states.i_solver_state.IStateIterator.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        solution_class : :py:class:`.ISolution`, :py:class:`.StepSolutionData` or :py:class:`.TrajectorySolutionData`</span>
+
+<span class="sd">        element_type : :py:class:`.IStepState` or :py:class:`.IStateItertor`</span>
+
+<span class="sd">        num_states : :py:class:`int`</span>
+<span class="sd">            *(optional)*</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        ValueError</span>
+<span class="sd">            if ``num_states`` is not a non-zero positive integer</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">assert_named_argument</span><span class="p">(</span><span class="s">&#39;solution_class&#39;</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">,</span> <span class="n">descriptor</span><span class="o">=</span><span class="s">&quot;Solution Type&quot;</span><span class="p">,</span> <span class="n">checking_obj</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
+        <span class="n">assert_named_argument</span><span class="p">(</span><span class="s">&#39;element_type&#39;</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">,</span> <span class="n">descriptor</span><span class="o">=</span><span class="s">&quot;Element Type&quot;</span><span class="p">,</span> <span class="n">checking_obj</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_solution</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s">&#39;solution_class&#39;</span><span class="p">]()</span>
+        <span class="k">del</span> <span class="n">kwargs</span><span class="p">[</span><span class="s">&#39;solution_class&#39;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_element_type</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s">&#39;element_type&#39;</span><span class="p">]</span>
+        <span class="k">del</span> <span class="n">kwargs</span><span class="p">[</span><span class="s">&#39;element_type&#39;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_states</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_current_index</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_finalized</span> <span class="o">=</span> <span class="bp">False</span>
+
+        <span class="k">if</span> <span class="s">&#39;num_states&#39;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+            <span class="n">_num_states</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s">&#39;num_states&#39;</span><span class="p">]</span>
+            <span class="n">assert_condition</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">_num_states</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span> <span class="ow">and</span> <span class="n">_num_states</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">,</span>
+                             <span class="ne">ValueError</span><span class="p">,</span> <span class="n">message</span><span class="o">=</span><span class="s">&quot;Number of states must be a non-zero positive integer: NOT {}&quot;</span>
+                                                 <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">_num_states</span><span class="p">),</span>
+                             <span class="n">checking_obj</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_states</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_element_type</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">_num_states</span><span class="p">)]</span>
+</div>
+<div class="viewcode-block" id="IStateIterator.finalize"><a class="viewcode-back" href="../../../../api/solvers/states/i_solver_state.html#pypint.solvers.states.i_solver_state.IStateIterator.finalize">[docs]</a>    <span class="k">def</span> <span class="nf">finalize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Finalize this sequence of states</span>
+
+<span class="sd">        This copies the solution data from all containing states to its own solution object and finalizes it.</span>
+<span class="sd">        As well, the :py:attr:`.current_index` is reset to zero.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        RuntimeError</span>
+<span class="sd">            if this state has already been finalized</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">assert_condition</span><span class="p">(</span><span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">finalized</span><span class="p">,</span> <span class="ne">RuntimeError</span><span class="p">,</span>
+                         <span class="n">message</span><span class="o">=</span><span class="s">&quot;This {} is already done.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">class_name</span><span class="p">(</span><span class="bp">self</span><span class="p">)),</span>
+                         <span class="n">checking_obj</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">_state</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">solution</span><span class="o">.</span><span class="n">add_solution_data</span><span class="p">(</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">_state</span><span class="o">.</span><span class="n">solution</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">solution</span><span class="o">.</span><span class="n">finalize</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_current_index</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_finalized</span> <span class="o">=</span> <span class="bp">True</span>
+</div>
+    <span class="k">def</span> <span class="nf">definalize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_finalized</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_solution</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">solution</span><span class="o">.</span><span class="n">__class__</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_finalized</span> <span class="o">=</span> <span class="bp">False</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">reset_to_start</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">LOG</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&quot;This {} wasn&#39;t finalized.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">class_name</span><span class="p">(</span><span class="bp">self</span><span class="p">)))</span>
+
+    <span class="k">def</span> <span class="nf">reset_to_start</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_current_index</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="IStateIterator.finalized"><a class="viewcode-back" href="../../../../api/solvers/states/i_solver_state.html#pypint.solvers.states.i_solver_state.IStateIterator.finalized">[docs]</a>    <span class="k">def</span> <span class="nf">finalized</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Read-only accessor to determine the finalized state of this state sequence</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        RuntimeError</span>
+<span class="sd">            if this object is finalized but its containing solution object is not</span>
+<span class="sd">            (though, this should never happen)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_finalized</span><span class="p">:</span>
+            <span class="c"># if this throws, something is really broken</span>
+            <span class="n">assert_condition</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">solution</span><span class="o">.</span><span class="n">finalized</span><span class="p">,</span> <span class="ne">RuntimeError</span><span class="p">,</span>
+                             <span class="n">message</span><span class="o">=</span><span class="s">&quot;State is finalized but not its solution object.&quot;</span><span class="p">,</span>
+                             <span class="n">checking_obj</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_finalized</span>
+</div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="IStateIterator.solution"><a class="viewcode-back" href="../../../../api/solvers/states/i_solver_state.html#pypint.solvers.states.i_solver_state.IStateIterator.solution">[docs]</a>    <span class="k">def</span> <span class="nf">solution</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Accessor for the containing solution object</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_solution</span>
+</div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="IStateIterator.current"><a class="viewcode-back" href="../../../../api/solvers/states/i_solver_state.html#pypint.solvers.states.i_solver_state.IStateIterator.current">[docs]</a>    <span class="k">def</span> <span class="nf">current</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Accessor to the current state of this sequence</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">current_index</span><span class="p">]</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_index</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="k">else</span> <span class="bp">None</span>
+</div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="IStateIterator.current_index"><a class="viewcode-back" href="../../../../api/solvers/states/i_solver_state.html#pypint.solvers.states.i_solver_state.IStateIterator.current_index">[docs]</a>    <span class="k">def</span> <span class="nf">current_index</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Index of the current state of this sequence</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_current_index</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">_current_index</span> <span class="k">else</span> <span class="bp">None</span>
+</div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="IStateIterator.previous"><a class="viewcode-back" href="../../../../api/solvers/states/i_solver_state.html#pypint.solvers.states.i_solver_state.IStateIterator.previous">[docs]</a>    <span class="k">def</span> <span class="nf">previous</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Accessor to the previous state of this sequence</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        previous : :py:class:`.IStepState`, :py:class:`.IStateIterator` or :py:class:`None`</span>
+<span class="sd">            :py:class:`None` if :py:attr:`.previous_index` returns :py:class:`None`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">previous_index</span><span class="p">]</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">previous_index</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="k">else</span> <span class="bp">None</span>
+</div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="IStateIterator.previous_index"><a class="viewcode-back" href="../../../../api/solvers/states/i_solver_state.html#pypint.solvers.states.i_solver_state.IStateIterator.previous_index">[docs]</a>    <span class="k">def</span> <span class="nf">previous_index</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Index of the previous state of this sequence</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        previous_index : :py:class:`int` or :py:class:`None`</span>
+<span class="sd">            :py:class:`None` if no previous state is available, i.e. if :py:attr:`.current_index` is 0</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_index</span> <span class="o">-</span> <span class="mi">1</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_index</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_index</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="bp">None</span>
+</div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="IStateIterator.first"><a class="viewcode-back" href="../../../../api/solvers/states/i_solver_state.html#pypint.solvers.states.i_solver_state.IStateIterator.first">[docs]</a>    <span class="k">def</span> <span class="nf">first</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Accessor to the first state of this sequence</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        first : :py:class:`None`</span>
+<span class="sd">            if :py:attr:`.first_index` returns :py:class:`None`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">first_index</span><span class="p">]</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">first_index</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="k">else</span> <span class="bp">None</span>
+</div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="IStateIterator.first_index"><a class="viewcode-back" href="../../../../api/solvers/states/i_solver_state.html#pypint.solvers.states.i_solver_state.IStateIterator.first_index">[docs]</a>    <span class="k">def</span> <span class="nf">first_index</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Index of the first state of this seuqence</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        first_index : ``0`` or :py:class:`None`</span>
+<span class="sd">            :py:class:`None` is returned, if there are no states in this sequence</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="mi">0</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="bp">None</span>
+</div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="IStateIterator.last"><a class="viewcode-back" href="../../../../api/solvers/states/i_solver_state.html#pypint.solvers.states.i_solver_state.IStateIterator.last">[docs]</a>    <span class="k">def</span> <span class="nf">last</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Accessor for the last state in this sequence</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        last : :py:class:`.IStepState`, :py:class:`.IStateIterator` or :py:class:`None`</span>
+<span class="sd">            :py:class:`None` if :py:attr:`.last_index` is :py:class:`None`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">last_index</span><span class="p">]</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">last_index</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="k">else</span> <span class="bp">None</span>
+</div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="IStateIterator.last_index"><a class="viewcode-back" href="../../../../api/solvers/states/i_solver_state.html#pypint.solvers.states.i_solver_state.IStateIterator.last_index">[docs]</a>    <span class="k">def</span> <span class="nf">last_index</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Index of the last state in this sequence</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        last_index : :py:class:`int` or :py:class:`None`</span>
+<span class="sd">            :py:class:`None` if there are no states in this sequence</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="bp">None</span>
+</div>
+    <span class="k">def</span> <span class="nf">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_states</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">iter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_states</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_states</span><span class="p">[</span><span class="n">item</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">_states</span> <span class="o">=</span> <span class="p">[</span><span class="n">state</span><span class="o">.</span><span class="n">__str__</span><span class="p">()</span> <span class="k">for</span> <span class="n">state</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_states</span><span class="p">]</span>
+        <span class="k">return</span> <span class="s">&quot;{}({}, solution={}, _states={})&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">class_name</span><span class="p">(</span><span class="bp">self</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">_element_type</span><span class="o">.</span><span class="n">__name__</span><span class="p">,</span>
+                                                        <span class="bp">self</span><span class="o">.</span><span class="n">solution</span><span class="o">.</span><span class="n">__str__</span><span class="p">(),</span> <span class="n">_states</span><span class="o">.</span><span class="n">__str__</span><span class="p">())</span>
+
+</div>
+<div class="viewcode-block" id="IStaticStateIterator"><a class="viewcode-back" href="../../../../api/solvers/states/i_solver_state.html#pypint.solvers.states.i_solver_state.IStaticStateIterator">[docs]</a><span class="k">class</span> <span class="nc">IStaticStateIterator</span><span class="p">(</span><span class="n">IStateIterator</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Specialized sequence of states with fixed number of states</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="IStaticStateIterator.proceed"><a class="viewcode-back" href="../../../../api/solvers/states/i_solver_state.html#pypint.solvers.states.i_solver_state.IStaticStateIterator.proceed">[docs]</a>    <span class="k">def</span> <span class="nf">proceed</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Proceed :py:attr:`.current` to the next state in the sequence</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        RuntimeError</span>
+<span class="sd">            if this sequence has already been finalized via :py:meth:`.IStateIterator.finalize`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">assert_condition</span><span class="p">(</span><span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">finalized</span><span class="p">,</span> <span class="ne">RuntimeError</span><span class="p">,</span>
+                         <span class="n">message</span><span class="o">=</span><span class="s">&quot;This {} is already done.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">class_name</span><span class="p">(</span><span class="bp">self</span><span class="p">)),</span>
+                         <span class="n">checking_obj</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">next_index</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_current_index</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">StopIteration</span><span class="p">(</span><span class="s">&quot;No further states available.&quot;</span><span class="p">)</span>
+</div>
+    <span class="k">def</span> <span class="nf">broadcast</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">_step</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">:</span>
+            <span class="n">_step</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="IStaticStateIterator.next"><a class="viewcode-back" href="../../../../api/solvers/states/i_solver_state.html#pypint.solvers.states.i_solver_state.IStaticStateIterator.next">[docs]</a>    <span class="k">def</span> <span class="nf">next</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Accessor for the next state in this sequence</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        next : :py:class:`.IStepState`, :py:class:`.IStateIterator` or :py:class:`None`</span>
+<span class="sd">            :py:class:`None` if :py:attr:`.next_index` is :py:class:`None`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">next_index</span><span class="p">]</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">next_index</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="k">else</span> <span class="bp">None</span>
+</div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="IStaticStateIterator.next_index"><a class="viewcode-back" href="../../../../api/solvers/states/i_solver_state.html#pypint.solvers.states.i_solver_state.IStaticStateIterator.next_index">[docs]</a>    <span class="k">def</span> <span class="nf">next_index</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Index of the next state in this sequence</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        next_index : :py:class:`int` or :py:class:`None`</span>
+<span class="sd">            :py:class:`None` if :py:attr:`.current` is already the last state in this sequence</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_index</span> <span class="o">+</span> <span class="mi">1</span> \
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_index</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_index</span> <span class="o">+</span> <span class="mi">1</span> <span class="k">else</span> <span class="bp">None</span>
+
+</div></div>
+<div class="viewcode-block" id="ITimeStepState"><a class="viewcode-back" href="../../../../api/solvers/states/i_solver_state.html#pypint.solvers.states.i_solver_state.ITimeStepState">[docs]</a><span class="k">class</span> <span class="nc">ITimeStepState</span><span class="p">(</span><span class="n">IStaticStateIterator</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Stores integration step states of a single time step.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="ITimeStepState.__init__"><a class="viewcode-back" href="../../../../api/solvers/states/i_solver_state.html#pypint.solvers.states.i_solver_state.ITimeStepState.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        num_states : :py:class:`int`</span>
+<span class="sd">            number of states in this sequence</span>
+
+<span class="sd">        solution_class : :py:class:`.TrajectorySolutionData` or :py:class:`.StepSolutionData`</span>
+<span class="sd">            *(optional)*</span>
+<span class="sd">            defaults to :py:class:`.TrajectorySolutionData`</span>
+
+<span class="sd">        element_type : :py:class:`.IStepState` or :py:class:`.IStateIterator`</span>
+<span class="sd">            *(optional)*</span>
+<span class="sd">            defaults to :py:class:`.IStepState`</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        ValueError</span>
+<span class="sd">            if ``num_states`` is not given</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="s">&#39;solution_class&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+            <span class="n">kwargs</span><span class="p">[</span><span class="s">&#39;solution_class&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">TrajectorySolutionData</span>
+        <span class="k">if</span> <span class="s">&#39;element_type&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+            <span class="n">kwargs</span><span class="p">[</span><span class="s">&#39;element_type&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">IStepState</span>
+        <span class="n">assert_named_argument</span><span class="p">(</span><span class="s">&#39;num_states&#39;</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">,</span> <span class="n">types</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span> <span class="n">descriptor</span><span class="o">=</span><span class="s">&quot;Number of States&quot;</span><span class="p">,</span> <span class="n">checking_obj</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">ITimeStepState</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_delta_time_step</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_initial</span> <span class="o">=</span> <span class="n">IStepState</span><span class="p">()</span>
+</div>
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">delta_time_step</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Accessor for the width of the time step</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        delta_time_step : :py:class:`float`</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        width_of_time_step : :py:class:`float`</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        ValueError</span>
+<span class="sd">            *(only setter)*</span>
+<span class="sd">            if ``delta_time_step`` is not a non-zero positive :py:class:`float`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_delta_time_step</span>
+
+    <span class="nd">@delta_time_step.setter</span>
+<div class="viewcode-block" id="ITimeStepState.delta_time_step"><a class="viewcode-back" href="../../../../api/solvers/states/i_solver_state.html#pypint.solvers.states.i_solver_state.ITimeStepState.delta_time_step">[docs]</a>    <span class="k">def</span> <span class="nf">delta_time_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">delta_time_step</span><span class="p">):</span>
+        <span class="n">assert_condition</span><span class="p">(</span><span class="n">delta_time_step</span> <span class="o">&gt;</span> <span class="mf">0.0</span><span class="p">,</span> <span class="ne">ValueError</span><span class="p">,</span>
+                         <span class="n">message</span><span class="o">=</span><span class="s">&quot;Delta interval must be non-zero positive: NOT {}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">delta_time_step</span><span class="p">),</span>
+                         <span class="n">checking_obj</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_delta_time_step</span> <span class="o">=</span> <span class="n">delta_time_step</span>
+</div>
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">initial</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Accessor for the initial value of this time step</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_initial</span>
+
+    <span class="nd">@initial.setter</span>
+<div class="viewcode-block" id="ITimeStepState.initial"><a class="viewcode-back" href="../../../../api/solvers/states/i_solver_state.html#pypint.solvers.states.i_solver_state.ITimeStepState.initial">[docs]</a>    <span class="k">def</span> <span class="nf">initial</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">initial</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_initial</span> <span class="o">=</span> <span class="n">initial</span>
+</div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="ITimeStepState.time_points"><a class="viewcode-back" href="../../../../api/solvers/states/i_solver_state.html#pypint.solvers.states.i_solver_state.ITimeStepState.time_points">[docs]</a>    <span class="k">def</span> <span class="nf">time_points</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Read-only accessor for the list of time points of this time step</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">step</span><span class="o">.</span><span class="n">time_point</span> <span class="k">for</span> <span class="n">step</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+</div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="ITimeStepState.current_time_point"><a class="viewcode-back" href="../../../../api/solvers/states/i_solver_state.html#pypint.solvers.states.i_solver_state.ITimeStepState.current_time_point">[docs]</a>    <span class="k">def</span> <span class="nf">current_time_point</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Accessor for the current step&#39;s time point</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        current_time_point : :py:class:`float` or :py:class:`None`</span>
+<span class="sd">            :py:class:`None` is returned if :py:attr:`.current_step` is :py:class:`None`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_step</span><span class="o">.</span><span class="n">time_point</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_step</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="k">else</span> <span class="bp">None</span>
+</div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="ITimeStepState.previous_time_point"><a class="viewcode-back" href="../../../../api/solvers/states/i_solver_state.html#pypint.solvers.states.i_solver_state.ITimeStepState.previous_time_point">[docs]</a>    <span class="k">def</span> <span class="nf">previous_time_point</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Accessor for the previous step&#39;s time point</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        previous_time_point : :py:class:`float` or :py:class:`None`</span>
+<span class="sd">            :py:class:`None` is returned if :py:attr:`.previous_step` is :py:class:`None`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">previous_step</span><span class="o">.</span><span class="n">time_point</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">previous</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="k">else</span> <span class="bp">None</span>
+</div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="ITimeStepState.next_time_point"><a class="viewcode-back" href="../../../../api/solvers/states/i_solver_state.html#pypint.solvers.states.i_solver_state.ITimeStepState.next_time_point">[docs]</a>    <span class="k">def</span> <span class="nf">next_time_point</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Accessor for the next step&#39;s time point</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        next_time_point : :py:class:`float` or :py:class:`None`</span>
+<span class="sd">            :py:class:`None` is returned if :py:attr:`.next_step` is :py:class:`None`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">next</span><span class="o">.</span><span class="n">time_point</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">next_step</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="k">else</span> <span class="bp">None</span>
+</div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="ITimeStepState.current_step"><a class="viewcode-back" href="../../../../api/solvers/states/i_solver_state.html#pypint.solvers.states.i_solver_state.ITimeStepState.current_step">[docs]</a>    <span class="k">def</span> <span class="nf">current_step</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Proxy for :py:attr:`.current`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">current</span>
+</div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="ITimeStepState.current_step_index"><a class="viewcode-back" href="../../../../api/solvers/states/i_solver_state.html#pypint.solvers.states.i_solver_state.ITimeStepState.current_step_index">[docs]</a>    <span class="k">def</span> <span class="nf">current_step_index</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Proxy for :py:attr:`.current_index`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_index</span>
+</div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="ITimeStepState.previous_step"><a class="viewcode-back" href="../../../../api/solvers/states/i_solver_state.html#pypint.solvers.states.i_solver_state.ITimeStepState.previous_step">[docs]</a>    <span class="k">def</span> <span class="nf">previous_step</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Accessor for the previous step</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        previous step : :py:class:`.IStepState` or :py:class:`None`</span>
+<span class="sd">            :py:class:`None` is returned if :py:attr:`.previous_index` is :py:class:`None`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">previous</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">previous_index</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">initial</span>
+</div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="ITimeStepState.previous_step_index"><a class="viewcode-back" href="../../../../api/solvers/states/i_solver_state.html#pypint.solvers.states.i_solver_state.ITimeStepState.previous_step_index">[docs]</a>    <span class="k">def</span> <span class="nf">previous_step_index</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Proxy for :py:attr:`.previous_index`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">previous_index</span>
+</div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="ITimeStepState.next_step"><a class="viewcode-back" href="../../../../api/solvers/states/i_solver_state.html#pypint.solvers.states.i_solver_state.ITimeStepState.next_step">[docs]</a>    <span class="k">def</span> <span class="nf">next_step</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Proxy for :py:attr:`.next`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">next</span>
+</div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="ITimeStepState.next_step_index"><a class="viewcode-back" href="../../../../api/solvers/states/i_solver_state.html#pypint.solvers.states.i_solver_state.ITimeStepState.next_step_index">[docs]</a>    <span class="k">def</span> <span class="nf">next_step_index</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Proxy for :py:attr:`.next_index`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">next_index</span>
+</div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="ITimeStepState.last_step"><a class="viewcode-back" href="../../../../api/solvers/states/i_solver_state.html#pypint.solvers.states.i_solver_state.ITimeStepState.last_step">[docs]</a>    <span class="k">def</span> <span class="nf">last_step</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Proxy for :py:attr:`.last`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">last</span>
+</div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="ITimeStepState.last_step_index"><a class="viewcode-back" href="../../../../api/solvers/states/i_solver_state.html#pypint.solvers.states.i_solver_state.ITimeStepState.last_step_index">[docs]</a>    <span class="k">def</span> <span class="nf">last_step_index</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Proxy for :py:attr:`.last_index`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">last_index</span>
+
+</div></div>
+<div class="viewcode-block" id="IIterationState"><a class="viewcode-back" href="../../../../api/solvers/states/i_solver_state.html#pypint.solvers.states.i_solver_state.IIterationState">[docs]</a><span class="k">class</span> <span class="nc">IIterationState</span><span class="p">(</span><span class="n">IStaticStateIterator</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Stores time step states of a single iteration.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="IIterationState.__init__"><a class="viewcode-back" href="../../../../api/solvers/states/i_solver_state.html#pypint.solvers.states.i_solver_state.IIterationState.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        num_time_steps : :py:class:`int`</span>
+<span class="sd">            number of time steps in this sequence</span>
+
+<span class="sd">        num_states : :py:class:`int`</span>
+<span class="sd">            number of steps per time step</span>
+
+<span class="sd">        solution_class : :py:class:`.TrajectorySolutionData`, *any other solution class*</span>
+<span class="sd">            *(optional)*</span>
+<span class="sd">            defaults to :py:class:`.TrajectorySolutionData`</span>
+
+<span class="sd">        element_type : :py:class:`.IStateIterator`</span>
+<span class="sd">            *(optional)*</span>
+<span class="sd">            defaults to :py:class:`.ITimeStepState`</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        ValueError</span>
+<span class="sd">            if ``num_time_steps`` is not given</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="s">&#39;solution_class&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+            <span class="n">kwargs</span><span class="p">[</span><span class="s">&#39;solution_class&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">TrajectorySolutionData</span>
+        <span class="k">if</span> <span class="s">&#39;element_type&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+            <span class="n">kwargs</span><span class="p">[</span><span class="s">&#39;element_type&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ITimeStepState</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">IIterationState</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">del</span> <span class="n">kwargs</span><span class="p">[</span><span class="s">&#39;solution_class&#39;</span><span class="p">]</span>
+        <span class="k">del</span> <span class="n">kwargs</span><span class="p">[</span><span class="s">&#39;element_type&#39;</span><span class="p">]</span>
+
+        <span class="n">assert_named_argument</span><span class="p">(</span><span class="s">&#39;num_time_steps&#39;</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">,</span> <span class="n">types</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span> <span class="n">descriptor</span><span class="o">=</span><span class="s">&quot;Number of Time Steps&quot;</span><span class="p">,</span> <span class="n">checking_obj</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
+        <span class="n">_num_time_steps</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s">&#39;num_time_steps&#39;</span><span class="p">]</span>
+        <span class="k">del</span> <span class="n">kwargs</span><span class="p">[</span><span class="s">&#39;num_time_steps&#39;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_states</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_element_type</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">_num_time_steps</span><span class="p">)]</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_delta_interval</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_initial</span> <span class="o">=</span> <span class="bp">None</span>
+</div>
+<div class="viewcode-block" id="IIterationState.finalize"><a class="viewcode-back" href="../../../../api/solvers/states/i_solver_state.html#pypint.solvers.states.i_solver_state.IIterationState.finalize">[docs]</a>    <span class="k">def</span> <span class="nf">finalize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Finalizes this iteration and copies solutions</span>
+
+<span class="sd">        The solutions of all steps of all time steps are copied to this sequence&#39;s :py:class:`.TrajectorySolutionData`</span>
+<span class="sd">        and is finalized afterwards.</span>
+
+<span class="sd">        The remaining behaviour is the same as the overridden method.</span>
+
+<span class="sd">        See Also</span>
+<span class="sd">        --------</span>
+<span class="sd">        :py:meth:`.IStateIterator.finalize` : overridden method</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">assert_condition</span><span class="p">(</span><span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">finalized</span><span class="p">,</span> <span class="ne">RuntimeError</span><span class="p">,</span>
+                         <span class="n">message</span><span class="o">=</span><span class="s">&quot;This {} is already done.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">class_name</span><span class="p">(</span><span class="bp">self</span><span class="p">)),</span>
+                         <span class="n">checking_obj</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">_time_step</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">_step</span> <span class="ow">in</span> <span class="n">_time_step</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">solution</span><span class="o">.</span><span class="n">add_solution_data</span><span class="p">(</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">_step</span><span class="o">.</span><span class="n">solution</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">solution</span><span class="o">.</span><span class="n">finalize</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_current_index</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_finalized</span> <span class="o">=</span> <span class="bp">True</span>
+</div>
+<div class="viewcode-block" id="IIterationState.proceed"><a class="viewcode-back" href="../../../../api/solvers/states/i_solver_state.html#pypint.solvers.states.i_solver_state.IIterationState.proceed">[docs]</a>    <span class="k">def</span> <span class="nf">proceed</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Proceeds to the next time step</span>
+
+<span class="sd">        Same as :py:meth:`.IStaticStateIterator.proceed` with the addition, that the current time step&#39;s initial</span>
+<span class="sd">        value is set as a reference to the previous time step&#39;s last step.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">IIterationState</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">proceed</span><span class="p">()</span>  <span class="c"># -&gt; current_index += 1</span>
+        <span class="c"># link initial step of this time step to the previous&#39; last step</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">current_time_step</span><span class="o">.</span><span class="n">initial</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">previous_time_step</span><span class="o">.</span><span class="n">last_step</span>
+</div>
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">initial</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Accessor to the initial value of this iteration</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_initial</span>
+
+    <span class="nd">@initial.setter</span>
+<div class="viewcode-block" id="IIterationState.initial"><a class="viewcode-back" href="../../../../api/solvers/states/i_solver_state.html#pypint.solvers.states.i_solver_state.IIterationState.initial">[docs]</a>    <span class="k">def</span> <span class="nf">initial</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">initial</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_initial</span> <span class="o">=</span> <span class="n">initial</span>
+</div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="IIterationState.current_time_step"><a class="viewcode-back" href="../../../../api/solvers/states/i_solver_state.html#pypint.solvers.states.i_solver_state.IIterationState.current_time_step">[docs]</a>    <span class="k">def</span> <span class="nf">current_time_step</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Proxy for :py:attr:`.current`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">current</span>
+</div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="IIterationState.current_time_step_index"><a class="viewcode-back" href="../../../../api/solvers/states/i_solver_state.html#pypint.solvers.states.i_solver_state.IIterationState.current_time_step_index">[docs]</a>    <span class="k">def</span> <span class="nf">current_time_step_index</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Proxy for :py:attr:`.current_index`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_index</span>
+</div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="IIterationState.previous_time_step"><a class="viewcode-back" href="../../../../api/solvers/states/i_solver_state.html#pypint.solvers.states.i_solver_state.IIterationState.previous_time_step">[docs]</a>    <span class="k">def</span> <span class="nf">previous_time_step</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Proxy for :py:attr:`.previous`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">previous</span>
+</div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="IIterationState.previous_time_step_index"><a class="viewcode-back" href="../../../../api/solvers/states/i_solver_state.html#pypint.solvers.states.i_solver_state.IIterationState.previous_time_step_index">[docs]</a>    <span class="k">def</span> <span class="nf">previous_time_step_index</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Proxy for :py:attr:`.previous_index`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">previous_index</span>
+</div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="IIterationState.next_time_step"><a class="viewcode-back" href="../../../../api/solvers/states/i_solver_state.html#pypint.solvers.states.i_solver_state.IIterationState.next_time_step">[docs]</a>    <span class="k">def</span> <span class="nf">next_time_step</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Proxy for :py:attr:`.next`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">next</span>
+</div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="IIterationState.next_time_step_index"><a class="viewcode-back" href="../../../../api/solvers/states/i_solver_state.html#pypint.solvers.states.i_solver_state.IIterationState.next_time_step_index">[docs]</a>    <span class="k">def</span> <span class="nf">next_time_step_index</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Proxy for :py:attr:`.next_index`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">next_index</span>
+</div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="IIterationState.first_time_step"><a class="viewcode-back" href="../../../../api/solvers/states/i_solver_state.html#pypint.solvers.states.i_solver_state.IIterationState.first_time_step">[docs]</a>    <span class="k">def</span> <span class="nf">first_time_step</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Proxy for :py:attr:`.first`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">first</span>
+</div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="IIterationState.first_time_step_index"><a class="viewcode-back" href="../../../../api/solvers/states/i_solver_state.html#pypint.solvers.states.i_solver_state.IIterationState.first_time_step_index">[docs]</a>    <span class="k">def</span> <span class="nf">first_time_step_index</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Proxy for :py:attr:`.first_index`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">first_index</span>
+</div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="IIterationState.last_time_step"><a class="viewcode-back" href="../../../../api/solvers/states/i_solver_state.html#pypint.solvers.states.i_solver_state.IIterationState.last_time_step">[docs]</a>    <span class="k">def</span> <span class="nf">last_time_step</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Proxy for :py:attr:`.last`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">last</span>
+</div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="IIterationState.last_time_step_index"><a class="viewcode-back" href="../../../../api/solvers/states/i_solver_state.html#pypint.solvers.states.i_solver_state.IIterationState.last_time_step_index">[docs]</a>    <span class="k">def</span> <span class="nf">last_time_step_index</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Proxy for :py:attr:`.last_index`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">last_index</span>
+</div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="IIterationState.current_step"><a class="viewcode-back" href="../../../../api/solvers/states/i_solver_state.html#pypint.solvers.states.i_solver_state.IIterationState.current_step">[docs]</a>    <span class="k">def</span> <span class="nf">current_step</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Proxy for :py:attr:`.ITimeStepState.current_step`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_time_step</span><span class="o">.</span><span class="n">current_step</span>
+</div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="IIterationState.current_step_index"><a class="viewcode-back" href="../../../../api/solvers/states/i_solver_state.html#pypint.solvers.states.i_solver_state.IIterationState.current_step_index">[docs]</a>    <span class="k">def</span> <span class="nf">current_step_index</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Proxy for :py:attr:`.ITimeStepState.current_step_index`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_time_step</span><span class="o">.</span><span class="n">current_step_index</span>
+</div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="IIterationState.previous_step"><a class="viewcode-back" href="../../../../api/solvers/states/i_solver_state.html#pypint.solvers.states.i_solver_state.IIterationState.previous_step">[docs]</a>    <span class="k">def</span> <span class="nf">previous_step</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Read-only accessor for the previous step</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        previous_step : :py:class:`.IStepState`</span>
+<span class="sd">            proxies :py:attr:`.ITimeStepState.previous_step` if it is not :py:class:`None`</span>
+<span class="sd">            else :py:attr:`.ITimeStepState.initial`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_time_step</span><span class="o">.</span><span class="n">previous_step</span> \
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_time_step</span><span class="o">.</span><span class="n">previous_step</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">first_time_step</span><span class="o">.</span><span class="n">initial</span>
+</div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="IIterationState.next_step"><a class="viewcode-back" href="../../../../api/solvers/states/i_solver_state.html#pypint.solvers.states.i_solver_state.IIterationState.next_step">[docs]</a>    <span class="k">def</span> <span class="nf">next_step</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Read-only accessor for the next step</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        next_step : :py:class:`.IStepState`</span>
+<span class="sd">            proxies :py:attr:`.ITimeStepState.next_step` if it is not :py:class:`None`</span>
+<span class="sd">            else returns :py:attr:`.ITimeStepState.first` if :py:attr:`.next_time_step` is not :py:class:`None`</span>
+<span class="sd">            else returns :py:class:`None`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_time_step</span><span class="o">.</span><span class="n">next_step</span> \
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_time_step</span><span class="o">.</span><span class="n">next_step</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> \
+            <span class="k">else</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">next_time_step</span><span class="o">.</span><span class="n">first</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">next_time_step</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="k">else</span> <span class="bp">None</span><span class="p">)</span>
+</div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="IIterationState.first_step"><a class="viewcode-back" href="../../../../api/solvers/states/i_solver_state.html#pypint.solvers.states.i_solver_state.IIterationState.first_step">[docs]</a>    <span class="k">def</span> <span class="nf">first_step</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Read-only accessor for the first step</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        first_step : :py:class:`.IStepState`</span>
+<span class="sd">            proxies :py:attr:`.ITimeStepState.first` if :py:attr:`.first_time_step` is not :py:class:`None`</span>
+<span class="sd">            else returns :py:class:`None`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">first_time_step</span><span class="o">.</span><span class="n">first</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">first_time_step</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="k">else</span> <span class="bp">None</span>
+</div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="IIterationState.final_step"><a class="viewcode-back" href="../../../../api/solvers/states/i_solver_state.html#pypint.solvers.states.i_solver_state.IIterationState.final_step">[docs]</a>    <span class="k">def</span> <span class="nf">final_step</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Read-only accessor for the very last step</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        last_step : :py:class:`.IStepState`</span>
+<span class="sd">            proxies :py:attr:`.ITimeStepState.last` if :py:attr:`.last_time_step` is not :py:class:`None`</span>
+<span class="sd">            else returns :py:class:`None`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">last_time_step</span><span class="o">.</span><span class="n">last</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">last_time_step</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="k">else</span> <span class="bp">None</span>
+</div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="IIterationState.time_points"><a class="viewcode-back" href="../../../../api/solvers/states/i_solver_state.html#pypint.solvers.states.i_solver_state.IIterationState.time_points">[docs]</a>    <span class="k">def</span> <span class="nf">time_points</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Read-only accessor for all time points</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        time_points : :py:class:`numpy.array(dtype=float)`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">_step</span><span class="o">.</span><span class="n">time_point</span> <span class="k">for</span> <span class="n">_time_point</span> <span class="ow">in</span> <span class="bp">self</span> <span class="k">for</span> <span class="n">_step</span> <span class="ow">in</span> <span class="n">_time_point</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+
+</div></div>
+<div class="viewcode-block" id="ISolverState"><a class="viewcode-back" href="../../../../api/solvers/states/i_solver_state.html#pypint.solvers.states.i_solver_state.ISolverState">[docs]</a><span class="k">class</span> <span class="nc">ISolverState</span><span class="p">(</span><span class="n">IStateIterator</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Stores iteration states.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">if</span> <span class="s">&#39;solution_class&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+            <span class="n">kwargs</span><span class="p">[</span><span class="s">&#39;solution_class&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">IterativeSolution</span>
+        <span class="k">if</span> <span class="s">&#39;element_type&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+            <span class="n">kwargs</span><span class="p">[</span><span class="s">&#39;element_type&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">IIterationState</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">ISolverState</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_num_nodes</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s">&#39;num_nodes&#39;</span><span class="p">]</span> <span class="k">if</span> <span class="s">&#39;num_nodes&#39;</span> <span class="ow">in</span> <span class="n">kwargs</span> <span class="k">else</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_num_time_steps</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s">&#39;num_time_steps&#39;</span><span class="p">]</span> <span class="k">if</span> <span class="s">&#39;num_time_steps&#39;</span> <span class="ow">in</span> <span class="n">kwargs</span> <span class="k">else</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_delta_interval</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_initial</span> <span class="o">=</span> <span class="n">IStepState</span><span class="p">()</span>
+
+<div class="viewcode-block" id="ISolverState.proceed"><a class="viewcode-back" href="../../../../api/solvers/states/i_solver_state.html#pypint.solvers.states.i_solver_state.ISolverState.proceed">[docs]</a>    <span class="k">def</span> <span class="nf">proceed</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Proceeds to the next iteration</span>
+
+<span class="sd">        Extends the sequence of :py:class:`.IIterationState` by appending a new instance with the set</span>
+<span class="sd">        :py:attr:`.num_time_steps` and :py:attr:`.num_nodes`.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_add_iteration</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_current_index</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">current_iteration</span><span class="o">.</span><span class="n">initial</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">initial</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">current_iteration</span><span class="o">.</span><span class="n">first_time_step</span><span class="o">.</span><span class="n">initial</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">current_iteration</span><span class="o">.</span><span class="n">initial</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="ISolverState.finalize"><a class="viewcode-back" href="../../../../api/solvers/states/i_solver_state.html#pypint.solvers.states.i_solver_state.ISolverState.finalize">[docs]</a>    <span class="k">def</span> <span class="nf">finalize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Finalizes the whole solver state.</span>
+
+<span class="sd">        This copies the :py:class:`.TrajectorySolutionData` objects from the :py:class:`.IIterationState` instances of</span>
+<span class="sd">        this sequence to the main :py:class:`.IterativeSolution` object and finalizes it.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">assert_condition</span><span class="p">(</span><span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">finalized</span><span class="p">,</span> <span class="ne">RuntimeError</span><span class="p">,</span>
+                         <span class="n">message</span><span class="o">=</span><span class="s">&quot;This {} is already done.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">class_name</span><span class="p">(</span><span class="bp">self</span><span class="p">)),</span>
+                         <span class="n">checking_obj</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">_iter</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">solution</span><span class="o">.</span><span class="n">add_solution</span><span class="p">(</span><span class="n">_iter</span><span class="o">.</span><span class="n">solution</span><span class="p">)</span>
+        <span class="c"># self.solution.finalize()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_current_index</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="c"># self._finalized = True</span>
+</div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="ISolverState.num_nodes"><a class="viewcode-back" href="../../../../api/solvers/states/i_solver_state.html#pypint.solvers.states.i_solver_state.ISolverState.num_nodes">[docs]</a>    <span class="k">def</span> <span class="nf">num_nodes</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Read-only accessor for the number of nodes per time step.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_num_nodes</span>
+</div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="ISolverState.num_time_steps"><a class="viewcode-back" href="../../../../api/solvers/states/i_solver_state.html#pypint.solvers.states.i_solver_state.ISolverState.num_time_steps">[docs]</a>    <span class="k">def</span> <span class="nf">num_time_steps</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Read-only accessor for the number of time steps per iteration.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_num_time_steps</span>
+</div>
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">interval</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">initial</span><span class="o">.</span><span class="n">time_point</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">initial</span><span class="o">.</span><span class="n">time_point</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">delta_interval</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">delta_interval</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Accessor for the total interval width.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        delta_interval : :py:class:`float`</span>
+<span class="sd">            width of the whole interval</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        ValueError</span>
+<span class="sd">            if given interval is not a non-zero float</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_delta_interval</span>
+
+    <span class="nd">@delta_interval.setter</span>
+<div class="viewcode-block" id="ISolverState.delta_interval"><a class="viewcode-back" href="../../../../api/solvers/states/i_solver_state.html#pypint.solvers.states.i_solver_state.ISolverState.delta_interval">[docs]</a>    <span class="k">def</span> <span class="nf">delta_interval</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">delta_interval</span><span class="p">):</span>
+        <span class="n">assert_condition</span><span class="p">(</span><span class="n">delta_interval</span> <span class="o">&gt;</span> <span class="mf">0.0</span><span class="p">,</span> <span class="ne">ValueError</span><span class="p">,</span>
+                         <span class="n">message</span><span class="o">=</span><span class="s">&quot;Delta interval must be non-zero positive: NOT {}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">delta_interval</span><span class="p">),</span>
+                         <span class="n">checking_obj</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_delta_interval</span> <span class="o">=</span> <span class="n">delta_interval</span>
+</div>
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">initial</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Accessor for the initial value</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_initial</span>
+
+    <span class="nd">@initial.setter</span>
+<div class="viewcode-block" id="ISolverState.initial"><a class="viewcode-back" href="../../../../api/solvers/states/i_solver_state.html#pypint.solvers.states.i_solver_state.ISolverState.initial">[docs]</a>    <span class="k">def</span> <span class="nf">initial</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">initial</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_initial</span> <span class="o">=</span> <span class="n">initial</span>
+</div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="ISolverState.current_iteration"><a class="viewcode-back" href="../../../../api/solvers/states/i_solver_state.html#pypint.solvers.states.i_solver_state.ISolverState.current_iteration">[docs]</a>    <span class="k">def</span> <span class="nf">current_iteration</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Proxies :py:attr:`.IStateIterator.current`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">current</span>
+</div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="ISolverState.current_iteration_index"><a class="viewcode-back" href="../../../../api/solvers/states/i_solver_state.html#pypint.solvers.states.i_solver_state.ISolverState.current_iteration_index">[docs]</a>    <span class="k">def</span> <span class="nf">current_iteration_index</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Proxies :py:attr:`.IStateIterator.current_index`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_index</span>
+</div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="ISolverState.previous_iteration"><a class="viewcode-back" href="../../../../api/solvers/states/i_solver_state.html#pypint.solvers.states.i_solver_state.ISolverState.previous_iteration">[docs]</a>    <span class="k">def</span> <span class="nf">previous_iteration</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Proxies :py:attr:`.IStateIterator.previous`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">previous</span>
+</div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="ISolverState.previous_iteration_index"><a class="viewcode-back" href="../../../../api/solvers/states/i_solver_state.html#pypint.solvers.states.i_solver_state.ISolverState.previous_iteration_index">[docs]</a>    <span class="k">def</span> <span class="nf">previous_iteration_index</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Proxies :py:attr:`.IStateIterator.previous_index`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">previous_index</span>
+</div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="ISolverState.first_iteration"><a class="viewcode-back" href="../../../../api/solvers/states/i_solver_state.html#pypint.solvers.states.i_solver_state.ISolverState.first_iteration">[docs]</a>    <span class="k">def</span> <span class="nf">first_iteration</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Proxies :py:attr:`.IStateIterator.first`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">first</span>
+</div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="ISolverState.is_first_iteration"><a class="viewcode-back" href="../../../../api/solvers/states/i_solver_state.html#pypint.solvers.states.i_solver_state.ISolverState.is_first_iteration">[docs]</a>    <span class="k">def</span> <span class="nf">is_first_iteration</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Check on whether current iteration is the first one.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        is_first : :py:class:`bool`</span>
+<span class="sd">            :py:class:`True` if ``len(self)`` is one, :py:class:`False` otherwise</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span>
+</div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="ISolverState.last_iteration"><a class="viewcode-back" href="../../../../api/solvers/states/i_solver_state.html#pypint.solvers.states.i_solver_state.ISolverState.last_iteration">[docs]</a>    <span class="k">def</span> <span class="nf">last_iteration</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Proxies :py:attr:`.IStateIterator.last`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">last</span>
+</div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="ISolverState.last_iteration_index"><a class="viewcode-back" href="../../../../api/solvers/states/i_solver_state.html#pypint.solvers.states.i_solver_state.ISolverState.last_iteration_index">[docs]</a>    <span class="k">def</span> <span class="nf">last_iteration_index</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Proxies :py:attr:`.IStateIterator.last_index`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">last_index</span>
+</div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="ISolverState.current_time_step"><a class="viewcode-back" href="../../../../api/solvers/states/i_solver_state.html#pypint.solvers.states.i_solver_state.ISolverState.current_time_step">[docs]</a>    <span class="k">def</span> <span class="nf">current_time_step</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Read-only accessor for the current time step</span>
+
+<span class="sd">        Proxies :py:attr:`.IIterationState.current_time_step` if :py:attr:`.current_iteration` is not :py:class:`None`</span>
+<span class="sd">        else returns :py:class:`None`.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_iteration</span><span class="o">.</span><span class="n">current_time_step</span> \
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_iteration</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="k">else</span> <span class="bp">None</span>
+</div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="ISolverState.current_time_step_index"><a class="viewcode-back" href="../../../../api/solvers/states/i_solver_state.html#pypint.solvers.states.i_solver_state.ISolverState.current_time_step_index">[docs]</a>    <span class="k">def</span> <span class="nf">current_time_step_index</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Read-only accessor for the current time step&#39;s index</span>
+
+<span class="sd">        Proxies :py:attr:`.IIterationState.current_time_step_index` if :py:attr:`.current_iteration` is not</span>
+<span class="sd">        :py:class:`None` else returns :py:class:`None`.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_iteration</span><span class="o">.</span><span class="n">current_time_step_index</span> \
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_iteration</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="k">else</span> <span class="bp">None</span>
+</div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="ISolverState.previous_time_step"><a class="viewcode-back" href="../../../../api/solvers/states/i_solver_state.html#pypint.solvers.states.i_solver_state.ISolverState.previous_time_step">[docs]</a>    <span class="k">def</span> <span class="nf">previous_time_step</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Read-only accessor for the revious time step</span>
+
+<span class="sd">        Proxies :py:attr:`.IIterationState.previous_time_step` if :py:attr:`.current_iteration` is not :py:class:`None`</span>
+<span class="sd">        else returns :py:class:`None`.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_iteration</span><span class="o">.</span><span class="n">previous_time_step</span> \
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_iteration</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="k">else</span> <span class="bp">None</span>
+</div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="ISolverState.next_time_step"><a class="viewcode-back" href="../../../../api/solvers/states/i_solver_state.html#pypint.solvers.states.i_solver_state.ISolverState.next_time_step">[docs]</a>    <span class="k">def</span> <span class="nf">next_time_step</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Read-only accessor for the next time step</span>
+
+<span class="sd">        Proxies :py:attr:`.IIterationState.next_time_step` if :py:attr:`.current_iteration` is not :py:class:`None`</span>
+<span class="sd">        else returns :py:class:`None`.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_iteration</span><span class="o">.</span><span class="n">next_time_step</span> \
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_iteration</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="k">else</span> <span class="bp">None</span>
+</div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="ISolverState.current_step"><a class="viewcode-back" href="../../../../api/solvers/states/i_solver_state.html#pypint.solvers.states.i_solver_state.ISolverState.current_step">[docs]</a>    <span class="k">def</span> <span class="nf">current_step</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Read-only accessor for the current step</span>
+
+<span class="sd">        Proxies :py:attr:`.ITimeStepState.current_step` if :py:attr:`.current_iteration` and</span>
+<span class="sd">        :py:attr:`.IIterationState.current_time_step` are not :py:class:`None` else returns :py:class:`None`.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_iteration</span><span class="o">.</span><span class="n">current_time_step</span><span class="o">.</span><span class="n">current_step</span> \
+            <span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">current_iteration</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_iteration</span><span class="o">.</span><span class="n">current_time_step</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">)</span> \
+            <span class="k">else</span> <span class="bp">None</span>
+</div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="ISolverState.current_step_index"><a class="viewcode-back" href="../../../../api/solvers/states/i_solver_state.html#pypint.solvers.states.i_solver_state.ISolverState.current_step_index">[docs]</a>    <span class="k">def</span> <span class="nf">current_step_index</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Read-only accessor for the current step&#39;s index</span>
+
+<span class="sd">        Proxies :py:attr:`.ITimeStepState.current_step_index` if :py:attr:`.current_iteration` and</span>
+<span class="sd">        :py:attr:`.IIterationState.current_time_step` are not :py:class:`None` else returns :py:class:`None`.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_iteration</span><span class="o">.</span><span class="n">current_time_step</span><span class="o">.</span><span class="n">current_step_index</span> \
+            <span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">current_iteration</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_iteration</span><span class="o">.</span><span class="n">current_time_step</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">)</span> \
+            <span class="k">else</span> <span class="bp">None</span>
+</div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="ISolverState.previous_step"><a class="viewcode-back" href="../../../../api/solvers/states/i_solver_state.html#pypint.solvers.states.i_solver_state.ISolverState.previous_step">[docs]</a>    <span class="k">def</span> <span class="nf">previous_step</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Read-only accessor for the previous step</span>
+
+<span class="sd">        Proxies :py:attr:`.ITimeStepState.previous_step` if neither :py:attr:`.current_iteration` nor</span>
+<span class="sd">        :py:attr:`.IIterationState.current_time_step` or :py:attr:`.IIterationState.previous_step` are :py:class:`None`</span>
+<span class="sd">        else returns :py:class:`None`.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_iteration</span><span class="o">.</span><span class="n">current_time_step</span><span class="o">.</span><span class="n">previous_step</span> \
+            <span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">current_iteration</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_iteration</span><span class="o">.</span><span class="n">current_time_step</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span>
+                <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_iteration</span><span class="o">.</span><span class="n">current_time_step</span><span class="o">.</span><span class="n">previous_step</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">)</span> \
+            <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">initial</span>
+</div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="ISolverState.previous_step_index"><a class="viewcode-back" href="../../../../api/solvers/states/i_solver_state.html#pypint.solvers.states.i_solver_state.ISolverState.previous_step_index">[docs]</a>    <span class="k">def</span> <span class="nf">previous_step_index</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Read-only accessor for the previous step&#39;s index</span>
+
+<span class="sd">        Proxies :py:attr:`.ITimeStepState.previous_step_index` if neither :py:attr:`.current_iteration` nor</span>
+<span class="sd">        :py:attr:`.IIterationState.current_time_step` or :py:attr:`.IIterationState.previous_step` are :py:class:`None`</span>
+<span class="sd">        else returns :py:class:`None`.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_iteration</span><span class="o">.</span><span class="n">current_time_step</span><span class="o">.</span><span class="n">previous_step_index</span> \
+            <span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">current_iteration</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_iteration</span><span class="o">.</span><span class="n">current_time_step</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span>
+                <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_iteration</span><span class="o">.</span><span class="n">current_time_step</span><span class="o">.</span><span class="n">previous_step</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">)</span> \
+            <span class="k">else</span> <span class="bp">None</span>
+</div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="ISolverState.next_step"><a class="viewcode-back" href="../../../../api/solvers/states/i_solver_state.html#pypint.solvers.states.i_solver_state.ISolverState.next_step">[docs]</a>    <span class="k">def</span> <span class="nf">next_step</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Read-only accessor for the next step</span>
+
+<span class="sd">        Proxies :py:attr:`.IIterationState.next_step` if :py:attr:`.current_iteration` is not :py:class:`None` else</span>
+<span class="sd">        returns :py:class:`None`.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_iteration</span><span class="o">.</span><span class="n">next_step</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_iteration</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="k">else</span> <span class="bp">None</span>
+</div>
+    <span class="k">def</span> <span class="nf">_add_iteration</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">assert_condition</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_time_steps</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_nodes</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">,</span>
+                         <span class="ne">ValueError</span><span class="p">,</span> <span class="n">message</span><span class="o">=</span><span class="s">&quot;Number of time steps and nodes per time step must be larger 0: NOT {}, {}&quot;</span>
+                         <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_time_steps</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_nodes</span><span class="p">),</span>
+                         <span class="n">checking_obj</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_states</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_element_type</span><span class="p">(</span><span class="n">num_states</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">num_nodes</span><span class="p">,</span>
+                                               <span class="n">num_time_steps</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">num_time_steps</span><span class="p">))</span>
+
+</div>
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;IStepState&#39;</span><span class="p">,</span> <span class="s">&#39;IStateIterator&#39;</span><span class="p">,</span> <span class="s">&#39;IStaticStateIterator&#39;</span><span class="p">,</span> <span class="s">&#39;ITimeStepState&#39;</span><span class="p">,</span> <span class="s">&#39;IIterationState&#39;</span><span class="p">,</span> <span class="s">&#39;ISolverState&#39;</span><span class="p">]</span>
+</pre></div>
+
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+      &copy; 2013-2014,
+        <a href="http://www.fz-juelich.de/ias/jsc/EN/Research/Algorithms/ParallelInTimeIntegration/_node.html">Parallel-in-Time Research Group</a>
+        at the
+        <a href="http://www.fz-juelich.de/ias/jsc/EN/Home/home_node.html">Jülich Supercomputing Centre</a><br />
+    </p>
+  </div>
+
+  <a href="https://github.com/snide/sphinx_rtd_theme">Sphinx theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../../',
+            VERSION:'0.0.4-dev-0-g4dad7c2',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+      <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

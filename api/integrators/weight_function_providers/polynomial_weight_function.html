@@ -1,0 +1,348 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Polynomial Weight Function (polynomial_weight_function) &mdash; PyPinT 0.0.4-dev-0-g4dad7c2 documentation</title>
+  
+
+  
+  
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+        <link rel="author" title="About these documents"
+              href="../../../about.html"/>
+    <link rel="top" title="PyPinT 0.0.4-dev-0-g4dad7c2 documentation" href="../../../index.html"/>
+        <link rel="up" title="Weight Function Providers (weight_function_providers)" href="package.html"/>
+        <link rel="next" title="Multi-Level Providers (multi_level_providers)" href="../../multi_level_providers/package.html"/>
+        <link rel="prev" title="Weight Function Interface (i_weight_function)" href="i_weight_function.html"/> 
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-nav-search">
+        <a href="../../../index.html" class="fa fa-home"> PyPinT</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+        
+        
+            <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../about.html">About</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user/rationale.html">Rationale</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../user/rationale.html#objectives">Objectives</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../user/rationale.html#goals">Goals</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../user/rationale.html#scope">Scope</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user/requirements.html">Requirements</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user/basic_usage.html">Basic Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../examples/package.html">Examples</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../examples/problems/package.html">Example Problems (<tt class="docutils literal"><span class="pre">problems</span></tt>)</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user/theory.html">Mathematical Theory</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../user/bibliography.html">Bibliography</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../history.html">History</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../history.html#release-0-0-3-04-04-2014">Release 0.0.3 (04/04/2014)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../history.html#release-0-0-2-04-03-2014">Release 0.0.2 (04/03/2014)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../history.html#release-0-0-1-2013-11-26">Release 0.0.1 (2013-11-26)</a></li>
+</ul>
+</li>
+</ul>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../development/coding_style.html">Coding Style</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../development/documentation.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../development/contributing.html">Contributing</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../development/contributing.html#branching-and-tagging-model">Branching and Tagging Model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../development/contributing.html#commit-messages">Commit Messages</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../development/contributing.html#how-to-implement-a-new-feature">How to Implement a New Feature?</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../development/testing.html">Testing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../development/todo.html">ToDos</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../development/todo.html#global">Global</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../development/todo.html#in-source">In Source</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../package.html">API Reference</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../package.html#communicators">Communicators</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../../package.html#integrators">Integrators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../package.html#multi-level-providers">Multi Level Providers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../package.html#plugins">Plugins</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../package.html#problems">Problems</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../package.html#solutions">Solutions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../package.html#solvers">Solvers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../package.html#utilities">Utilities</a></li>
+</ul>
+</li>
+</ul>
+
+        
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../../../index.html">PyPinT</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="../../package.html">PyPinT Package</a> &raquo;</li>
+      
+          <li><a href="../package.html">Integrators (<tt class="docutils literal"><span class="pre">integrators</span></tt>)</a> &raquo;</li>
+      
+          <li><a href="package.html">Weight Function Providers (<tt class="docutils literal"><span class="pre">weight_function_providers</span></tt>)</a> &raquo;</li>
+      
+    <li>Polynomial Weight Function (<tt class="docutils literal"><span class="pre">polynomial_weight_function</span></tt>)</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          <a href="../../../_sources/api/integrators/weight_function_providers/polynomial_weight_function.txt" rel="nofollow"> View page source</a>
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main">
+            
+  <div class="section" id="module-pypint.integrators.weight_function_providers.polynomial_weight_function">
+<span id="polynomial-weight-function-polynomial-weight-function"></span><h1>Polynomial Weight Function (<tt class="xref py py-mod docutils literal"><span class="pre">polynomial_weight_function</span></tt>)<a class="headerlink" href="#module-pypint.integrators.weight_function_providers.polynomial_weight_function" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="pypint.integrators.weight_function_providers.polynomial_weight_function.PolynomialWeightFunction">
+<em class="property">class </em><tt class="descclassname">pypint.integrators.weight_function_providers.polynomial_weight_function.</tt><tt class="descname">PolynomialWeightFunction</tt><a class="reference internal" href="../../../_modules/pypint/integrators/weight_function_providers/polynomial_weight_function.html#PolynomialWeightFunction"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypint.integrators.weight_function_providers.polynomial_weight_function.PolynomialWeightFunction" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="i_weight_function.html#pypint.integrators.weight_function_providers.i_weight_function.IWeightFunction" title="pypint.integrators.weight_function_providers.i_weight_function.IWeightFunction"><tt class="xref py py-class docutils literal"><span class="pre">pypint.integrators.weight_function_providers.i_weight_function.IWeightFunction</span></tt></a></p>
+<p>Provider for polynomial weight functions.</p>
+<p>Computes weights of given nodes based on a polynomial weight function of the form
+<span class="math">\(\sum_{i=0}^\infty c_i x^i\)</span>.
+By default, all powers have a coefficient of zero.</p>
+<div class="admonition-examples admonition">
+<p class="first admonition-title">Examples</p>
+<div class="last highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">nodes</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="o">-</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c"># To compute the integration weights for a given set of nodes based</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c"># on the constant weight function 1.0 use:</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c"># create an instance</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">polyWeights</span> <span class="o">=</span> <span class="n">PolynomialWeightFunction</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c"># set the coefficients of the polynom</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">polyWeights</span><span class="o">.</span><span class="n">init</span><span class="p">([</span><span class="mf">1.0</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c"># compute the weights</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">polyWeights</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">nodes</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c"># access the weights</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">polyWeights</span><span class="o">.</span><span class="n">weights</span>
+<span class="go">array([ 0.3333,  1.3333,  0.3333])</span>
+</pre></div>
+</div>
+</div>
+<dl class="method">
+<dt id="pypint.integrators.weight_function_providers.polynomial_weight_function.PolynomialWeightFunction.add_coefficient">
+<tt class="descname">add_coefficient</tt><span class="sig-paren">(</span><em>coefficient</em>, <em>power</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/pypint/integrators/weight_function_providers/polynomial_weight_function.html#PolynomialWeightFunction.add_coefficient"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypint.integrators.weight_function_providers.polynomial_weight_function.PolynomialWeightFunction.add_coefficient" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds or sets the coefficient <span class="math">\(c\)</span> of <span class="math">\(cx^p\)</span> for a specific <span class="math">\(p\)</span>.</p>
+<p>The polynomial gets automatically extended to hold the new coefficient in case it didn&#8217;t included the specified
+power previously.
+Unset, but skipped powers have a coefficient of zero by default.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>coefficient</strong> (<tt class="xref py py-class docutils literal"><span class="pre">float</span></tt>) &#8211; Coefficient <span class="math">\(c\)</span> of <span class="math">\(cx^p\)</span>.</li>
+<li><strong>power</strong> (<tt class="xref py py-class docutils literal"><span class="pre">int</span></tt>) &#8211; Power <span class="math">\(p\)</span> of <span class="math">\(cx^p\)</span>.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition-examples admonition">
+<p class="first admonition-title">Examples</p>
+<div class="last highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">polyWeights</span> <span class="o">=</span> <span class="n">PolynomialWeightFunction</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c"># To set the coefficient of x^3 to 3.14 use:</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">polyWeights</span><span class="o">.</span><span class="n">add_coefficient</span><span class="p">(</span><span class="mf">3.14</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c"># Similar, to set the constant coefficient 42, e.i. 42*x^0, use:</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">polyWeights</span><span class="o">.</span><span class="n">add_coefficient</span><span class="p">(</span><span class="mi">42</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="pypint.integrators.weight_function_providers.polynomial_weight_function.PolynomialWeightFunction.evaluate">
+<tt class="descname">evaluate</tt><span class="sig-paren">(</span><em>nodes</em>, <em>interval=None</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/pypint/integrators/weight_function_providers/polynomial_weight_function.html#PolynomialWeightFunction.evaluate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypint.integrators.weight_function_providers.polynomial_weight_function.PolynomialWeightFunction.evaluate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes weights for stored polynomial and given nodes.</p>
+<p>The weights are calculated with help of the Lagrange polynomials</p>
+<div class="math">
+\[\alpha_i = \int_a^b\omega (x) \prod_{j=1,j \neq i}^{n} \frac{x-x_j}{x_i-x_j} \mathrm{d}x\]</div>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><a class="reference internal" href="i_weight_function.html#pypint.integrators.weight_function_providers.i_weight_function.IWeightFunction.evaluate" title="pypint.integrators.weight_function_providers.i_weight_function.IWeightFunction.evaluate"><tt class="xref py py-meth docutils literal"><span class="pre">IWeightFunction.evaluate()</span></tt></a> : overridden method</p>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="pypint.integrators.weight_function_providers.polynomial_weight_function.PolynomialWeightFunction.init">
+<tt class="descname">init</tt><span class="sig-paren">(</span><em>coeffs=[1.0], func=None</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/pypint/integrators/weight_function_providers/polynomial_weight_function.html#PolynomialWeightFunction.init"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypint.integrators.weight_function_providers.polynomial_weight_function.PolynomialWeightFunction.init" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets and defines the weights function.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>coeffs</strong> (<tt class="xref py py-class docutils literal"><span class="pre">numpy.ndarray</span></tt> or <tt class="xref py py-class docutils literal"><span class="pre">list</span></tt>) &#8211; Array of coefficients of the polynomial.</li>
+<li><strong>func</strong> (<tt class="xref py py-class docutils literal"><span class="pre">str</span></tt>) &#8211; Of format <tt class="docutils literal"><span class="pre">c0</span> <span class="pre">+</span> <span class="pre">c1</span> <span class="pre">x^1</span> <span class="pre">+</span> <span class="pre">c2</span> <span class="pre">x^2...</span></tt>
+String representation of the polynomial.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition-notes admonition">
+<p class="first admonition-title">Notes</p>
+<p class="last">Parsing of a string representation of the polynomial is not yet implemented.
+Usage will lead to a <cite>NotImplementedError</cite> exception.</p>
+</div>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pypint.integrators.weight_function_providers.polynomial_weight_function.PolynomialWeightFunction.coefficients">
+<tt class="descname">coefficients</tt><a class="reference internal" href="../../../_modules/pypint/integrators/weight_function_providers/polynomial_weight_function.html#PolynomialWeightFunction.coefficients"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypint.integrators.weight_function_providers.polynomial_weight_function.PolynomialWeightFunction.coefficients" title="Permalink to this definition">¶</a></dt>
+<dd><p>Accessor for the polynomial&#8217;s coefficients.</p>
+<p>To add or alter single coefficients, see <a class="reference internal" href="#pypint.integrators.weight_function_providers.polynomial_weight_function.PolynomialWeightFunction.add_coefficient" title="pypint.integrators.weight_function_providers.polynomial_weight_function.PolynomialWeightFunction.add_coefficient"><tt class="xref py py-meth docutils literal"><span class="pre">add_coefficient()</span></tt></a>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>coefficients</strong> (<tt class="xref py py-class docutils literal"><span class="pre">numpy.ndarray</span></tt>) &#8211; Coefficients of the polynomial.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>coefficients</strong> &#8211;
+Coefficients <span class="math">\(c_i\)</span> of the polynomial <span class="math">\(\sum_{i=0}^\infty c_i x^i\)</span>.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><tt class="xref py py-class docutils literal"><span class="pre">numpy.ndarray</span></tt></td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><tt class="xref py py-exc docutils literal"><span class="pre">ValueError</span></tt> &#8211; 
+If <tt class="docutils literal"><span class="pre">coefficients</span></tt> is not a <tt class="xref py py-class docutils literal"><span class="pre">numpy.ndarray</span></tt> <em>(only Setter)</em>.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="../../multi_level_providers/package.html" class="btn btn-neutral float-right" title="Multi-Level Providers (multi_level_providers)"/>Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="i_weight_function.html" class="btn btn-neutral" title="Weight Function Interface (i_weight_function)"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+      &copy; 2013-2014,
+        <a href="http://www.fz-juelich.de/ias/jsc/EN/Research/Algorithms/ParallelInTimeIntegration/_node.html">Parallel-in-Time Research Group</a>
+        at the
+        <a href="http://www.fz-juelich.de/ias/jsc/EN/Home/home_node.html">Jülich Supercomputing Centre</a><br />
+    </p>
+  </div>
+
+  <a href="https://github.com/snide/sphinx_rtd_theme">Sphinx theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../',
+            VERSION:'0.0.4-dev-0-g4dad7c2',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../_static/doctools.js"></script>
+      <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

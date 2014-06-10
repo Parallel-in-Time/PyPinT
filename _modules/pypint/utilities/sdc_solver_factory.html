@@ -1,0 +1,351 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>pypint.utilities.sdc_solver_factory &mdash; PyPinT 0.0.4-dev-0-g4dad7c2 documentation</title>
+  
+
+  
+  
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+        <link rel="author" title="About these documents"
+              href="../../../about.html"/>
+    <link rel="top" title="PyPinT 0.0.4-dev-0-g4dad7c2 documentation" href="../../../index.html"/>
+        <link rel="up" title="Module code" href="../../index.html"/> 
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-nav-search">
+        <a href="../../../index.html" class="fa fa-home"> PyPinT</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+        
+        
+            <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../about.html">About</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user/rationale.html">Rationale</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../user/rationale.html#objectives">Objectives</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../user/rationale.html#goals">Goals</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../user/rationale.html#scope">Scope</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user/requirements.html">Requirements</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user/basic_usage.html">Basic Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/examples/package.html">Examples</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/examples/problems/package.html">Example Problems (<tt class="docutils literal"><span class="pre">problems</span></tt>)</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user/theory.html">Mathematical Theory</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../user/bibliography.html">Bibliography</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../history.html">History</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../history.html#release-0-0-3-04-04-2014">Release 0.0.3 (04/04/2014)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../history.html#release-0-0-2-04-03-2014">Release 0.0.2 (04/03/2014)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../history.html#release-0-0-1-2013-11-26">Release 0.0.1 (2013-11-26)</a></li>
+</ul>
+</li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../development/coding_style.html">Coding Style</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../development/documentation.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../development/contributing.html">Contributing</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../development/contributing.html#branching-and-tagging-model">Branching and Tagging Model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../development/contributing.html#commit-messages">Commit Messages</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../development/contributing.html#how-to-implement-a-new-feature">How to Implement a New Feature?</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../development/testing.html">Testing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../development/todo.html">ToDos</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../development/todo.html#global">Global</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../development/todo.html#in-source">In Source</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/package.html">API Reference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/package.html#communicators">Communicators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/package.html#integrators">Integrators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/package.html#multi-level-providers">Multi Level Providers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/package.html#plugins">Plugins</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/package.html#problems">Problems</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/package.html#solutions">Solutions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/package.html#solvers">Solvers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/package.html#utilities">Utilities</a></li>
+</ul>
+</li>
+</ul>
+
+        
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../../../index.html">PyPinT</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+      
+    <li>pypint.utilities.sdc_solver_factory</li>
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main">
+            
+  <h1>Source code for pypint.utilities.sdc_solver_factory</h1><div class="highlight"><pre>
+<span class="c"># coding=utf-8</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">.. moduleauthor:: Torbjörn Klatt &lt;t.klatt@fz-juelich.de&gt;</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">OrderedDict</span>
+
+<span class="kn">from</span> <span class="nn">pypint.solvers.parallel_sdc</span> <span class="kn">import</span> <span class="n">ParallelSdc</span>
+<span class="kn">from</span> <span class="nn">pypint.communicators.forward_sending_messaging</span> <span class="kn">import</span> <span class="n">ForwardSendingMessaging</span>
+<span class="kn">from</span> <span class="nn">pypint.integrators.sdc_integrator</span> <span class="kn">import</span> <span class="n">SdcIntegrator</span>
+<span class="kn">from</span> <span class="nn">pypint.problems.i_initial_value_problem</span> <span class="kn">import</span> <span class="n">IInitialValueProblem</span>
+<span class="kn">from</span> <span class="nn">pypint.utilities</span> <span class="kn">import</span> <span class="n">assert_is_instance</span><span class="p">,</span> <span class="n">assert_condition</span>
+<span class="kn">from</span> <span class="nn">pypint.utilities.logging</span> <span class="kn">import</span> <span class="o">*</span>
+
+
+<div class="viewcode-block" id="sdc_solver_factory"><a class="viewcode-back" href="../../../api/utilities/sdc_solver_factory.html#pypint.utilities.sdc_solver_factory.sdc_solver_factory">[docs]</a><span class="k">def</span> <span class="nf">sdc_solver_factory</span><span class="p">(</span><span class="n">problem</span><span class="p">,</span> <span class="n">num_solvers</span><span class="p">,</span> <span class="n">num_total_time_steps</span><span class="p">,</span> <span class="n">solver_core</span><span class="p">,</span> <span class="o">**</span><span class="n">solver_options</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Factory function for Parallel SDC with Forward Sending Messaging</span>
+
+<span class="sd">    This function creates, initializes and executes one or more SDC solvers in parallel for a given problem.</span>
+<span class="sd">    The number of solver instances and total number of time steps can be specified as well as the type of SDC core.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    problem : :py:class:`.IInitialValueProblem`</span>
+<span class="sd">        the initial value problem to create the solvers for</span>
+<span class="sd">    num_solvers : :py:class:`int`</span>
+<span class="sd">        number of parallel solvers to be created</span>
+<span class="sd">    num_total_time_steps : :py:class:`int`</span>
+<span class="sd">        total number of time steps for the whole interval defined by the problem</span>
+<span class="sd">    solver_core : :py:class:`.SdcSolverCore`</span>
+<span class="sd">        type of the SDC solver core</span>
+<span class="sd">    solver_options : :py:class:`dict`</span>
+<span class="sd">        options to be passed as it to the solver instantiation</span>
+<span class="sd">        (see :py:meth:`.ParallelSDC.__init__` for details)</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    solvers : :py:class:`list` of :py:class:`.ParallelSDC`</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    ValueError</span>
+
+<span class="sd">        * if ``problem`` is not an :py:class:`.IInitialValueProblem`</span>
+<span class="sd">        * if ``num_solvers`` is not an :py:class:`int` or not larger zero</span>
+<span class="sd">        * if ``num_total_time_steps`` is smaller than ``num_solvers``</span>
+<span class="sd">        * if ``solver_options`` is not a :py:class:`dict`</span>
+<span class="sd">        * if the interval width per solver core is invalid (i.e. not non-zero possitive or larger the problem width)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">assert_is_instance</span><span class="p">(</span><span class="n">problem</span><span class="p">,</span> <span class="n">IInitialValueProblem</span><span class="p">,</span> <span class="n">descriptor</span><span class="o">=</span><span class="s">&quot;Problem&quot;</span><span class="p">)</span>
+    <span class="n">assert_is_instance</span><span class="p">(</span><span class="n">num_solvers</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="n">descriptor</span><span class="o">=</span><span class="s">&quot;Number of Desired Solvers&quot;</span><span class="p">)</span>
+    <span class="n">assert_condition</span><span class="p">(</span><span class="n">num_solvers</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">,</span>
+                     <span class="ne">ValueError</span><span class="p">,</span> <span class="n">message</span><span class="o">=</span><span class="s">&quot;Number of solvers must be greater 0: NOT </span><span class="si">%d</span><span class="s">&quot;</span> <span class="o">%</span> <span class="n">num_solvers</span><span class="p">)</span>
+    <span class="n">assert_is_instance</span><span class="p">(</span><span class="n">num_total_time_steps</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="n">descriptor</span><span class="o">=</span><span class="s">&quot;Total Number of Time Steps&quot;</span><span class="p">)</span>
+    <span class="n">assert_condition</span><span class="p">(</span><span class="n">num_total_time_steps</span> <span class="o">&gt;=</span> <span class="n">num_solvers</span><span class="p">,</span>
+                     <span class="ne">ValueError</span><span class="p">,</span> <span class="n">message</span><span class="o">=</span><span class="p">(</span><span class="s">&quot;Total Number of Time Steps must be at least as large as number of solvers: &quot;</span>
+                                          <span class="s">&quot;</span><span class="si">%d</span><span class="s"> &lt; </span><span class="si">%d</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">num_total_time_steps</span><span class="p">,</span> <span class="n">num_solvers</span><span class="p">)))</span>
+    <span class="n">assert_is_instance</span><span class="p">(</span><span class="n">solver_options</span><span class="p">,</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">descriptor</span><span class="o">=</span><span class="s">&quot;Solver Options&quot;</span><span class="p">)</span>
+
+    <span class="n">_log_messages</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">({</span><span class="s">&#39;&#39;</span><span class="p">:</span> <span class="n">OrderedDict</span><span class="p">()})</span>
+
+    <span class="n">LOG</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&quot;</span><span class="si">%s%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">VERBOSITY_LVL1</span><span class="p">,</span> <span class="n">SEPARATOR_LVL1</span><span class="p">))</span>
+    <span class="n">LOG</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&quot;{}{:#&lt;80}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">VERBOSITY_LVL1</span><span class="p">,</span> <span class="s">&quot;START: </span><span class="si">%s</span><span class="s"> &quot;</span> <span class="o">%</span> <span class="n">solver_core</span><span class="o">.</span><span class="n">name</span><span class="p">))</span>
+
+    <span class="n">_log_messages</span><span class="p">[</span><span class="s">&#39;&#39;</span><span class="p">][</span><span class="s">&#39;Problem&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">problem</span><span class="o">.</span><span class="n">print_lines_for_log</span><span class="p">()</span>
+
+    <span class="c"># calculate width of interval per solver call</span>
+    <span class="n">_prob_width</span> <span class="o">=</span> <span class="p">(</span><span class="n">problem</span><span class="o">.</span><span class="n">time_end</span> <span class="o">-</span> <span class="n">problem</span><span class="o">.</span><span class="n">time_start</span><span class="p">)</span>
+    <span class="k">if</span> <span class="s">&#39;num_time_steps&#39;</span> <span class="ow">in</span> <span class="n">solver_options</span><span class="p">:</span>
+        <span class="c"># multiple time steps per solver</span>
+        <span class="n">_total_num_calls</span> <span class="o">=</span> <span class="n">num_total_time_steps</span> <span class="o">/</span> <span class="n">solver_options</span><span class="p">[</span><span class="s">&#39;num_time_steps&#39;</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c"># one time step per solver</span>
+        <span class="n">_total_num_calls</span> <span class="o">=</span> <span class="n">num_total_time_steps</span>
+    <span class="n">LOG</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&quot;Total number of solver calls: </span><span class="si">%d</span><span class="s">&quot;</span> <span class="o">%</span> <span class="n">_total_num_calls</span><span class="p">)</span>
+
+    <span class="n">_dt</span> <span class="o">=</span> <span class="n">_prob_width</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="n">_total_num_calls</span><span class="p">)</span>
+    <span class="n">assert_condition</span><span class="p">(</span><span class="mf">0.0</span> <span class="o">&lt;</span> <span class="n">_dt</span> <span class="o">&lt;=</span> <span class="n">_prob_width</span><span class="p">,</span>
+                     <span class="ne">RuntimeError</span><span class="p">,</span>
+                     <span class="n">message</span><span class="o">=</span><span class="s">&quot;Width of interval per solver is invalid: 0.0 &gt; </span><span class="si">%f</span><span class="s"> &lt;= </span><span class="si">%f</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">_dt</span><span class="p">,</span> <span class="n">_prob_width</span><span class="p">))</span>
+    <span class="n">assert_condition</span><span class="p">(</span><span class="nb">abs</span><span class="p">((</span><span class="n">_dt</span> <span class="o">*</span> <span class="n">_total_num_calls</span><span class="p">)</span> <span class="o">-</span> <span class="n">_prob_width</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mf">1e-16</span><span class="p">,</span>
+                     <span class="ne">ValueError</span><span class="p">,</span>
+                     <span class="n">message</span><span class="o">=</span><span class="s">&quot;Number of solver calls and calculated interval width do not make sense.&quot;</span><span class="p">)</span>
+    <span class="n">LOG</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&quot;Interval width per solver call: </span><span class="si">%f</span><span class="s">&quot;</span> <span class="o">%</span> <span class="n">_dt</span><span class="p">)</span>
+
+    <span class="n">_log_messages</span><span class="p">[</span><span class="s">&#39;&#39;</span><span class="p">][</span><span class="s">&#39;Number Solver Instances&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s">&quot;</span><span class="si">%d</span><span class="s">&quot;</span> <span class="o">%</span> <span class="n">num_solvers</span>
+    <span class="n">_log_messages</span><span class="p">[</span><span class="s">&#39;&#39;</span><span class="p">][</span><span class="s">&#39;Interval Width per Solver Call&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s">&quot;{:.3f}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">_dt</span><span class="p">)</span>
+    <span class="n">_log_messages</span><span class="p">[</span><span class="s">&#39;&#39;</span><span class="p">][</span><span class="s">&#39;Total Number Solver Calls&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s">&quot;</span><span class="si">%d</span><span class="s">&quot;</span> <span class="o">%</span> <span class="n">_total_num_calls</span>
+
+    <span class="c"># list of solvers and their communicators</span>
+    <span class="c"># (list indices associate solvers and communicators)</span>
+    <span class="n">_solvers</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">_comms</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="c"># instantiate communicators and solvers</span>
+    <span class="k">for</span> <span class="n">_n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">num_solvers</span><span class="p">):</span>
+        <span class="n">_comms</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ForwardSendingMessaging</span><span class="p">())</span>
+        <span class="n">_solvers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ParallelSdc</span><span class="p">(</span><span class="n">communicator</span><span class="o">=</span><span class="n">_comms</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]))</span>
+
+    <span class="c"># write problem&#39;s initial values into the first communicator</span>
+    <span class="n">_comms</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">write_buffer</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="n">problem</span><span class="o">.</span><span class="n">initial_value</span><span class="p">,</span> <span class="n">time_point</span><span class="o">=</span><span class="n">problem</span><span class="o">.</span><span class="n">time_start</span><span class="p">)</span>
+
+    <span class="c"># link communicators</span>
+    <span class="k">if</span> <span class="n">num_solvers</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">_n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">num_solvers</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">_n</span> <span class="o">!=</span> <span class="n">num_solvers</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="c"># all but the very last</span>
+                <span class="c"># (index arithmetics for first communicator is included)</span>
+                <span class="n">_comms</span><span class="p">[</span><span class="n">_n</span><span class="p">]</span><span class="o">.</span><span class="n">link_solvers</span><span class="p">(</span><span class="n">previous</span><span class="o">=</span><span class="n">_comms</span><span class="p">[</span><span class="n">_n</span> <span class="o">-</span> <span class="mi">1</span><span class="p">],</span> <span class="nb">next</span><span class="o">=</span><span class="n">_comms</span><span class="p">[</span><span class="n">_n</span> <span class="o">+</span> <span class="mi">1</span><span class="p">])</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c"># last communicator</span>
+                <span class="n">_comms</span><span class="p">[</span><span class="n">_n</span><span class="p">]</span><span class="o">.</span><span class="n">link_solvers</span><span class="p">(</span><span class="n">previous</span><span class="o">=</span><span class="n">_comms</span><span class="p">[</span><span class="n">_n</span> <span class="o">-</span> <span class="mi">1</span><span class="p">],</span> <span class="nb">next</span><span class="o">=</span><span class="n">_comms</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c"># we need a special handling in case of only one solver/communicator</span>
+        <span class="n">_comms</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">link_solvers</span><span class="p">(</span><span class="n">previous</span><span class="o">=</span><span class="n">_comms</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">next</span><span class="o">=</span><span class="n">_comms</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+
+    <span class="c"># initialize solvers</span>
+    <span class="k">for</span> <span class="n">_s</span> <span class="ow">in</span> <span class="n">_solvers</span><span class="p">:</span>
+        <span class="n">_s</span><span class="o">.</span><span class="n">init</span><span class="p">(</span><span class="n">problem</span><span class="o">=</span><span class="n">problem</span><span class="p">,</span> <span class="n">integrator</span><span class="o">=</span><span class="n">SdcIntegrator</span><span class="p">,</span> <span class="o">**</span><span class="n">solver_options</span><span class="p">)</span>
+
+    <span class="n">_log_messages</span><span class="p">[</span><span class="s">&#39;&#39;</span><span class="p">][</span><span class="s">&#39;Individual Solver&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">_solvers</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">print_lines_for_log</span><span class="p">()</span>
+
+    <span class="n">print_logging_message_tree</span><span class="p">(</span><span class="n">_log_messages</span><span class="p">)</span>
+
+    <span class="c"># run solvers</span>
+    <span class="n">_calls</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">while</span> <span class="nb">len</span><span class="p">(</span><span class="n">_calls</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">_total_num_calls</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">_s</span> <span class="ow">in</span> <span class="n">_solvers</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">_calls</span><span class="p">)</span> <span class="o">==</span> <span class="n">_total_num_calls</span><span class="p">:</span>
+                <span class="n">LOG</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&quot;Problem done.&quot;</span><span class="p">)</span>
+                <span class="k">break</span>
+            <span class="n">LOG</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&quot;</span><span class="si">%s%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">VERBOSITY_LVL1</span><span class="p">,</span> <span class="n">SEPARATOR_LVL1</span><span class="p">))</span>
+            <span class="n">LOG</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&quot;</span><span class="si">%s</span><span class="s">Calling solver </span><span class="si">%d</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">VERBOSITY_LVL1</span><span class="p">,</span> <span class="n">_solvers</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">_s</span><span class="p">)))</span>
+            <span class="n">_s</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">core</span><span class="o">=</span><span class="n">solver_core</span><span class="p">,</span> <span class="n">dt</span><span class="o">=</span><span class="n">_dt</span><span class="p">)</span>
+            <span class="n">_calls</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">_solvers</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">_s</span><span class="p">))</span>
+    <span class="n">LOG</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&quot;</span><span class="si">%s%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">VERBOSITY_LVL1</span><span class="p">,</span> <span class="n">SEPARATOR_LVL1</span><span class="p">))</span>
+    <span class="n">LOG</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&quot;</span><span class="si">%s</span><span class="s">Last solver called: </span><span class="si">%d</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">VERBOSITY_LVL2</span><span class="p">,</span> <span class="n">_calls</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]))</span>
+
+    <span class="k">return</span> <span class="n">_solvers</span>
+
+</div>
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;sdc_solver_factory&#39;</span><span class="p">]</span>
+</pre></div>
+
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+      &copy; 2013-2014,
+        <a href="http://www.fz-juelich.de/ias/jsc/EN/Research/Algorithms/ParallelInTimeIntegration/_node.html">Parallel-in-Time Research Group</a>
+        at the
+        <a href="http://www.fz-juelich.de/ias/jsc/EN/Home/home_node.html">Jülich Supercomputing Centre</a><br />
+    </p>
+  </div>
+
+  <a href="https://github.com/snide/sphinx_rtd_theme">Sphinx theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../',
+            VERSION:'0.0.4-dev-0-g4dad7c2',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../_static/doctools.js"></script>
+      <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

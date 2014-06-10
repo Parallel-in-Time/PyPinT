@@ -1,0 +1,382 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>pypint.integrators.weight_function_providers.polynomial_weight_function &mdash; PyPinT 0.0.4-dev-0-g4dad7c2 documentation</title>
+  
+
+  
+  
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+        <link rel="author" title="About these documents"
+              href="../../../../about.html"/>
+    <link rel="top" title="PyPinT 0.0.4-dev-0-g4dad7c2 documentation" href="../../../../index.html"/>
+        <link rel="up" title="pypint.integrators" href="../../integrators.html"/> 
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-nav-search">
+        <a href="../../../../index.html" class="fa fa-home"> PyPinT</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+        
+        
+            <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../about.html">About</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../user/rationale.html">Rationale</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../../user/rationale.html#objectives">Objectives</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../user/rationale.html#goals">Goals</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../user/rationale.html#scope">Scope</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../user/requirements.html">Requirements</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../user/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../user/basic_usage.html">Basic Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api/examples/package.html">Examples</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/examples/problems/package.html">Example Problems (<tt class="docutils literal"><span class="pre">problems</span></tt>)</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../user/theory.html">Mathematical Theory</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../../user/bibliography.html">Bibliography</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../history.html">History</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../../history.html#release-0-0-3-04-04-2014">Release 0.0.3 (04/04/2014)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../history.html#release-0-0-2-04-03-2014">Release 0.0.2 (04/03/2014)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../history.html#release-0-0-1-2013-11-26">Release 0.0.1 (2013-11-26)</a></li>
+</ul>
+</li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../development/coding_style.html">Coding Style</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../development/documentation.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../development/contributing.html">Contributing</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../../development/contributing.html#branching-and-tagging-model">Branching and Tagging Model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../development/contributing.html#commit-messages">Commit Messages</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../development/contributing.html#how-to-implement-a-new-feature">How to Implement a New Feature?</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../development/testing.html">Testing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../development/todo.html">ToDos</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../../development/todo.html#global">Global</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../development/todo.html#in-source">In Source</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api/package.html">API Reference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/package.html#communicators">Communicators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/package.html#integrators">Integrators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/package.html#multi-level-providers">Multi Level Providers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/package.html#plugins">Plugins</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/package.html#problems">Problems</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/package.html#solutions">Solutions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/package.html#solvers">Solvers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/package.html#utilities">Utilities</a></li>
+</ul>
+</li>
+</ul>
+
+        
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../../../../index.html">PyPinT</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../../../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="../../../index.html">Module code</a> &raquo;</li>
+      
+          <li><a href="../../integrators.html">pypint.integrators</a> &raquo;</li>
+      
+    <li>pypint.integrators.weight_function_providers.polynomial_weight_function</li>
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main">
+            
+  <h1>Source code for pypint.integrators.weight_function_providers.polynomial_weight_function</h1><div class="highlight"><pre>
+<span class="c"># coding=utf-8</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">.. moduleauthor:: Torbjörn Klatt &lt;t.klatt@fz-juelich.de&gt;</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">numpy.polynomial.polynomial</span> <span class="kn">as</span> <span class="nn">pol</span>
+
+<span class="kn">from</span> <span class="nn">pypint.integrators.weight_function_providers.i_weight_function</span> <span class="kn">import</span> <span class="n">IWeightFunction</span>
+<span class="kn">from</span> <span class="nn">pypint.utilities</span> <span class="kn">import</span> <span class="n">func_name</span><span class="p">,</span> <span class="n">assert_is_instance</span><span class="p">,</span> <span class="n">assert_condition</span>
+
+
+<div class="viewcode-block" id="PolynomialWeightFunction"><a class="viewcode-back" href="../../../../api/integrators/weight_function_providers/polynomial_weight_function.html#pypint.integrators.weight_function_providers.polynomial_weight_function.PolynomialWeightFunction">[docs]</a><span class="k">class</span> <span class="nc">PolynomialWeightFunction</span><span class="p">(</span><span class="n">IWeightFunction</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Provider for polynomial weight functions.</span>
+
+<span class="sd">    Computes weights of given nodes based on a polynomial weight function of the form</span>
+<span class="sd">    :math:`\\sum_{i=0}^\\infty c_i x^i`.</span>
+<span class="sd">    By default, all powers have a coefficient of zero.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; import numpy</span>
+<span class="sd">    &gt;&gt;&gt; nodes = numpy.array([-1.0, 0.0, 1.0])</span>
+<span class="sd">    &gt;&gt;&gt; # To compute the integration weights for a given set of nodes based</span>
+<span class="sd">    &gt;&gt;&gt; # on the constant weight function 1.0 use:</span>
+<span class="sd">    &gt;&gt;&gt; # create an instance</span>
+<span class="sd">    &gt;&gt;&gt; polyWeights = PolynomialWeightFunction()</span>
+<span class="sd">    &gt;&gt;&gt; # set the coefficients of the polynom</span>
+<span class="sd">    &gt;&gt;&gt; polyWeights.init([1.0])</span>
+<span class="sd">    &gt;&gt;&gt; # compute the weights</span>
+<span class="sd">    &gt;&gt;&gt; polyWeights.evaluate(nodes)</span>
+<span class="sd">    &gt;&gt;&gt; # access the weights</span>
+<span class="sd">    &gt;&gt;&gt; polyWeights.weights</span>
+<span class="sd">    array([ 0.3333,  1.3333,  0.3333])</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">PolynomialWeightFunction</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_coefficients</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+<div class="viewcode-block" id="PolynomialWeightFunction.init"><a class="viewcode-back" href="../../../../api/integrators/weight_function_providers/polynomial_weight_function.html#pypint.integrators.weight_function_providers.polynomial_weight_function.PolynomialWeightFunction.init">[docs]</a>    <span class="k">def</span> <span class="nf">init</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">coeffs</span><span class="o">=</span><span class="p">[</span><span class="mf">1.0</span><span class="p">],</span> <span class="n">func</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Sets and defines the weights function.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        coeffs : :py:class:`numpy.ndarray` or :py:class:`list`</span>
+<span class="sd">            Array of coefficients of the polynomial.</span>
+<span class="sd">        func : :py:class:`str`</span>
+<span class="sd">            Of format ``c0 + c1 x^1 + c2 x^2...``</span>
+<span class="sd">            String representation of the polynomial.</span>
+
+<span class="sd">        Notes</span>
+<span class="sd">        -----</span>
+<span class="sd">        Parsing of a string representation of the polynomial is not yet implemented.</span>
+<span class="sd">        Usage will lead to a `NotImplementedError` exception.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">PolynomialWeightFunction</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">init</span><span class="p">(</span><span class="n">coeffs</span><span class="p">,</span> <span class="n">func</span><span class="o">=</span><span class="bp">None</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">func</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="c"># TODO: implement parsing of polynomial function string</span>
+            <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="n">func_name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">+</span>
+                                      <span class="s">&quot;Parsing of polynomial function as string not yet possible.&quot;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">coeffs</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="ow">and</span> \
+                <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">coeffs</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">coeffs</span><span class="p">,</span> <span class="nb">list</span><span class="p">)):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">coefficients</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">coeffs</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="PolynomialWeightFunction.evaluate"><a class="viewcode-back" href="../../../../api/integrators/weight_function_providers/polynomial_weight_function.html#pypint.integrators.weight_function_providers.polynomial_weight_function.PolynomialWeightFunction.evaluate">[docs]</a>    <span class="k">def</span> <span class="nf">evaluate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nodes</span><span class="p">,</span> <span class="n">interval</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Computes weights for stored polynomial and given nodes.</span>
+
+<span class="sd">        The weights are calculated with help of the Lagrange polynomials</span>
+
+<span class="sd">        .. math::</span>
+
+<span class="sd">            \\alpha_i = \\int_a^b\\omega (x) \\prod_{j=1,j \\neq i}^{n} \\frac{x-x_j}{x_i-x_j} \\mathrm{d}x</span>
+
+<span class="sd">        See Also</span>
+<span class="sd">        --------</span>
+<span class="sd">        :py:meth:`.IWeightFunction.evaluate` : overridden method</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">PolynomialWeightFunction</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">nodes</span><span class="p">,</span> <span class="n">interval</span><span class="p">)</span>
+
+        <span class="n">a</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_interval</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">b</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_interval</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+
+        <span class="n">n_nodes</span> <span class="o">=</span> <span class="n">nodes</span><span class="o">.</span><span class="n">size</span>
+        <span class="n">alpha</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n_nodes</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_nodes</span><span class="p">):</span>
+            <span class="n">selection</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">j</span><span class="p">))</span>
+            <span class="n">selection</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">j</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">n_nodes</span><span class="p">)))</span>
+            <span class="n">poly</span> <span class="o">=</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">]</span>
+
+            <span class="k">for</span> <span class="n">ais</span> <span class="ow">in</span> <span class="n">nodes</span><span class="p">[</span><span class="n">selection</span><span class="p">]:</span>
+                <span class="c"># builds Lagrange polynomial p_i</span>
+                <span class="n">poly</span> <span class="o">=</span> <span class="n">pol</span><span class="o">.</span><span class="n">polymul</span><span class="p">(</span><span class="n">poly</span><span class="p">,</span> <span class="p">[</span><span class="n">ais</span> <span class="o">/</span> <span class="p">(</span><span class="n">ais</span> <span class="o">-</span> <span class="n">nodes</span><span class="p">[</span><span class="n">j</span><span class="p">]),</span> <span class="mi">1</span> <span class="o">/</span> <span class="p">(</span><span class="n">nodes</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">-</span> <span class="n">ais</span><span class="p">)])</span>
+
+            <span class="c"># computes \int w(x)p_i dx</span>
+            <span class="n">poly</span> <span class="o">=</span> <span class="n">pol</span><span class="o">.</span><span class="n">polyint</span><span class="p">(</span><span class="n">pol</span><span class="o">.</span><span class="n">polymul</span><span class="p">(</span><span class="n">poly</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_coefficients</span><span class="p">))</span>
+            <span class="n">alpha</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">pol</span><span class="o">.</span><span class="n">polyval</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="n">poly</span><span class="p">)</span> <span class="o">-</span> <span class="n">pol</span><span class="o">.</span><span class="n">polyval</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">poly</span><span class="p">)</span>
+
+        <span class="c">#LOG.debug(&quot;Computed polynomial weights for nodes {:s} in {:s}.&quot;</span>
+        <span class="c">#          .format(nodes, self._interval))</span>
+        <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">_interval</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_weights</span> <span class="o">=</span> <span class="n">alpha</span>
+</div>
+<div class="viewcode-block" id="PolynomialWeightFunction.add_coefficient"><a class="viewcode-back" href="../../../../api/integrators/weight_function_providers/polynomial_weight_function.html#pypint.integrators.weight_function_providers.polynomial_weight_function.PolynomialWeightFunction.add_coefficient">[docs]</a>    <span class="k">def</span> <span class="nf">add_coefficient</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">coefficient</span><span class="p">,</span> <span class="n">power</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Adds or sets the coefficient :math:`c` of :math:`cx^p` for a specific :math:`p`.</span>
+
+<span class="sd">        The polynomial gets automatically extended to hold the new coefficient in case it didn&#39;t included the specified</span>
+<span class="sd">        power previously.</span>
+<span class="sd">        Unset, but skipped powers have a coefficient of zero by default.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        coefficient : :py:class:`float`</span>
+<span class="sd">            Coefficient :math:`c` of :math:`cx^p`.</span>
+<span class="sd">        power : :py:class:`int`</span>
+<span class="sd">             Power :math:`p` of :math:`cx^p`.</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        &gt;&gt;&gt; polyWeights = PolynomialWeightFunction()</span>
+<span class="sd">        &gt;&gt;&gt; # To set the coefficient of x^3 to 3.14 use:</span>
+<span class="sd">        &gt;&gt;&gt; polyWeights.add_coefficient(3.14, 3)</span>
+<span class="sd">        &gt;&gt;&gt; # Similar, to set the constant coefficient 42, e.i. 42*x^0, use:</span>
+<span class="sd">        &gt;&gt;&gt; polyWeights.add_coefficient(42, 0)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">assert_is_instance</span><span class="p">(</span><span class="n">power</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="n">descriptor</span><span class="o">=</span><span class="s">&quot;Power&quot;</span><span class="p">,</span> <span class="n">checking_obj</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
+        <span class="n">assert_condition</span><span class="p">(</span><span class="n">power</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">,</span> <span class="ne">ValueError</span><span class="p">,</span>
+                         <span class="n">message</span><span class="o">=</span><span class="s">&quot;Power must be zero or positive: {:d}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">power</span><span class="p">),</span> <span class="n">checking_obj</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_coefficients</span><span class="o">.</span><span class="n">size</span> <span class="o">&lt;=</span> <span class="n">power</span> <span class="o">+</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_coefficients</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">resize</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_coefficients</span><span class="p">,</span> <span class="p">(</span><span class="n">power</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_coefficients</span><span class="p">[</span><span class="n">power</span><span class="p">]</span> <span class="o">=</span> <span class="n">coefficient</span>
+</div>
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">coefficients</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Accessor for the polynomial&#39;s coefficients.</span>
+
+<span class="sd">        To add or alter single coefficients, see :py:meth:`.add_coefficient`.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        coefficients : :py:class:`numpy.ndarray`</span>
+<span class="sd">            Coefficients of the polynomial.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        coefficients : :py:class:`numpy.ndarray`</span>
+<span class="sd">            Coefficients :math:`c_i` of the polynomial :math:`\\sum_{i=0}^\\infty c_i x^i`.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        ValueError</span>
+<span class="sd">            If ``coefficients`` is not a :py:class:`numpy.ndarray` *(only Setter)*.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_coefficients</span>
+
+    <span class="nd">@coefficients.setter</span>
+<div class="viewcode-block" id="PolynomialWeightFunction.coefficients"><a class="viewcode-back" href="../../../../api/integrators/weight_function_providers/polynomial_weight_function.html#pypint.integrators.weight_function_providers.polynomial_weight_function.PolynomialWeightFunction.coefficients">[docs]</a>    <span class="k">def</span> <span class="nf">coefficients</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">coefficients</span><span class="p">):</span>
+        <span class="n">assert_is_instance</span><span class="p">(</span><span class="n">coefficients</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">descriptor</span><span class="o">=</span><span class="s">&quot;Coefficients&quot;</span><span class="p">,</span> <span class="n">checking_obj</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_coefficients</span> <span class="o">=</span> <span class="n">coefficients</span>
+</div>
+    <span class="k">def</span> <span class="nf">print_lines_for_log</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">_lines</span> <span class="o">=</span> <span class="nb">super</span><span class="p">(</span><span class="n">PolynomialWeightFunction</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">print_lines_for_log</span><span class="p">()</span>
+        <span class="n">_lines</span><span class="p">[</span><span class="s">&#39;Coefficients&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s">&quot;{}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">coefficients</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">_lines</span>
+
+    <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s">&quot;PolynomialWeightFunction&lt;0x</span><span class="si">%x</span><span class="s">&gt;(weights=</span><span class="si">%s</span><span class="s">)&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="nb">id</span><span class="p">(</span><span class="bp">self</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">weights</span><span class="p">)</span></div>
+</pre></div>
+
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+      &copy; 2013-2014,
+        <a href="http://www.fz-juelich.de/ias/jsc/EN/Research/Algorithms/ParallelInTimeIntegration/_node.html">Parallel-in-Time Research Group</a>
+        at the
+        <a href="http://www.fz-juelich.de/ias/jsc/EN/Home/home_node.html">Jülich Supercomputing Centre</a><br />
+    </p>
+  </div>
+
+  <a href="https://github.com/snide/sphinx_rtd_theme">Sphinx theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../../',
+            VERSION:'0.0.4-dev-0-g4dad7c2',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+      <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

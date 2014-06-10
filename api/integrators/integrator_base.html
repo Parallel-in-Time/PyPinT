@@ -1,0 +1,387 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Integrator Base (integrator_base) &mdash; PyPinT 0.0.4-dev-0-g4dad7c2 documentation</title>
+  
+
+  
+  
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  
+
+  
+        <link rel="author" title="About these documents"
+              href="../../about.html"/>
+    <link rel="top" title="PyPinT 0.0.4-dev-0-g4dad7c2 documentation" href="../../index.html"/>
+        <link rel="up" title="Integrators (integrators)" href="package.html"/>
+        <link rel="next" title="SDC Integrator (sdc_integrator)" href="sdc_integrator.html"/>
+        <link rel="prev" title="Integrators (integrators)" href="package.html"/> 
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-nav-search">
+        <a href="../../index.html" class="fa fa-home"> PyPinT</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+        
+        
+            <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../about.html">About</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user/rationale.html">Rationale</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../user/rationale.html#objectives">Objectives</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../user/rationale.html#goals">Goals</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../user/rationale.html#scope">Scope</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../user/requirements.html">Requirements</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user/basic_usage.html">Basic Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/package.html">Examples</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../examples/problems/package.html">Example Problems (<tt class="docutils literal"><span class="pre">problems</span></tt>)</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../user/theory.html">Mathematical Theory</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../user/bibliography.html">Bibliography</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../history.html">History</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../history.html#release-0-0-3-04-04-2014">Release 0.0.3 (04/04/2014)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../history.html#release-0-0-2-04-03-2014">Release 0.0.2 (04/03/2014)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../history.html#release-0-0-1-2013-11-26">Release 0.0.1 (2013-11-26)</a></li>
+</ul>
+</li>
+</ul>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../development/coding_style.html">Coding Style</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../development/documentation.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../development/contributing.html">Contributing</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../development/contributing.html#branching-and-tagging-model">Branching and Tagging Model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../development/contributing.html#commit-messages">Commit Messages</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../development/contributing.html#how-to-implement-a-new-feature">How to Implement a New Feature?</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../development/testing.html">Testing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../development/todo.html">ToDos</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../development/todo.html#global">Global</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../development/todo.html#in-source">In Source</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="reference internal" href="../package.html">API Reference</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../package.html#communicators">Communicators</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../package.html#integrators">Integrators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../package.html#multi-level-providers">Multi Level Providers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../package.html#plugins">Plugins</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../package.html#problems">Problems</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../package.html#solutions">Solutions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../package.html#solvers">Solvers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../package.html#utilities">Utilities</a></li>
+</ul>
+</li>
+</ul>
+
+        
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../../index.html">PyPinT</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="../package.html">PyPinT Package</a> &raquo;</li>
+      
+          <li><a href="package.html">Integrators (<tt class="docutils literal"><span class="pre">integrators</span></tt>)</a> &raquo;</li>
+      
+    <li>Integrator Base (<tt class="docutils literal"><span class="pre">integrator_base</span></tt>)</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          <a href="../../_sources/api/integrators/integrator_base.txt" rel="nofollow"> View page source</a>
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main">
+            
+  <div class="section" id="module-pypint.integrators.integrator_base">
+<span id="integrator-base-integrator-base"></span><h1>Integrator Base (<tt class="xref py py-mod docutils literal"><span class="pre">integrator_base</span></tt>)<a class="headerlink" href="#module-pypint.integrators.integrator_base" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="pypint.integrators.integrator_base.IntegratorBase">
+<em class="property">class </em><tt class="descclassname">pypint.integrators.integrator_base.</tt><tt class="descname">IntegratorBase</tt><a class="reference internal" href="../../_modules/pypint/integrators/integrator_base.html#IntegratorBase"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypint.integrators.integrator_base.IntegratorBase" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">builtins.object</span></tt></p>
+<p>Basic and generic integrator for variable nodes and weights.</p>
+<dl class="method">
+<dt id="pypint.integrators.integrator_base.IntegratorBase.evaluate">
+<tt class="descname">evaluate</tt><span class="sig-paren">(</span><em>data</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pypint/integrators/integrator_base.html#IntegratorBase.evaluate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypint.integrators.integrator_base.IntegratorBase.evaluate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Applies this integrator to given data in specified time interval.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>data</strong> (<tt class="xref py py-class docutils literal"><span class="pre">numpy.ndarray</span></tt>) &#8211; Data vector of the values at given time points.
+Its length must equal the number of integration nodes.</li>
+<li><strong>time_start</strong> (<tt class="xref py py-class docutils literal"><span class="pre">float</span></tt>) &#8211; <em>(optional)</em>
+Begining of the time interval to integrate over.</li>
+<li><strong>time_end</strong> (<tt class="xref py py-class docutils literal"><span class="pre">float</span></tt>) &#8211; <em>(optional)</em>
+End of the time interval to integrate over.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first"><tt class="xref py py-exc docutils literal"><span class="pre">ValueError</span></tt> &#8211;</p>
+<ul class="last simple">
+<li>if <tt class="docutils literal"><span class="pre">data</span></tt> is not a <tt class="xref py py-class docutils literal"><span class="pre">numpy.ndarray</span></tt></li>
+<li>if either <tt class="docutils literal"><span class="pre">time_start</span></tt> or <tt class="docutils literal"><span class="pre">time_end</span></tt> are not given</li>
+<li>if <tt class="docutils literal"><span class="pre">time_start</span></tt> is larger or equals <tt class="docutils literal"><span class="pre">time_end</span></tt></li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="pypint.integrators.integrator_base.IntegratorBase.init">
+<tt class="descname">init</tt><span class="sig-paren">(</span><em>nodes_type</em>, <em>num_nodes</em>, <em>weights_function</em>, <em>interval=None</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pypint/integrators/integrator_base.html#IntegratorBase.init"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypint.integrators.integrator_base.IntegratorBase.init" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initializes the integrator with given nodes and weights function.</p>
+<p>Before setting the given attributes, a consistency check is carried out testing for the correct types.
+<a class="reference internal" href="node_providers/i_nodes.html#pypint.integrators.node_providers.i_nodes.INodes.init" title="pypint.integrators.node_providers.i_nodes.INodes.init"><tt class="xref py py-meth docutils literal"><span class="pre">INodes.init()</span></tt></a> is called on the provided nodes object.
+<a class="reference internal" href="weight_function_providers/i_weight_function.html#pypint.integrators.weight_function_providers.i_weight_function.IWeightFunction.evaluate" title="pypint.integrators.weight_function_providers.i_weight_function.IWeightFunction.evaluate"><tt class="xref py py-meth docutils literal"><span class="pre">IWeightFunction.evaluate()</span></tt></a> is called on the provided weight function object.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>nodes_type</strong> (<a class="reference internal" href="node_providers/i_nodes.html#pypint.integrators.node_providers.i_nodes.INodes" title="pypint.integrators.node_providers.i_nodes.INodes"><tt class="xref py py-class docutils literal"><span class="pre">INodes</span></tt></a>) &#8211; Type of integration nodes as the class name <strong>not instance</strong>.</li>
+<li><strong>num_nodes</strong> (<tt class="xref py py-class docutils literal"><span class="pre">int</span></tt>) &#8211; Number of integration nodes</li>
+<li><strong>weights_function</strong> (<a class="reference internal" href="weight_function_providers/i_weight_function.html#pypint.integrators.weight_function_providers.i_weight_function.IWeightFunction" title="pypint.integrators.weight_function_providers.i_weight_function.IWeightFunction"><tt class="xref py py-class docutils literal"><span class="pre">IWeightFunction</span></tt></a> or <tt class="xref py py-class docutils literal"><span class="pre">dict</span></tt>) &#8211; Weight function for the integration nodes.
+If it is a dictionary, it must have a <tt class="docutils literal"><span class="pre">class</span></tt> field with the <a class="reference internal" href="weight_function_providers/i_weight_function.html#pypint.integrators.weight_function_providers.i_weight_function.IWeightFunction" title="pypint.integrators.weight_function_providers.i_weight_function.IWeightFunction"><tt class="xref py py-class docutils literal"><span class="pre">IWeightFunction</span></tt></a> as the value.
+Further fields are used as parameters to <tt class="xref py py-class docutils literal"><span class="pre">IWeightFunction.init</span></tt>.
+In both cases the weight function class must be given as a name <strong>not instance</strong>.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first"><tt class="xref py py-exc docutils literal"><span class="pre">ValueError</span></tt> &#8211; 
+If the type of one of the given arguments does not match.</p>
+<ul class="last">
+<li><p class="first"><tt class="docutils literal"><span class="pre">nodes_type</span></tt> must be a subclass of <a class="reference internal" href="node_providers/i_nodes.html#pypint.integrators.node_providers.i_nodes.INodes" title="pypint.integrators.node_providers.i_nodes.INodes"><tt class="xref py py-class docutils literal"><span class="pre">INodes</span></tt></a></p>
+</li>
+<li><p class="first"><tt class="docutils literal"><span class="pre">num_nodes</span></tt> must be an <tt class="xref py py-class docutils literal"><span class="pre">int</span></tt></p>
+</li>
+<li><p class="first"><tt class="docutils literal"><span class="pre">weights_function</span></tt> must be a subclass of <a class="reference internal" href="weight_function_providers/i_weight_function.html#pypint.integrators.weight_function_providers.i_weight_function.IWeightFunction" title="pypint.integrators.weight_function_providers.i_weight_function.IWeightFunction"><tt class="xref py py-class docutils literal"><span class="pre">IWeightFunction</span></tt></a> or <tt class="xref py py-class docutils literal"><span class="pre">dict</span></tt></p>
+<blockquote>
+<div><ul class="simple">
+<li>if <tt class="docutils literal"><span class="pre">weights_function</span></tt> is a dictionary, its field <tt class="docutils literal"><span class="pre">class</span></tt> must be an <a class="reference internal" href="weight_function_providers/i_weight_function.html#pypint.integrators.weight_function_providers.i_weight_function.IWeightFunction" title="pypint.integrators.weight_function_providers.i_weight_function.IWeightFunction"><tt class="xref py py-class docutils literal"><span class="pre">IWeightFunction</span></tt></a>.</li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition-examples admonition">
+<p class="first admonition-title">Examples</p>
+<div class="last highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">pypint.integrators</span> <span class="kn">import</span> <span class="n">INTEGRATOR_PRESETS</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">integrator</span> <span class="o">=</span> <span class="n">IntegratorBase</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c"># create classic Gauss-Lobatto integrator with 4 integration nodes</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">options</span> <span class="o">=</span> <span class="n">INTEGRATOR_PRESETS</span><span class="p">[</span><span class="s">&#39;Gauss-Lobatto&#39;</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">options</span><span class="p">[</span><span class="s">&#39;num_nodes&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">4</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">integrator</span><span class="o">.</span><span class="n">init</span><span class="p">(</span><span class="o">**</span><span class="n">options</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="pypint.integrators.integrator_base.IntegratorBase.transform_interval">
+<tt class="descname">transform_interval</tt><span class="sig-paren">(</span><em>interval</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pypint/integrators/integrator_base.html#IntegratorBase.transform_interval"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypint.integrators.integrator_base.IntegratorBase.transform_interval" title="Permalink to this definition">¶</a></dt>
+<dd><p>Transform current interval to the given one</p>
+<p>The integration nodes are transformed to fit the given interval and subsequently the weights are recomputed to
+match the new nodes.</p>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><a class="reference internal" href="node_providers/i_nodes.html#pypint.integrators.node_providers.i_nodes.INodes.transform" title="pypint.integrators.node_providers.i_nodes.INodes.transform"><tt class="xref py py-meth docutils literal"><span class="pre">INodes.transform()</span></tt></a> : method called for node transformation</p>
+</div>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pypint.integrators.integrator_base.IntegratorBase.__weakref__">
+<tt class="descname">__weakref__</tt><a class="headerlink" href="#pypint.integrators.integrator_base.IntegratorBase.__weakref__" title="Permalink to this definition">¶</a></dt>
+<dd><p>list of weak references to the object (if defined)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pypint.integrators.integrator_base.IntegratorBase.nodes">
+<tt class="descname">nodes</tt><a class="reference internal" href="../../_modules/pypint/integrators/integrator_base.html#IntegratorBase.nodes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypint.integrators.integrator_base.IntegratorBase.nodes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Proxy accessor for the integration nodes.</p>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><a class="reference internal" href="node_providers/i_nodes.html#pypint.integrators.node_providers.i_nodes.INodes.nodes" title="pypint.integrators.node_providers.i_nodes.INodes.nodes"><tt class="xref py py-attr docutils literal"><span class="pre">INodes.nodes</span></tt></a></p>
+</div>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pypint.integrators.integrator_base.IntegratorBase.nodes_type">
+<tt class="descname">nodes_type</tt><a class="reference internal" href="../../_modules/pypint/integrators/integrator_base.html#IntegratorBase.nodes_type"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypint.integrators.integrator_base.IntegratorBase.nodes_type" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read-only accessor for the type of nodes</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>nodes</strong></td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="node_providers/i_nodes.html#pypint.integrators.node_providers.i_nodes.INodes" title="pypint.integrators.node_providers.i_nodes.INodes"><tt class="xref py py-class docutils literal"><span class="pre">INodes</span></tt></a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pypint.integrators.integrator_base.IntegratorBase.weights">
+<tt class="descname">weights</tt><a class="reference internal" href="../../_modules/pypint/integrators/integrator_base.html#IntegratorBase.weights"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypint.integrators.integrator_base.IntegratorBase.weights" title="Permalink to this definition">¶</a></dt>
+<dd><p>Proxy accessor for the calculated and cached integration weights.</p>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><a class="reference internal" href="weight_function_providers/i_weight_function.html#pypint.integrators.weight_function_providers.i_weight_function.IWeightFunction.weights" title="pypint.integrators.weight_function_providers.i_weight_function.IWeightFunction.weights"><tt class="xref py py-attr docutils literal"><span class="pre">IWeightFunction.weights</span></tt></a></p>
+</div>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pypint.integrators.integrator_base.IntegratorBase.weights_function">
+<tt class="descname">weights_function</tt><a class="reference internal" href="../../_modules/pypint/integrators/integrator_base.html#IntegratorBase.weights_function"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypint.integrators.integrator_base.IntegratorBase.weights_function" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read-only accessor for the weights function</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>weights_function</strong></td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="weight_function_providers/i_weight_function.html#pypint.integrators.weight_function_providers.i_weight_function.IWeightFunction" title="pypint.integrators.weight_function_providers.i_weight_function.IWeightFunction"><tt class="xref py py-class docutils literal"><span class="pre">IWeightFunction</span></tt></a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="sdc_integrator.html" class="btn btn-neutral float-right" title="SDC Integrator (sdc_integrator)"/>Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="package.html" class="btn btn-neutral" title="Integrators (integrators)"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+      &copy; 2013-2014,
+        <a href="http://www.fz-juelich.de/ias/jsc/EN/Research/Algorithms/ParallelInTimeIntegration/_node.html">Parallel-in-Time Research Group</a>
+        at the
+        <a href="http://www.fz-juelich.de/ias/jsc/EN/Home/home_node.html">Jülich Supercomputing Centre</a><br />
+    </p>
+  </div>
+
+  <a href="https://github.com/snide/sphinx_rtd_theme">Sphinx theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../',
+            VERSION:'0.0.4-dev-0-g4dad7c2',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../_static/doctools.js"></script>
+      <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>
